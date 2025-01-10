@@ -1,0 +1,13 @@
+Insane: 105 BPM
+Never Gonna Give You Up: 114 BPM
+Media: 109,5 ~= 110 BPM
+
+(Vi = Valor inicial; Vf = Valor final)
+nº de cambio (con 4 decimales) = ((Vi - Vf) / Vi )
+
+Calcular nuevo float = 
+1 + nº de cambio si es incremento
+1 - nº de cambio si es decremento
+
+%^Insane: -0,0428 (el float aumenta EJ: 1.0f -> 1.0428f)
+%^Rickroll: 0,0394 (el float disminuye EJ: 1.0f -> 0.9606f)
