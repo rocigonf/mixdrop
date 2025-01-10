@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+/* ESTILOS GLOBALES :D */
+
+@font-face {
+    font-family: 'monogram';
+    src: url('/font/monogram.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+*{
+    font-family:'monogram'
+}
+
+body{
+    background-color: black;
+    color: white;
+}

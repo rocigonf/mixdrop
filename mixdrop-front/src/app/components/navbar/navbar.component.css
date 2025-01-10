@@ -1,0 +1,17 @@
+nav{
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+#speaker{
+    height: 45px;
+}
+
+#trophy{
+    height: 40px;
+}
+
+span{
+    font-size: 2rem;
+}
