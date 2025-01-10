@@ -11,6 +11,10 @@
     font-family:'monogram'
 }
 
+html{
+    scroll-behavior: smooth;
+}
+
 body{
     background-color: black;
     color: white;
