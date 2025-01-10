@@ -5,7 +5,7 @@ namespace mixdrop_back
         public static void Main(string[] args)
         {
             Console.WriteLine("Procesando...");
-            HellIsForever.ChangeBPM("music.wav", "output.wav", 120);
+            HellIsForever.ChangeBPM("music.wav", "output.wav", 2f);
             Console.WriteLine("Procesado");
 
             var builder = WebApplication.CreateBuilder(args);
