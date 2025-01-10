@@ -4,6 +4,10 @@ namespace mixdrop_back
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Procesando...");
+            HellIsForever.ChangeBPM("music.wav", "output.wav", 120);
+            Console.WriteLine("Procesado");
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
