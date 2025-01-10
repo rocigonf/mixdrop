@@ -4,8 +4,13 @@ namespace mixdrop_back
     {
         public static void Main(string[] args)
         {
+            // Estas 3 variables habrá que ponerlas en otro lado
+            var semitone = Math.Pow(2, 1.0 / 12);
+            var upOneTone = semitone * semitone;
+            var downOneTone = 1.0 / upOneTone;
+
             Console.WriteLine("Procesando...");
-            HellIsForever.ChangeBPM("music.wav", "output.wav", 2f);
+            HellIsForever.ChangeBPM("music.wav", "output.wav", 2.0f);
             Console.WriteLine("Procesado");
 
             var builder = WebApplication.CreateBuilder(args);
