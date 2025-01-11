@@ -20,8 +20,6 @@ export class HomeComponent implements OnInit {
     '/images/runa-speaker/runa-speaker2.png',
     '/images/runa-speaker/runa-speaker3.png',
     '/images/runa-speaker/runa-speaker4.png',
-    '/images/runa-speaker/runa-speaker5.png',
-    '/images/runa-speaker/runa-speaker6.png',
   ];
   public currentFrameNumber : number = 0
   public currentFrameName : string = this.RUNA_FRAMES[0]
