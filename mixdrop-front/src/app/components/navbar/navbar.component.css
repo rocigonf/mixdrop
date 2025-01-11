@@ -1,0 +1,36 @@
+nav{
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    align-items: center;
+}
+
+span{
+    font-size: 2rem;
+}
+
+#speaker{
+    height: 45px;
+}
+
+#trophy{
+    height: 40px;
+}
+
+.avatar {
+    vertical-align: middle;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.nav-right{
+    display: flex;
+    position: absolute;
+    right: 1%;
+    gap: 1rem;
+}
+
+a{
+    text-decoration: none;
+    color: white;
+}

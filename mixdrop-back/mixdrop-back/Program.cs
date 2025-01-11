@@ -1,10 +1,19 @@
-
+﻿
 namespace mixdrop_back
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            // Estas 3 variables habría que ponerlas en otro lado
+            var semitone = Math.Pow(2, 1.0 / 12);
+            var upOneTone = semitone * semitone;
+            var downOneTone = 1.0 / upOneTone;
+
+            Console.WriteLine("Procesando...");
+            HellIsForever.ChangeBPM("music.wav", "output.wav", 2.0f);
+            Console.WriteLine("Procesado");
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -13,6 +22,8 @@ namespace mixdrop_back
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<MixDropContext>();
 
             var app = builder.Build();
 
@@ -29,6 +40,12 @@ namespace mixdrop_back
 
 
             app.MapControllers();
+
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                MixDropContext dbContext = scope.ServiceProvider.GetService<MixDropContext>();
+                dbContext.Database.EnsureCreated();
+            }
 
             app.Run();
         }

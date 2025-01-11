@@ -1,0 +1,92 @@
+.container{
+  font-size: 2rem;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+.rainbow-button{
+  border: 4px white;
+  border-style: solid;
+  border-radius: 50px;
+  background: linear-gradient(
+        90deg,  
+        rgba(47, 201, 226, 1),
+        rgba(114,175,68,1),
+        rgba(255,252,60,1),
+        rgba(236,126,80,1),
+        rgba(219,5,99,1)
+    );
+  font-size: 2rem;
+  width: 10%;
+  transition: 0.3s;
+}
+
+.rainbow-button:hover{
+  font-size: 2.4rem;
+  width: 11%;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.text-section{
+  padding: 1em;
+  gap: 1em;
+  display: flex;
+}
+
+.text-section p{
+  flex: 1 1 0;
+}
+
+.text-section img{
+  flex: 0 1 auto;
+  width: 50%;
+  height: 50%;
+}
+
+#rules{
+  background-image: linear-gradient(
+    90deg,  
+    rgba(47, 201, 226, 1),
+    rgba(114,175,68,1),
+    rgba(255,252,60,1),
+    rgba(236,126,80,1),
+    rgba(219,5,99,1)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+#triangle{
+  margin-top: -1.5em;
+  width: 80px;
+}
+
+.rule-list{
+  width: 50%;
+  text-align: justify;
+}
+
+.speaker-girl{
+  width: 40%;
+}
+
+hr{
+  width: 50%;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+}
+.social-logo img{
+  margin-top: -0.5em;
+  height: 2em;
+  width: 2em;
+}
+
+.footer-text{
+  margin-top: -1em;
+}

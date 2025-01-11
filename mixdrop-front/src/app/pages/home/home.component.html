@@ -1,0 +1,42 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <button (click)="reproduce()">Púlsame si no escuchas ninguna canción</button>
+
+  <img src="/images/mdx_logo.png" alt="logo">
+  <button class="rainbow-button">Jugar</button>
+
+  <div class="text-section">
+    <p class="text">
+      DropMix te permite crear música como nunca antes lo habías hecho. <br><br>
+      Este trepidante juego de mezclas musicales te ofrece una forma totalmente nueva de coleccionar, descubrir y combinar tu música favorita. Reta a tus amigos (hasta 4 jugadores) y haz unas mezclas totalmente inéditas de tus canciones preferidas. <br><br>
+      Con las cartas DropMix  podrás mezclar canciones de éxito de los mejores artistas, tales como Bruno Mars, Childish Gambino, Disturbed, Ed Sheeran, Imagine Dragons, Sam Hunt, Sia, The Weeknd, y muchos más.
+    </p>
+    <img src="/images/cards.jpg" alt="cartas">
+  </div>
+
+  <h1 id="rules">REGLAS</h1>
+  <img id="triangle" src="/images/triangle.png" alt="triangulo">
+  <ul class="rule-list">
+    <li>El juego comienza repartiendo el mazo de 60 cartas entre los 2 equipos/jugadores, por lo que cada uno tendría un mazo de 30 cartas.</li>
+    <li>Cada jugador coge de ese mazo 5 cartas. El jugador solo puede mirar sus 5 cartas, las del mazo y las del otro jugador no.</li>
+    <li>El tablero comienza vacío.</li>
+    <li>Al empezar aparece una ruleta para sortear quien empieza a jugar.</li>
+    <li>Cada jugador, en su turno, puede hacer 2 jugadas. O bien tirar una carta o darle a la ruleta dropmix.</li>
+    <li>Para tirar una carta, la tienes que poner en su color correspondiente en el tablero, además de que tiene que ser de un nivel igual o superior al que ya hay.</li>
+    <li>Al tirar una carta te dan 1 punto.</li>
+    <li>Después del primer turno, si falta un color de los 4 dan punto extra si lo rellenas.</li>
+    <li>Bonus de punto si las 4 cartas del tablero son tuyas.</li>
+    <li>Al girar la ruleta, resta al contrincante 1 punto por cada carta que quite.</li>
+    <li>El objetivo es conseguir 21 puntos o 15 si lo has seleccionado antes de empezar el juego.</li>
+  </ul>
+
+  <img class="speaker-girl" [src]="currentFrameName" alt="speaker girl">
+
+  <hr>
+
+  <a href="https://github.com/rocigonf/moshiro-mixdrop" class="social-logo">
+    <img src="/images/github.png" alt="github logo">
+  </a>
+  <p class="footer-text">2025 - Moshiro</p>
+</div>
