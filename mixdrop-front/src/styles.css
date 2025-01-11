@@ -2,13 +2,13 @@
 
 @font-face {
     font-family: 'monogram';
-    src: url('/font/monogram.ttf');
+    src: url('/font/monogram-extended.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 *{
-    font-family:'monogram'
+    font-family:'monogram';
 }
 
 html{
