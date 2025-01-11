@@ -29,7 +29,12 @@ export class HomeComponent implements OnInit {
     "/songs/break_free.mp3" : 109,
     "/songs/enemy.mp3" : 77,
     "/songs/hip_shop.mp3" : 97.50884434,
-    "/songs/home_song.mp3" : 90
+    "/songs/home_song.mp3" : 90,
+    "/songs/fly_octo_fly.flac" : 163,
+    "/songs/cat.flac" : 112,
+    "/songs/hopes_and_dreams.mp3" : 171,
+    "/songs/underground.mp3" : 120,
+    "/songs/natures_crescendo.mp3" : 121
   }
 
 
@@ -39,6 +44,7 @@ export class HomeComponent implements OnInit {
     const songName = keys[Math.floor(keys.length * Math.random())]
     this.audio = new Audio(songName)
     this.bpm = this.SONGS[songName]
+    this.audio.volume = 0.2; // El volumen es un float por lo q 1 es el máximo
 
     this.intervalTime = (60 / this.bpm) * 1000; // Calcula la cantidad de veces que lo tiene que hacer en segundos y lo pasa a milisegundos
     this.audio.load()
