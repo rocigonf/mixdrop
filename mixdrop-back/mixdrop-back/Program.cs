@@ -23,6 +23,8 @@ namespace mixdrop_back
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddScoped<MixDropContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -38,6 +40,12 @@ namespace mixdrop_back
 
 
             app.MapControllers();
+
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                MixDropContext dbContext = scope.ServiceProvider.GetService<MixDropContext>();
+                dbContext.Database.EnsureCreated();
+            }
 
             app.Run();
         }
