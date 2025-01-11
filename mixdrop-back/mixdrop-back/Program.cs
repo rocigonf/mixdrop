@@ -18,6 +18,8 @@ namespace mixdrop_back
             // Add services to the container.
             builder.Services.AddRazorPages();
 
+            builder.Services.AddScoped<MixDropContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -36,6 +38,12 @@ namespace mixdrop_back
             app.UseAuthorization();
 
             app.MapRazorPages();
+
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                MixDropContext dbContext = scope.ServiceProvider.GetService<MixDropContext>();
+                dbContext.Database.EnsureCreated();
+            }
 
             app.Run();
         }
