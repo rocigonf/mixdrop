@@ -1,6 +1,8 @@
 <app-navbar></app-navbar>
 
 <div class="container">
+  <button (click)="reproduce()">Púlsame si no escuchas ninguna canción</button>
+
   <img src="/images/mdx_logo.png" alt="logo">
   <button class="rainbow-button">Jugar</button>
 
@@ -29,7 +31,7 @@
     <li>El objetivo es conseguir 21 puntos o 15 si lo has seleccionado antes de empezar el juego.</li>
   </ul>
 
-  <img class="speaker-girl" src="/images/runa-speaker.gif" alt="speaker girl">
+  <img class="speaker-girl" [src]="currentFrameName" alt="speaker girl">
 
   <hr>
 
