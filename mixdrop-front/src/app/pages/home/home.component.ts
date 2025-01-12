@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit {
   private intervalTime: number = 0;
   private isReproducing : boolean = false
   private interval : any
-  private audio = new Audio('home_song.mp3');
+  private audio = new Audio('/songs/home_song.mp3');
 
   private readonly RUNA_FRAMES: string[] = [
     '/images/runa-speaker/runa-speaker1.png',
@@ -23,8 +23,16 @@ export class HomeComponent implements OnInit {
     '/images/runa-speaker/runa-speaker5.png',
     '/images/runa-speaker/runa-speaker6.png',
   ];
-  public currentFrameNumber : number = 0
-  public currentFrameName : string = this.RUNA_FRAMES[0]
+  public currentRunaFrameNumber : number = 0
+  public currentRunaFrameName : string = this.RUNA_FRAMES[0]
+
+  // Por ahora pongo esto aquí, si en el juego quisiésemos que el altavoz se mueva también al ritmo de lo que hayan jugado los usuarios, pues se movería
+  private readonly SPEAKER_FRAMES: string[] = [
+    '/images/speaker/speaker1.png',
+    '/images/speaker/speaker2.png',
+  ];
+  public currentSpeakerFrameNumber : number = 0
+  public currentSpeakerFrameName : string = this.SPEAKER_FRAMES[0]
 
   private readonly SONGS: { [index: string]: number; } = {
     "/songs/pressure.mp3" : 114,
@@ -70,16 +78,28 @@ export class HomeComponent implements OnInit {
 
   animate(this : any) {
     console.log('ola') 
-    if (this.currentFrameNumber < this.RUNA_FRAMES.length - 1)
+  
+    // Runa
+    if (this.currentRunaFrameNumber < this.RUNA_FRAMES.length - 1)
     {
-      this.currentFrameNumber++
+      this.currentRunaFrameNumber++
     } 
     else
     {
-      this.currentFrameNumber = 0
+      this.currentRunaFrameNumber = 0
     }
-  
-    this.currentFrameName = this.RUNA_FRAMES[this.currentFrameNumber]
+    this.currentRunaFrameName = this.RUNA_FRAMES[this.currentRunaFrameNumber]
+
+    // Altavoz
+    if(this.currentSpeakerFrameNumber < this.SPEAKER_FRAMES.length - 1)
+    {
+      this.currentSpeakerFrameNumber++
+    }
+    else
+    {
+      this.currentSpeakerFrameNumber = 0
+    }
+    this.currentSpeakerFrameName = this.SPEAKER_FRAMES[this.currentSpeakerFrameNumber]
   }
 
   // CRÉDITOS: https://gist.github.com/AlexJWayne/1d99b3cd81d610ac7351

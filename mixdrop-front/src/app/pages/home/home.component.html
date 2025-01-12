@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<app-navbar [frameName]="currentSpeakerFrameName"></app-navbar>
 
 <div class="container">
   <button (click)="reproduce()">Púlsame si no escuchas ninguna canción</button>
@@ -31,7 +31,7 @@
     <li>El objetivo es conseguir 21 puntos o 15 si lo has seleccionado antes de empezar el juego.</li>
   </ul>
 
-  <img class="speaker-girl" [src]="currentFrameName" alt="speaker girl">
+  <img class="speaker-girl" [src]="currentRunaFrameName" alt="speaker girl">
 
   <hr>
 
