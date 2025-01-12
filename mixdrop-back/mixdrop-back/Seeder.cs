@@ -32,7 +32,7 @@ public class Seeder
                     Nickname = "zero" ,
                     Email = "maria@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/zero.png",
+                    AvatarPath = "avatar/zero.webp",
                     Role = "Admin",
                     StateId = 1
                 },
@@ -40,7 +40,7 @@ public class Seeder
                     Nickname = "shiro" ,
                     Email = "rocio@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/zero.png",
+                    AvatarPath = "avatar/shiro.png",
                     Role = "Admin",
                     StateId = 1
                 },
