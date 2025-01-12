@@ -2,24 +2,31 @@
     <a href="/">
         <img id="speaker" [src]="frameName" alt="altavoz">
     </a>
-    
+
     <div class="nav-right">
 
         <a href="/">
             <span>JUGAR</span>
         </a>
-    
+
         <a href="#rules">
             <span>REGLAS</span>
         </a>
-    
+
         <a href="/">
             <img id="trophy" src="/images/trophy.png" alt="ranking">
         </a>
-    
-        <a href="/login">
-            <img class="avatar" src="/images/user.png" alt="avatar" > 
-        </a>
+
+        @if (!authService.isAuthenticated()) {
+            <a href="/login">
+                <img class="avatar" src="/images/user.png" alt="avatar">
+            </a>
+        }
+        @if (authService.isAuthenticated()) {
+            <a href="/">
+                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+            </a>
+        }
 
     </div>
-</nav>    
+</nav>
