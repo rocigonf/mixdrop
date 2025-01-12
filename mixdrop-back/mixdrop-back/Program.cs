@@ -63,6 +63,18 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        // Configuración de CORS
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins", builder =>
+            {
+                builder.AllowAnyOrigin() // Permitir cualquier origen
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+        });
+
+
         builder.Services.AddScoped<MixDropContext>();
 
         var app = builder.Build();
@@ -75,6 +87,9 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+
+        // Permite CORS
+        app.UseCors("AllowAllOrigins");
 
         app.UseAuthentication();
         app.UseAuthorization();

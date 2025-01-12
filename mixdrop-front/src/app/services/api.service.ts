@@ -1,15 +1,18 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { lastValueFrom, Observable } from 'rxjs';
 import { Result } from '../models/result';
+import { Observable, catchError, forkJoin, lastValueFrom, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private BASE_URL = environment.apiImg;
+  private BASE_URL = environment.apiUrl;
+
+  private readonly USER_KEY = 'user';
+  private readonly TOKEN_KEY = 'jwtToken';
 
   jwt: string | null = ""
 
@@ -18,10 +21,6 @@ export class ApiService {
     if (token) {
       this.jwt = token
     }
-    /*if(localStorage.getItem("remember") == "false")
-    {
-      this.deleteToken()
-    }*/
   }
 
   deleteToken() {
@@ -41,23 +40,14 @@ export class ApiService {
     return this.sendRequest<T>(request$);
   }
 
-  async post<T = void>(path: string, body: Object = {}, params: any = {}): Promise<Result<T>> {
+  async post<T = void>(path: string, body: Object = {}, contentType = null): Promise<Result<T>> {
     const url = `${this.BASE_URL}${path}`;
     const request$ = this.http.post(url, body, {
-      params: new HttpParams({ fromObject: params }),
-      headers: this.getHeader(null),
-      observe: 'response',
-      responseType: 'text'
+      headers: this.getHeader(contentType),
+      observe: 'response'
     });
 
-    if(path.includes("login") || path.includes("sign"))
-    {
-      return this.sendRequest<T>(request$, true);
-    }
-    else
-    {
-      return this.sendRequest<T>(request$);
-    }
+    return this.sendRequest<T>(request$);
   }
 
   async postWithImage<T = void>(path: string, body: Object = {}): Promise<Result<T>> {
@@ -100,7 +90,7 @@ export class ApiService {
     return this.sendRequest<T>(request$);
   }
 
-  private async sendRequest<T = boolean>(request$: Observable<HttpResponse<any>>, saveJwt: boolean = false): Promise<Result<T>> {
+  private async sendRequest<T = void>(request$: Observable<HttpResponse<any>>): Promise<Result<T>> {
     let result: Result<T>;
 
     try {
@@ -118,21 +108,16 @@ export class ApiService {
       } else {
         result = result = Result.error(statusCode, response.statusText);
       }
-
-    } catch (exception: any) {
-      console.log("EXCEPCION: ", exception)
+    } catch (exception) {
       if (exception instanceof HttpErrorResponse) {
         result = Result.error(exception.status, exception.statusText);
+      } else if (exception instanceof Error) {
+        result = Result.error(-1, exception.message);
       } else {
-        result = Result.error(-1, exception.mesage);
+        result = Result.error(-1, 'Unknown error occurred');
       }
     }
 
-    console.log("RESULT: ", result)
-    if (result.data && saveJwt) {
-      this.jwt = result.data.toString();
-      console.log("AY MI MADRE EL BICHO: ", this.jwt)
-    }
     return result;
   }
 

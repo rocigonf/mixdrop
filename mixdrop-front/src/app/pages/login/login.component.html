@@ -1,1 +1,28 @@
-<p>login works!</p>
+<app-navbar></app-navbar>
+
+<p class="iniciar">Iniciar sesión</p>
+
+<form (submit)="login()">
+    <div>
+
+        <input type="text" pInputText placeholder="Apodo o email" class="icon-input" required [(ngModel)]="emailOrNickname"
+          [ngModelOptions]="{standalone: true}" />
+
+        <input type="password" pInputText placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
+          [ngModelOptions]="{standalone: true}" />
+
+        <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" inputId="rememberMe"
+          binary="true"/>
+        <label for="rememberMe" class="remember-me-label">Recuérdame</label>
+      </div>
+
+      <div>
+        <button type="submit" class="button">Iniciar sesión</button>
+      </div>
+
+  </form>
+
+  <div class="register-link">
+    <p>¿Eres un cliente nuevo? <a>Regístrate</a></p>
+  </div>
+
