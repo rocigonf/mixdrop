@@ -22,17 +22,13 @@ export class AuthService {
     }
   }
 
-  async signup(formData: any): Promise<Result<any>> { // Registro
-    return this.api.post<any>('Auth/Signup', formData);
-  }
-
   async login(authData: LoginRequest, rememberMe: boolean): Promise<Result<LoginResult>> { // Iniciar sesión
     const result = await this.api.post<LoginResult>('Auth/login', authData);
-  
+
     if (result.success && result.data) {
       const { accessToken, user } = result.data; // guardo info de la respuesta AuthResponse
       this.api.jwt = accessToken;
-  
+
       if (rememberMe) { // Si se pulsó el botón recuérdame
         localStorage.setItem(this.TOKEN_KEY, accessToken);
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
@@ -41,7 +37,7 @@ export class AuthService {
         sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
       }
     }
-  
+
     return result;
   }
 
@@ -73,20 +69,9 @@ export class AuthService {
     }
   }
 
-  // actualiza los datos que el usuario ha modificado
-  updateUserData(updatedUser: any) {
-    const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
-    
-    const newUser = { ...JSON.parse(user ?? '{}'), ...updatedUser };
-
-    // guarda el usuario actualizado en localStorage o sessionStorage
-    if (localStorage.getItem(this.USER_KEY)) {
-      localStorage.setItem(this.USER_KEY, JSON.stringify(newUser));
-    } else {
-      sessionStorage.setItem(this.USER_KEY, JSON.stringify(newUser));
-    }
-
+  // Registro
+  async register(formData: any): Promise<Result<any>> {
+    return this.api.post<any>('Auth/Register', formData);
   }
-
 
 }
