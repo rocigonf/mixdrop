@@ -22,7 +22,7 @@ public class Program
         //HellIsForever.ChangeBPM("songs/music.wav", "output.wav", 1, (float) downOneTone);
 
         HellIsForever.ChangeBPM("songs/insane_music_loop.wav", "insane.wav", 1.0428f);
-        HellIsForever.ChangeBPM("songs/rickroll_full_loop.wav", "rickroll.wav", 0.9606f);
+        HellIsForever.ChangeBPM("songs/rickroll_full_loop.mp3", "rickroll.wav", 0.9606f);
 
         HellIsForever.MixFiles("insane.wav", "rickroll.wav", "mixed.wav");
         
