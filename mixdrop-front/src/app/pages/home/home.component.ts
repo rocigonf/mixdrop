@@ -47,17 +47,21 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // Escoge aleatoriamente la canción y luego la selecciona
-    const keys = Object.keys(this.SONGS)
-    const songName = keys[Math.floor(keys.length * Math.random())]
-    this.audio = new Audio(songName)
-    this.bpm = this.SONGS[songName]
-    this.audio.volume = 0.2; // El volumen es un float por lo q 1 es el máximo
+    try 
+    {
+      // Escoge aleatoriamente la canción y luego la selecciona
+      const keys = Object.keys(this.SONGS)
+      const songName = keys[Math.floor(keys.length * Math.random())]
+      this.audio = new Audio(songName)
+      this.bpm = this.SONGS[songName]
+      this.audio.volume = 0.2; // El volumen es un float por lo q 1 es el máximo
 
-    this.intervalTime = (60 / this.bpm) * 1000; // Calcula la cantidad de veces que lo tiene que hacer en segundos y lo pasa a milisegundos
-    this.audio.load()
-    this.audio.addEventListener('ended', () => { this.reproduce(); this.reproduce()}) // Lo para y luego lo vuelve a activar, por eso llamarlo dos veces
-    this.reproduce()
+      this.intervalTime = (60 / this.bpm) * 1000; // Calcula la cantidad de veces que lo tiene que hacer en segundos y lo pasa a milisegundos
+      this.audio.load()
+      this.audio.addEventListener('ended', () => { this.reproduce(); this.reproduce()}) // Lo para y luego lo vuelve a activar, por eso llamarlo dos veces
+      this.reproduce()
+    }
+    catch {}
   }
 
   // CRÉDITOS POR EL "bind": https://stackoverflow.com/questions/70634283/react-typescript-uncaught-typeerror-this-is-undefined

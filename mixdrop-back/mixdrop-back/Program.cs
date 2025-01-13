@@ -18,7 +18,14 @@ public class Program
         var downOneTone = 1.0 / upOneTone;
 
         Console.WriteLine("Procesando...");
-        HellIsForever.ChangeBPM("music.wav", "output.wav", 2.0f);
+        
+        //HellIsForever.ChangeBPM("songs/music.wav", "output.wav", 1, (float) downOneTone);
+
+        HellIsForever.ChangeBPM("songs/insane_music_loop.wav", "insane.wav", 1.0428f);
+        HellIsForever.ChangeBPM("songs/rickroll_full_loop.wav", "rickroll.wav", 0.9606f);
+
+        HellIsForever.MixFiles("insane.wav", "rickroll.wav", "mixed.wav");
+        
         Console.WriteLine("Procesado");
 
         var builder = WebApplication.CreateBuilder(args);
@@ -96,17 +103,13 @@ public class Program
 
         app.MapControllers();
 
+        app.UseStaticFiles();
+
+        app.UseWebSockets(); // Para permitir web sockets
+
         await SeedDataBaseAsync(app.Services);
 
-        using (IServiceScope scope = app.Services.CreateScope())
-        {
-            MixDropContext dbContext = scope.ServiceProvider.GetService<MixDropContext>();
-            dbContext.Database.EnsureCreated();
-        }
-
         app.Run();
-
-
 
         // metodo para el seeder
         static async Task SeedDataBaseAsync(IServiceProvider serviceProvider)
