@@ -100,6 +100,7 @@ export class LoginComponent {
           const nickname = user ? user.nickname : null;
 
           alert("Te has registrado con éxito.")
+          this.router.navigateByUrl("/"); // redirige a inicio
 
         } else {
           alert("Error en el inicio de sesión");
@@ -124,7 +125,6 @@ export class LoginComponent {
       console.log("NO HAY IMAGEN")
     }
   }
-
 
 }
 
