@@ -1,18 +1,27 @@
 <app-navbar></app-navbar>
 
-<p class="iniciar">Iniciar sesión</p>
+<br>
+<div class="caja">
+  <!-- Pestañas -->
+  <div class="menu">
+    <button [class.active]="menuSeleccion === 'login'" (click)="menuSeleccion = 'login'">Iniciar Sesión</button>
+    <button [class.active]="menuSeleccion === 'register'" (click)="menuSeleccion = 'register'">Registrarse</button>
+  </div>
 
-<form (submit)="login()">
-    <div>
+  <!-- Contenido de las pestañas -->
+  @if (menuSeleccion === 'login') {
+  <div class="contenido">
+    <form (submit)="login()">
+      <div>
 
-        <input type="text" pInputText placeholder="Apodo o email" class="icon-input" required [(ngModel)]="emailOrNickname"
-          [ngModelOptions]="{standalone: true}" />
+        <input type="text" pInputText placeholder="Apodo o email" class="icon-input" required
+          [(ngModel)]="emailOrNickname" [ngModelOptions]="{standalone: true}" />
 
         <input type="password" pInputText placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
           [ngModelOptions]="{standalone: true}" />
 
         <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" inputId="rememberMe"
-          binary="true"/>
+          binary="true" />
         <label for="rememberMe" class="remember-me-label">Recuérdame</label>
       </div>
 
@@ -20,9 +29,29 @@
         <button type="submit" class="button">Iniciar sesión</button>
       </div>
 
-  </form>
+    </form>
 
-  <div class="register-link">
-    <p>¿Eres un cliente nuevo? <a>Regístrate</a></p>
   </div>
+  }
+  @else {
+  <div class="contenido">
+    <form [formGroup]="registerForm" (submit)="register()">
+      <input type="text" placeholder="Apodo" formControlName="nickname" />
+      <input type="email" placeholder="Correo Electrónico" formControlName="email" />
+      <input type="password" placeholder="Contraseña" formControlName="password" />
+      <input type="password" placeholder="Confirmar contraseña" formControlName="confirmPassword">
+      <label for="productImage">Imagen de perfil:</label> <br>
+      <input type="file" accept="image/png, image/jpeg, image/jpg" required (change)="onFileSelected($event)"
+        formControlName="image">
+      <!-- para que se vea miniatura de lo que ha elegido - en proceso - 
+       @if (this.image) {
+        <img [src]="this.image" alt="imagen">
+    }
+        -->
+      <br>
+      <button type="submit">Crear Cuenta</button>
+    </form>
 
+  </div>
+  }
+</div>

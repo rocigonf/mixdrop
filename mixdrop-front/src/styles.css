@@ -12,7 +12,7 @@
 }
 
 html{
-    scroll-behavior: smooth;
+    scroll-behavior: smooth !important;  /*no funciona :(*/
 }
 
 body{

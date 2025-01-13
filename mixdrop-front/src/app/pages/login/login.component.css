@@ -1,0 +1,60 @@
+.caja {
+    width: 400px;
+    margin: auto;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 0 4px 8px rgba(113, 113, 113, 0.953);
+    background-color: #5b5b5b;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-around;
+    background-color: #ddd;
+    border-bottom: 1px solid #ccc;
+}
+
+.menu button {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.menu button.active {
+    background-color: #fff;
+    border-bottom: 2px solid #009dff ;
+}
+
+.contenido {
+    padding: 20px;
+}
+
+input{
+    width: 95%;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+input[type="checkbox"]{
+    width: 5%;
+}
+
+input[type="file"]{
+    width: 100%;
+    font-size: 1rem;
+}
+
+label{
+    font-size: 1.2rem;
+}
+
+button{
+    font-size: 1.5rem;
+}
+
+
+

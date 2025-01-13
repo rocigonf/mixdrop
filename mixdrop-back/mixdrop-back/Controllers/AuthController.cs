@@ -88,9 +88,9 @@ public class AuthController : ControllerBase
         }
     }
 
-
-    // SIGN UP CREAR NUEVO USUARIO
-    [HttpPost("Signup")]
+    
+    // CREAR NUEVO USUARIO
+    [HttpPost("register")]
     public async Task<ActionResult<RegisterDto>> SignUp([FromBody] RegisterDto model)
     {
 

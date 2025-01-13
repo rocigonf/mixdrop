@@ -85,7 +85,7 @@ export class HomeComponent implements OnInit {
   }
 
   animate(this : any) {
-    console.log('ola') 
+    //console.log('ola') 
   
     // Runa
     if (this.currentRunaFrameNumber < this.RUNA_FRAMES.length - 1)

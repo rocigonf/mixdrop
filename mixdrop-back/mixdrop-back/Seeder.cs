@@ -32,15 +32,15 @@ public class Seeder
                     Nickname = "zero" ,
                     Email = "maria@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/zero.png",
+                    AvatarPath = "avatar/zero.webp",
                     Role = "Admin",
                     StateId = 1
                 },
                 new User {
-                    Nickname = "shiro" ,
+                    Nickname = "shio" ,
                     Email = "rocio@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/zero.png",
+                    AvatarPath = "avatar/shio.webp",
                     Role = "Admin",
                     StateId = 1
                 },

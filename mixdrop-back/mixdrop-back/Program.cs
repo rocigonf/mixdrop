@@ -105,6 +105,8 @@ public class Program
 
         app.UseStaticFiles();
 
+        await SeedDataBaseAsync(app.Services);
+
         app.UseWebSockets(); // Para permitir web sockets
 
         await SeedDataBaseAsync(app.Services);
