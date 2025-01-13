@@ -17,16 +17,22 @@
             <img id="trophy" src="/images/trophy.png" alt="ranking">
         </a>
 
-        @if (!user) {
+        @if (authService.isAuthenticated()) {
+
+            <a href="/">
+                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+            </a>
+
+            <a class="logout" (click)="authClick()">
+                <img src="/images/logout.webp" alt="cerrar sesion">
+            </a>
+            
+        } @else {
+            
             <a href="/login">
                 <img class="avatar" src="/images/user.png" alt="avatar">
             </a>
-        }
-        @if (user) {
-            <a href="/">
-                <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
-            </a>
-            <p (click)="authService.logout()">cerrar sesion</p>
+
         }
 
     </div>
