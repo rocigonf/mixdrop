@@ -37,10 +37,10 @@ public class Seeder
                     StateId = 1
                 },
                 new User {
-                    Nickname = "shiro" ,
+                    Nickname = "shio" ,
                     Email = "rocio@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/shiro.png",
+                    AvatarPath = "avatar/shio.webp",
                     Role = "Admin",
                     StateId = 1
                 },
@@ -48,7 +48,7 @@ public class Seeder
                     Nickname = "moguism" ,
                     Email = "mauricio@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/moguism.png",
+                    AvatarPath = "avatar/moguism.webp",
                     Role = "Admin",
                     StateId = 1
                 }

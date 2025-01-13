@@ -14,7 +14,7 @@ span{
 }
 
 #trophy{
-    height: 40px;
+    height: 45px;
 }
 
 .avatar {
@@ -33,4 +33,33 @@ span{
 a{
     text-decoration: none;
     color: white;
+}
+
+.logout{
+    cursor: pointer;
+}
+
+@media (max-width: 450px) {
+    nav{
+        max-width: 100%;
+        padding: 0.8rem;
+    }
+    .logout img{
+        width: 30px;
+    }
+    .avatar{
+        height: 30px;
+    }
+    span{
+        font-size: 1.8rem;
+        align-self: center;
+    }
+    
+    #speaker{
+        height: 30px;
+    }
+    
+    #trophy{
+        height: 30px;
+    }
 }
