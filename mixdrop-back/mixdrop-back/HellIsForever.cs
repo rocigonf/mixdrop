@@ -8,6 +8,7 @@ namespace mixdrop_back;
 // https://www.markheath.net/post/varispeed-naudio-soundtouch (REALMENTE INTERESA ESTO: https://github.com/naudio/varispeed-sample)
 // CONVERSIÓN DE BYTE A FLOAT: https://stackoverflow.com/questions/4635769/how-do-i-convert-an-array-of-floats-to-a-byte-and-back
 // PARA LA TONALIDAD: https://github.com/naudio/NAudio/blob/master/Docs/SmbPitchShiftingSampleProvider.md
+// MIXEAR: https://github.com/naudio/NAudio/blob/master/Docs/MixTwoAudioFilesToWav.md
 
 public class HellIsForever
 {
@@ -50,11 +51,23 @@ public class HellIsForever
         // El pibe de la respuesta de StackOverflow yapea algo sobre esto, pero como el while que intenté antes no iba y así directamente sí, pues lo dejo así :3
         sampleProvider.Read(buffer, 0, buffer.Length);
 
-        using (WaveFileWriter writer = new WaveFileWriter(outputFile, reader.WaveFormat))
-        {
-            byte[] byteBuffer = new byte[buffer.Length * 4];
-            Buffer.BlockCopy(buffer, 0, byteBuffer, 0, byteBuffer.Length);
-            writer.Write(byteBuffer, 0, byteBuffer.Length);
-        }
+        using WaveFileWriter writer = new WaveFileWriter(outputFile, reader.WaveFormat);
+
+        byte[] byteBuffer = new byte[buffer.Length * 4];
+        Buffer.BlockCopy(buffer, 0, byteBuffer, 0, byteBuffer.Length);
+        writer.Write(byteBuffer, 0, byteBuffer.Length);
+    }
+
+    public static void MixFiles(string file1, string file2, string outputFile)
+    {
+        using var reader1 = new AudioFileReader(file1);
+        using var reader2 = new AudioFileReader(file2);
+
+        /* SI UN AUDIO ES MÁS ALTO QUE OTRO
+        reader1.Volume = 0.75f;
+        reader2.Volume = 0.75f;*/
+
+        var mixer = new MixingSampleProvider(new[] { reader1, reader2 });
+        WaveFileWriter.CreateWaveFile16(outputFile, mixer);
     }
 }

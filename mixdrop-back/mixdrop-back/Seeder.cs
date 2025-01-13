@@ -48,7 +48,7 @@ public class Seeder
                     Nickname = "moguism" ,
                     Email = "mauricio@gmail.com",
                     Password = PasswordHelper.Hash("123456"),
-                    AvatarPath = "avatar/moguism.png",
+                    AvatarPath = "avatar/moguism.webp",
                     Role = "Admin",
                     StateId = 1
                 }
