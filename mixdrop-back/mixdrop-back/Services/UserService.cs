@@ -87,11 +87,13 @@ public class UserService
                 throw new Exception("El usuario ya existe.");
             }
 
+            ImageService imageService = new ImageService();
+
             var newUser = new User
             {
                 Email = model.Email,
                 Nickname = model.Nickname,
-                AvatarPath = model.AvatarPath,
+                AvatarPath = "/" + await imageService.InsertAsync(model.Image),
                 Role = "User", // Rol por defecto
                 Password = PasswordHelper.Hash(model.Password),
                 IsInQueue = false,  // por defecto al crearse
