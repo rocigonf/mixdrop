@@ -36,7 +36,7 @@ export class LoginComponent {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      image: ['', Validators.required],
+      image: [File, Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
@@ -87,6 +87,7 @@ export class LoginComponent {
   async register() {
     if (this.registerForm.valid) {
       const formData = this.registerForm.value;
+      console.log(formData)
       const registerResult = await this.authService.register(formData);
 
       if (registerResult.success) {
@@ -117,13 +118,7 @@ export class LoginComponent {
 
   onFileSelected(event: any) {
     const image = event.target.files[0] as File;
-    if (image) {
-      console.log("NUEVA IMAGEN")
-      this.image = image
-    }
-    else {
-      console.log("NO HAY IMAGEN")
-    }
+    this.image = image
   }
 
 }

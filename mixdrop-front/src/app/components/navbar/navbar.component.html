@@ -26,7 +26,8 @@
             <a href="/">
                 <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
             </a>
-            <p (click)="authService.logout()">cerrar sesion</p>
+
+            <span (click)="authService.logout()">cerrar sesion</span>
         }
 
     </div>
