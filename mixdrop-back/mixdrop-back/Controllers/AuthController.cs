@@ -91,9 +91,9 @@ public class AuthController : ControllerBase
     
     // CREAR NUEVO USUARIO
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterDto>> SignUp([FromBody] RegisterDto model)
+    public async Task<ActionResult<RegisterDto>> SignUp([FromForm] RegisterDto model)
     {
-
+        
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);

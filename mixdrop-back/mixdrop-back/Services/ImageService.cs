@@ -8,7 +8,7 @@ public class ImageService
 
     public async Task<string> InsertAsync(IFormFile file)
     {
-        string relativePath = $"{IMAGES_FOLDER}{Guid.NewGuid()}_{file.FileName}";
+        string relativePath = $"{IMAGES_FOLDER}{file.FileName}";
 
         await StoreImageAsync(relativePath, file);
 

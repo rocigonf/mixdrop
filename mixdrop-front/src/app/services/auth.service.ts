@@ -70,8 +70,8 @@ export class AuthService {
   }
 
   // Registro
-  async register(formData: any): Promise<Result<any>> {
-    return this.api.post<any>('Auth/Register', formData);
+  async register(formData: FormData): Promise<Result<any>> {
+    return this.api.postWithImage<any>('Auth/register', formData);
   }
 
 }

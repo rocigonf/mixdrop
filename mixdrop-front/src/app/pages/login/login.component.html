@@ -42,7 +42,7 @@
       <input type="password" placeholder="Confirmar contraseña" formControlName="confirmPassword">
       <label for="productImage">Imagen de perfil:</label> <br>
       <input type="file" accept="image/png, image/jpeg, image/jpg" required (change)="onFileSelected($event)"
-        formControlName="image" >
+         >
       <!-- para que se vea miniatura de lo que ha elegido - en proceso - 
        @if (this.image) {
         <img [src]="this.image" alt="imagen">

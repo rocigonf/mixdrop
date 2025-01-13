@@ -17,7 +17,6 @@ export class LoginComponent {
 
   menuSeleccion: 'login' | 'register' = 'login';
 
-
   emailOrNickname: string = '';
   password: string = '';
   rememberMe: boolean = false;
@@ -25,6 +24,11 @@ export class LoginComponent {
 
   registerForm: FormGroup;
 
+
+  newNickname : string = '';
+  newEmail : string = '';
+  newPasword : string = '';
+  newConfirmPasword : string = ''
   image: File | null = null
 
 
@@ -36,7 +40,6 @@ export class LoginComponent {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      image: [File, Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
@@ -85,14 +88,27 @@ export class LoginComponent {
 
   // Registro
   async register() {
-    if (this.registerForm.valid) {
-      const formData = this.registerForm.value;
-      console.log(formData)
+    console.log(this.registerForm.value)
+
+
+    if (this.registerForm.valid && this.image) {
+
+      console.log(this.registerForm.value.image)
+      const formData = new FormData();
+      formData.append( "Nickname" ,this.registerForm.value.nickname )
+      formData.append( "Image" ,this.image, this.image.name )
+      formData.append( "Email" ,this.registerForm.value.email )
+      formData.append( "Password" ,this.registerForm.value.password )
+
+
+
       const registerResult = await this.authService.register(formData);
 
       if (registerResult.success) {
 
-        const authData = { emailOrNickname: formData.email, password: formData.password };
+        const formUser = this.registerForm.value;
+
+        const authData = { emailOrNickname: formUser.email, password: formUser.password };
         const loginResult = await this.authService.login(authData, false);
 
         if (loginResult.success) {
