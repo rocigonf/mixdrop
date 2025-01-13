@@ -96,6 +96,8 @@ public class Program
 
         app.MapControllers();
 
+        app.UseStaticFiles();
+
         await SeedDataBaseAsync(app.Services);
 
         using (IServiceScope scope = app.Services.CreateScope())
