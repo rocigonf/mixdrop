@@ -1,0 +1,3 @@
+1) Pillar datos de la URL de la petición
+2) Meter, si está autorizado, el JWT en el Authorize
+3) El Controller autoriza
