@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
+import { WebsocketService } from '../../services/websocket.service';
 
 
 @Component({
@@ -36,6 +36,7 @@ export class LoginComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService,
+    private webSocketService: WebsocketService
   ) {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
@@ -79,6 +80,8 @@ export class LoginComponent {
       alert("inicio sesion exitoso");
 
       this.router.navigateByUrl("/"); // redirige a inicio
+      
+      this.webSocketService.connectRxjs()
     } else {
       alert("error al iniciar sesion")
 
@@ -118,6 +121,8 @@ export class LoginComponent {
 
           alert("Te has registrado con éxito.")
           this.router.navigateByUrl("/"); // redirige a inicio
+
+          this.webSocketService.connectRxjs()
 
         } else {
           alert("Error en el inicio de sesión");

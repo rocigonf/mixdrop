@@ -42,6 +42,11 @@ public class Program
 
         // Inyección de Servicios
         builder.Services.AddScoped<UserService>();
+        
+        builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
+
+        // Inyección del servicio de WebSocket como Singleton
+        builder.Services.AddSingleton<WebSocketHandler>();
 
         // Add services to the container.
 

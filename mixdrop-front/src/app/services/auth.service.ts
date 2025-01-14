@@ -6,6 +6,7 @@ import { Result } from '../models/result';
 import { LoginRequest } from '../models/loginRequest';
 import { LoginResult } from '../models/loginResult';
 import { User } from '../models/user';
+import { WebsocketService } from './websocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AuthService {
   private readonly USER_KEY = 'user';
   private readonly TOKEN_KEY = 'jwtToken';
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private webSocket : WebsocketService) {
     const token = localStorage.getItem(this.TOKEN_KEY) || sessionStorage.getItem(this.TOKEN_KEY);
     if (token) {
       this.api.jwt = token;
@@ -52,17 +53,26 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.USER_KEY);
+    this.webSocket.disconnectRxjs()
   }
 
-  getUser(): User { // Obtener datos del usuario
+  getUser(): User | null { // Obtener datos del usuario
     const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
-    return user ? JSON.parse(user) : null;
+    if(user)
+    {
+      if(!this.webSocket.isConnectedRxjs())
+      {
+        this.webSocket.connectRxjs()
+      }
+      return JSON.parse(user)
+    }
+    return null
   }
 
   // comprueba si es admin
   isAdmin(): boolean {
     const user = this.getUser();
-    if (user.role == "Admin") {
+    if (user?.role == "Admin") {
       return true
     } else {
       return false
