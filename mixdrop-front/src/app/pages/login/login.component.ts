@@ -4,12 +4,14 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { WebsocketService } from '../../services/websocket.service';
+import { NgIf } from '@angular/common';
+
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule],
+  imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule,  NgIf],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -24,11 +26,6 @@ export class LoginComponent {
 
   registerForm: FormGroup;
 
-
-  newNickname : string = '';
-  newEmail : string = '';
-  newPasword : string = '';
-  newConfirmPasword : string = ''
   image: File | null = null
 
 
@@ -96,14 +93,11 @@ export class LoginComponent {
 
     if (this.registerForm.valid && this.image) {
 
-      console.log(this.registerForm.value.image)
       const formData = new FormData();
       formData.append( "Nickname" ,this.registerForm.value.nickname )
       formData.append( "Image" ,this.image, this.image.name )
       formData.append( "Email" ,this.registerForm.value.email )
       formData.append( "Password" ,this.registerForm.value.password )
-
-
 
       const registerResult = await this.authService.register(formData);
 
@@ -140,6 +134,13 @@ export class LoginComponent {
   onFileSelected(event: any) {
     const image = event.target.files[0] as File;
     this.image = image
+
+    // para previsualizar la imagen que suba al registrarse
+    // https://lavidadeljunior.wordpress.com/2018/05/28/previsualizar-una-imagen-en-angular-2-5/
+    if(event.target.files.length > 0){
+      const reader = new FileReader();
+      
+    }
   }
 
 }
