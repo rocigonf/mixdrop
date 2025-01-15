@@ -30,6 +30,8 @@ export class NavbarComponent implements OnInit{
     if (this.authService.isAuthenticated()) {
 
       this.authService.logout()
+      alert("Sesion cerrada corectamente.")
+      
       // Iniciar sesión
     } else {
       this.router.navigate(['/login']);

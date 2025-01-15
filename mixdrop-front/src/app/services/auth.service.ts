@@ -6,6 +6,7 @@ import { Result } from '../models/result';
 import { LoginRequest } from '../models/loginRequest';
 import { LoginResult } from '../models/loginResult';
 import { User } from '../models/user';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,8 @@ export class AuthService {
 
   private readonly USER_KEY = 'user';
   private readonly TOKEN_KEY = 'jwtToken';
+
+  private readonly BASE_URL = environment.apiUrl;
 
   constructor(private api: ApiService) {
     const token = localStorage.getItem(this.TOKEN_KEY) || sessionStorage.getItem(this.TOKEN_KEY);
@@ -47,31 +50,38 @@ export class AuthService {
     return !!token;
   }
 
-  logout(): void { // Cerrar sesión
-    sessionStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-    sessionStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.USER_KEY);
-  }
 
-  getUser(): User { // Obtener datos del usuario
-    const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
-    return user ? JSON.parse(user) : null;
-  }
+  // Cerrar sesión
+  logout(): Promise<Result<any>> { 
+    
+      const headers = this.api.getHeader();
 
-  // comprueba si es admin
-  isAdmin(): boolean {
-    const user = this.getUser();
-    if (user.role == "Admin") {
-      return true
-    } else {
-      return false
+      sessionStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.TOKEN_KEY);
+      sessionStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.USER_KEY);
+
+      return this.api.put(`Auth/disconnect`, { headers , responseType: 'text'  })
     }
-  }
+
+    getUser(): User { // Obtener datos del usuario
+      const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
+      return user ? JSON.parse(user) : null;
+    }
+
+    // comprueba si es admin
+    isAdmin(): boolean {
+      const user = this.getUser();
+      if (user.role == "Admin") {
+        return true
+      } else {
+        return false
+      }
+    }
 
   // Registro
-  async register(formData: FormData): Promise<Result<any>> {
-    return this.api.postWithImage<any>('Auth/register', formData);
-  }
+  async register(formData: FormData): Promise < Result < any >> {
+      return this.api.postWithImage<any>('Auth/register', formData);
+    }
 
-}
+  }

@@ -119,4 +119,38 @@ public class AuthController : ControllerBase
 
         return CreatedAtAction(nameof(Login), new { email = userDto.Email }, userDto);
     }
+
+    [Authorize]
+    [HttpPut("disconnect")]
+    public async Task<IActionResult> DisconnectUser()
+    {
+        UserDto user = await ReadToken();
+
+        try
+        {
+            await _userService.DisconnectUser(user.Id);
+            return Ok("Desconectado correctamente.");
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest("No pudo modificarse el estado.");
+        }
+    }
+
+
+    // Leer datos del token
+    private async Task<UserDto> ReadToken()
+    {
+        try
+        {
+            string id = User.Claims.FirstOrDefault().Value;
+            UserDto user = await _userService.GetUserByIdAsync(Int32.Parse(id));
+            return user;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("La ID del usuario es nula.");
+            return null;
+        }
+    }
 }
