@@ -21,7 +21,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'jwtToken';
 
 
-  constructor(private api: ApiService, private webSocket : WebsocketService) {
+  constructor(private api: ApiService, private webSocket: WebsocketService) {
     const token = localStorage.getItem(this.TOKEN_KEY) || sessionStorage.getItem(this.TOKEN_KEY);
     if (token) {
       this.api.jwt = token;
@@ -54,42 +54,26 @@ export class AuthService {
   }
 
 
-   // Cerrar sesión
-  logout(): Promise<Result<any>> { 
-    
-      const headers = this.api.getHeader();
+  // Cerrar sesión
+  logout(): Promise<Result<any>> {
 
-      sessionStorage.removeItem(this.TOKEN_KEY);
-      localStorage.removeItem(this.TOKEN_KEY);
-      sessionStorage.removeItem(this.USER_KEY);
-      localStorage.removeItem(this.USER_KEY);
+    const headers = this.api.getHeader();
 
-     this.webSocket.disconnectRxjs()
+    sessionStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
+    sessionStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.USER_KEY);
 
-      return this.api.put(`Auth/disconnect`, { headers , responseType: 'text'  })
-    }
+    this.webSocket.disconnectRxjs()
 
-    getUser(): User { // Obtener datos del usuario
-      const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
-      return user ? JSON.parse(user) : null;
-    }
+    return this.api.put(`Auth/disconnect`, { headers, responseType: 'text' })
+  }
 
-    // comprueba si es admin
-    isAdmin(): boolean {
-      const user = this.getUser();
-      if (user.role == "Admin") {
-        return true
-      } else {
-        return false
-      }
-      
 
   getUser(): User | null { // Obtener datos del usuario
     const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
-    if(user)
-    {
-      if(!this.webSocket.isConnectedRxjs())
-      {
+    if (user) {
+      if (!this.webSocket.isConnectedRxjs()) {
         this.webSocket.connectRxjs()
       }
       return JSON.parse(user)
@@ -105,10 +89,11 @@ export class AuthService {
     } else {
       return false
     }
+  }
 
   // Registro
-  async register(formData: FormData): Promise < Result < any >> {
-      return this.api.postWithImage<any>('Auth/register', formData);
-    }
-
+  async register(formData: FormData): Promise<Result<any>> {
+    return this.api.postWithImage<any>('Auth/register', formData);
   }
+
+}
