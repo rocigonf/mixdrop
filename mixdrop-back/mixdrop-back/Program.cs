@@ -82,6 +82,9 @@ public class Program
         // Inyección del servicio de WebSocket como Singleton
         builder.Services.AddSingleton<WebSocketHandler>();
 
+        // Inyección de Middleware
+        builder.Services.AddTransient<PreAuthMiddleware>();
+
         // Add services to the container.
 
         builder.Services.AddControllers();
@@ -139,6 +142,9 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        // Se usa nuestro middleware :D
+        app.UseMiddleware<PreAuthMiddleware>();
 
         app.MapControllers();
 
