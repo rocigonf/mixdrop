@@ -54,10 +54,10 @@ public class Program
         
         //HellIsForever.ChangeBPM("songs/music.wav", "output.wav", 1, (float) downOneTone);
 
-        HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
-        HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);
+        // HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
+        // HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);
 
-        HellIsForever.MixFiles("songs/input/insane.wav", "songs/input/rickroll.wav", "songs/output/mixed.wav");
+        // HellIsForever.MixFiles("songs/input/insane.wav", "songs/input/rickroll.wav", "songs/output/mixed.wav");
         
         Console.WriteLine("Procesado");
 
