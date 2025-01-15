@@ -1,5 +1,5 @@
-﻿using mixdrop_back.Helper;
-using mixdrop_back.Models;
+﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Models.Helper;
 
 
 

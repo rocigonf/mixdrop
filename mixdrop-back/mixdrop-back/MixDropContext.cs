@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using mixdrop_back.Models;
+using mixdrop_back.Models.Entities;
 
 namespace mixdrop_back;
 

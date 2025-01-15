@@ -1,14 +1,13 @@
 ﻿namespace mixdrop_back.Controllers;
 
-using Ecommerce.Models.Dtos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using mixdrop_back.DTOs;
-using mixdrop_back.Mappers;
+using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -33,7 +32,7 @@ public class AuthController : ControllerBase
     // LOGIN 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResult>> Login([FromBody] DTOs.LoginRequest model)
+    public async Task<ActionResult<LoginResult>> Login([FromBody] Models.DTOs.LoginRequest model)
     {
         try
         {

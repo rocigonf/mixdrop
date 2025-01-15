@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using mixdrop_back.DTOs;
-using mixdrop_back.Helper;
-using mixdrop_back.Mappers;
-using mixdrop_back.Models;
+
 using System.Text.RegularExpressions;
+using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Entities;
+using mixdrop_back.Models.Helper;
+using mixdrop_back.Models.Mappers;
 
 namespace mixdrop_back.Services;
 

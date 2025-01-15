@@ -6,7 +6,11 @@ import { Result } from '../models/result';
 import { LoginRequest } from '../models/loginRequest';
 import { LoginResult } from '../models/loginResult';
 import { User } from '../models/user';
+
 import { Observable } from 'rxjs';
+
+import { WebsocketService } from './websocket.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +20,8 @@ export class AuthService {
   private readonly USER_KEY = 'user';
   private readonly TOKEN_KEY = 'jwtToken';
 
-  private readonly BASE_URL = environment.apiUrl;
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private webSocket : WebsocketService) {
     const token = localStorage.getItem(this.TOKEN_KEY) || sessionStorage.getItem(this.TOKEN_KEY);
     if (token) {
       this.api.jwt = token;
@@ -51,7 +54,7 @@ export class AuthService {
   }
 
 
-  // Cerrar sesión
+   // Cerrar sesión
   logout(): Promise<Result<any>> { 
     
       const headers = this.api.getHeader();
@@ -60,6 +63,8 @@ export class AuthService {
       localStorage.removeItem(this.TOKEN_KEY);
       sessionStorage.removeItem(this.USER_KEY);
       localStorage.removeItem(this.USER_KEY);
+
+     this.webSocket.disconnectRxjs()
 
       return this.api.put(`Auth/disconnect`, { headers , responseType: 'text'  })
     }
@@ -77,6 +82,28 @@ export class AuthService {
       } else {
         return false
       }
+      
+
+  getUser(): User | null { // Obtener datos del usuario
+    const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
+    if(user)
+    {
+      if(!this.webSocket.isConnectedRxjs())
+      {
+        this.webSocket.connectRxjs()
+      }
+      return JSON.parse(user)
+    }
+    return null
+  }
+
+  // comprueba si es admin
+  isAdmin(): boolean {
+    const user = this.getUser();
+    if (user?.role == "Admin") {
+      return true
+    } else {
+      return false
     }
 
   // Registro
