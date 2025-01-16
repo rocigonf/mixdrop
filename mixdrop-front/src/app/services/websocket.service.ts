@@ -32,6 +32,7 @@ export class WebsocketService {
     console.log('WebSocket connection closed');
     this.disconnected.next();
   }
+  
   // ============ Usando Rxjs =============
 
   rxjsSocket: WebSocketSubject<any> | null = null // Con "any" le especifico que puede enviar y recibir cualquier cosa
@@ -43,7 +44,7 @@ export class WebsocketService {
   connectRxjs() {
     console.log("rosio gamba")
     this.rxjsSocket = webSocket({
-      url: environment.socketUrl + `?jwt=${this.api.jwt}`,
+      url: environment.socketUrl + `/${this.api.jwt}`,
   
       // Evento de apertura de conexión
       openObserver: {
