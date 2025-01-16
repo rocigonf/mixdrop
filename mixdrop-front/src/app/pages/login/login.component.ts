@@ -28,6 +28,7 @@ export class LoginComponent {
 
   image: File | null = null
 
+  imagePreview!: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -135,11 +136,12 @@ export class LoginComponent {
     const image = event.target.files[0] as File;
     this.image = image
 
-    // para previsualizar la imagen que suba al registrarse
-    // https://lavidadeljunior.wordpress.com/2018/05/28/previsualizar-una-imagen-en-angular-2-5/
     if(event.target.files.length > 0){
       const reader = new FileReader();
-      
+      reader.onload = (event:any) => {
+        this.imagePreview = event.target.result;
+      }
+      reader.readAsDataURL(event.target.files[0])
     }
   }
 

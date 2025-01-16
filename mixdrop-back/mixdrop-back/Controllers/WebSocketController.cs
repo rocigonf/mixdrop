@@ -35,4 +35,7 @@ public class WebSocketController : ControllerBase
 
         // Cuando este método finalice, se cerrará automáticamente la conexión con el websocket
     }
+
+
+
 }

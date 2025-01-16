@@ -57,6 +57,13 @@ input[type="checkbox"] {
     margin-bottom: 18px;
 }
 
+#preview-img{
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    margin: 5px;
+}
+
 label {
     font-size: 1.2rem;
 }

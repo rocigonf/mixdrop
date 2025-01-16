@@ -75,12 +75,14 @@
       </div>
 
       <label for="productImage">Imagen de perfil:</label> <br>
+      
+      <!-- para que se vea miniatura de lo que ha elegido -->
+      @if (this.image) {
+      <img id="preview-img" [src]="this.imagePreview" alt="imagen">
+      } 
       <input type="file" accept="image/png, image/jpeg, image/jpg" required (change)="onFileSelected($event)">
 
-      <!-- para que se vea miniatura de lo que ha elegido - en proceso -
-      @if (this.image) {
-      <img [src]="this.image" alt="imagen">
-      }  -->
+      
 
 
       <br>
