@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 import { environment } from '../../environments/environment';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
 
+  constructor(private api : ApiService){}
   // Eventos
   connected = new Subject<void>();
   messageReceived = new Subject<any>();
@@ -39,9 +41,10 @@ export class WebsocketService {
   }
 
   connectRxjs() {
+    console.log("rosio gamba")
     this.rxjsSocket = webSocket({
-      url: environment.socketUrl,
-
+      url: environment.socketUrl + `?jwt=${this.api.jwt}`,
+  
       // Evento de apertura de conexión
       openObserver: {
         next: () => this.onConnected()

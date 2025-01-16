@@ -121,7 +121,7 @@ export class ApiService {
     return result;
   }
 
-  private getHeader(accept = null, contentType = "application/json"): HttpHeaders {
+  public getHeader(accept = null, contentType = "application/json"): HttpHeaders {
     let header: any = {};
 
     // Para cuando haya que poner un JWT

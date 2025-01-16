@@ -9,13 +9,16 @@ public class UnitOfWork
 
     private UserRepository _userRepository;
 
+    private StateRepository _stateRepository;
+
     // poner todos los repositorys
 
 
 
 
     public UserRepository UserRepository => _userRepository ??= new UserRepository(_context);
-   
+    public StateRepository StateRepositoty => _stateRepository ??= new StateRepository(_context);
+
 
 
     public UnitOfWork(MixDropContext context)

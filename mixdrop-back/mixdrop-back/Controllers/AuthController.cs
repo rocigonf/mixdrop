@@ -1,14 +1,13 @@
 ﻿namespace mixdrop_back.Controllers;
 
-using Ecommerce.Models.Dtos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using mixdrop_back.DTOs;
-using mixdrop_back.Mappers;
+using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -33,7 +32,7 @@ public class AuthController : ControllerBase
     // LOGIN 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResult>> Login([FromBody] DTOs.LoginRequest model)
+    public async Task<ActionResult<LoginResult>> Login([FromBody] Models.DTOs.LoginRequest model)
     {
         try
         {
@@ -91,9 +90,9 @@ public class AuthController : ControllerBase
     
     // CREAR NUEVO USUARIO
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterDto>> SignUp([FromBody] RegisterDto model)
+    public async Task<ActionResult<RegisterDto>> SignUp([FromForm] RegisterDto model)
     {
-
+        
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -110,7 +109,7 @@ public class AuthController : ControllerBase
         var existingNickname = await _userService.GetUserByNicknameAsync(model.Nickname);
         if (existingNickname != null)
         {
-            return Conflict("El correo electrónico ya está en uso.");
+            return Conflict("El nickname ya está en uso.");
         }
 
         var newUser = await _userService.RegisterAsync(model);
@@ -118,5 +117,39 @@ public class AuthController : ControllerBase
         var userDto = _userMapper.ToDto(newUser);
 
         return CreatedAtAction(nameof(Login), new { email = userDto.Email }, userDto);
+    }
+
+    [Authorize]
+    [HttpPut("disconnect")]
+    public async Task<IActionResult> DisconnectUser()
+    {
+        UserDto user = await ReadToken();
+
+        try
+        {
+            await _userService.DisconnectUser(user.Id);
+            return Ok("Desconectado correctamente.");
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest("No pudo modificarse el estado.");
+        }
+    }
+
+
+    // Leer datos del token
+    private async Task<UserDto> ReadToken()
+    {
+        try
+        {
+            string id = User.Claims.FirstOrDefault().Value;
+            UserDto user = await _userService.GetUserByIdAsync(Int32.Parse(id));
+            return user;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("La ID del usuario es nula.");
+            return null;
+        }
     }
 }
