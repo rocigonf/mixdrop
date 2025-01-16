@@ -42,7 +42,10 @@ public class WebSocketController : ControllerBase
     {
         // Pilla el usuario autenticado según ASP
         System.Security.Claims.ClaimsPrincipal currentUser = this.User;
-        string idString = currentUser.Claims.First().ToString().Substring(3); // 3 porque en las propiedades sale "id: X", y la X sale en la tercera posición
+        string firstClaim = currentUser.Claims.First().ToString();
+
+        // Un poco hardcodeado por mi parte la verdad xD
+        string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
 
         return int.Parse(idString);
     }

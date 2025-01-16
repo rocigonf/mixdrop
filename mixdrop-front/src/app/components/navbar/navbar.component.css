@@ -1,8 +1,8 @@
 nav{
     display: flex;
+    justify-content: space-between;
     gap: 1rem;
     padding: 1rem;
-    align-items: center;
 }
 
 span{
@@ -25,8 +25,7 @@ span{
 
 .nav-right{
     display: flex;
-    position: absolute;
-    right: 1%;
+    align-items: center;
     gap: 1rem;
 }
 

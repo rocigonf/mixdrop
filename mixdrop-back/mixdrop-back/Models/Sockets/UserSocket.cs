@@ -14,21 +14,28 @@ public class UserSocket
         // Mientras que el websocket del cliente esté conectado
         while (Socket.State == WebSocketState.Open)
         {
-            // Leemos el mensaje
-            string message = await ReadAsync();
-
-            if (!string.IsNullOrWhiteSpace(message))
+            try
             {
-                // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH
+                string message = await ReadAsync();
 
-                // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
+                if (!string.IsNullOrWhiteSpace(message))
+                {
+                    // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH (POR AHORA)
 
-                // Procesamos el mensaje
-                string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
+                    // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
 
-                // Enviamos respuesta al cliente
-                await SendAsync(outMessage);
+                    // Procesamos el mensaje
+                    string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
+
+                    // Enviamos respuesta al cliente
+                    await SendAsync(outMessage);
+                }
             }
+            catch (Exception)
+            { 
+            }
+            // Leemos el mensaje
+            
         }
     }
 
@@ -40,7 +47,7 @@ public class UserSocket
         // Creo un buffer para almacenar temporalmente los bytes del contenido del mensaje
         byte[] buffer = new byte[4096];
         // Creo un StringBuilder para poder ir creando poco a poco el mensaje en formato texto
-        //StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         // Creo un booleano para saber cuándo termino de leer el mensaje
         bool endOfMessage = false;
 
@@ -54,9 +61,8 @@ public class UserSocket
             {
                 // Decodifico el contenido recibido
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                return message;
                 // Lo añado al StringBuilder
-                //stringBuilder.Append(message);
+                stringBuilder.Append(message);
             }
             // Si el resultado que se ha recibido entonces cerramos la conexión
             else if (result.CloseStatus.HasValue)
@@ -71,7 +77,7 @@ public class UserSocket
         // Repetiremos iteración si el socket permanece abierto y no se ha recibido todavía el final del mensaje
         while (Socket.State == WebSocketState.Open && !endOfMessage);
 
-        return "";
+        return stringBuilder.ToString();
 
         // Finalmente devolvemos el contenido del StringBuilder
         //return stringBuilder.ToString();

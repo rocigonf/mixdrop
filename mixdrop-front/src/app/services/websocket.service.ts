@@ -42,7 +42,6 @@ export class WebsocketService {
   }
 
   connectRxjs() {
-    console.log("rosio gamba")
     this.rxjsSocket = webSocket({
       url: environment.socketUrl + `/${this.api.jwt}`,
   

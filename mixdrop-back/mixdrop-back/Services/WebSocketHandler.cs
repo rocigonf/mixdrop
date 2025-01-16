@@ -6,12 +6,12 @@ namespace mixdrop_back.Services;
 
 public class WebSocketHandler
 {
-    private List<UserSocket> userSockets;
+    private readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
 
     public async Task HandleWebsocketAsync(WebSocket webSocket, int userId)
     {
         // TODO: Cuando asigno un nuevo socket a la lista, envío a todos los usuarios que se ha cambiado
-        var socket = userSockets.FirstOrDefault(userSocket => userSocket.UserId == userId);
+        var socket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
         if (socket == null)
         {
             socket = new UserSocket()
@@ -19,7 +19,7 @@ public class WebSocketHandler
                 UserId = userId,
                 Socket = webSocket
             };
-            userSockets.Add(socket);
+            USER_SOCKETS.Add(socket);
         }
 
         await NotifyUsers();
@@ -28,7 +28,7 @@ public class WebSocketHandler
 
     private async Task NotifyUsers()
     {
-        foreach (var userSocket in userSockets)
+        foreach (var userSocket in USER_SOCKETS)
         {
             await userSocket.SendAsync("Se conectó un usuario");
         }
