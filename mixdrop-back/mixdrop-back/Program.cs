@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Repositories;
 using mixdrop_back.Services;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -146,9 +147,13 @@ public class Program
 
         await SeedDataBaseAsync(app.Services);
 
-        app.UseWebSockets(); // Para permitir web sockets
+        // Para permitir web sockets
+        // El protocolo de websockets no permite cabeceras, de manera que cuando en el front se pide abrir el websocket, se hace una petición que recibe el controlador pero a través de ese protocolo, de manera que no se puede incluir el JWT
+        // Por tanto, tiene que haber un middleware que coja de la URL este JWT y lo ponga en la cabecera para que Authorize no bloquee el acceso
+        app.UseWebSockets();
 
         await SeedDataBaseAsync(app.Services);
+      
 
         app.Run();
 

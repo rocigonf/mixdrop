@@ -1,4 +1,5 @@
-﻿using System.Net.WebSockets;
+﻿using mixdrop_back.Models.Sockets;
+using System.Net.WebSockets;
 using System.Text;
 
 namespace mixdrop_back.Services;
@@ -11,6 +12,7 @@ public class WebSocketHandler
     // ... Eso y sus subficheros, pero se les pasa por parámetro eso si hiciese falta
     private readonly UnitOfWork _unitOfWork;
     private readonly IServiceProvider _serviceProvider;
+    private ICollection<UserSocket> userSockets;
 
     public WebSocketHandler(IServiceProvider serviceProvider)
     {
