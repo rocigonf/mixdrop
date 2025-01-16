@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using mixdrop_back.Services;
 using System.Net.WebSockets;
 
@@ -15,6 +16,7 @@ public class WebSocketController : ControllerBase
         _webSocketHandler = webSocketHandler;
     }
 
+    //[Authorize]
     [HttpGet]
     public async Task ConnectAsync()
     {
