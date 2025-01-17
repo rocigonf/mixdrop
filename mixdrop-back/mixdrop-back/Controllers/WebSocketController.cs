@@ -38,6 +38,7 @@ public class WebSocketController : ControllerBase
         // Cuando este método finalice, se cerrará automáticamente la conexión con el websocket
     }
 
+
     private int GetCurrentUserId()
     {
         // Pilla el usuario autenticado según ASP
@@ -49,4 +50,5 @@ public class WebSocketController : ControllerBase
 
         return int.Parse(idString);
     }
+
 }

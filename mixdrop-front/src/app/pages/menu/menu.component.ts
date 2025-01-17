@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-menu',
@@ -49,5 +51,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.messageReceived$?.unsubscribe();
     this.webSocketService.disconnectRxjs();
+
+
+  async getSearchedUsers(query: string) : Promise<User[]> {
+    const result = await this.userService.searchUser(query);
+    return result;
   }
 }

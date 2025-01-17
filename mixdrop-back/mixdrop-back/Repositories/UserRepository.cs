@@ -8,6 +8,12 @@ public class UserRepository : Repository<User, int>
 {
     public UserRepository(MixDropContext context) : base(context) { }
 
+    public async Task<ICollection<User>> SearchUser(string search)
+    {
+        return await GetQueryable()
+            .Where(user => user.Nickname.Contains(search))
+            .ToListAsync();
+    }
 
     public async Task<User> GetByEmailAsync(string email)
     {

@@ -8,6 +8,7 @@ using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Helper;
 using mixdrop_back.Models.Mappers;
+using System.Text;
 
 namespace mixdrop_back.Services;
 
@@ -27,7 +28,20 @@ public class UserService
                 .TokenValidationParameters;
     }
 
-    
+
+    // buscar usuario
+    public async Task<List<UserDto>> SearchUser( string search)
+    {
+
+        string searchSinTildes = Regex.Replace(search.Normalize(NormalizationForm.FormD), @"[^a-zA-z0-9 ]+", "");
+
+        var users = await _unitOfWork.UserRepository.SearchUser(searchSinTildes.ToLower());
+
+        return _userMapper.ToDto(users).ToList();
+    }
+
+
+
     // desconectar usuario
     public async Task DisconnectUser(int userId)
     {
@@ -54,8 +68,6 @@ public class UserService
 
         Console.WriteLine("Usuario desconectado: " + existingUser.Nickname);
     }
-
-
 
 
     public async Task<List<UserDto>> GetAllUsersAsync()
