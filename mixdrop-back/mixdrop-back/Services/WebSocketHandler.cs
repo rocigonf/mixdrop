@@ -1,12 +1,14 @@
 ﻿using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Sockets;
 using System.Net.WebSockets;
+using System.Text.Json;
 
 namespace mixdrop_back.Services;
 
 public class WebSocketHandler
 {
-    private readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
+    private static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
+    public static int Total { get; set; } = 0;
 
     public async Task HandleWebsocketAsync(WebSocket webSocket, int userId)
     {
@@ -20,17 +22,31 @@ public class WebSocketHandler
                 Socket = webSocket
             };
             USER_SOCKETS.Add(socket);
+            Total += 1;
+        }
+        else
+        {
+            // Necesario porque parece que toma el socket como cerrado, no sé por qué
+            socket.Socket = webSocket;
         }
 
         await NotifyUsers();
         await socket.ProcessWebSocket();
     }
 
-    private async Task NotifyUsers()
+    private static async Task NotifyUsers()
     {
+        Dictionary<object, object> dict = new Dictionary<object, object>
+        {
+            { "messageType", MessageType.Stats },
+            { "total", Total }
+        };
+
+        string jsonToSend = JsonSerializer.Serialize(dict);
+
         foreach (var userSocket in USER_SOCKETS)
         {
-            await userSocket.SendAsync("Se conectó un usuario");
+            if(userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
         }
     }
 }

@@ -35,7 +35,7 @@ export class WebsocketService {
   
   // ============ Usando Rxjs =============
 
-  rxjsSocket: WebSocketSubject<any> | null = null // Con "any" le especifico que puede enviar y recibir cualquier cosa
+  rxjsSocket: WebSocketSubject<string> | null = null
 
   isConnectedRxjs() {
     return this.rxjsSocket && !this.rxjsSocket.closed;
