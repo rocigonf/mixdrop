@@ -30,11 +30,39 @@ public class WebSocketHandler
             socket.Socket = webSocket;
         }
 
-        await NotifyUsers();
+        Dictionary<object, object> dict = new Dictionary<object, object>
+        {
+            { "messageType", MessageType.Stats },
+            { "total", Total }
+        };
+
+        await SendStatsMessage();
         await socket.ProcessWebSocket();
     }
 
-    private static async Task NotifyUsers()
+    public static async Task RemoveSocket(int userId)
+    {
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket=>userSocket.UserId == userId);
+        if(userSocket != null)
+        {
+            USER_SOCKETS.Remove(userSocket);
+            Total -= 1;
+
+            await SendStatsMessage();
+        }
+    }
+
+    private static async Task NotifyUsers(string jsonToSend)
+    {
+
+        foreach (var userSocket in USER_SOCKETS)
+        {
+            if(userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
+        }
+    }
+
+    // Esto habrá que ponerlo en otro archivo
+    public static async Task SendStatsMessage()
     {
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
@@ -42,11 +70,6 @@ public class WebSocketHandler
             { "total", Total }
         };
 
-        string jsonToSend = JsonSerializer.Serialize(dict);
-
-        foreach (var userSocket in USER_SOCKETS)
-        {
-            if(userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
-        }
+        await NotifyUsers(JsonSerializer.Serialize(dict));
     }
 }

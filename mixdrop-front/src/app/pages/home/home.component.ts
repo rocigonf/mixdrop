@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
       this.intervalTime = (60 / this.bpm) * 1000; // Calcula la cantidad de veces que lo tiene que hacer en segundos y lo pasa a milisegundos
       this.audio.load()
       this.audio.addEventListener('ended', () => { this.reproduce(); this.reproduce()}) // Lo para y luego lo vuelve a activar, por eso llamarlo dos veces
-      this.reproduce()
+      //this.reproduce()
     }
     catch {}
   }

@@ -15,17 +15,14 @@ namespace mixdrop_back.Services;
 public class UserService
 {
     private readonly UnitOfWork _unitOfWork;
-    private readonly TokenValidationParameters _tokenParameters;
     private readonly UserMapper _userMapper;
 
     Regex emailRegex = new(@"^([\w\.-]+)@([\w-]+)((\.(\w){2,3})+)$");
 
-    public UserService(UnitOfWork unitOfWork, IOptionsMonitor<JwtBearerOptions> jwtOptions, UserMapper userMapper)
+    public UserService(UnitOfWork unitOfWork, UserMapper userMapper)
     {
         _unitOfWork = unitOfWork;
         _userMapper = userMapper;
-        _tokenParameters = jwtOptions.Get(JwtBearerDefaults.AuthenticationScheme)
-                .TokenValidationParameters;
     }
 
 
@@ -67,6 +64,8 @@ public class UserService
         await _unitOfWork.SaveAsync();
 
         Console.WriteLine("Usuario desconectado: " + existingUser.Nickname);
+
+        await WebSocketHandler.RemoveSocket(userId);
     }
 
 
