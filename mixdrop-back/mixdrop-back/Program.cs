@@ -83,6 +83,9 @@ public class Program
         // Inyección del servicio de WebSocket como Singleton
         builder.Services.AddSingleton<WebSocketHandler>();
 
+        // Inyección de Middleware
+        builder.Services.AddTransient<PreAuthMiddleware>();
+
         // Add services to the container.
 
         builder.Services.AddControllers();
@@ -136,7 +139,15 @@ public class Program
         app.UseHttpsRedirection();
 
         // Permite CORS
-        app.UseCors("AllowAllOrigins");
+        app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+        // Para permitir web sockets
+        // El protocolo de websockets no permite cabeceras, de manera que cuando en el front se pide abrir el websocket, se hace una petición que recibe el controlador pero a través de ese protocolo, de manera que no se puede incluir el JWT
+        // Por tanto, tiene que haber un middleware que coja de la URL este JWT y lo ponga en la cabecera para que Authorize no bloquee el acceso
+        app.UseWebSockets();
+
+        // Se usa nuestro middleware :D (DEBE IR AQUÍ)
+        app.UseMiddleware<PreAuthMiddleware>();
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -146,14 +157,6 @@ public class Program
         app.UseStaticFiles();
 
         await SeedDataBaseAsync(app.Services);
-
-        // Para permitir web sockets
-        // El protocolo de websockets no permite cabeceras, de manera que cuando en el front se pide abrir el websocket, se hace una petición que recibe el controlador pero a través de ese protocolo, de manera que no se puede incluir el JWT
-        // Por tanto, tiene que haber un middleware que coja de la URL este JWT y lo ponga en la cabecera para que Authorize no bloquee el acceso
-        app.UseWebSockets();
-
-        await SeedDataBaseAsync(app.Services);
-      
 
         app.Run();
 

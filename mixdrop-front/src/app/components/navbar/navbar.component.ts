@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
+import { WebsocketService } from '../../services/websocket.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +15,7 @@ import { Router } from '@angular/router';
 export class NavbarComponent implements OnInit{
   @Input() frameName = "/images/speaker/speaker1.png"
 
-  constructor(public authService: AuthService, public router: Router){}
+  constructor(public authService: AuthService, public router: Router, private webSocketService : WebsocketService){}
 
   user: User | null = null;
 
@@ -30,11 +31,18 @@ export class NavbarComponent implements OnInit{
     if (this.authService.isAuthenticated()) {
 
       this.authService.logout()
+      this.webSocketService.disconnectRxjs()
+      this.navigateToUrl("/")
       alert("Sesion cerrada corectamente.")
       
       // Iniciar sesión
     } else {
-      this.router.navigate(['/login']);
+      this.navigateToUrl("login");
     }
+  }
+
+  navigateToUrl(url: string)
+  {
+    this.router.navigateByUrl(url);
   }
 }

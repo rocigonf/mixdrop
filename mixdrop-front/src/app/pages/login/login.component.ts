@@ -77,7 +77,7 @@ export class LoginComponent {
 
       alert("inicio sesion exitoso");
 
-      this.router.navigateByUrl("/"); // redirige a inicio
+      this.router.navigateByUrl("menu"); // redirige a inicio
       
       this.webSocketService.connectRxjs()
     } else {
@@ -115,7 +115,7 @@ export class LoginComponent {
           const nickname = user ? user.nickname : null;
 
           alert("Te has registrado con éxito.")
-          this.router.navigateByUrl("/"); // redirige a inicio
+          this.router.navigateByUrl("menu"); // redirige a inicio
 
           this.webSocketService.connectRxjs()
 

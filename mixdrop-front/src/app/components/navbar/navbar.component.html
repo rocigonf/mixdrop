@@ -1,11 +1,11 @@
 <nav>
-    <a href="/">
+    <a (click)="navigateToUrl('/')">
         <img id="speaker" [src]="frameName" alt="altavoz">
     </a>
 
     <div class="nav-right">
 
-        <a href="/">
+        <a (click)="navigateToUrl('menu')">
             <span>JUGAR</span>
         </a>
 
@@ -13,13 +13,13 @@
             <span>REGLAS</span>
         </a>
 
-        <a href="/">
+        <a (click)="navigateToUrl('/')">
             <img id="trophy" src="/images/trophy.png" alt="ranking">
         </a>
 
         @if (authService.isAuthenticated()) {
 
-            <a href="/">
+            <a (click)="navigateToUrl('menu')">
                 <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
             </a>
 
@@ -29,7 +29,7 @@
             
         } @else {
             
-            <a href="/login">
+            <a (click)="navigateToUrl('login')">
                 <img class="avatar" src="/images/user.png" alt="avatar">
             </a>
 
