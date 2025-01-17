@@ -1,5 +1,45 @@
 <app-navbar></app-navbar>
-<p>menu works!</p>
+
+<img src="" alt="avatar de usuario">
+<p></p> <!-- nickname del usuario-->
+
+<!-- contenido -->
+<div class="container">
+    <!-- menu lateral -->
+    <aside>
+        <div>
+            <img src="/images/amigos.png" alt="icono amigo"> Tus amigos
+        </div>
+        <div>
+            <img src="/images/buzon.png" alt="icono buzon"> Añadir a un amigo
+        </div>
+        <div>
+            <img src="/images/invitacion.png" alt="icono carta"> Solicitudes de amistad
+        </div>
+        <div>
+            <img src="/images/juego.png" alt="icono juego"> Solicitudes de batalla
+        </div>
+    </aside>
+
+
+    <section>
+
+        <div>
+            <span>TUS AMIGOS</span>
+            <button>Añadir a un amigo</button> <!--te lleva a buscar amigos-->
+        </div>
+
+        
+        <form (submit)="(queryfriend)">
+            <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
+                [ngModelOptions]="{standalone: true}" />
+            <button type="submit" > Buscar</button>
+        </form>
+
+
+    </section>
+</div>
+<br><br><br><br>
 <div>
     <button (click)="askForInfo(0)">Pedir dato 1</button>
     <button (click)="askForInfo(1)">Pedir dato 2</button>
@@ -8,3 +48,27 @@
     <p>Total de jugadores: {{ totalPlayers }}</p>
 </div>
 
+
+<br><br><br><br>
+<div class="busquedaUsuarios">
+    <form (submit)="getSearchedUsers(queryuser)">
+        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryfriend"
+            [ngModelOptions]="{standalone: true}" />
+        <button type="submit" [disabled]="!queryuser"> Buscar</button>
+    </form>
+
+    @if (searchedUsers) {
+
+    @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p>
+        }
+        @else {
+        @for (user of searchedUsers; track $index)
+        {
+        <div class="usuarioBuscado">
+            <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+            {{user.nickname}}
+        </div>
+        }
+        }
+        }
+</div>

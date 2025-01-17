@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
@@ -14,12 +14,17 @@ import { WebsocketService } from '../../services/websocket.service';
 })
 export class NavbarComponent implements OnInit{
   @Input() frameName = "/images/speaker/speaker1.png"
+  @Output() musicEvent = new EventEmitter();
 
   constructor(public authService: AuthService, public router: Router, private webSocketService : WebsocketService){}
 
   user: User | null = null;
 
   public readonly IMG_URL = environment.apiImg;
+
+  startMusic() {
+    this.musicEvent.emit();
+  }
 
   ngOnInit() {
     // usuario logueado

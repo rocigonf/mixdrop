@@ -1,5 +1,5 @@
 <nav>
-    <a (click)="navigateToUrl('/')">
+    <a (click)="startMusic()">
         <img id="speaker" [src]="frameName" alt="altavoz">
     </a>
 
@@ -24,7 +24,7 @@
             </a>
 
             <a class="logout" (click)="authClick()">
-                <img src="/images/logout.webp" alt="cerrar sesion">
+                <img src="/images/acceso.png" alt="cerrar sesion">
             </a>
             
         } @else {

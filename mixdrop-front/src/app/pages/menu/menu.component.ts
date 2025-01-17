@@ -11,10 +11,14 @@ import { Battle } from '../../models/battle';
 import { UserFriendService } from '../../services/user-friend.service';
 import { BattleService } from '../../services/battle.service';
 
+import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
+
+
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [NavbarComponent, FormsModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
@@ -26,6 +30,13 @@ export class MenuComponent implements OnInit, OnDestroy {
   friends: UserFriend[] = []
   pendingBattles: Battle[] = []
   battleId : number = 0
+
+  searchedUsers!: User[];
+  searchedFriends:User[] = [];
+  queryuser: string = '';
+  queryfriend: string = '';
+
+  public readonly IMG_URL = environment.apiImg;
   
   constructor (private webSocketService : WebsocketService, 
     private router: Router, private userService: UserService, 
@@ -103,9 +114,16 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
 
-  async getSearchedUsers(query: string) : Promise<User[]> {
-    const result = await this.userService.searchUser(query);
+  async getSearchedUsers(queryuser: string) : Promise<User[]> {
+    const result = await this.userService.searchUser(queryuser);
+    console.log(result)
+    this.searchedUsers = result;
     return result;
   }
+
   
+  searchFriend(queryfriend : string) : void{
+    
+  }
+
 }
