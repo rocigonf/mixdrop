@@ -9,7 +9,7 @@ export class BattleService {
 
   constructor(private api: ApiService) { }
 
-  async acceptBattle(battle : Battle)
+  async modifyBattle(battle : Battle)
   {
     const result = await this.api.put("Battle", battle)
     return result
