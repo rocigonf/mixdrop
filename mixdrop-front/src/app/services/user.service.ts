@@ -19,11 +19,11 @@ export class UserService {
 
 
   // buscar usuario -- en proceso --
-  async searchUser(search: String): Promise<User[]> {
-    const result = await this.api.get(`$User/search?query=${search}`);
+  async searchUser(search: string): Promise<any> {
+    const result = await this.api.get(`User/search?query=${search}`);
     const users: any = result.data;
 
-    return users;
+    return users.users;
 
   }
 
