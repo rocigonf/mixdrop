@@ -4,24 +4,16 @@
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            bool canContinue = true;
+            string pathValue = context.Request.Path.Value;
 
-            if (context.Request.Path.Value.Contains("socket"))
+            if (pathValue.Contains("socket"))
             {
-                canContinue = false;
-
-                // Coge el JWT desde la ruta de la api
-                var routeDict = context.Request.Query.FirstOrDefault();
-                if (routeDict.Key != null && routeDict.Key.Equals("jwt"))
-                {
-                    var jwt = routeDict.Value;
-                    //context.Request.Headers.Append("Authorization", "Bearer " + jwt);
-                    // TODO: Verificar JWT
-                    canContinue = true;
-                }
+                int index = pathValue.IndexOf("/", 2); // En la segunda barra se encontraría el JWT (espero xD)
+                string jwt = pathValue.Substring(index + 1);
+                context.Request.Headers.Append("Authorization", "Bearer " + jwt);
             }
 
-            if(canContinue) await next(context);
+            await next(context);
         }
     }
 }
