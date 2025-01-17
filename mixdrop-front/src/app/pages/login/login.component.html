@@ -14,10 +14,10 @@
     <form (submit)="login()">
       <div>
 
-        <input type="text" pInputText placeholder="Apodo o email" class="icon-input" required
+        <input type="text" placeholder="Apodo o email" class="icon-input" required
           [(ngModel)]="emailOrNickname" [ngModelOptions]="{standalone: true}" />
 
-        <input type="password" pInputText placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
+        <input type="password" placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
           [ngModelOptions]="{standalone: true}" />
 
         <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" inputId="rememberMe"
