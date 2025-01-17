@@ -1,6 +1,8 @@
 ﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 
 namespace mixdrop_back.Models.Sockets;
 
@@ -18,14 +20,34 @@ public class UserSocket
             {
                 string message = await ReadAsync();
 
+                // Si ha recibido algo
                 if (!string.IsNullOrWhiteSpace(message))
                 {
                     // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH (POR AHORA)
+                    int messageTypeInt = int.Parse(message);
+                    MessageType messageType = (MessageType)messageTypeInt;
+
+                    Dictionary<object, object> dict = new Dictionary<object, object>
+                    {
+                        { "messageType", messageType }
+                    };
 
                     // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
+                    // En función del switch, obtengo unos datos u otros, y los envío en JSON
+                    switch (messageType)
+                    {
+                        case MessageType.Friend:
+                            break;
+                        case MessageType.Stats:
+                            dict.Add("total", WebSocketHandler.Total);
+                            break;
+                        case MessageType.Play:
+                            break;
+                    }
 
+                    string outMessage = JsonSerializer.Serialize(dict);
                     // Procesamos el mensaje
-                    string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
+                    //string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
 
                     // Enviamos respuesta al cliente
                     await SendAsync(outMessage);
