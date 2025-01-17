@@ -19,7 +19,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   serverResponse: string = '';
   totalPlayers = 0;
   
-  constructor (private webSocketService : WebsocketService, private router: Router){}
+  constructor (private webSocketService : WebsocketService, private router: Router, private userService :UserService){}
 
   // TODO: Redirigir al login si no ha iniciado sesión
   ngOnInit(): void 
@@ -51,10 +51,12 @@ export class MenuComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.messageReceived$?.unsubscribe();
     this.webSocketService.disconnectRxjs();
+  }
 
 
   async getSearchedUsers(query: string) : Promise<User[]> {
     const result = await this.userService.searchUser(query);
     return result;
   }
+  
 }
