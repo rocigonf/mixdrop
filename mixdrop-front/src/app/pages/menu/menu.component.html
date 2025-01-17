@@ -8,3 +8,27 @@
     <p>Total de jugadores: {{ totalPlayers }}</p>
 </div>
 
+
+<div class="busquedaUsuarios">
+    <form (submit)="getSearchedUsers(query)">
+        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="query"
+            [ngModelOptions]="{standalone: true}" />
+        <button type="submit" [disabled]="!query" > Buscar</button>
+    </form>
+
+    @if (searchedUsers) {
+
+    @if (searchedUsers.length<1) { 
+        <p> No se encontraton usuarios</p>
+        } 
+    @else {
+        @for (user of searchedUsers; track $index)
+        { 
+            <div>
+                <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+                 {{user.nickname}}
+            </div>
+            }
+        }
+    }
+</div>

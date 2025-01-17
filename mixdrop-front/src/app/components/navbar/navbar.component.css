@@ -40,6 +40,10 @@ a{
     cursor: pointer;
 }
 
+.logout img{
+    height: 45px;
+}
+
 @media (max-width: 450px) {
     nav{
         max-width: 100%;

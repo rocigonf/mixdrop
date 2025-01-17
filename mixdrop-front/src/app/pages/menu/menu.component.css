@@ -1,0 +1,18 @@
+*{
+    font-size: 1.5rem;
+}
+
+.busquedaUsuarios{
+    background-color: darkgray;
+    width: 40%;
+    padding: 8px;
+}
+
+.busquedaUsuarios form{
+    display: flex;
+    gap: 10px;
+}
+
+.busquedaUsuarios button{
+    flex: 1;
+}
