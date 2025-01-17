@@ -21,8 +21,15 @@ span{
 .avatar {
     vertical-align: middle;
     height: 45px;
-    border-radius: 50%;
+    width: 45px;
     cursor: pointer;
+
+    /*hay que poner otra q sea cuadrada
+    border: rgb(0, 0, 0) 10px solid;
+    border-width: 10px 10px 10px 10px;
+    border-image-slice: 35;
+
+    border-image-source: url("/images/marco.png");*/
 }
 
 .nav-right{
