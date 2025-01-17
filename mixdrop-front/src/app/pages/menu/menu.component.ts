@@ -32,7 +32,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   battleId : number = 0
 
   searchedUsers!: User[];
-  query: string = '';
+  searchedFriends:User[] = [];
+  queryuser: string = '';
+  queryfriend: string = '';
+
   public readonly IMG_URL = environment.apiImg;
   
   constructor (private webSocketService : WebsocketService, 
@@ -111,11 +114,16 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
 
-  async getSearchedUsers(query: string) : Promise<User[]> {
-    const result = await this.userService.searchUser(query);
+  async getSearchedUsers(queryuser: string) : Promise<User[]> {
+    const result = await this.userService.searchUser(queryuser);
     console.log(result)
     this.searchedUsers = result;
     return result;
+  }
+
+  
+  searchFriend(queryfriend : string) : void{
+    
   }
 
 }

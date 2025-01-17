@@ -1,18 +1,53 @@
-*{
+* {
     font-size: 1.5rem;
 }
 
-.busquedaUsuarios{
-    background-color: darkgray;
+.busquedaUsuarios {
     width: 40%;
     padding: 8px;
 }
 
-.busquedaUsuarios form{
+.busquedaUsuarios form {
     display: flex;
     gap: 10px;
+    background-color: darkgray;
+
 }
 
-.busquedaUsuarios button{
+.busquedaUsuarios input {
     flex: 1;
+}
+
+.usuarioBuscado {
+    margin: 5px;
+    width: 100%;
+
+}
+
+.container {
+    display: flex;
+}
+
+aside {
+    background-color: rgb(59, 59, 59);
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+aside div {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+aside div:hover{
+    background-color: rgb(131, 131, 131);
+}
+
+aside img {
+    width: 30px;
 }
