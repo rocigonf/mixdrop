@@ -75,6 +75,11 @@ public class UserService
         return _userMapper.ToDto(users).ToList();
     }
 
+    public async Task<User> GetBasicUserByIdAsync(int userId)
+    {
+        return await _unitOfWork.UserRepository.GetByIdAsync(userId);
+    }
+
     public async Task<UserDto> GetUserByEmailAsync(string email)
     {
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(email);
@@ -176,6 +181,52 @@ public class UserService
         }
     }
 
+    public async Task<User> UpdateUser(RegisterDto model, User existingUser, string role)
+    {
+        // validacion email
 
+        if (!emailRegex.IsMatch(model.Email))
+        {
+            throw new Exception("Email no valido.");
+        }
 
+        try
+        {
+            // Verifica si el usuario ya existe
+            if (!model.Email.Equals(existingUser.Email))
+            {
+                var otherUser = await GetUserByEmailAsync(model.Email.ToLower());
+
+                if (otherUser != null)
+                {
+                    throw new Exception("El usuario ya existe.");
+                }
+            }
+
+            ImageService imageService = new ImageService();
+
+            existingUser.Email = model.Email.ToLower();
+            existingUser.Nickname = model.Nickname.ToLower();
+            if (model.Image != null)
+            {
+                existingUser.AvatarPath = "/" + await imageService.InsertAsync(model.Image);
+            }
+
+            existingUser.Role = role;
+
+            existingUser.Password = PasswordHelper.Hash(model.Password);
+
+            _unitOfWork.UserRepository.Update(existingUser);
+            await _unitOfWork.SaveAsync();
+
+            return existingUser;
+
+        }
+        catch (DbUpdateException ex)
+        {
+            // Log más detallado del error
+            Console.WriteLine($"Error al guardar el usuario: {ex.InnerException?.Message}");
+            throw new Exception("Error al registrar el usuario. Verifica los datos ingresados.");
+        }
+    }
 }

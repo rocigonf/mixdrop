@@ -94,11 +94,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log("Respuesta de agregar al amigo: ", response)
   }
 
-  async acceptBattle(battle: Battle)
+  async modifyBattle(battle: Battle)
   {
-    // Aquí actualizaría el estado de la batalla con una petición, que notificaría a todos los usuarios y los llevaría a ambos a la vista de batalla
-    battle.accepted = true
-    const response = await this.battleService.acceptBattle(battle)
+    // Aquí actualizaría el estado de la batalla con una petición, que notificaría a todos los usuarios y los llevaría a ambos a la vista de batalla si se acepta
+    // Si se rechaza, se borra de la BBDD
+    const response = await this.battleService.modifyBattle(battle)
     console.log("Respuesta de aceptar la batalla: ", response)
   }
 

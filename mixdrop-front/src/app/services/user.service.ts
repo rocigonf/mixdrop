@@ -27,4 +27,9 @@ export class UserService {
 
   }
 
+  async getUserById(id : number): Promise<any> {
+    const result = await this.api.get(`User/${id}`);
+    const user: any = result.data;
+    return user
+  }
 }
