@@ -4,5 +4,6 @@ public enum MessageType
 {
     Friend,
     Stats,
-    Play
+    Play,
+    PendingBattle
 }
