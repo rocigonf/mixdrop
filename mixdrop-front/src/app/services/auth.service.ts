@@ -74,6 +74,7 @@ export class AuthService {
     const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
     if (user) {
       if (!this.webSocket.isConnectedRxjs()) {
+        console.log("CONECTANDO...")
         this.webSocket.connectRxjs()
       }
       return JSON.parse(user)

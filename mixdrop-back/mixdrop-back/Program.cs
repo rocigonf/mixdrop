@@ -136,8 +136,6 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
-
         // Permite CORS
         app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
@@ -148,6 +146,10 @@ public class Program
 
         // Se usa nuestro middleware :D (DEBE IR AQUÍ)
         app.UseMiddleware<PreAuthMiddleware>();
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
 
         app.UseAuthentication();
         app.UseAuthorization();

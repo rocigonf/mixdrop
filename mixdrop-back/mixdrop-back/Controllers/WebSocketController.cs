@@ -17,7 +17,8 @@ public class WebSocketController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{jwt}")]
+    [Route("{jwt}")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task ConnectAsync()
     {
         // Si la petición es de tipo websocket la aceptamos
