@@ -20,6 +20,7 @@
         @if (authService.isAuthenticated()) {
 
             <a (click)="navigateToUrl('menu')">
+                <img class="marco" src="/images/marco.png" alt=""  >
                 <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
             </a>
 

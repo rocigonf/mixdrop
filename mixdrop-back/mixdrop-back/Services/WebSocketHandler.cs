@@ -1,5 +1,4 @@
-﻿using mixdrop_back.Models.Entities;
-using mixdrop_back.Models.Sockets;
+﻿using mixdrop_back.Models.Sockets;
 using System.Net.WebSockets;
 using System.Text.Json;
 
@@ -33,7 +32,7 @@ public class WebSocketHandler
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.Stats },
-            { "total", Total }
+            { "total", Total },
         };
 
         await SendStatsMessage();
@@ -42,8 +41,8 @@ public class WebSocketHandler
 
     public static async Task RemoveSocket(int userId)
     {
-        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket=>userSocket.UserId == userId);
-        if(userSocket != null)
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
+        if (userSocket != null)
         {
             USER_SOCKETS.Remove(userSocket);
             Total -= 1;
@@ -57,7 +56,7 @@ public class WebSocketHandler
 
         foreach (var userSocket in USER_SOCKETS)
         {
-            if(userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
+            if (userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
         }
     }
 
@@ -67,7 +66,7 @@ public class WebSocketHandler
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.Stats },
-            { "total", Total }
+            { "total", Total },
         };
 
         await NotifyUsers(JsonSerializer.Serialize(dict));

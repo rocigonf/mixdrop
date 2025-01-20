@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Services;
@@ -17,6 +18,7 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [Authorize]
     [HttpGet("search")]
     public async Task<IActionResult> SearchUser([FromQuery] string query)
     {

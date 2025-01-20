@@ -13,6 +13,7 @@ import { BattleService } from '../../services/battle.service';
 
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -26,6 +27,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
+  user: User | null = null;
+
   totalPlayers = 0;
   friends: UserFriend[] = []
   pendingBattles: Battle[] = []
@@ -36,12 +39,17 @@ export class MenuComponent implements OnInit, OnDestroy {
   queryuser: string = '';
   queryfriend: string = '';
 
+
+  menuSelector : string = 'myFriends';  // myFriends, searchUsers, friendRequest, battleRequest
+
+
   public readonly IMG_URL = environment.apiImg;
   
   constructor (private webSocketService : WebsocketService, 
     private router: Router, private userService: UserService, 
     private userFriendService : UserFriendService,
-    private battleService : BattleService
+    private battleService : BattleService,
+    public authService: AuthService
   ){}
 
   // TODO: Redirigir al login si no ha iniciado sesión
@@ -50,12 +58,16 @@ export class MenuComponent implements OnInit, OnDestroy {
     // Procesa la respuesta
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
     this.askForInfo(1)
+
+    this.user = this.authService.getUser();
+
   }
 
   processMessage(message : any)
   {
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
+
     // En función del tipo de mensaje que he recibido, sé que me han enviado unos datos u otros
     
     // Es posible que haya que hacer JSON.parse() otra vez en alguno de los casos

@@ -1,77 +1,83 @@
-nav{
+nav {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
     padding: 1rem;
 }
 
-span{
+span {
     font-size: 2rem;
 }
 
-#speaker{
+#speaker {
     height: 45px;
     cursor: pointer;
 }
 
-#trophy{
+#trophy {
     height: 45px;
 }
 
 .avatar {
     vertical-align: middle;
-    height: 45px;
-    width: 45px;
+    height: 40px;
+    width: 40px;
     cursor: pointer;
-
-    /*hay que poner otra q sea cuadrada
-    border: rgb(0, 0, 0) 10px solid;
-    border-width: 10px 10px 10px 10px;
-    border-image-slice: 35;
-
-    border-image-source: url("/images/marco.png");*/
+    padding-left: 10px;
+    padding-top: 5px;
 }
 
-.nav-right{
+.marco {
+    z-index: 2;
+    position: absolute;
+    height: 50px;
+    width: 60px;
+    margin: 0;
+}
+
+.nav-right {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-a{
+a {
     text-decoration: none;
     color: white;
 }
 
-.logout{
+.logout {
     cursor: pointer;
 }
 
-.logout img{
+.logout img {
     height: 45px;
 }
 
 @media (max-width: 450px) {
-    nav{
+    nav {
         max-width: 100%;
         padding: 0.8rem;
     }
-    .logout img{
+
+    .logout img {
         width: 30px;
     }
-    .avatar{
+
+    .avatar {
         height: 30px;
     }
-    span{
+
+    span {
         font-size: 1.8rem;
         align-self: center;
     }
-    
-    #speaker{
+
+    #speaker {
         height: 30px;
     }
-    
-    #trophy{
+
+    #trophy {
         height: 30px;
     }
 }

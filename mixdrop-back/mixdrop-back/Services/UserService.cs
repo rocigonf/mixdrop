@@ -108,7 +108,7 @@ public class UserService
     }
 
 
-    // REGISTRO E INICIO DE SESION
+    // INICIO DE SESION
     public async Task<User> LoginAsync(LoginRequest loginRequest)
     {
         var user = await _unitOfWork.UserRepository.GetByEmailOrNickname(loginRequest.EmailOrNickname.ToLower());
@@ -130,6 +130,7 @@ public class UserService
         return user;
     }
 
+    // REGISTRO 
     public async Task<User> RegisterAsync(RegisterDto model)
     {
         // validacion email
