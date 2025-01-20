@@ -73,7 +73,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         break
       case MessageType.Play:
         // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
-        alert("*voz de narrador del valorant*")
+        alert("Partida encontrada :3")
         this.battleId = jsonResponse.battleId
         break
     }
@@ -82,21 +82,21 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   async removeFriend(userFriend : UserFriend)
   {
-    // En el servidor se llamaría a un método para borrar la amistad, el cual llamaría al socket del otro usuario para notificarle
+    // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
     await this.userFriendService.removeFriendById(userFriend.id)
   }
 
   async addFriend(user : User)
   {
-    // Hago una petición para que cree el amigo, y el back el servidor debería notificar a ambos usuarios enviando la lista de amigos
+    // Hago una petición para que cree el amigo, ( wesoque ->) y en back el servidor debería notificar a ambos usuarios enviando la lista de amigos
     const response = await this.userFriendService.addFriend(user)
     console.log("Respuesta de agregar al amigo: ", response)
   }
 
   async modifyBattle(battle: Battle)
   {
-    // Aquí actualizaría el estado de la batalla con una petición, que notificaría a todos los usuarios y los llevaría a ambos a la vista de batalla si se acepta
+    // Aquí actualizaría el estado de la batalla con una petición, ( wesoque ->) que notificaría a todos los usuarios y los llevaría a ambos a la vista de batalla si se acepta
     // Si se rechaza, se borra de la BBDD
     const response = await this.battleService.modifyBattle(battle)
     console.log("Respuesta de aceptar la batalla: ", response)
@@ -113,14 +113,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.webSocketService.disconnectRxjs();
   }
 
-
   async getSearchedUsers(queryuser: string) : Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
     console.log(result)
     this.searchedUsers = result;
     return result;
   }
-
   
   searchFriend(queryfriend : string) : void{
     
