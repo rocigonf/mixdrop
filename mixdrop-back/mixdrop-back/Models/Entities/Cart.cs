@@ -11,5 +11,5 @@ public class Cart
     public Track Track { get; set; }
     public CartType CartType { get; set; }
     public Collection Collection { get; set; }
-    public ICollection<BattleCart> BattleCarts { get; set; }
+    public ICollection<BattleCart> BattleCarts { get; set; } = new List<BattleCart>();
 }

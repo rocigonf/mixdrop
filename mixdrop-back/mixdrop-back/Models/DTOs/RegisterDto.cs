@@ -9,5 +9,5 @@ public class RegisterDto
     public string Password { get; set; }
     public IFormFile Image { get; set; }
     public string Role { get; set; } = "User";
-
+    public string ChangeImage { get; set; } = "true";
 }

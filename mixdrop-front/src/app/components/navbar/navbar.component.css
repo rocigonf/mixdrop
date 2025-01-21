@@ -18,6 +18,15 @@ span{
     height: 45px;
 }
 
+.play {
+    cursor: pointer;
+}
+
+.play:hover
+{
+    text-decoration: underline;
+}
+
 .avatar {
     vertical-align: middle;
     height: 45px;
