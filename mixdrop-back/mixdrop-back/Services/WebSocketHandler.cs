@@ -1,5 +1,4 @@
-﻿using mixdrop_back.Models.Entities;
-using mixdrop_back.Models.Sockets;
+﻿using mixdrop_back.Models.Sockets;
 using System.Net.WebSockets;
 using System.Text.Json;
 
@@ -12,7 +11,6 @@ public class WebSocketHandler
 
     public async Task HandleWebsocketAsync(WebSocket webSocket, int userId)
     {
-        // TODO: Cuando asigno un nuevo socket a la lista, envío a todos los usuarios que se ha cambiado
         var socket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
         if (socket == null)
         {

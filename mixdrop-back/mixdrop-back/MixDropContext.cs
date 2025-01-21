@@ -15,7 +15,7 @@ public class MixDropContext : DbContext
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartType> CartTypes { get; set; }
     public DbSet<Collection> Collections { get; set; }
-    public DbSet<Friend> Friends { get; set; }
+    public DbSet<Friendship> Friendships { get; set; }
     public DbSet<Part> Parts { get; set; }
     public DbSet<Song> Songs { get; set; }
     public DbSet<State> States { get; set; }

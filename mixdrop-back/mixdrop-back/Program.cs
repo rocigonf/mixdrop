@@ -69,14 +69,12 @@ public class Program
         builder.Services.AddScoped<MixDropContext>();
         builder.Services.AddScoped<UnitOfWork>();
 
-        // Inyección de todos los repositorios
-        builder.Services.AddScoped<UserRepository>();
-
         // Inyección de Mappers
         builder.Services.AddScoped<UserMapper>();
 
         // Inyección de Servicios
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<FriendshipService>();
         
         builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
 
