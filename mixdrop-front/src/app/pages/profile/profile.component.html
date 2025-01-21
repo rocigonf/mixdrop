@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 @if(user)
 {
-    @if(user.avatarPath != "")
+    @if(user.avatarPath != "" && !deleteAvatar)
     {
     <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
     }
@@ -19,6 +19,7 @@
             <img id="preview-img" [src]="this.imagePreview" alt="imagen">
         } 
         <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
+        <button (click)="deleteAvatar = true">Borrar avatar</button>
         <fieldset>
             <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
                 <div class="profile-row">

@@ -52,7 +52,7 @@
 <br><br><br><br>
 <div class="busquedaUsuarios">
     <form (submit)="getSearchedUsers(queryuser)">
-        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryfriend"
+        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
             [ngModelOptions]="{standalone: true}" />
         <button type="submit" [disabled]="!queryuser"> Buscar</button>
     </form>
