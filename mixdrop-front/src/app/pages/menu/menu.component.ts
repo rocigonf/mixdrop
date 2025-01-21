@@ -13,6 +13,7 @@ import { BattleService } from '../../services/battle.service';
 
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -41,7 +42,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   constructor (private webSocketService : WebsocketService, 
     private router: Router, private userService: UserService, 
     private userFriendService : UserFriendService,
-    private battleService : BattleService
+    private battleService : BattleService,
   ){}
 
   // TODO: Redirigir al login si no ha iniciado sesión
@@ -110,7 +111,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.messageReceived$?.unsubscribe();
-    this.webSocketService.disconnectRxjs();
   }
 
   async getSearchedUsers(queryuser: string) : Promise<User[]> {

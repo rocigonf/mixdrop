@@ -80,7 +80,7 @@
       @if (this.image) {
       <img id="preview-img" [src]="this.imagePreview" alt="imagen">
       } 
-      <input type="file" accept="image/png, image/jpeg, image/jpg" required (change)="onFileSelected($event)">
+      <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
 
       
 

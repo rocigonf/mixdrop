@@ -28,17 +28,19 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut]
-    public async Task<IActionResult> UpdateUser([FromForm] RegisterDto user)
+    [HttpPut("{id}")]
+    public async Task<UserDto> UpdateUser([FromForm] RegisterDto user, int id)
     {
         try
         {
+            user.Id = id;
+
             User currentUser = await GetAuthorizedUser();
 
             // Si no es admin y está intentando modificar a otro usuario
             if(!currentUser.Role.Equals("Admin") && user.Id != currentUser.Id)
             {
-                return Unauthorized();
+                return null;
             }
 
             string role = "User";
@@ -49,20 +51,18 @@ public class UserController : ControllerBase
 
             if (currentUser.Id == user.Id)
             {
-                await _userService.UpdateUser(user, currentUser, role);
+                return await _userService.UpdateUser(user, currentUser, role);
             }
             else
             {
                 // Para los admin
                 User oldUser = await _userService.GetBasicUserByIdAsync(user.Id);
-                await _userService.UpdateUser(user, oldUser, role);
+                return await _userService.UpdateUser(user, oldUser, role);
             }
-
-            return Ok();
         }
         catch
         {
-            return BadRequest();
+            return null;
         }
     }
 

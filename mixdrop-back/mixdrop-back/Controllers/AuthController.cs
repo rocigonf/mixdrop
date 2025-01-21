@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.DTOs;
-using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,12 +19,9 @@ public class AuthController : ControllerBase
 {
     private readonly TokenValidationParameters _tokenParameters;
     private readonly UserService _userService;
-    private readonly UserMapper _userMapper;
-
-    public AuthController(UserService userService, UserMapper userMapper, IOptionsMonitor<JwtBearerOptions> jwtOptions)
+    public AuthController(UserService userService, IOptionsMonitor<JwtBearerOptions> jwtOptions)
     {
         _userService = userService;
-        _userMapper = userMapper;
         _tokenParameters = jwtOptions.Get(JwtBearerDefaults.AuthenticationScheme).TokenValidationParameters;
     }
 
@@ -74,7 +70,7 @@ public class AuthController : ControllerBase
             var loginResult = new LoginResult
             {
                 AccessToken = stringToken,
-                User = _userMapper.ToDto(user)
+                User = _userService.ToDto(user)
             };
 
             return Ok(loginResult);
@@ -114,7 +110,7 @@ public class AuthController : ControllerBase
 
         var newUser = await _userService.RegisterAsync(model);
 
-        var userDto = _userMapper.ToDto(newUser);
+        var userDto = _userService.ToDto(newUser);
 
         return CreatedAtAction(nameof(Login), new { email = userDto.Email }, userDto);
     }

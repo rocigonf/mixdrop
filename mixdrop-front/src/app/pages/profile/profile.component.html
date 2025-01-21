@@ -1,1 +1,84 @@
-<p>profile works!</p>
+<app-navbar></app-navbar>
+@if(user)
+{
+    @if(user.avatarPath != "" && !deleteAvatar)
+    {
+    <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
+    }
+    @else
+    {
+    <img class="avatar" src="/images/user.png" alt="avatar">
+    }
+
+    <p>Apodo: {{user.nickname}}</p>
+    <p>Mail: {{user.email}}</p>
+    
+    @if(isItself)
+    {
+        @if (this.image) {
+            <img id="preview-img" [src]="this.imagePreview" alt="imagen">
+        } 
+        <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
+        <button (click)="deleteAvatar = true">Borrar avatar</button>
+        <fieldset>
+            <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
+                <div class="profile-row">
+                    <label for="nickname">Nombre:
+                        <input type="text" [value]="user.nickname" formControlName="nickname" [readonly]="!isEditing">
+                    </label>
+                </div>
+                <div class="profile-row">
+                    <label for="email">Correo:
+                        <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.email" />
+                    </label>
+                </div>
+                <div class="profile-row-buttons">
+                    <button type="button" [ngClass]="isEditing ? 'btn-edit' : 'btn-secondary'" class="btn btn-secondary"
+                        (click)="edit()">
+                        {{ isEditing? 'Cancelar edición' : 'Editar' }}
+                    </button>
+                    <button type="submit" class="btn btn-primary" [hidden]="!isEditing || userForm.invalid">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </fieldset>
+        
+        <fieldset>
+            <Label>Contraseña: <input type="password" placeholder="***********" [readonly]="!isEditing"></Label>
+            <button type="button" class="btn btn-secondary" style="float: right;" (click)="showEditPassword()"> Cambiar
+                Contraseña </button>
+        </fieldset>
+        
+        <div id="newPassword" [hidden]="">
+            <fieldset>
+                <form [formGroup]="passwordForm" (ngSubmit)="editPassword()">
+                    <label>Cambiar contraseña:</label>
+                    <br><br>
+                    <input type="password" formControlName="newPassword" required placeholder="Nueva Contraseña" />
+    
+                    <!-- COMENTO ESTO PORQUE DA FALLO IDK WHY
+                    <br>
+                    <div class="error" *ngIf="passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched">La contraseña debe
+                        tener mínimo 6 caracteres.</div>
+                    <br>--->
+                    <input class="icon-input" placeholder="Repetir contraseña" type="password"
+                        formControlName="confirmPassword" />
+                    <!--<div class="error" *ngIf="passwordForm.get('confirmPassword')?.hasError(('mismatch'))  && passwordForm.get('confirmPassword')?.touched">Las contraseñas no coinciden.</div>
+                    <br>--->
+        
+                    <button type="submit" [disabled]="">Actualizar contraseña</button>
+                </form>
+            </fieldset>
+        </div>
+
+        <button (click)="updateUser()">Guardar cambios</button>
+    }
+    @else
+    {
+        
+    }
+}
+@else {
+<p>Cargando...</p>
+}
