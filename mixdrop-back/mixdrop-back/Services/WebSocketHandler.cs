@@ -47,6 +47,7 @@ public class WebSocketHandler
         {
             USER_SOCKETS.Remove(userSocket);
             Total -= 1;
+            userSocket.Socket.Dispose(); // Para cerrar el websocket
 
             await SendStatsMessage();
         }

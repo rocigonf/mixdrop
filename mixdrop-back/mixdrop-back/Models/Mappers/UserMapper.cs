@@ -16,6 +16,7 @@ public class UserMapper
             Role = user.Role,
             AvatarPath = user.AvatarPath,
             IsInQueue = user.IsInQueue,
+            Banned = user.Banned,
             StateId = user.StateId,
             UserFriends = user.UserFriends,
             BattleUsers = user.BattleUsers

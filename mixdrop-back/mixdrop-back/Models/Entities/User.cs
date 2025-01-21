@@ -13,6 +13,7 @@ public class User
     public string Role { get; set; }
     public string AvatarPath { get; set; }
     public bool IsInQueue { get; set; }
+    public bool Banned { get; set; } = false;
     public int StateId { get; set; }
     public State State { get; set; }
     public ICollection<UserFriend> UserFriends { get; set; } = new List<UserFriend>();
