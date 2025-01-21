@@ -7,7 +7,7 @@ namespace mixdrop_back.Repositories
     public class FriendshipRepository : Repository<Friendship, int>
     {
         public FriendshipRepository(MixDropContext context) : base(context) { }
-        public async Task<Friendship> GetFriendAsync(int userId1, int userId2)
+        public async Task<Friendship> GetFriendshipAsync(int userId1, int userId2)
         {
             return await GetQueryable()
                 .Include(friendship => friendship.UserFriends
@@ -17,7 +17,7 @@ namespace mixdrop_back.Repositories
                 .FirstOrDefaultAsync();
 
         }
-        public async Task<Friendship> GetAllFriendsAsync(int friendshipId)
+        public async Task<Friendship> GetAllFriendshipsAsync(int friendshipId)
         {
             return await GetQueryable()
                 .Include(friendship => friendship.UserFriends)

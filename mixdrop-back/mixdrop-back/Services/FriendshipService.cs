@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using mixdrop_back.Models.Entities;
+using mixdrop_back.Repositories.Base;
 using System.Runtime.Intrinsics.X86;
 
 namespace mixdrop_back.Services
@@ -13,19 +14,19 @@ namespace mixdrop_back.Services
             _unitOfWork = unitOfWork;
         }
 
-        // Enviar solicitud de amistad
+        // Método enviar solicitud de amistad
         public async Task AddFriend(User user1, User user2)
         {
             try
             {
-                // Comprobar si el user2 existe
-                var existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
+                // Comprobamos si el user2 existe
+                User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
                 if (existingUser == null)
                 {
                     throw new Exception("Este usuario no existe.");
                 }
 
-                var existingFriendship = await _unitOfWork.FriendshipRepository.GetFriendAsync(user1.Id, user2.Id);
+                Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetFriendshipAsync(user1.Id, user2.Id);
                 if (existingFriendship != null)
                 {
                     throw new Exception("Esta amistad ya existe");
@@ -33,17 +34,17 @@ namespace mixdrop_back.Services
 
                 // Se crea una nueva "plantilla" de amistad
                 var newFriendship = await _unitOfWork.FriendshipRepository.InsertAsync(new Friendship());
-                
-                // A cada usuario se le asigna la misma ID de amistad.
-                var newUserFriend1 = new UserFriend
+
+                // A cada usuario se le asigna la misma ID de amistad
+                UserFriend newUserFriend1 = new UserFriend
                 {
-                    FriendId = newFriendship.Id,
+                    FriendshipId = newFriendship.Id,
                     UserId = user1.Id,
                     Receiver = false
                 };
-                var newUserFriend2 = new UserFriend
+                UserFriend newUserFriend2 = new UserFriend
                 {
-                    FriendId = newFriendship.Id,
+                    FriendshipId = newFriendship.Id,
                     UserId = user2.Id,
                     Receiver = true
                 };
@@ -51,22 +52,22 @@ namespace mixdrop_back.Services
                 await _unitOfWork.SaveAsync();
                 
             }
-            catch (Exception e)
+            catch (Exception mortadela)
             {
-                Console.WriteLine("Error al añadir amigo: ", e);
+                Console.WriteLine("Error al añadir amigo: ", mortadela);
             }
         }
 
-        // Aceptar solicitud de amistad
-        public async Task AcceptFriend(Friendship friendship, User user)
+        // Método solicitud de amistad
+        public async Task AcceptFriend(int friendshipId, User user)
         {
-            var existingFriendship = await _unitOfWork.FriendshipRepository.GetAllFriendsAsync(friendship.Id);
+            Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetAllFriendshipsAsync(friendshipId);
             if (existingFriendship == null)
             {
                 throw new Exception("Esta solicitud no existe");
             }
 
-            var receiverUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver);
+            UserFriend receiverUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == true);
             if (receiverUser.Id != user.Id)
             {
                 throw new Exception("Este usuario no es recibidor");
@@ -79,10 +80,25 @@ namespace mixdrop_back.Services
             // You're my friend now :D turururururu
         }
 
-        // Borrar amigo
-        public async Task DeleteFriend (Friendship friendship, User user)
+        // Método borrar amigo o rechazar solicitud de amistad
+        public async Task DeleteFriend (int friendshipId, User user)
         {
-            // Comprobar que la amistad existe y que el usuario es parte de la amistad
+            // Comprobamos que la amistad existe
+            Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetAllFriendshipsAsync(friendshipId);
+            if (existingFriendship == null)
+            {
+                throw new Exception("Esta amistad no existe :(");
+            }
+
+            // Comprobamos que el usuario es parte de la amistad
+            UserFriend userFriend = existingFriendship.UserFriends.FirstOrDefault(user => user.UserId == user.Id);
+            if (userFriend == null)
+            {
+                throw new Exception("Este usuario no forma parte de esta amistad");
+            }
+
+            _unitOfWork.FriendshipRepository.Delete(existingFriendship);
+            await _unitOfWork.SaveAsync();
         }
     }
 }
