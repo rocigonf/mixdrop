@@ -33,6 +33,7 @@ export class ProfileComponent implements OnInit {
   imagePreview!: string;
 
   isEditing = false; //modo edición
+  deleteAvatar = false;
   
   constructor(
     private activatedRoute: ActivatedRoute, 
@@ -96,18 +97,24 @@ export class ProfileComponent implements OnInit {
       reader.readAsDataURL(event.target.files[0])
     }
   }
-
+  
   // TODO: Agregar verificación
   async updateUser() : Promise<void>
   {
     const role = this.user?.role.toString();
     const formData = new FormData();
     formData.append( "Nickname" ,this.userForm.value.nickname )
+
     if(this.image)
     {
       formData.append( "Image" ,this.image, this.image.name )
       formData.append( "ChangeImage", "true")
     }
+    else if(this.deleteAvatar)
+    {
+      formData.append("ChangeImage", "true")
+    }
+    
     formData.append( "Email" ,this.userForm.value.email )
     formData.append( "Password" , this.passwordForm.get('newPassword')?.value )
     
