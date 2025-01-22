@@ -8,12 +8,10 @@ import { UserService } from '../../services/user.service';
 import { UserFriend } from '../../models/user-friend';
 import { User } from '../../models/user';
 import { Battle } from '../../models/battle';
-import { UserFriendService } from '../../services/user-friend.service';
 import { BattleService } from '../../services/battle.service';
-
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../services/auth.service';
+import { FriendshipService } from '../../services/friendship.service';
 
 
 @Component({
@@ -41,7 +39,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   
   constructor (private webSocketService : WebsocketService, 
     private router: Router, private userService: UserService, 
-    private userFriendService : UserFriendService,
+    private friendshipService : FriendshipService,
     private battleService : BattleService,
   ){}
 
@@ -85,13 +83,13 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
-    await this.userFriendService.removeFriendById(userFriend.id)
+    await this.friendshipService.removeFriendById(userFriend.id)
   }
 
   async addFriend(user : User)
   {
     // Hago una petición para que cree el amigo, ( wesoque ->) y en back el servidor debería notificar a ambos usuarios enviando la lista de amigos
-    const response = await this.userFriendService.addFriend(user)
+    const response = await this.friendshipService.addFriend(user)
     console.log("Respuesta de agregar al amigo: ", response)
   }
 

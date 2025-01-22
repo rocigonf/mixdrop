@@ -1,8 +1,7 @@
-﻿using mixdrop_back.Models.Sockets;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text.Json;
 
-namespace mixdrop_back.Services;
+namespace mixdrop_back.Sockets;
 
 public class WebSocketHandler
 {
@@ -25,7 +24,10 @@ public class WebSocketHandler
         else
         {
             // Necesario porque parece que toma el socket como cerrado, no sé por qué
-            socket.Socket = webSocket;
+            if (socket.Socket == null || socket.Socket.State == WebSocketState.Closed)
+            {
+                socket.Socket = webSocket;
+            }
         }
 
         Dictionary<object, object> dict = new Dictionary<object, object>
@@ -40,8 +42,8 @@ public class WebSocketHandler
 
     public static async Task RemoveSocket(int userId)
     {
-        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket=>userSocket.UserId == userId);
-        if(userSocket != null)
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
+        if (userSocket != null)
         {
             USER_SOCKETS.Remove(userSocket);
             Total -= 1;
@@ -53,10 +55,9 @@ public class WebSocketHandler
 
     private static async Task NotifyUsers(string jsonToSend)
     {
-
         foreach (var userSocket in USER_SOCKETS)
         {
-            if(userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
+            if (userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);
         }
     }
 

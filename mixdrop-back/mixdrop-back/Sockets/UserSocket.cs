@@ -1,10 +1,9 @@
 ﻿using mixdrop_back.Models.Entities;
-using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
-namespace mixdrop_back.Models.Sockets;
+namespace mixdrop_back.Sockets;
 
 public class UserSocket
 {
@@ -54,10 +53,10 @@ public class UserSocket
                 }
             }
             catch (Exception)
-            { 
+            {
             }
             // Leemos el mensaje
-            
+
         }
     }
 
