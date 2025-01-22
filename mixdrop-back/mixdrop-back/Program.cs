@@ -76,6 +76,7 @@ public class Program
         // Inyección de Servicios
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<FriendshipService>();
+        builder.Services.AddScoped<BattleService>();
         
         builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
 
