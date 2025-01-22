@@ -18,6 +18,15 @@ span {
     height: 45px;
 }
 
+.play {
+    cursor: pointer;
+}
+
+.play:hover
+{
+    text-decoration: underline;
+}
+
 .avatar {
     vertical-align: middle;
     height: 40px;
@@ -25,6 +34,8 @@ span {
     cursor: pointer;
     padding-left: 10px;
     padding-top: 5px;
+    
+   
 }
 
 .marco {

@@ -19,7 +19,7 @@ public class UserRepository : Repository<User, int>
     {
         return await GetQueryable()
             .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friend)
+                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -30,11 +30,16 @@ public class UserRepository : Repository<User, int>
             .FirstOrDefaultAsync(user => user.Email.Equals(email));
     }
 
+    public async Task<User> GetBasicUserByMailAsync(string email)
+    {
+        return await GetQueryable().FirstOrDefaultAsync(u => u.Email.Equals(email));
+    }
+
     public async Task<User> GetByNicknameAsync(string nickname)
     {
         return await GetQueryable()
             .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friend)
+                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -49,7 +54,7 @@ public class UserRepository : Repository<User, int>
     {
         return await GetQueryable()
             .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friend)
+                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -64,7 +69,7 @@ public class UserRepository : Repository<User, int>
     {
         return await GetQueryable()
             .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friend)
+                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)

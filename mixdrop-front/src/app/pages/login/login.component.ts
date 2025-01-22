@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { WebsocketService } from '../../services/websocket.service';
 import { NgIf } from '@angular/common';
+import { PasswordValidatorService } from '../../services/password-validator.service';
 
 
 
@@ -34,7 +35,8 @@ export class LoginComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private webSocketService: WebsocketService
+    private webSocketService: WebsocketService,
+    private passwordValidator : PasswordValidatorService
   ) {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
@@ -42,20 +44,7 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
-      { validators: this.passwordMatchValidator });
-  }
-
-  // Validator de contraseña
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password')?.value;
-    const confirmPasswordControl = form.get('confirmPassword');
-    const confirmPassword = confirmPasswordControl?.value;
-
-    if (password !== confirmPassword && confirmPasswordControl) {
-      confirmPasswordControl.setErrors({ mismatch: true });
-    } else if (confirmPasswordControl) {
-      confirmPasswordControl.setErrors(null);
-    }
+      { validators: this.passwordValidator.passwordMatchValidator });
   }
 
 

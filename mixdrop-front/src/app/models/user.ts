@@ -1,3 +1,5 @@
+import { UserFriend } from "./user-friend";
+
 export interface User {
     id : number,
     nickname : string,
@@ -5,5 +7,7 @@ export interface User {
     avatarPath : string,
     role: string,
     isInQueue: boolean,
-    stateId: number
+    stateId: number,
+    userFriend: UserFriend[],
+    banned : boolean
 }

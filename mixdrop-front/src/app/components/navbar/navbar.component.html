@@ -5,7 +5,7 @@
 
     <div class="nav-right">
 
-        <a (click)="navigateToUrl('menu')">
+        <a class="play" (click)="navigateToUrl('menu')">
             <span>JUGAR</span>
         </a>
 
@@ -18,10 +18,17 @@
         </a>
 
         @if (authService.isAuthenticated()) {
-
-            <a (click)="navigateToUrl('menu')">
-                <img class="marco" src="/images/marco.png" alt=""  >
+                
+            <a (click)="navigateToUrl('profile/' + user?.id)">
+                @if(user?.avatarPath != "")
+                {
+                    <img class="marco" src="/images/marco.png" alt=""  >
                 <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+                }
+                @else 
+                {
+                    <img class="avatar" src="/images/user.png" alt="avatar">
+                }
             </a>
 
             <a class="logout" (click)="authClick()">

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Repositories;
 using mixdrop_back.Services;
+using mixdrop_back.Sockets;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -69,14 +70,12 @@ public class Program
         builder.Services.AddScoped<MixDropContext>();
         builder.Services.AddScoped<UnitOfWork>();
 
-        // Inyección de todos los repositorios
-        builder.Services.AddScoped<UserRepository>();
-
         // Inyección de Mappers
         builder.Services.AddScoped<UserMapper>();
 
         // Inyección de Servicios
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<FriendshipService>();
         
         builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
 
@@ -136,8 +135,6 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
-
         // Permite CORS
         app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
@@ -148,6 +145,10 @@ public class Program
 
         // Se usa nuestro middleware :D (DEBE IR AQUÍ)
         app.UseMiddleware<PreAuthMiddleware>();
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
 
         app.UseAuthentication();
         app.UseAuthorization();

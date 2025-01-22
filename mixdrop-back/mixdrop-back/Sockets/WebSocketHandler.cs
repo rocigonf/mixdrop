@@ -2,7 +2,7 @@
 using System.Net.WebSockets;
 using System.Text.Json;
 
-namespace mixdrop_back.Services;
+namespace mixdrop_back.Sockets;
 
 public class WebSocketHandler
 {
@@ -11,7 +11,6 @@ public class WebSocketHandler
 
     public async Task HandleWebsocketAsync(WebSocket webSocket, int userId)
     {
-        // TODO: Cuando asigno un nuevo socket a la lista, envío a todos los usuarios que se ha cambiado
         var socket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
         if (socket == null)
         {
@@ -26,7 +25,10 @@ public class WebSocketHandler
         else
         {
             // Necesario porque parece que toma el socket como cerrado, no sé por qué
-            socket.Socket = webSocket;
+            if (socket.Socket == null || socket.Socket.State == WebSocketState.Closed)
+            {
+                socket.Socket = webSocket;
+            }
         }
 
         Dictionary<object, object> dict = new Dictionary<object, object>
@@ -46,6 +48,7 @@ public class WebSocketHandler
         {
             USER_SOCKETS.Remove(userSocket);
             Total -= 1;
+            userSocket.Socket.Dispose(); // Para cerrar el websocket
 
             await SendStatsMessage();
         }
@@ -53,7 +56,6 @@ public class WebSocketHandler
 
     private static async Task NotifyUsers(string jsonToSend)
     {
-
         foreach (var userSocket in USER_SOCKETS)
         {
             if (userSocket.Socket.State == WebSocketState.Open) await userSocket.SendAsync(jsonToSend);

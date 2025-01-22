@@ -9,6 +9,7 @@ using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Helper;
 using mixdrop_back.Models.Mappers;
 using System.Text;
+using mixdrop_back.Sockets;
 
 namespace mixdrop_back.Services;
 
@@ -75,6 +76,11 @@ public class UserService
         return _userMapper.ToDto(users).ToList();
     }
 
+    public async Task<User> GetBasicUserByIdAsync(int userId)
+    {
+        return await _unitOfWork.UserRepository.GetByIdAsync(userId);
+    }
+
     public async Task<UserDto> GetUserByEmailAsync(string email)
     {
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(email);
@@ -139,6 +145,11 @@ public class UserService
             throw new Exception("Email no valido.");
         }
 
+        if(model.Password == null || model.Password.Length < 6)
+        {
+            throw new Exception("Contraseña no válida");
+        }
+
         try
         {
             
@@ -156,12 +167,17 @@ public class UserService
             {
                 Email = model.Email.ToLower(),
                 Nickname = model.Nickname.ToLower(),
-                AvatarPath = "/" + await imageService.InsertAsync(model.Image),
+                AvatarPath = "",
                 Role = "User", // Rol por defecto
                 Password = PasswordHelper.Hash(model.Password),
                 IsInQueue = false,  // por defecto al crearse
                 StateId = 1
             };
+
+            if(model.Image != null)
+            {
+                newUser.AvatarPath = "/" + await imageService.InsertAsync(model.Image);
+            }
 
             await _unitOfWork.UserRepository.InsertAsync(newUser);
             await _unitOfWork.SaveAsync();
@@ -177,6 +193,74 @@ public class UserService
         }
     }
 
+    public async Task<UserDto> UpdateUser(RegisterDto model, User existingUser, string role)
+    {
+        // validacion email
 
+        if (!emailRegex.IsMatch(model.Email))
+        {
+            throw new Exception("Email no valido.");
+        }
 
+        if (model.Password != null && model.Password != "" && model.Password.Length < 6)
+        {
+            throw new Exception("La contraseña no es válida");
+        }
+
+        try
+        {
+            // Verifica si el usuario ya existe
+            if (!model.Email.Equals(existingUser.Email))
+            {
+                var otherUser = await GetUserByEmailAsync(model.Email.ToLower());
+
+                if (otherUser != null)
+                {
+                    throw new Exception("El usuario ya existe.");
+                }
+            }
+
+            ImageService imageService = new ImageService();
+
+            existingUser.Email = model.Email.ToLower();
+            existingUser.Nickname = model.Nickname.ToLower();
+            
+            // Si han pasado que la imagen debe cambiar y no es nula, guardo la imagen, pero si es nula, borro la que ya tenía
+            if(model.ChangeImage.Equals("true"))
+            {
+                if (model.Image != null)
+                {
+                    existingUser.AvatarPath = await imageService.InsertAsync(model.Image);
+                }
+                else
+                {
+                    existingUser.AvatarPath = "";
+                }
+            }
+
+            existingUser.Role = role;
+
+            if(model.Password != null && model.Password != "")
+            {
+                existingUser.Password = PasswordHelper.Hash(model.Password);
+            }
+
+            _unitOfWork.UserRepository.Update(existingUser);
+            await _unitOfWork.SaveAsync();
+
+            return _userMapper.ToDto(existingUser);
+
+        }
+        catch (DbUpdateException ex)
+        {
+            // Log más detallado del error
+            Console.WriteLine($"Error al guardar el usuario: {ex.InnerException?.Message}");
+            throw new Exception("Error al registrar el usuario. Verifica los datos ingresados.");
+        }
+    }
+    
+    public UserDto ToDto(User user)
+    {
+        return _userMapper.ToDto(user);
+    }
 }
