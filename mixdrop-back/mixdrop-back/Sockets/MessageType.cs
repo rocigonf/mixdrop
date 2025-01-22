@@ -1,4 +1,4 @@
-﻿namespace mixdrop_back.Models.Sockets;
+﻿namespace mixdrop_back.Sockets;
 
 public enum MessageType
 {
