@@ -1,10 +1,11 @@
 <app-navbar></app-navbar>
 
+<button (click)="emparejar()">Emparejamiento</button>
+
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
     <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
 </div>
-
 
 <!-- contenido -->
 <div class="container">

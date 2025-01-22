@@ -46,7 +46,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   
   constructor (private webSocketService : WebsocketService, 
     private router: Router, private userService: UserService, 
-    private userFriendService : UserFriendService,
     private battleService : BattleService,
     public authService: AuthService,
     private friendshipService : FriendshipService,
@@ -133,6 +132,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   
   searchFriend(queryfriend : string) : void{
     
+  }
+
+  emparejar() {
+
+    // se crea una partida
+
+    // HAY QUE PASARLE EL ID DE LA PARTIDA CREADA A LA RUTA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    this.router.navigateByUrl("matching");
   }
 
 }
