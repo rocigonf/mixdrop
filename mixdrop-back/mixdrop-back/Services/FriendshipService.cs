@@ -1,14 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Repositories.Base;
+using mixdrop_back.Sockets;
 using System.Runtime.Intrinsics.X86;
+using System.Text.Json;
 
 namespace mixdrop_back.Services
 {
     public class FriendshipService
     {
         private readonly UnitOfWork _unitOfWork;
-
+        private Dictionary<object, object> dict = new Dictionary<object, object>
+                    {
+                        { "messageType", MessageType.Friend }
+                    };
         public FriendshipService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -48,9 +53,18 @@ namespace mixdrop_back.Services
                     UserId = user2.Id,
                     Receiver = true
                 };
+                
+                // Se insertan los nuevos amigos
+                await _unitOfWork.UserFriendRepository.InsertAsync(newUserFriend1);
+                await _unitOfWork.UserFriendRepository.InsertAsync(newUserFriend2);
 
                 await _unitOfWork.SaveAsync();
-                
+
+                dict.Add("friends", user1.UserFriends.Append(newUserFriend1));
+                await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user1.Id);
+
+                dict["friends"] = user2.UserFriends.Append(newUserFriend2);
+                await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user2.Id);
             }
             catch (Exception mortadela)
             {
@@ -77,6 +91,24 @@ namespace mixdrop_back.Services
 
             _unitOfWork.FriendshipRepository.Update(existingFriendship);
             await _unitOfWork.SaveAsync();
+
+            // Notificar a usuario recibidor
+            user.UserFriends.Remove(receiverUser); // Se borra la amistad del usuario
+            receiverUser.Friendships.Accepted = true; // Se cambia el estado de la amistad
+
+            dict.Add("friends", user.UserFriends.Append(receiverUser)); // Y se vuelve a pegar la amistad
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user.Id);
+
+            // Notificar a usuario enviador
+            UserFriend senderUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == false);
+            User sender = await _unitOfWork.UserRepository.GetUserById(senderUser.Id);
+
+            sender.UserFriends.Remove(senderUser); // Se borra la amistad del usuario
+            senderUser.Friendships.Accepted = true; // Se cambia el estado de la amistad
+
+            dict["friends"] = sender.UserFriends.Append(senderUser); // Y se vuelve a pegar la amistad
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), sender.Id);
+
             // You're my friend now :D turururururu
         }
 
@@ -99,6 +131,16 @@ namespace mixdrop_back.Services
 
             _unitOfWork.FriendshipRepository.Delete(existingFriendship);
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<ICollection<UserFriend>> GetFriendList(int userId)
+        {
+            User user = await _unitOfWork.UserRepository.GetUserById(userId);
+            if (user == null) {
+                throw new Exception("Si es nulo vete a tomar por culo >:(");
+            }
+
+            return user.UserFriends;
         }
     }
 }

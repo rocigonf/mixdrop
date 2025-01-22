@@ -1,19 +1,27 @@
-﻿using System.Net.WebSockets;
+﻿using mixdrop_back.Services;
+using System.Net.WebSockets;
 using System.Text.Json;
 
 namespace mixdrop_back.Sockets;
 
 public class WebSocketHandler
 {
+    private static IServiceProvider _serviceProvider;
     private static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
     public static int Total { get; set; } = 0;
 
+    public WebSocketHandler(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public async Task HandleWebsocketAsync(WebSocket webSocket, int userId)
     {
+        using IServiceScope scope = _serviceProvider.CreateScope();
         var socket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
         if (socket == null)
         {
-            socket = new UserSocket()
+            socket = new UserSocket(scope.ServiceProvider.GetRequiredService<FriendshipService>())
             {
                 UserId = userId,
                 Socket = webSocket
@@ -53,7 +61,16 @@ public class WebSocketHandler
         }
     }
 
-    private static async Task NotifyUsers(string jsonToSend)
+    public static async Task NotifyOneUser(string jsonToSend, int userId)
+    {
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
+        if (userSocket != null && userSocket.Socket.State == WebSocketState.Open)
+        {
+            await userSocket.SendAsync(jsonToSend);
+        }
+    }
+
+    public static async Task NotifyUsers(string jsonToSend)
     {
         foreach (var userSocket in USER_SOCKETS)
         {
