@@ -76,7 +76,7 @@ export class ProfileComponent implements OnInit {
         if(jwt)
         {
           const id = JSON.parse(window.atob(jwt.split('.')[1])).nameid;
-          if(id == this.user?.id)
+          if(id == this.user?.Id)
           {
             this.isItself = true
           }
@@ -101,7 +101,7 @@ export class ProfileComponent implements OnInit {
   // TODO: Agregar verificación
   async updateUser() : Promise<void>
   {
-    const role = this.user?.role.toString();
+    const role = this.user?.Role.toString();
     const formData = new FormData();
     formData.append( "Nickname" ,this.userForm.value.nickname )
 

@@ -96,7 +96,7 @@ export class AuthService implements OnDestroy {
   // comprueba si es admin
   isAdmin(): boolean {
     const user = this.getUser();
-    if (user?.role == "Admin") {
+    if (user?.Role == "Admin") {
       return true
     } else {
       return false
