@@ -35,16 +35,16 @@ public class MixDropContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Friendship>()
-            .HasKey(f => new { f.User1Id, f.User2Id });
+            .HasKey(f => new { f.SenderUserId, f.ReceiverUserId });
 
         modelBuilder.Entity<Friendship>()
-            .HasOne(f => f.User1)
+            .HasOne(f => f.SenderUser)
             .WithMany(u => u.Friendships)
-            .HasForeignKey(f => f.User1Id);
+            .HasForeignKey(f => f.SenderUserId);
 
         modelBuilder.Entity<Friendship>()
-            .HasOne(f => f.User2)
+            .HasOne(f => f.ReceiverUser)
             .WithMany()
-            .HasForeignKey(a => a.User2Id);
+            .HasForeignKey(a => a.ReceiverUserId);
     }
 }

@@ -1,13 +1,13 @@
-import { UserFriend } from "./user-friend";
+import { Friend } from "./friend";
 
 export interface User {
     id : number,
-    nickname : string,
+    Nickname : string,
     email : string,
     avatarPath : string,
     role: string,
     isInQueue: boolean,
     stateId: number,
-    userFriend: UserFriend[],
+    friend: Friend[],
     banned : boolean
 }
