@@ -117,7 +117,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       if(friend.accepted === false)
       {
 
-        if(this.user?.id == friend.receiverUser?.id)
+        if(this.user?.id == friend.receiverUserId)
         {
           this.pendingFriends.push(friend)
         }
