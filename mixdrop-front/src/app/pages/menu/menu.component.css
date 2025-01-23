@@ -13,7 +13,8 @@
 .cabecera img {
     border: 2px solid white;
     border-radius: 5px;
-    width: 150px;
+    width: 120px;
+    height: 120px;
 }
 
 .container {

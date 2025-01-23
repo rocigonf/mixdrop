@@ -1,13 +1,13 @@
 import { Friend } from "./friend";
 
 export interface User {
-    Id : number,
-    Nickname : string,
-    Email : string,
-    AvatarPath : string,
-    Role: string,
-    IsInQueue: boolean,
-    StateId: number,
-    Friend: Friend[],
-    Banned : boolean
+    id : number,
+    nickname : string,
+    email : string,
+    avatarPath : string,
+    role: string,
+    isInQueue: boolean,
+    stateId: number,
+    friend: Friend[],
+    banned : boolean
 }

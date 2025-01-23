@@ -1,17 +1,17 @@
 <app-navbar></app-navbar>
 @if(user)
 {
-    @if(user.AvatarPath != "" && !deleteAvatar)
+    @if(user.avatarPath != "" && !deleteAvatar)
     {
-    <img class="avatar" [src]="IMG_URL + user.AvatarPath" alt="avatar">
+    <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
     }
     @else
     {
     <img class="avatar" src="/images/user.png" alt="avatar">
     }
 
-    <p>Apodo: {{user.Nickname}}</p>
-    <p>Mail: {{user.Email}}</p>
+    <p>Apodo: {{user.nickname}}</p>
+    <p>Mail: {{user.email}}</p>
     
     @if(isItself)
     {
@@ -24,12 +24,12 @@
             <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
                 <div class="profile-row">
                     <label for="nickname">Nombre:
-                        <input type="text" [value]="user.Nickname" formControlName="nickname" [readonly]="!isEditing">
+                        <input type="text" [value]="user.nickname" formControlName="nickname" [readonly]="!isEditing">
                     </label>
                 </div>
                 <div class="profile-row">
                     <label for="email">Correo:
-                        <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.Email" />
+                        <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.email" />
                     </label>
                 </div>
                 <div class="profile-row-buttons">

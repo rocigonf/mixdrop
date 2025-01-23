@@ -108,13 +108,13 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.pendingFriends = []
     for(const friend of this.friendsRaw)
     {
-      if(friend.Accepted)
+      if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
       }
       else
       {
-        if(this.user?.Id == friend.ReceiverUser?.Id)
+        if(this.user?.id == friend.receiverUser?.id)
         {
           this.pendingFriends.push(friend)
         }
@@ -128,7 +128,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
-    await this.friendshipService.removeFriendById(friend.Id)
+    await this.friendshipService.removeFriendById(friend.id)
   }
 
   async addFriend(user : User)
