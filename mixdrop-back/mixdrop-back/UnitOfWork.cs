@@ -19,7 +19,7 @@ public class UnitOfWork
     public FriendshipRepository FriendshipRepository => _friendshipRepository ??= new FriendshipRepository(_context);
     public UserFriendRepository UserFriendRepository => _userFriendRepository ??= new UserFriendRepository(_context);
     public BattleRepository BattleRepository => _battleRepository ??= new BattleRepository(_context);
-    public UserBattleRepository UserBattleRepository => _userBattleRepository ?? = new UserBattleRepository(_context);
+    public UserBattleRepository UserBattleRepository => _userBattleRepository ??= new UserBattleRepository(_context);
 
     // poner todos los repositorys
 
