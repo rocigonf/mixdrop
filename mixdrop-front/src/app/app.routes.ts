@@ -13,5 +13,4 @@ export const routes: Routes = [
     { path: 'profile/:id', component: ProfileComponent},
     { path: 'game/:id', component: GameComponent},
     { path: 'matching', component: MatchingComponent }, // PONERLE ID !!!!!!
-
 ];

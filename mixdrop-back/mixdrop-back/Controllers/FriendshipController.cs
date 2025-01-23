@@ -20,6 +20,24 @@ namespace mixdrop_back.Controllers
             _userService = userService;
         }
 
+        // TODO: Pasar a DTO para no enviar los datos del usuario
+        /*[Authorize]
+        [HttpGet("{id}")]
+        public async Task<Friendship> GetFriendshipById(int id)
+        {
+            User user = await GetAuthorizedUser();
+            Friendship friendship = await _friendshipService.GetFriendshipByIdAsync(id);
+
+            UserFriend userInFriendship = friendship.UserFriends.FirstOrDefault(user => user.Id == id);
+            if (userInFriendship == null)
+            {
+                Console.WriteLine("El usuario no está en la amistad");
+                return null;
+            }
+
+            return friendship;
+        }*/
+
         // Enviar solicitud de amistad
         [Authorize]
         [HttpPost]

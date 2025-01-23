@@ -44,6 +44,19 @@
                     [ngModelOptions]="{standalone: true}" />
                 <button type="submit"> Buscar</button>
             </form>
+        <div>
+            <span>TUS AMIGOS</span>
+            @for(friend of friends; track friend.id)
+            {
+                <div>
+                    <p>Amistad {{ friend.id }}:</p>
+                    <p>{{ friend.friend.accepted }}</p>
+                    <p>{{ friend.user.nickname }}</p>
+                </div>
+                
+
+            }
+            <button>Añadir a un amigo</button> <!--te lleva a buscar amigos-->
         </div>
         }
 
@@ -100,3 +113,26 @@
 
 
 <br><br><br><br>
+<div class="busquedaUsuarios">
+    <form (submit)="getSearchedUsers(queryuser)">
+        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
+            [ngModelOptions]="{standalone: true}" />
+        <button type="submit" [disabled]="!queryuser"> Buscar</button>
+    </form>
+
+    @if (searchedUsers) {
+
+    @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p>
+        }
+        @else {
+        @for (user of searchedUsers; track $index)
+        {
+        <div class="usuarioBuscado">
+            <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+            {{user.nickname}}
+            <button (click)="addFriend(user)">Agregar amigo</button>
+        </div>
+        }
+        }
+        }
+</div>
