@@ -123,14 +123,28 @@ namespace mixdrop_back.Services
             }
 
             // Comprobamos que el usuario es parte de la amistad
-            UserFriend userFriend = existingFriendship.UserFriends.FirstOrDefault(user => user.UserId == user.Id);
+            UserFriend userFriend = existingFriendship.UserFriends.FirstOrDefault(userFriend => userFriend.UserId == user.Id);
             if (userFriend == null)
+            {
+                throw new Exception("Este usuario no forma parte de esta amistad");
+            }
+
+            UserFriend user2 = existingFriendship.UserFriends.FirstOrDefault(userFriend => userFriend.UserId != user.Id);
+            if (user2 == null)
             {
                 throw new Exception("Este usuario no forma parte de esta amistad");
             }
 
             _unitOfWork.FriendshipRepository.Delete(existingFriendship);
             await _unitOfWork.SaveAsync();
+
+            // Notificar al primer usuario
+            dict.Add("friends", user.UserFriends);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user.Id);
+
+            // Notificar al segundo usuario
+            dict.Add("friends", user2.Friendships.UserFriends);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user2.UserId);
         }
 
         public async Task<ICollection<UserFriend>> GetFriendList(int userId)
