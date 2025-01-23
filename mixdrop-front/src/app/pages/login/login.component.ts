@@ -29,6 +29,8 @@ export class LoginComponent {
 
   image: File | null = null
 
+  imgSeleccionada : Boolean = false;
+
   imagePreview!: string;
 
   constructor(
@@ -80,7 +82,6 @@ export class LoginComponent {
   async register() {
     console.log(this.registerForm.value)
 
-
     if (this.registerForm.valid && this.image) {
 
       const formData = new FormData();
@@ -120,6 +121,8 @@ export class LoginComponent {
   onFileSelected(event: any) {
     const image = event.target.files[0] as File;
     this.image = image
+
+    this.imgSeleccionada = true;
 
     if(event.target.files.length > 0){
       const reader = new FileReader();
