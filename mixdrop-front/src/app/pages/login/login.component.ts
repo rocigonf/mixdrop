@@ -100,10 +100,6 @@ export class LoginComponent {
         const loginResult = await this.authService.login(authData, false);
 
         if (loginResult.success) {
-
-          const user = this.authService.getUser();
-          const nickname = user ? user.nickname : null;
-
           alert("Te has registrado con éxito.")
           this.router.navigateByUrl("menu"); // redirige a inicio
 

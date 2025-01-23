@@ -43,9 +43,8 @@ namespace mixdrop_back.Services
             // Se crea una nueva "plantilla" de amistad
             var newFriendship = await _unitOfWork.FriendshipRepository.InsertAsync(new Friendship() 
             {
-                User1Id = user1.Id,
-                User2Id = user2.Id,
-                ReceiverId = user2.Id
+                SenderUserId = user1.Id,
+                ReceiverUserId = user2.Id,
             });
 
 
@@ -90,7 +89,7 @@ namespace mixdrop_back.Services
             }
 
             //UserFriend receiverUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == true);
-            if (user.Id != existingFriendship.ReceiverId)
+            if (user.Id != existingFriendship.ReceiverUserId)
             {
                 Console.WriteLine("Este usuario no es recibidor");
                 return;
@@ -110,7 +109,7 @@ namespace mixdrop_back.Services
 
             // Notificar a usuario enviador
             //UserFriend senderUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == false);
-            User sender = existingFriendship.User1;
+            User sender = existingFriendship.SenderUser;
 
             sender.Friendships.Remove(existingFriendship); // Se borra la amistad del usuario
             //sender.Friendships.Accepted = true; // Se cambia el estado de la amistad
@@ -134,7 +133,7 @@ namespace mixdrop_back.Services
 
             // Comprobamos que el usuario es parte de la amistad
             //User user = existingFriendship.FirstOrDefault(user => user.UserId == user.Id);
-            if (existingFriendship.User1Id != user.Id && existingFriendship.User2Id != user.Id)
+            if (existingFriendship.SenderUserId != user.Id && existingFriendship.ReceiverUserId != user.Id)
             {
                 Console.WriteLine("Este usuario no forma parte de esta amistad");
                 return;
@@ -147,14 +146,29 @@ namespace mixdrop_back.Services
         // TODO: Agregar verificación
         public async Task<ICollection<Friendship>> GetFriendList(int userId)
         {
-            /*User user = await _unitOfWork.UserRepository.GetUserWithFriends(userId);
+            /*User user = await _unitOfWork.UserRepository.GetMortadelaById(userId);
             if (user == null)
             {
-                Console.WriteLine("Si es nulo vete a tomar por culo >:(");
+                Console.WriteLine("Si es nulo a tomar por culo >:(");
                 return null;
             }*/
 
-            ICollection<Friendship> friendships = await _unitOfWork.FriendshipRepository.GetFriendshipyByUserIdAsync(userId);
+            ICollection<Friendship> friendships = await _unitOfWork.FriendshipRepository.GetFriendshipsByUserAsync(userId);
+
+            foreach(Friendship friendship in friendships)
+            {
+                if(friendship.SenderUserId == userId)
+                {
+                    friendship.SenderUser = null;
+                    friendship.ReceiverUser.Password = null;
+                }
+                else
+                {
+                    friendship.ReceiverUser = null;
+                    friendship.SenderUser.Password = null;
+                }
+            }
+
             return friendships;
         }
     }

@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { UserService } from '../../services/user.service';
-import { UserFriend } from '../../models/user-friend';
 import { User } from '../../models/user';
 import { Battle } from '../../models/battle';
 import { BattleService } from '../../services/battle.service';
@@ -13,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
+import { Friend } from '../../models/friend';
 
 
 @Component({
@@ -29,7 +29,11 @@ export class MenuComponent implements OnInit, OnDestroy {
   user: User | null = null;
 
   totalPlayers = 0;
-  friends: UserFriend[] = []
+
+  friendsRaw: Friend[] = []
+  acceptedFriends : Friend[] = []
+  pendingFriends : Friend[] = []
+
   pendingBattles: Battle[] = []
   battleId : number = 0
 
@@ -37,6 +41,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   searchedFriends:User[] = [];
   queryuser: string = '';
   queryfriend: string = '';
+  askedForFriend: boolean = false
 
 
   menuSelector : string = 'myFriends';  // myFriends, searchUsers, friendRequest, battleRequest
@@ -56,12 +61,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     // Procesa la respuesta
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
-    this.askForInfo(1)
 
     this.user = this.authService.getUser();
 
     this.askForInfo(MessageType.Stats)
-    this.askForInfo(MessageType.Friend)
   }
 
   processMessage(message : any)
@@ -76,7 +79,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     {
       case MessageType.Friend:
         // Es posible que haya que hacer JSON.parse() otra vez
-        this.friends = jsonResponse.friends
+        this.askedForFriend = true
+        this.friendsRaw = jsonResponse.friends
+        this.processFriends()
         break
       case MessageType.Stats:
         this.totalPlayers = jsonResponse.total
@@ -90,14 +95,37 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.battleId = jsonResponse.battleId
         break
     }
+    if(!this.askedForFriend)
+    {
+      this.askForInfo(MessageType.Friend)
+    }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
-  async removeFriend(userFriend : UserFriend)
+  processFriends()
+  {
+    this.acceptedFriends = []
+    this.pendingFriends = []
+    for(const friend of this.friendsRaw)
+    {
+      if(friend.Accepted)
+      {
+        this.acceptedFriends.push(friend)
+      }
+      else
+      {
+        this.pendingFriends.push(friend)
+      }
+    }
+    console.log("mortadela: ", this.acceptedFriends)
+    console.log("xoriso: ", this.pendingFriends)
+  }
+
+  async removeFriend(friend : Friend)
   {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
-    await this.friendshipService.removeFriendById(userFriend.id)
+    await this.friendshipService.removeFriendById(friend.Id)
   }
 
   async addFriend(user : User)
