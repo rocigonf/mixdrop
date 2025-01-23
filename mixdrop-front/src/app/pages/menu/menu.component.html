@@ -3,7 +3,7 @@
 <button (click)="emparejar()">Emparejamiento</button>
 
 <div class="cabecera">
-    <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
+    <img [src]="IMG_URL + user?.AvatarPath" alt="avatar de usuario">
     <span style="font-size: 2rem;">{{user?.Nickname}}</span> <!-- nickname del usuario-->
 </div>
 
@@ -67,7 +67,7 @@
                 @for (user of searchedUsers; track $index)
                 {
                 <div class="usuarioBuscado">
-                    <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+                    <img [src]="IMG_URL + user?.AvatarPath" alt="usuario avatar" width="50px">
                     {{user.Nickname}}
                 </div>
                 }
@@ -83,6 +83,8 @@
             {
                 <div>
                     <p>Nombre: {{ friend.SenderUser?.Nickname || friend.ReceiverUser?.Nickname }}</p>
+                    <button (click)="acceptFriendship(friend.Id)">Aceptar solicitud</button>
+                    <button (click)="removeFriend(friend)">Eliminar solicitud</button>
                 </div>
             
             }
@@ -122,7 +124,7 @@
         @for (user of searchedUsers; track $index)
         {
         <div class="usuarioBuscado">
-            <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+            <img [src]="IMG_URL + user?.AvatarPath" alt="usuario avatar" width="50px">
             {{user.Nickname}}
             <button (click)="addFriend(user)">Agregar amigo</button>
         </div>
