@@ -48,7 +48,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     // Procesa la respuesta
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
-    this.askForInfo(1)
+    this.askForInfo(MessageType.Stats)
+    this.askForInfo(MessageType.Friend)
   }
 
   processMessage(message : any)
@@ -76,7 +77,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.battleId = jsonResponse.battleId
         break
     }
-    console.log(jsonResponse)
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
   async removeFriend(userFriend : UserFriend)

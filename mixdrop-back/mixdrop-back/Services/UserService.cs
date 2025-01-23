@@ -66,7 +66,7 @@ public class UserService
 
         Console.WriteLine("Usuario desconectado: " + existingUser.Nickname);
 
-        await WebSocketHandler.RemoveSocket(userId);
+        //await WebSocketHandler.RemoveSocket(userId);
     }
 
 

@@ -18,7 +18,7 @@ public class UserMapper
             IsInQueue = user.IsInQueue,
             Banned = user.Banned,
             StateId = user.StateId,
-            UserFriends = user.UserFriends,
+            Friendships = user.Friendships,
             BattleUsers = user.BattleUsers
         };
     }
