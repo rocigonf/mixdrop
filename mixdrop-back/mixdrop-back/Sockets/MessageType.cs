@@ -5,5 +5,6 @@ public enum MessageType
     Friend,
     Stats,
     Play,
-    AskForFriend
+    AskForFriend,
+    AskForBattle
 }

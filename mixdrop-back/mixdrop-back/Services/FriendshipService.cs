@@ -48,7 +48,8 @@ namespace mixdrop_back.Services
 
             await _unitOfWork.SaveAsync();
 
-            JsonSerializerOptions options = new JsonSerializerOptions();
+            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
             dict["messageType"] = MessageType.AskForFriend;
@@ -77,7 +78,7 @@ namespace mixdrop_back.Services
             _unitOfWork.FriendshipRepository.Update(existingFriendship);
             await _unitOfWork.SaveAsync();
 
-            JsonSerializerOptions options = new JsonSerializerOptions();
+            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
             dict["messageType"] = MessageType.AskForFriend;
@@ -108,7 +109,7 @@ namespace mixdrop_back.Services
             _unitOfWork.FriendshipRepository.Delete(existingFriendship);
             await _unitOfWork.SaveAsync();
 
-            JsonSerializerOptions options = new JsonSerializerOptions();
+            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
             dict["messageType"] = MessageType.AskForFriend;

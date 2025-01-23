@@ -110,12 +110,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log(this.friendsRaw)
     for(const friend of this.friendsRaw)
     {
-
       if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
       }
-      if(friend.Accepted === false)
+      if(friend.accepted === false)
       {
 
         if(this.user?.id == friend.receiverUser?.id)
