@@ -1,4 +1,4 @@
 export interface Battle {
-    Id: number,
-    Accepted : boolean
+    id: number,
+    accepted : boolean
 }
