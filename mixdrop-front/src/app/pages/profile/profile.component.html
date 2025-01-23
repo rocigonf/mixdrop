@@ -1,9 +1,9 @@
 <app-navbar></app-navbar>
 @if(user)
 {
-    @if(user.avatarPath != "" && !deleteAvatar)
+    @if(user.AvatarPath != "" && !deleteAvatar)
     {
-    <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
+    <img class="avatar" [src]="IMG_URL + user.AvatarPath" alt="avatar">
     }
     @else
     {
@@ -11,7 +11,7 @@
     }
 
     <p>Apodo: {{user.Nickname}}</p>
-    <p>Mail: {{user.email}}</p>
+    <p>Mail: {{user.Email}}</p>
     
     @if(isItself)
     {
@@ -29,7 +29,7 @@
                 </div>
                 <div class="profile-row">
                     <label for="email">Correo:
-                        <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.email" />
+                        <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.Email" />
                     </label>
                 </div>
                 <div class="profile-row-buttons">
