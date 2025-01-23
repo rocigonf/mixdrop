@@ -81,7 +81,7 @@ namespace mixdrop_back.Services
                 throw new Exception("Esta solicitud no existe");
             }
 
-            UserFriend receiverUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == true);
+            UserFriend receiverUser = existingFriendship.UserFriends.FirstOrDefault(userFriend => userFriend.Receiver == true);
             if (receiverUser.Id != user.Id)
             {
                 throw new Exception("Este usuario no es recibidor");
@@ -100,7 +100,7 @@ namespace mixdrop_back.Services
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user.Id);
 
             // Notificar a usuario enviador
-            UserFriend senderUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == false);
+            UserFriend senderUser = existingFriendship.UserFriends.FirstOrDefault(userFriend => userFriend.Receiver == false);
             User sender = await _unitOfWork.UserRepository.GetUserById(senderUser.Id);
 
             sender.UserFriends.Remove(senderUser); // Se borra la amistad del usuario
