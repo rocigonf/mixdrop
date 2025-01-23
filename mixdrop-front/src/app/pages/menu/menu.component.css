@@ -85,6 +85,8 @@ aside img {
     border-radius: 5px;
     height: 54px;
     width: 54px;
+    object-fit: cover;
+    object-position: center center;
 }
 
 .icono{

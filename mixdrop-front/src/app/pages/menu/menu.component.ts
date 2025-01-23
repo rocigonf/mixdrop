@@ -107,7 +107,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     this.acceptedFriends = []
     this.pendingFriends = []
-    console.log(this.friendsRaw)
+
     for(const friend of this.friendsRaw)
     {
 
@@ -115,7 +115,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       {
         this.acceptedFriends.push(friend)
       }
-      if(friend.Accepted === false)
+      if(friend.accepted === false)
       {
 
         if(this.user?.id == friend.receiverUser?.id)
@@ -169,7 +169,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   async getSearchedUsers(queryuser: string) : Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
     console.log(result)
+
     this.searchedUsers = result;
+
     return result;
   }
   
