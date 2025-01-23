@@ -81,6 +81,11 @@ public class UserService
         return await _unitOfWork.UserRepository.GetByIdAsync(userId);
     }
 
+    public async Task<User> GetFullUserByIdAsync(int userId)
+    {
+        return await _unitOfWork.UserRepository.GetUserById(userId);
+    }
+
     public async Task<UserDto> GetUserByEmailAsync(string email)
     {
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(email);

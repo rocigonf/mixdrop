@@ -1,5 +1,7 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using Microsoft.Extensions.Options;
+using mixdrop_back.Models.Entities;
 using mixdrop_back.Sockets;
+using System.Runtime.Intrinsics.X86;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -44,42 +46,18 @@ namespace mixdrop_back.Services
                 ReceiverUserId = user2.Id,
             });
 
-
-            // A cada usuario se le asigna la misma ID de amistad
-            /*UserFriend newUserFriend1 = new UserFriend
-            {
-                FriendshipId = newFriendship.Id,
-                UserId = user1.Id,
-                Receiver = false,
-                Friendships = newFriendship
-            };
-            UserFriend newUserFriend2 = new UserFriend
-            {
-                FriendshipId = newFriendship.Id,
-                UserId = user2.Id,
-                Receiver = true,
-                Friendships = newFriendship
-            };
-
-            // Se insertan los nuevos amigos
-            await _unitOfWork.UserFriendRepository.InsertAsync(newUserFriend1);
-            await _unitOfWork.UserFriendRepository.InsertAsync(newUserFriend2);*/
-
             await _unitOfWork.SaveAsync();
 
             JsonSerializerOptions options = new JsonSerializerOptions();
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-            dict["friends"] = user1.Friendships.Append(newFriendship);
-
+            dict["messageType"] = MessageType.AskForFriend;
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user1.Id);
-
-            dict["friends"] = user2.Friendships.Append(newFriendship);
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2.Id);
         }
 
         // Método solicitud de amistad
-        public async Task AcceptFriend(int friendshipId, User user)
+        public async Task AcceptFriend(int friendshipId, int userId)
         {
             Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetByIdAsync(friendshipId);
             if (existingFriendship == null)
@@ -88,8 +66,7 @@ namespace mixdrop_back.Services
                 return;
             }
 
-            //UserFriend receiverUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == true);
-            if (user.Id != existingFriendship.ReceiverUserId)
+            if (userId != existingFriendship.ReceiverUserId)
             {
                 Console.WriteLine("Este usuario no es recibidor");
                 return;
@@ -100,28 +77,18 @@ namespace mixdrop_back.Services
             _unitOfWork.FriendshipRepository.Update(existingFriendship);
             await _unitOfWork.SaveAsync();
 
-            // Notificar a usuario recibidor
-            /*user.Friendships.Remove(existingFriendship); // Se borra la amistad del usuario
-            //receiverUser.Friendships.Accepted = true; // Se cambia el estado de la amistad
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-            dict["friends"] = user.Friendships.Append(existingFriendship); // Y se vuelve a pegar la amistad
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), user.Id);
-
-            // Notificar a usuario enviador
-            //UserFriend senderUser = existingFriendship.UserFriends.FirstOrDefault(user => user.Receiver == false);
-            User sender = existingFriendship.SenderUser;
-
-            sender.Friendships.Remove(existingFriendship); // Se borra la amistad del usuario
-            //sender.Friendships.Accepted = true; // Se cambia el estado de la amistad
-
-            dict["friends"] = sender.Friendships.Append(existingFriendship); // Y se vuelve a pegar la amistad
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), sender.Id);*/
+            dict["messageType"] = MessageType.AskForFriend;
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), existingFriendship.SenderUserId);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), existingFriendship.ReceiverUserId);
 
             // You're my friend now :D turururururu
         }
 
         // Método borrar amigo o rechazar solicitud de amistad
-        public async Task DeleteFriend(int friendshipId, User user)
+        public async Task DeleteFriend(int friendshipId, int userId)
         {
             // Comprobamos que la amistad existe
             Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetByIdAsync(friendshipId);
@@ -132,8 +99,7 @@ namespace mixdrop_back.Services
             }
 
             // Comprobamos que el usuario es parte de la amistad
-            //User user = existingFriendship.FirstOrDefault(user => user.UserId == user.Id);
-            if (existingFriendship.SenderUserId != user.Id && existingFriendship.ReceiverUserId != user.Id)
+            if (existingFriendship.SenderUserId != userId && existingFriendship.ReceiverUserId != userId)
             {
                 Console.WriteLine("Este usuario no forma parte de esta amistad");
                 return;
@@ -141,17 +107,17 @@ namespace mixdrop_back.Services
 
             _unitOfWork.FriendshipRepository.Delete(existingFriendship);
             await _unitOfWork.SaveAsync();
+
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+            dict["messageType"] = MessageType.AskForFriend;
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), existingFriendship.SenderUserId);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), existingFriendship.ReceiverUserId);
         }
 
         public async Task<ICollection<Friendship>> GetFriendList(int userId)
         {
-            /*User user = await _unitOfWork.UserRepository.GetMortadelaById(userId);
-            if (user == null)
-            {
-                Console.WriteLine("Si es nulo a tomar por culo >:(");
-                return null;
-            }*/
-
             ICollection<Friendship> friendships = await _unitOfWork.FriendshipRepository.GetFriendshipsByUserAsync(userId);
 
             foreach(Friendship friendship in friendships)

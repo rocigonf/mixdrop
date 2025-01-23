@@ -20,6 +20,7 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetByEmailAsync(string email)
     {
         return await GetQueryable()
+            .Include(user => user.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -30,14 +31,10 @@ public class UserRepository : Repository<User, int>
             .FirstOrDefaultAsync(user => user.Email.Equals(email));
     }
 
-    public async Task<User> GetBasicUserByMailAsync(string email)
-    {
-        return await GetQueryable().FirstOrDefaultAsync(u => u.Email.Equals(email));
-    }
-
     public async Task<User> GetByNicknameAsync(string nickname)
     {
         return await GetQueryable()
+            .Include(user => user.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -51,6 +48,7 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetByEmailOrNickname(string emailOrNickname)
     {
         return await GetQueryable()
+            .Include(user => user.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -64,6 +62,7 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetUserById(int id)
     {
         return await GetQueryable()
+            .Include(user => user.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -74,13 +73,4 @@ public class UserRepository : Repository<User, int>
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
-    public async Task<User> GetMortadelaById(int id)
-    {
-        return await GetQueryable()
-            .Include(u => u.Friendships)
-                .ThenInclude(f => f.SenderUser)
-            .Include(u => u.Friendships)
-                .ThenInclude(f => f.ReceiverUser)
-            .FirstOrDefaultAsync(f => f.Id == id);
-    }
 }

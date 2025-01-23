@@ -15,12 +15,14 @@ namespace mixdrop_back.Repositories
                 .FirstOrDefaultAsync(f => f.SenderUserId == userId1 && f.ReceiverUserId == userId2);
 
         }
-        /*public async Task<Friendship> GetAllFriendshipsAsync(int friendshipId)
+
+        /*public async Task<Friendship> GetFriendshipByIdAsync(int id)
         {
             return await GetQueryable()
                 .Include(friendship => friendship.SenderUser)
                 .Include(f => f.ReceiverUser)
-                .FirstOrDefaultAsync(friendship => friendship.Id == friendshipId);
+                .FirstOrDefaultAsync(f => f.Id == id);
+
         }*/
 
         public async Task<ICollection<Friendship>> GetFriendshipsByUserAsync(int userId)
@@ -28,6 +30,7 @@ namespace mixdrop_back.Repositories
             return await GetQueryable()
                 .Include(friendship => friendship.SenderUser)
                 .Include(f => f.ReceiverUser)
+                .Where(f => f.SenderUserId == userId || f.ReceiverUserId == userId)
                 .ToListAsync();
         }
     }
