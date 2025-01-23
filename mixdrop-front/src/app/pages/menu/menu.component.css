@@ -11,7 +11,9 @@
 }
 
 .cabecera img {
-    width: 60px;
+    border: 2px solid white;
+    border-radius: 5px;
+    width: 150px;
 }
 
 .container {
@@ -46,41 +48,44 @@ aside img {
 
 /*contenido*/
 
-section {
+.seccionAmigos {
     margin: 0rem 1rem;
+    width: 100%;
 }
 
 /*amigos*/
-.amigos div{
-    display: flex;
-    gap: 1rem;
-
-}
-
-.amigos div button{
-    
-}
-
-.amigos form{
-    display: flex;
-    gap: 10px;
-    background-color: rgb(169, 169, 169);
-}
-
-
-
-/*busqueda usuarios*/
 .busquedaUsuarios form {
     display: flex;
     gap: 10px;
-    background-color: darkgray;
 }
 
-.busquedaUsuarios input {
-    flex: 1;
+.listaUsuarios{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    gap: 1rem;
 }
 
-.usuarioBuscado {
-    margin: 5px;
-    width: 100%;
+.tarjetaUsuario {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    gap: 1rem;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: 7.5px;
+    background-color: rgb(36, 39, 82);
+}
+
+.avatar{
+    border: 2px solid white;
+    border-radius: 5px;
+    height: 54px;
+    width: 54px;
+}
+
+.icono{
+    flex: 1 1 auto;
+    width: 32px;
+    cursor: pointer;
 }
