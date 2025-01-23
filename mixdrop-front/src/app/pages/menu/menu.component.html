@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<button (click)="emparejar()">Emparejamiento</button>
+<button (click)="emparejar()">Jugar</button>
 
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
@@ -31,6 +31,7 @@
 
     <section>
         @switch (menuSelector) {
+
         <!-- LISTA DE AMIGOS-->
         @case ('myFriends') {
 
@@ -47,7 +48,7 @@
 
             <div>
                 @for (friend of acceptedFriends; track $index) {
-
+                <p>{{friend.ReceiverUser?.nickname}}</p>
                 }
             </div>
         </div>
@@ -76,6 +77,7 @@
                     <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
                     {{user.nickname}}
                 </div>
+                <button (click)="addFriend(user)">Enviar solicitud</button>
                 }
                 }
                 }
@@ -85,15 +87,16 @@
         <!-- SOLICITUDES DE AMISTAD-->
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
-            @for(friend of pendingFriends; track friend.Id)
-            {
-                <div>
-                    <p>Nombre: {{ friend.SenderUser?.nickname || friend.ReceiverUser?.nickname }}</p>
-                    <button (click)="acceptFriendship(friend.Id)">Aceptar solicitud</button>
-                    <button (click)="removeFriend(friend)">Eliminar solicitud</button>
-                </div>
-            
-            }
+        @for(friend of pendingFriends; track $index)
+        {
+        <div>
+            <p>Nombre: {{ friend.SenderUser?.nickname || friend.ReceiverUser?.nickname }}</p>
+
+            <button (click)="acceptFriendship(friend.Id)">Aceptar solicitud</button>
+            <button (click)="removeFriend(friend)">Cancelar solicitud</button>
+        </div>
+
+        }
         }
 
         <!-- SOLICITUDES DE BATALLA-->

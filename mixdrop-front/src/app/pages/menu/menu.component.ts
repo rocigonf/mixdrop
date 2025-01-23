@@ -107,22 +107,23 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     this.acceptedFriends = []
     this.pendingFriends = []
+    console.log(this.friendsRaw)
     for(const friend of this.friendsRaw)
     {
-      if(friend.Accepted)
+      if(friend.Accepted === true)
       {
         this.acceptedFriends.push(friend)
       }
-      else
+      if(friend.Accepted === false)
       {
-        if(this.user?.id == friend.ReceiverUser?.id)
+        if(this.user?.id != friend.ReceiverUser?.id)
         {
           this.pendingFriends.push(friend)
         }
       }
     }
-    console.log("mortadela: ", this.acceptedFriends)
-    console.log("xoriso: ", this.pendingFriends)
+    console.log("amigos: ", this.acceptedFriends)
+    console.log("solicitudes: ", this.pendingFriends)
   }
 
   async removeFriend(friend : Friend)
@@ -175,7 +176,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
 
- 
+
 
   emparejar() {
 
