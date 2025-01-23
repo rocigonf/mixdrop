@@ -4,7 +4,7 @@
 
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span style="font-size: 2rem;">{{user?.Nickname}}</span> <!-- nickname del usuario-->
+    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
 </div>
 
 <!-- contenido -->
@@ -44,6 +44,12 @@
                     [ngModelOptions]="{standalone: true}" />
                 <button type="submit"> Buscar</button>
             </form>
+
+            <div>
+                @for (friend of acceptedFriends; track $index) {
+
+                }
+            </div>
         </div>
         }
 
@@ -68,7 +74,7 @@
                 {
                 <div class="usuarioBuscado">
                     <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                    {{user.Nickname}}
+                    {{user.nickname}}
                 </div>
                 }
                 }
@@ -82,7 +88,7 @@
             @for(friend of pendingFriends; track friend.Id)
             {
                 <div>
-                    <p>Nombre: {{ friend.SenderUser?.Nickname || friend.ReceiverUser?.Nickname }}</p>
+                    <p>Nombre: {{ friend.SenderUser?.nickname || friend.ReceiverUser?.nickname }}</p>
                 </div>
             
             }
@@ -123,7 +129,7 @@
         {
         <div class="usuarioBuscado">
             <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-            {{user.Nickname}}
+            {{user.nickname}}
             <button (click)="addFriend(user)">Agregar amigo</button>
         </div>
         }

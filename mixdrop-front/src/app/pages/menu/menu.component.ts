@@ -65,6 +65,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.user = this.authService.getUser();
 
     this.askForInfo(MessageType.Stats)
+
   }
 
   processMessage(message : any)
@@ -163,6 +164,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   searchFriend(queryfriend : string) : void{
     
   }
+
+
+ 
 
   emparejar() {
 

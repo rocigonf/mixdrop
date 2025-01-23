@@ -2,7 +2,7 @@ import { Friend } from "./friend";
 
 export interface User {
     id : number,
-    Nickname : string,
+    nickname : string,
     email : string,
     avatarPath : string,
     role: string,
