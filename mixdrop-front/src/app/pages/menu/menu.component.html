@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<button (click)="emparejar()">Emparejamiento</button>
+<button (click)="emparejar()">Jugar</button>
 
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
@@ -31,6 +31,7 @@
 
     <section class="seccionAmigos">
         @switch (menuSelector) {
+
         <!-- LISTA DE AMIGOS-->
         @case ('myFriends') {
 
@@ -52,6 +53,12 @@
                     [ngModelOptions]="{standalone: true}" />
                 <button type="submit"> Buscar</button>
             </form>
+
+            <div>
+                @for (friend of acceptedFriends; track $index) {
+                <p>{{friend.ReceiverUser?.nickname}}</p>
+                }
+            </div>
         </div>
         }
 
@@ -72,6 +79,7 @@
 
             @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p> }
                 @else {
+
                     <div class="listaUsuarios">
                         @for (user of searchedUsers; track $index)
                         {
@@ -94,6 +102,7 @@
         <!-- SOLICITUDES DE AMISTAD-->
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
+
             @for(friend of pendingFriends; track friend.id)
             {
                 <div>
