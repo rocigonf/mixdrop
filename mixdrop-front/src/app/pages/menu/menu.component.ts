@@ -86,8 +86,8 @@ export class MenuComponent implements OnInit, OnDestroy {
       case MessageType.Stats:
         this.totalPlayers = jsonResponse.total
         break
-      case MessageType.PendingBattle:
-        this.pendingBattles = jsonResponse.pendingBattles
+      case MessageType.AskForFriend:
+        this.askForInfo(MessageType.Friend)
         break
       case MessageType.Play:
         // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)

@@ -36,7 +36,15 @@
 
         <div class="amigos">
             <div>
-                <span>TUS AMIGOS</span>
+                <span>TUS AMIGOS</span><br>
+                @for(friend of acceptedFriends; track friend.Id)
+                {
+                <div>
+                    <p>Nombre: {{ friend.SenderUser?.Nickname || friend.ReceiverUser?.Nickname }}</p>
+                    <button (click)="removeFriend(friend)">Eliminar amigo</button>
+                </div>
+            
+                }
             </div>
 
             <form (submit)="(queryfriend)">
