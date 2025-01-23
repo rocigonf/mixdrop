@@ -89,6 +89,8 @@
             {
                 <div>
                     <p>Nombre: {{ friend.SenderUser?.nickname || friend.ReceiverUser?.nickname }}</p>
+                    <button (click)="acceptFriendship(friend.Id)">Aceptar solicitud</button>
+                    <button (click)="removeFriend(friend)">Eliminar solicitud</button>
                 </div>
             
             }

@@ -55,7 +55,6 @@ public class UserSocket
                         case MessageType.Friend:                           
                             FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
                             var friendList = await friendshipService.GetFriendList(UserId);
-                            friendshipService = null;
                             dict.Add("friends", friendList);
                             break;
                         case MessageType.Stats:

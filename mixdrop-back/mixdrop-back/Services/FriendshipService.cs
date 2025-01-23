@@ -13,13 +13,10 @@ namespace mixdrop_back.Services
             { "messageType", MessageType.Friend },
             { "friends", null }
         };
-        private static readonly JsonSerializerOptions OPTIONS = new JsonSerializerOptions();
-
 
         public FriendshipService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            OPTIONS.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         }
 
         // Método enviar solicitud de amistad
@@ -70,18 +67,21 @@ namespace mixdrop_back.Services
 
             await _unitOfWork.SaveAsync();
 
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
             dict["friends"] = user1.Friendships.Append(newFriendship);
 
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, OPTIONS), user1.Id);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user1.Id);
 
             dict["friends"] = user2.Friendships.Append(newFriendship);
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, OPTIONS), user2.Id);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2.Id);
         }
 
         // Método solicitud de amistad
         public async Task AcceptFriend(int friendshipId, User user)
         {
-            Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetAllFriendshipsAsync(friendshipId);
+            Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetByIdAsync(friendshipId);
             if (existingFriendship == null)
             {
                 Console.WriteLine("Esta solicitud no existe");
@@ -101,7 +101,7 @@ namespace mixdrop_back.Services
             await _unitOfWork.SaveAsync();
 
             // Notificar a usuario recibidor
-            user.Friendships.Remove(existingFriendship); // Se borra la amistad del usuario
+            /*user.Friendships.Remove(existingFriendship); // Se borra la amistad del usuario
             //receiverUser.Friendships.Accepted = true; // Se cambia el estado de la amistad
 
             dict["friends"] = user.Friendships.Append(existingFriendship); // Y se vuelve a pegar la amistad
@@ -115,7 +115,7 @@ namespace mixdrop_back.Services
             //sender.Friendships.Accepted = true; // Se cambia el estado de la amistad
 
             dict["friends"] = sender.Friendships.Append(existingFriendship); // Y se vuelve a pegar la amistad
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), sender.Id);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict), sender.Id);*/
 
             // You're my friend now :D turururururu
         }
@@ -124,7 +124,7 @@ namespace mixdrop_back.Services
         public async Task DeleteFriend(int friendshipId, User user)
         {
             // Comprobamos que la amistad existe
-            Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetAllFriendshipsAsync(friendshipId);
+            Friendship existingFriendship = await _unitOfWork.FriendshipRepository.GetByIdAsync(friendshipId);
             if (existingFriendship == null)
             {
                 Console.WriteLine("Esta amistad no existe :(");
@@ -143,7 +143,6 @@ namespace mixdrop_back.Services
             await _unitOfWork.SaveAsync();
         }
 
-        // TODO: Agregar verificación
         public async Task<ICollection<Friendship>> GetFriendList(int userId)
         {
             /*User user = await _unitOfWork.UserRepository.GetMortadelaById(userId);

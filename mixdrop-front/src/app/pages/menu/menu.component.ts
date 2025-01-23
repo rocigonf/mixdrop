@@ -115,7 +115,10 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
       else
       {
-        this.pendingFriends.push(friend)
+        if(this.user?.id == friend.ReceiverUser?.id)
+        {
+          this.pendingFriends.push(friend)
+        }
       }
     }
     console.log("mortadela: ", this.acceptedFriends)
@@ -134,6 +137,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     // Hago una petición para que cree el amigo, ( wesoque ->) y en back el servidor debería notificar a ambos usuarios enviando la lista de amigos
     const response = await this.friendshipService.addFriend(user)
     console.log("Respuesta de agregar al amigo: ", response)
+  }
+
+  async acceptFriendship(id : number)
+  {
+    const response = await this.friendshipService.acceptFriendship(id)
+    console.log("Respuesta de aceptar al amigo: ", response)
   }
 
   async modifyBattle(battle: Battle)

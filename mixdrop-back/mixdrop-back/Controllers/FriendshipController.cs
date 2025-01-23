@@ -49,20 +49,20 @@ namespace mixdrop_back.Controllers
 
         // Aceptar solicitud de amistad
         [Authorize]
-        [HttpPut]
-        public async Task AcceptFriend([FromQuery] int friendshipId)
+        [HttpPut("{id}")]
+        public async Task AcceptFriend(int id)
         {
             User user = await GetAuthorizedUser();
-            await _friendshipService.AcceptFriend(friendshipId, user);
+            await _friendshipService.AcceptFriend(id, user);
         }
 
         // Borrar amigo o rechazar solicitud de amistad
         [Authorize]
-        [HttpDelete]
-        public async Task DeleteFriend([FromQuery] int friendshipId)
+        [HttpDelete("{id}")]
+        public async Task DeleteFriend(int id)
         {
             User user = await GetAuthorizedUser();
-            await _friendshipService.DeleteFriend(friendshipId, user);
+            await _friendshipService.DeleteFriend(id, user);
         }
 
         private async Task<User> GetAuthorizedUser()
