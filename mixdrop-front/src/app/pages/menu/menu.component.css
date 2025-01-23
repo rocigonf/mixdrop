@@ -40,7 +40,8 @@ aside div {
 }
 
 aside div:hover {
-    background-color: rgb(102, 102, 102);
+    background-color: rgb(131, 131, 131);
+    cursor: pointer;
 }
 
 aside img {
@@ -55,6 +56,7 @@ aside img {
 }
 
 /*amigos*/
+
 .busquedaUsuarios form {
     display: flex;
     gap: 10px;
