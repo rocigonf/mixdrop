@@ -74,14 +74,13 @@ public class UserRepository : Repository<User, int>
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
-    public async Task<User> GetUserWithFriends(int id)
+    public async Task<User> GetMortadelaById(int id)
     {
         return await GetQueryable()
-            .Include(user => user.Friendships)
-                .ThenInclude(friendship => friendship.User1)
-            .Include(user => user.Friendships)
-                .ThenInclude(friendship => friendship.User2)
-            .FirstOrDefaultAsync(user => user.Id == id);
+            .Include(u => u.Friendships)
+                .ThenInclude(f => f.SenderUser)
+            .Include(u => u.Friendships)
+                .ThenInclude(f => f.ReceiverUser)
+            .FirstOrDefaultAsync(f => f.Id == id);
     }
-
 }

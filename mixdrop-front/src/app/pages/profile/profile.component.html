@@ -10,7 +10,7 @@
     <img class="avatar" src="/images/user.png" alt="avatar">
     }
 
-    <p>Apodo: {{user.nickname}}</p>
+    <p>Apodo: {{user.Nickname}}</p>
     <p>Mail: {{user.email}}</p>
     
     @if(isItself)
@@ -24,7 +24,7 @@
             <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
                 <div class="profile-row">
                     <label for="nickname">Nombre:
-                        <input type="text" [value]="user.nickname" formControlName="nickname" [readonly]="!isEditing">
+                        <input type="text" [value]="user.Nickname" formControlName="nickname" [readonly]="!isEditing">
                     </label>
                 </div>
                 <div class="profile-row">

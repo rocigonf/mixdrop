@@ -52,10 +52,10 @@ public class UserSocket
                     // En función del switch, obtengo unos datos u otros, y los envío en JSON
                     switch (messageType)
                     {
-                        case MessageType.Friend:
-                            
+                        case MessageType.Friend:                           
                             FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
                             var friendList = await friendshipService.GetFriendList(UserId);
+                            friendshipService = null;
                             dict.Add("friends", friendList);
                             break;
                         case MessageType.Stats:
@@ -71,6 +71,8 @@ public class UserSocket
 
                     // Enviamos respuesta al cliente
                     await SendAsync(outMessage);
+
+                    scope.Dispose();
                 }
             }
             catch (Exception)

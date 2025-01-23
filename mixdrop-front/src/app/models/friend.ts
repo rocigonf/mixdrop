@@ -1,4 +1,8 @@
+import { User } from "./user";
+
 export interface Friend {
-    id : number,
-    accepted : boolean
+    Id : number,
+    Accepted : boolean,
+    SenderUser : User | null,
+    ReceiverUser: User | null
 }
