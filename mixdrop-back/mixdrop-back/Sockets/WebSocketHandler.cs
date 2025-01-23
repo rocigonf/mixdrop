@@ -26,7 +26,7 @@ public class WebSocketHandler
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.Stats },
-            { "total", Total }
+            { "total", Total },
         };
 
         await SendStatsMessage();
@@ -128,7 +128,7 @@ public class WebSocketHandler
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.Stats },
-            { "total", Total }
+            { "total", Total },
         };
 
         await NotifyUsers(JsonSerializer.Serialize(dict));

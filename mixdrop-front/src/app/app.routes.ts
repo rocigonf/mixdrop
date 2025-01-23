@@ -4,11 +4,13 @@ import {LoginComponent } from './pages/login/login.component'
 import { MenuComponent } from './pages/menu/menu.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { GameComponent } from './pages/game/game.component';
+import { MatchingComponent } from './pages/matching/matching.component';
 
 export const routes: Routes = [
     {path: "", component: HomeComponent},
     { path: 'login', component: LoginComponent },
     { path: 'menu', component: MenuComponent },
     { path: 'profile/:id', component: ProfileComponent},
-    { path: 'game/:id', component: GameComponent}
+    { path: 'game/:id', component: GameComponent},
+    { path: 'matching', component: MatchingComponent }, // PONERLE ID !!!!!!
 ];

@@ -1,29 +1,49 @@
 <app-navbar></app-navbar>
 
-<img src="" alt="avatar de usuario">
-<p></p> <!-- nickname del usuario-->
+<button (click)="emparejar()">Emparejamiento</button>
+
+<div class="cabecera">
+    <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
+    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
+</div>
 
 <!-- contenido -->
 <div class="container">
-    <!-- menu lateral -->
+
+    <!-- MENU LATERAL -->
     <aside>
-        <div>
+        <div (click)=" menuSelector='myFriends'">
             <img src="/images/amigos.png" alt="icono amigo"> Tus amigos
         </div>
-        <div>
+        <div (click)="menuSelector='searchUsers'">
             <img src="/images/buzon.png" alt="icono buzon"> Añadir a un amigo
         </div>
-        <div>
+        <div (click)="menuSelector='friendRequest'">
             <img src="/images/invitacion.png" alt="icono carta"> Solicitudes de amistad
         </div>
-        <div>
+        <div (click)="menuSelector='battleRequest'">
             <img src="/images/juego.png" alt="icono juego"> Solicitudes de batalla
         </div>
     </aside>
 
 
-    <section>
+    <!-- CONTENIDO -->
 
+    <section>
+        @switch (menuSelector) {
+        <!-- LISTA DE AMIGOS-->
+        @case ('myFriends') {
+
+        <div class="amigos">
+            <div>
+                <span>TUS AMIGOS</span>
+            </div>
+
+            <form (submit)="(queryfriend)">
+                <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
+                    [ngModelOptions]="{standalone: true}" />
+                <button type="submit"> Buscar</button>
+            </form>
         <div>
             <span>TUS AMIGOS</span>
             @for(friend of friends; track friend.id)
@@ -38,14 +58,47 @@
             }
             <button>Añadir a un amigo</button> <!--te lleva a buscar amigos-->
         </div>
+        }
 
-        
-        <form (submit)="(queryfriend)">
-            <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
-                [ngModelOptions]="{standalone: true}" />
-            <button type="submit" > Buscar</button>
-        </form>
+        <!-- BUSCAR USUARIOS-->
+        @case ('searchUsers') {
+        <div class="busquedaUsuarios">
+            <div>
+                <span>BUSCAR USUARIO</span>
+            </div>
+            <form (submit)="getSearchedUsers(queryuser)">
+                <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
+                    [ngModelOptions]="{standalone: true}" />
+                <button type="submit" [disabled]="!queryuser"> Buscar</button>
+            </form>
 
+            @if (searchedUsers) {
+
+            @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p>
+                }
+                @else {
+                @for (user of searchedUsers; track $index)
+                {
+                <div class="usuarioBuscado">
+                    <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+                    {{user.nickname}}
+                </div>
+                }
+                }
+                }
+        </div>
+        }
+
+        <!-- SOLICITUDES DE AMISTAD-->
+        @case ('friendRequest') {
+        SOLICITUDES DE AMISTAD
+        }
+
+        <!-- SOLICITUDES DE BATALLA-->
+        @case ('battleRequest') {
+        SOLICITUDES DE BATALLA
+        }
+        }
 
     </section>
 </div>

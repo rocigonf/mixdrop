@@ -18,11 +18,12 @@
         </a>
 
         @if (authService.isAuthenticated()) {
-
+                
             <a (click)="navigateToUrl('profile/' + user?.id)">
                 @if(user?.avatarPath != "")
                 {
-                    <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+                    <img class="marco" src="/images/marco.png" alt=""  >
+                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
                 }
                 @else 
                 {
