@@ -1,4 +1,5 @@
 ﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -7,8 +8,14 @@ namespace mixdrop_back.Sockets;
 
 public class UserSocket
 {
+    private readonly FriendshipService _friendshipService;
+
     public WebSocket Socket;
     public int UserId { get; set; }
+
+    public UserSocket(FriendshipService friendshipService) {  
+        _friendshipService = friendshipService; 
+    }
 
     public async Task ProcessWebSocket()
     {
@@ -36,6 +43,8 @@ public class UserSocket
                     switch (messageType)
                     {
                         case MessageType.Friend:
+                            ICollection<UserFriend> friendList = await _friendshipService.GetFriendList(UserId);
+                            dict.Add("friends", friendList);
                             break;
                         case MessageType.Stats:
                             dict.Add("total", WebSocketHandler.Total);

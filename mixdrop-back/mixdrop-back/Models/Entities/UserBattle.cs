@@ -9,6 +9,7 @@ public class UserBattle
     public int BattleId { get; set; }
     public int BattleRoleId { get; set; }
     public int BattleResultId { get; set; }
+    public bool Receiver { get; set; }
     public User User { get; set; }
     public Battle Battle { get; set; }
     public BattleRole BattleRole { get; set; }
