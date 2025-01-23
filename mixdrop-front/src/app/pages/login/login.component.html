@@ -83,10 +83,8 @@
       <input type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
 
       
-
-
       <br>
-      <button [disabled]="!registerForm.valid && !image" type="submit">Crear Cuenta</button>
+      <button [disabled]="!registerForm.valid || !imgSeleccionada " type="submit">Crear Cuenta</button>
     </form>
 
   </div>
