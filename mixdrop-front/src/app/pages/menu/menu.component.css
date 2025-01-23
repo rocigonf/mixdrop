@@ -6,7 +6,7 @@
 .cabecera {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     margin: 1rem 6rem;
 }
 
@@ -15,6 +15,10 @@
     border-radius: 5px;
     width: 120px;
     height: 120px;
+}
+
+.cabecera span{
+    font-size: 2.5rem;
 }
 
 .container {
@@ -41,6 +45,7 @@ aside div {
 
 aside div:hover {
     background-color: rgb(102, 102, 102);
+    cursor: pointer;
 }
 
 aside img {
@@ -63,30 +68,49 @@ aside img {
 .listaUsuarios{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    align-items: center;
     gap: 1rem;
 }
 
 .tarjetaUsuario {
     display: flex;
     align-items: center;
+    justify-content: center;
     margin-top: 5px;
-    gap: 1rem;
     padding: 0.5rem;
     border: 0;
     border-radius: 7.5px;
     background-color: rgb(36, 39, 82);
+    width: 300px;
+}
+
+.contenedorAvatar{
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .avatar{
     border: 2px solid white;
     border-radius: 5px;
-    height: 54px;
-    width: 54px;
+    height: 60px;
+    width: 60px;
+    vertical-align: middle;
+}
+
+.nickname{
+    flex: 1;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.contenedorIcono{
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .icono{
-    flex: 1 1 auto;
     width: 32px;
     cursor: pointer;
+    vertical-align: middle;
 }
