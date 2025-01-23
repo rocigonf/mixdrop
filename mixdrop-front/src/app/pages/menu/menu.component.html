@@ -4,7 +4,7 @@
 
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span style="font-size: 2rem;">{{user?.Nickname}}</span> <!-- nickname del usuario-->
+    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
 </div>
 
 <!-- contenido -->
@@ -36,7 +36,15 @@
 
         <div class="busquedaUsuarios">
             <div>
-                <span>TUS AMIGOS</span>
+                <span>TUS AMIGOS</span><br>
+                @for(friend of acceptedFriends; track friend.id)
+                {
+                <div>
+                    <p>Nombre: {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}</p>
+                    <button (click)="removeFriend(friend)">Eliminar amigo</button>
+                </div>
+            
+                }
             </div>
 
             <form (submit)="(queryfriend)">
@@ -69,7 +77,7 @@
                     {
                     <div class="tarjetaUsuario">
                         <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                        <span>texto{{user.Nickname}}</span>
+                        <span>{{user.nickname}}</span>
                         <div (click)="addFriend(user)">
                             <img class="icono" src="/images/addFriend.webp" alt="añadir amigo">
                         </div>
@@ -84,10 +92,12 @@
         <!-- SOLICITUDES DE AMISTAD-->
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
-            @for(friend of pendingFriends; track friend.Id)
+            @for(friend of pendingFriends; track friend.id)
             {
                 <div>
-                    <p>Nombre: {{ friend.SenderUser?.Nickname || friend.ReceiverUser?.Nickname }}</p>
+                    <p>Nombre: {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}</p>
+                    <button (click)="acceptFriendship(friend.id)">Aceptar solicitud</button>
+                    <button (click)="removeFriend(friend)">Eliminar solicitud</button>
                 </div>
             
             }
