@@ -60,6 +60,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.user = this.authService.getUser();
 
+    this.askForInfo(MessageType.Stats)
+    this.askForInfo(MessageType.Friend)
   }
 
   processMessage(message : any)
@@ -88,7 +90,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.battleId = jsonResponse.battleId
         break
     }
-    console.log(jsonResponse)
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
   async removeFriend(userFriend : UserFriend)
