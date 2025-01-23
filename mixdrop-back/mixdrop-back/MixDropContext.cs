@@ -34,9 +34,6 @@ public class MixDropContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        /*modelBuilder.Entity<Friendship>()
-            .HasKey(f => new { f.SenderUserId, f.ReceiverUserId });*/
-
         modelBuilder.Entity<Friendship>()
             .HasOne(f => f.SenderUser)
             .WithMany(u => u.Friendships)

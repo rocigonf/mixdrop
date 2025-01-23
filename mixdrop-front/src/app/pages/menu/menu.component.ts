@@ -87,8 +87,8 @@ export class MenuComponent implements OnInit, OnDestroy {
       case MessageType.Stats:
         this.totalPlayers = jsonResponse.total
         break
-      case MessageType.PendingBattle:
-        this.pendingBattles = jsonResponse.pendingBattles
+      case MessageType.AskForFriend:
+        this.askForInfo(MessageType.Friend)
         break
       case MessageType.Play:
         // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
@@ -110,13 +110,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log(this.friendsRaw)
     for(const friend of this.friendsRaw)
     {
-      if(friend.Accepted === true)
+
+      if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
       }
       if(friend.Accepted === false)
       {
-        if(this.user?.id != friend.ReceiverUser?.id)
+
+        if(this.user?.id == friend.receiverUser?.id)
         {
           this.pendingFriends.push(friend)
         }
@@ -130,7 +132,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
-    await this.friendshipService.removeFriendById(friend.Id)
+    await this.friendshipService.removeFriendById(friend.id)
   }
 
   async addFriend(user : User)

@@ -15,11 +15,11 @@ export class FriendshipService {
   }
 
   async acceptFriendship(id: number): Promise<any> {
-    const result = await this.api.put("Friendship", id)
+    const result = await this.api.put(`Friendship/${id}`)
     return result
   }
 
   async removeFriendById(id: number): Promise<any> {
-    await this.api.delete("Friendship", id)
+    await this.api.delete(`Friendship/${id}`)
   }
 }

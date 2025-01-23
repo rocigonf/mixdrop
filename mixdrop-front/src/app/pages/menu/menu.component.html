@@ -29,15 +29,23 @@
 
     <!-- CONTENIDO -->
 
-    <section>
+    <section class="seccionAmigos">
         @switch (menuSelector) {
 
         <!-- LISTA DE AMIGOS-->
         @case ('myFriends') {
 
-        <div class="amigos">
+        <div class="busquedaUsuarios">
             <div>
-                <span>TUS AMIGOS</span>
+                <span>TUS AMIGOS</span><br>
+                @for(friend of acceptedFriends; track friend.id)
+                {
+                <div>
+                    <p>Nombre: {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}</p>
+                    <button (click)="removeFriend(friend)">Eliminar amigo</button>
+                </div>
+            
+                }
             </div>
 
             <form (submit)="(queryfriend)">
@@ -63,40 +71,45 @@
             <form (submit)="getSearchedUsers(queryuser)">
                 <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
                     [ngModelOptions]="{standalone: true}" />
+
                 <button type="submit" [disabled]="!queryuser"> Buscar</button>
             </form>
 
             @if (searchedUsers) {
 
-            @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p>
-                }
+            @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p> }
                 @else {
-                @for (user of searchedUsers; track $index)
-                {
-                <div class="usuarioBuscado">
-                    <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                    {{user.nickname}}
-                </div>
-                <button (click)="addFriend(user)">Enviar solicitud</button>
+
+                    <div class="listaUsuarios">
+                    @for (user of searchedUsers; track $index)
+                    {
+                    <div class="tarjetaUsuario">
+                        <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+                        <span>{{user.nickname}}</span>
+                        <div (click)="addFriend(user)">
+                            <img class="icono" src="/images/addFriend.webp" alt="añadir amigo">
+                        </div>
+                    </div>
+                    }
+                    </div>
                 }
-                }
-                }
+            }
         </div>
         }
 
         <!-- SOLICITUDES DE AMISTAD-->
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
-        @for(friend of pendingFriends; track $index)
-        {
-        <div>
-            <p>Nombre: {{ friend.SenderUser?.nickname || friend.ReceiverUser?.nickname }}</p>
 
-            <button (click)="acceptFriendship(friend.Id)">Aceptar solicitud</button>
-            <button (click)="removeFriend(friend)">Cancelar solicitud</button>
-        </div>
-
-        }
+            @for(friend of pendingFriends; track friend.id)
+            {
+                <div>
+                    <p>Nombre: {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}</p>
+                    <button (click)="acceptFriendship(friend.id)">Aceptar solicitud</button>
+                    <button (click)="removeFriend(friend)">Eliminar solicitud</button>
+                </div>
+            
+            }
         }
 
         <!-- SOLICITUDES DE BATALLA-->
@@ -114,30 +127,4 @@
     <button (click)="askForInfo(2)">Pedir dato 3</button>
     <p>{{ serverResponse }}</p>
     <p>Total de jugadores: {{ totalPlayers }}</p>
-</div>
-
-
-<br><br><br><br>
-<div class="busquedaUsuarios">
-    <form (submit)="getSearchedUsers(queryuser)">
-        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
-            [ngModelOptions]="{standalone: true}" />
-        <button type="submit" [disabled]="!queryuser"> Buscar</button>
-    </form>
-
-    @if (searchedUsers) {
-
-    @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p>
-        }
-        @else {
-        @for (user of searchedUsers; track $index)
-        {
-        <div class="usuarioBuscado">
-            <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-            {{user.nickname}}
-            <button (click)="addFriend(user)">Agregar amigo</button>
-        </div>
-        }
-        }
-        }
 </div>
