@@ -4,7 +4,7 @@
 
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
+    <span style="font-size: 2rem;">{{user?.Nickname}}</span> <!-- nickname del usuario-->
 </div>
 
 <!-- contenido -->
@@ -68,7 +68,7 @@
                 {
                 <div class="usuarioBuscado">
                     <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                    {{user.nickname}}
+                    {{user.Nickname}}
                 </div>
                 }
                 }
@@ -79,6 +79,13 @@
         <!-- SOLICITUDES DE AMISTAD-->
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
+            @for(friend of pendingFriends; track friend.Id)
+            {
+                <div>
+                    <p>Nombre: {{ friend.SenderUser?.Nickname || friend.ReceiverUser?.Nickname }}</p>
+                </div>
+            
+            }
         }
 
         <!-- SOLICITUDES DE BATALLA-->
@@ -100,3 +107,26 @@
 
 
 <br><br><br><br>
+<div class="busquedaUsuarios">
+    <form (submit)="getSearchedUsers(queryuser)">
+        <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
+            [ngModelOptions]="{standalone: true}" />
+        <button type="submit" [disabled]="!queryuser"> Buscar</button>
+    </form>
+
+    @if (searchedUsers) {
+
+    @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p>
+        }
+        @else {
+        @for (user of searchedUsers; track $index)
+        {
+        <div class="usuarioBuscado">
+            <img [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+            {{user.Nickname}}
+            <button (click)="addFriend(user)">Agregar amigo</button>
+        </div>
+        }
+        }
+        }
+</div>

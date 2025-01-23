@@ -8,6 +8,8 @@ public class UserRepository : Repository<User, int>
 {
     public UserRepository(MixDropContext context) : base(context) { }
 
+    // TODO: Incluir las amistades
+
     public async Task<ICollection<User>> SearchUser(string search)
     {
         return await GetQueryable()
@@ -18,8 +20,6 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetByEmailAsync(string email)
     {
         return await GetQueryable()
-            .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -38,8 +38,6 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetByNicknameAsync(string nickname)
     {
         return await GetQueryable()
-            .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -53,8 +51,6 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetByEmailOrNickname(string emailOrNickname)
     {
         return await GetQueryable()
-            .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -68,8 +64,6 @@ public class UserRepository : Repository<User, int>
     public async Task<User> GetUserById(int id)
     {
         return await GetQueryable()
-            .Include(user => user.UserFriends)
-                .ThenInclude(userFriend => userFriend.Friendships)
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
@@ -80,6 +74,13 @@ public class UserRepository : Repository<User, int>
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
-
-
+    public async Task<User> GetMortadelaById(int id)
+    {
+        return await GetQueryable()
+            .Include(u => u.Friendships)
+                .ThenInclude(f => f.SenderUser)
+            .Include(u => u.Friendships)
+                .ThenInclude(f => f.ReceiverUser)
+            .FirstOrDefaultAsync(f => f.Id == id);
+    }
 }

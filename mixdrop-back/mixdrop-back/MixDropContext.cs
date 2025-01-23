@@ -22,11 +22,29 @@ public class MixDropContext : DbContext
     public DbSet<Track> Tracks { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserBattle> UsersBattles { get; set; }
-    public DbSet<UserFriend> UsersFriends { get; set; }
+    //public DbSet<UserFriend> UsersFriends { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         optionsBuilder.UseSqlite($"DataSource={baseDir}{DATABASE_PATH}");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Friendship>()
+            .HasKey(f => new { f.SenderUserId, f.ReceiverUserId });
+
+        modelBuilder.Entity<Friendship>()
+            .HasOne(f => f.SenderUser)
+            .WithMany(u => u.Friendships)
+            .HasForeignKey(f => f.SenderUserId);
+
+        modelBuilder.Entity<Friendship>()
+            .HasOne(f => f.ReceiverUser)
+            .WithMany()
+            .HasForeignKey(a => a.ReceiverUserId);
     }
 }

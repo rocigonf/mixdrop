@@ -3,18 +3,23 @@ using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace mixdrop_back.Sockets;
 
 public class UserSocket
 {
-    private readonly FriendshipService _friendshipService;
+    private static IServiceProvider _serviceProvider;
 
     public WebSocket Socket;
     public int UserId { get; set; }
 
-    public UserSocket(FriendshipService friendshipService) {  
-        _friendshipService = friendshipService; 
+    public event Func<UserSocket, Task> Disconnected;
+
+    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, int userId) {
+        _serviceProvider = serviceProvider;
+        Socket = socket;
+        UserId = userId;
     }
 
     public async Task ProcessWebSocket()
@@ -38,12 +43,19 @@ public class UserSocket
                         { "messageType", messageType }
                     };
 
+                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+                    using IServiceScope scope = _serviceProvider.CreateScope();
+
                     // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
                     // En función del switch, obtengo unos datos u otros, y los envío en JSON
                     switch (messageType)
                     {
-                        case MessageType.Friend:
-                            ICollection<UserFriend> friendList = await _friendshipService.GetFriendList(UserId);
+                        case MessageType.Friend:                           
+                            FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
+                            var friendList = await friendshipService.GetFriendList(UserId);
+                            friendshipService = null;
                             dict.Add("friends", friendList);
                             break;
                         case MessageType.Stats:
@@ -53,12 +65,14 @@ public class UserSocket
                             break;
                     }
 
-                    string outMessage = JsonSerializer.Serialize(dict);
+                    string outMessage = JsonSerializer.Serialize(dict, options);
                     // Procesamos el mensaje
                     //string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
 
                     // Enviamos respuesta al cliente
                     await SendAsync(outMessage);
+
+                    scope.Dispose();
                 }
             }
             catch (Exception)
@@ -66,6 +80,12 @@ public class UserSocket
             }
             // Leemos el mensaje
 
+        }
+
+        // Si hay suscriptores al evento Disconnected, gestionamos el evento
+        if (Disconnected != null)
+        {
+            await Disconnected.Invoke(this);
         }
     }
 
@@ -120,5 +140,11 @@ public class UserSocket
 
         // Enviamos los bytes al cliente marcando que el mensaje es un texto
         return Socket.SendAsync(bytes, WebSocketMessageType.Text, true, cancellation);
+    }
+
+    public void Dispose()
+    {
+        // Cerramos el websocket
+        Socket.Dispose();
     }
 }

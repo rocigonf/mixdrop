@@ -10,19 +10,25 @@ namespace mixdrop_back.Repositories
         public async Task<Friendship> GetFriendshipAsync(int userId1, int userId2)
         {
             return await GetQueryable()
-                .Include(friendship => friendship.UserFriends
-                    .Where(userFriend => userFriend.UserId == userId1)
-                    .Where(userFriend => userFriend.UserId == userId2)
-                )
-                .FirstOrDefaultAsync();
+                .Include(friendship => friendship.SenderUser)
+                .Include(f => f.ReceiverUser)
+                .FirstOrDefaultAsync(f => f.SenderUserId == userId1 && f.ReceiverUserId == userId2);
 
         }
         public async Task<Friendship> GetAllFriendshipsAsync(int friendshipId)
         {
             return await GetQueryable()
-                .Include(friendship => friendship.UserFriends)
+                .Include(friendship => friendship.SenderUser)
+                .Include(f => f.ReceiverUser)
                 .FirstOrDefaultAsync(friendship => friendship.Id == friendshipId);
+        }
 
+        public async Task<ICollection<Friendship>> GetFriendshipsByUserAsync(int userId)
+        {
+            return await GetQueryable()
+                .Include(friendship => friendship.SenderUser)
+                .Include(f => f.ReceiverUser)
+                .ToListAsync();
         }
     }
 }
