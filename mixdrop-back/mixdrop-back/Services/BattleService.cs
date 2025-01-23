@@ -8,64 +8,60 @@ public class BattleService
 
     public BattleService(UnitOfWork unitOfWork)
     {
-        _unitOfWork = unitOfWork; 
+        _unitOfWork = unitOfWork;
     }
 
     public async Task CreateBattle(User user1, User user2)
     {
-        try
+        User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
+        if (existingUser == null)
         {
-            User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
-            if (existingUser == null)
-            {
-                throw new Exception("Este usuario no existe.");
-            }
-
-            Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
-            if (existingBattle != null)
-            {
-                throw new Exception("Esta batalla ya existe");
-            }
-
-            Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync(new Battle());
-
-            UserBattle newUserBattle1 = new UserBattle
-            {
-               BattleId = newBattle.Id,
-               UserId = user1.Id,
-               Receiver = false,
-            };
-            UserBattle newUserBattle2 = new UserBattle
-            {
-                BattleId = newBattle.Id,
-                UserId = user2.Id,
-                Receiver = true,
-            };
-
-            await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle1);
-            await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle2);
-            await _unitOfWork.SaveAsync();
-
+            Console.WriteLine("Este usuario no existe.");
+            return;
         }
-        catch (Exception mortadela)
+
+        Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
+        if (existingBattle != null)
         {
-            Console.WriteLine("Error al crear la batalla: ", mortadela);
+            Console.WriteLine("Esta batalla ya existe");
+            return;
         }
+
+        Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync(new Battle());
+
+        UserBattle newUserBattle1 = new UserBattle
+        {
+            BattleId = newBattle.Id,
+            UserId = user1.Id,
+            Receiver = false
+        };
+        UserBattle newUserBattle2 = new UserBattle
+        {
+            BattleId = newBattle.Id,
+            UserId = user2.Id,
+            Receiver = true,
+        };
+
+        await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle1);
+        await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle2);
+        await _unitOfWork.SaveAsync();
     }
 
     // Método solicitud de batalla
-    public async Task AcceptBattle(int battleId, User user)
+    public async Task AcceptBattle(int battleId, int userId)
     {
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
         if (existingBattle == null)
         {
-            throw new Exception("Esta solicitud no existe");
+            Console.WriteLine("Esta solicitud no existe");
+            return;
         }
 
         UserBattle receiverUser = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == true);
-        if (receiverUser.Id != user.Id)
+        if (receiverUser.Id != userId)
         {
-            throw new Exception("Este usuario no es recibidor");
+            Console.WriteLine("Este usuario no es recibidor");
+            return;
         }
 
         existingBattle.Accepted = true;
@@ -75,23 +71,31 @@ public class BattleService
     }
 
     // Método borrar amigo o rechazar solicitud de batalla
-    public async Task DeleteBattle(int battleId, User user)
+    public async Task DeleteBattle(int battleId, int userId)
     {
         // Comprobamos que la batalla existe
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
         if (existingBattle == null)
         {
-            throw new Exception("Esta batalla no existe :(");
+            Console.WriteLine("Esta batalla no existe :(");
+            return;
         }
 
         // Comprobamos que el usuario es parte de la batalla
-        UserBattle userBattle = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId == user.Id);
+        UserBattle userBattle = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
         if (userBattle == null)
         {
-            throw new Exception("Este usuario no forma parte de esta batalla");
+            Console.WriteLine("Este usuario no forma parte de esta batalla");
+            return;
         }
 
         _unitOfWork.BattleRepository.Delete(existingBattle);
         await _unitOfWork.SaveAsync();
+    }
+
+    public async Task<ICollection<Battle>> GetBattleList(int userId)
+    {
+        ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetBattleByUserIdAsync(userId);
+        return battles;
     }
 }
