@@ -43,6 +43,9 @@ public class UserSocket
                         { "messageType", messageType }
                     };
 
+                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
                     using IServiceScope scope = _serviceProvider.CreateScope();
 
                     // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
@@ -62,7 +65,7 @@ public class UserSocket
                             break;
                     }
 
-                    string outMessage = JsonSerializer.Serialize(dict);
+                    string outMessage = JsonSerializer.Serialize(dict, options);
                     // Procesamos el mensaje
                     //string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
 

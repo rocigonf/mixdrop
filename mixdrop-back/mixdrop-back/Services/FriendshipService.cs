@@ -154,12 +154,8 @@ namespace mixdrop_back.Services
                 return null;
             }*/
 
-            return await _unitOfWork.FriendshipRepository.GetFriendshipyByUserIdAsync(userId);
-        }
-
-        public async Task<Friendship> GetFriendshipByIdAsync(int id)
-        {
-            return await _unitOfWork.FriendshipRepository.GetFriendshipWithUserByIdAsync(id);
+            ICollection<Friendship> friendships = await _unitOfWork.FriendshipRepository.GetFriendshipyByUserIdAsync(userId);
+            return friendships;
         }
     }
 }
