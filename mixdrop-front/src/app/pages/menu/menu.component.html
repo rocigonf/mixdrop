@@ -42,17 +42,21 @@
                     <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
                         [ngModelOptions]="{standalone: true}" />
     
-                    <button type="submit"> Buscar</button>
+                    <button type="submit" [disabled]="!queryfriend"> Buscar</button>
                 </form>
 
 
-                @if (acceptedFriends) {
+                @if (acceptedFriends.length < 1) {
+                    <p> No tienes amigos :C</p>
+                }
+                
+                @else if (searchedFriends) {
 
-                @if (acceptedFriends.length<1) { <p> No se tienes amigos :C</p> }
+                @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
                     @else {
 
                     <div class="listaUsuarios">
-                        @for (friend of acceptedFriends; track $index)
+                        @for (friend of searchedFriends; track $index)
                         {
                         <div class="tarjetaUsuario">
                             @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath != undefined) {

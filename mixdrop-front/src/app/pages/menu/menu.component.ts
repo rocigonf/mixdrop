@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   battleId: number = 0
 
   searchedUsers!: User[];
-  searchedFriends: User[] = [];
+  searchedFriends: Friend[] = [];
   queryuser: string = '';
   queryfriend: string = '';
   askedForFriend: boolean = false
@@ -122,6 +122,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
     console.log("amigos: ", this.acceptedFriends)
     console.log("solicitudes: ", this.pendingFriends)
+
+    this.searchFriend("")
   }
 
   async removeFriend(friend: Friend) {
@@ -197,9 +199,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     } 
   );
 
-  console.log("que pasaaaaaaaa",this.acceptedFriends);
-
-    this.searchedFriends = misAmigos;
+    // aqui tambien se pueden guardar los usuarios USER de los amigos 
+    this.searchedFriends = encontrados;
 
   }
 
