@@ -65,6 +65,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.askForInfo(MessageType.Stats)
 
+    
   }
 
   processMessage(message: any) {
@@ -170,7 +171,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     const query = this.removeAccents(queryfriend)
 
     let encontrados: Friend[] = [];
-    let misAmigos: User[] = []
+    const misAmigos: User[] = []
 
     this.acceptedFriends.forEach(friendship => {
 
@@ -193,7 +194,10 @@ export class MenuComponent implements OnInit, OnDestroy {
           }
         });
       }
-    });
+    } 
+  );
+
+  console.log("que pasaaaaaaaa",this.acceptedFriends);
 
     this.searchedFriends = misAmigos;
 
