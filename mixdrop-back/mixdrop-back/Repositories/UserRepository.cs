@@ -25,8 +25,6 @@ public class UserRepository : Repository<User, int>
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
             .Include(user => user.BattleUsers)
-               .ThenInclude(userBattle => userBattle.BattleRole)
-            .Include(user => user.BattleUsers)
                .ThenInclude(userBattle => userBattle.BattleResult)
             .FirstOrDefaultAsync(user => user.Email.Equals(email));
     }
@@ -38,8 +36,6 @@ public class UserRepository : Repository<User, int>
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
-            .Include(user => user.BattleUsers)
-               .ThenInclude(userBattle => userBattle.BattleRole)
             .Include(user => user.BattleUsers)
                .ThenInclude(userBattle => userBattle.BattleResult)
             .FirstOrDefaultAsync(user => user.Nickname.Equals(nickname));
@@ -53,8 +49,6 @@ public class UserRepository : Repository<User, int>
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
             .Include(user => user.BattleUsers)
-               .ThenInclude(userBattle => userBattle.BattleRole)
-            .Include(user => user.BattleUsers)
                .ThenInclude(userBattle => userBattle.BattleResult)
         .FirstOrDefaultAsync(user => user.Email == emailOrNickname || user.Nickname == emailOrNickname);
     }
@@ -66,8 +60,6 @@ public class UserRepository : Repository<User, int>
             .Include(user => user.State)
             .Include(user => user.BattleUsers)
                 .ThenInclude(userBattle => userBattle.Battle)
-            .Include(user => user.BattleUsers)
-               .ThenInclude(userBattle => userBattle.BattleRole)
             .Include(user => user.BattleUsers)
                .ThenInclude(userBattle => userBattle.BattleResult)
             .FirstOrDefaultAsync(user => user.Id == id);

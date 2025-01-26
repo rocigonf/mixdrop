@@ -4,7 +4,7 @@
 
 <div class="cabecera">
     <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
+    <span>{{user?.nickname}}</span> <!-- nickname del usuario-->
 </div>
 
 <!-- contenido -->
@@ -81,16 +81,18 @@
                 @else {
 
                     <div class="listaUsuarios">
-                    @for (user of searchedUsers; track $index)
-                    {
-                    <div class="tarjetaUsuario">
-                        <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                        <span>{{user.nickname}}</span>
-                        <div (click)="addFriend(user)">
-                            <img class="icono" src="/images/addFriend.webp" alt="añadir amigo">
+                        @for (user of searchedUsers; track $index)
+                        {
+                        <div class="tarjetaUsuario">
+                            <div class="contenedorAvatar">
+                                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
+                            </div>
+                            <span class="nickname">{{user.nickname}}</span>
+                            <div class="contenedorIcono">
+                                <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp" alt="añadir amigo">
+                            </div>
                         </div>
-                    </div>
-                    }
+                        }
                     </div>
                 }
             }

@@ -43,7 +43,7 @@ public class UserSocket
                         { "messageType", messageType }
                     };
 
-                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                     options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
                     using IServiceScope scope = _serviceProvider.CreateScope();
@@ -61,6 +61,9 @@ public class UserSocket
                             dict.Add("total", WebSocketHandler.Total);
                             break;
                         case MessageType.Play:
+                            BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
+                            var battleList = await battleService.GetBattleList(UserId);
+                            dict.Add("battles", battleList);
                             break;
                     }
 
