@@ -38,27 +38,55 @@
         <div class="busquedaUsuarios">
             <div>
                 <span>TUS AMIGOS</span><br>
-                @for(friend of acceptedFriends; track friend.id)
-                {
-                <div>
-                    <p>Nombre: {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}</p>
-                    <button (click)="removeFriend(friend)">Eliminar amigo</button>
-                </div>
-            
+                <form (submit)="searchFriend(queryfriend)">
+                    <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
+                        [ngModelOptions]="{standalone: true}" />
+    
+                    <button type="submit" [disabled]="!queryfriend"> Buscar</button>
+                </form>
+
+
+                @if (acceptedFriends.length < 1) {
+                    <p> No tienes amigos :C</p>
                 }
+                
+                @else if (searchedFriends) {
+
+                @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
+                    @else {
+
+                    <div class="listaUsuarios">
+                        @for (friend of searchedFriends; track $index)
+                        {
+                        <div class="tarjetaUsuario">
+                            @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath != undefined) {
+                            <div class="contenedorAvatar">
+                                <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath" alt="usuario avatar"
+                                    width="50px">
+                            </div>
+                            }
+                            @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                            undefined) {
+                            <div class="contenedorAvatar">
+                                <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
+                                    alt="usuario avatar" width="50px">
+                            </div>
+                            }
+
+
+                            <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
+                                }}</span>
+                            <div class="contenedorIcono">
+                                <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                    alt="eliminar amigo">
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
+                    }
             </div>
 
-            <form (submit)="(queryfriend)">
-                <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
-                    [ngModelOptions]="{standalone: true}" />
-                <button type="submit"> Buscar</button>
-            </form>
-
-            <div>
-                @for (friend of acceptedFriends; track $index) {
-                <p>{{friend.receiverUser?.nickname}}</p>
-                }
-            </div>
         </div>
         }
 
@@ -80,22 +108,23 @@
             @if (searchedUsers.length<1) { <p> No se encontraton usuarios</p> }
                 @else {
 
-                    <div class="listaUsuarios">
-                        @for (user of searchedUsers; track $index)
-                        {
-                        <div class="tarjetaUsuario">
-                            <div class="contenedorAvatar">
-                                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                            </div>
-                            <span class="nickname">{{user.nickname}}</span>
-                            <div class="contenedorIcono">
-                                <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp" alt="añadir amigo">
-                            </div>
+                <div class="listaUsuarios">
+                    @for (user of searchedUsers; track $index)
+                    {
+                    <div class="tarjetaUsuario">
+                        <div class="contenedorAvatar">
+                            <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
                         </div>
-                        }
+                        <span class="nickname">{{user.nickname}}</span>
+                        <div class="contenedorIcono">
+                            <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp"
+                                alt="añadir amigo">
+                        </div>
                     </div>
+                    }
+                </div>
                 }
-            }
+                }
         </div>
         }
 
@@ -103,22 +132,42 @@
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
 
-            @for(friend of pendingFriends; track friend.id)
-            {
-                <div>
-                    <p>Nombre: {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}</p>
-                    <button (click)="acceptFriendship(friend.id)">Aceptar solicitud</button>
-                    <button (click)="removeFriend(friend)">Eliminar solicitud</button>
-                </div>
-            
-            }
-        }
+        @if (pendingFriends.length<1) { <p> No tienes solicitudes de amistad :C</p> }
+            @else {
 
-        <!-- SOLICITUDES DE BATALLA-->
-        @case ('battleRequest') {
-        SOLICITUDES DE BATALLA
-        }
-        }
+            <div class="listaUsuarios">
+                @for (friend of pendingFriends; track $index)
+                {
+                <div class="tarjetaUsuario">
+                    <div class="contenedorAvatar">
+                        <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath" alt="usuario avatar"
+                            width="50px">
+                    </div>
+
+
+                    <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
+                        }}</span>
+                    <div class="contenedorIcono">
+                        <img class="icono" (click)="acceptFriendship(friend.id)" src="/images/addFriend.webp"
+                            alt="aceptar amigo">
+                    </div>
+                    <div class="contenedorIcono">
+                        <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                            alt="eliminar amigo">
+                    </div>
+                </div>
+                }
+            </div>
+            }
+
+
+            }
+
+            <!-- SOLICITUDES DE BATALLA-->
+            @case ('battleRequest') {
+            SOLICITUDES DE BATALLA
+            }
+            }
 
     </section>
 </div>

@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   battleId: number = 0
 
   searchedUsers!: User[];
-  searchedFriends: User[] = [];
+  searchedFriends: Friend[] = [];
   queryuser: string = '';
   queryfriend: string = '';
   askedForFriend: boolean = false
@@ -65,6 +65,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.askForInfo(MessageType.Stats)
 
+    
   }
 
   processMessage(message: any) {
@@ -121,6 +122,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
     console.log("amigos: ", this.acceptedFriends)
     console.log("solicitudes: ", this.pendingFriends)
+
+    this.searchFriend("")
   }
 
   async removeFriend(friend: Friend) {
@@ -170,7 +173,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     const query = this.removeAccents(queryfriend)
 
     let encontrados: Friend[] = [];
-    let misAmigos: User[] = []
+    const misAmigos: User[] = []
 
     this.acceptedFriends.forEach(friendship => {
 
@@ -193,9 +196,11 @@ export class MenuComponent implements OnInit, OnDestroy {
           }
         });
       }
-    });
+    } 
+  );
 
-    this.searchedFriends = misAmigos;
+    // aqui tambien se pueden guardar los usuarios USER de los amigos 
+    this.searchedFriends = encontrados;
 
   }
 
