@@ -46,7 +46,10 @@ public class BattleService
         {
             BattleId = newBattle.Id,
             UserId = user1.Id,
-            Receiver = false
+            Receiver = false,
+            BattleResultId = 1,
+            Battle = newBattle,
+            BattleResult = new BattleResult()
         };
 
 
@@ -57,6 +60,9 @@ public class BattleService
                 BattleId = newBattle.Id,
                 UserId = user2.Id,
                 Receiver = true,
+                BattleResultId = 1,
+                Battle = newBattle,
+                BattleResult = new BattleResult()
             };
 
             await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle2);
