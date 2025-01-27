@@ -1,5 +1,7 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using Microsoft.Extensions.Options;
+using mixdrop_back.Models.Entities;
 using mixdrop_back.Sockets;
+using System.Runtime.Intrinsics.X86;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -102,12 +104,6 @@ namespace mixdrop_back.Services
             {
                 Console.WriteLine("Este usuario no forma parte de esta amistad");
                 return;
-            }
-
-            UserFriend user2 = existingFriendship.UserFriends.FirstOrDefault(userFriend => userFriend.UserId != user.Id);
-            if (user2 == null)
-            {
-                throw new Exception("Este usuario no forma parte de esta amistad");
             }
 
             _unitOfWork.FriendshipRepository.Delete(existingFriendship);
