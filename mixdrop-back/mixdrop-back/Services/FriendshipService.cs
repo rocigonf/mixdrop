@@ -40,7 +40,7 @@ namespace mixdrop_back.Services
             }
 
             // Se crea una nueva "plantilla" de amistad
-            var newFriendship = await _unitOfWork.FriendshipRepository.InsertAsync(new Friendship() 
+            var newFriendship = await _unitOfWork.FriendshipRepository.InsertAsync(new Friendship()
             {
                 SenderUserId = user1.Id,
                 ReceiverUserId = user2.Id,
@@ -121,9 +121,9 @@ namespace mixdrop_back.Services
         {
             ICollection<Friendship> friendships = await _unitOfWork.FriendshipRepository.GetFriendshipsByUserAsync(userId);
 
-            foreach(Friendship friendship in friendships)
+            foreach (Friendship friendship in friendships)
             {
-                if(friendship.SenderUserId == userId)
+                if (friendship.SenderUserId == userId)
                 {
                     friendship.SenderUser = null;
                     friendship.ReceiverUser.Password = null;

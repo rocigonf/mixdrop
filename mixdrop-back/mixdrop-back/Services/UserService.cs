@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-
-using System.Text.RegularExpressions;
+﻿using Microsoft.EntityFrameworkCore;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Helper;
 using mixdrop_back.Models.Mappers;
 using System.Text;
-using mixdrop_back.Sockets;
+using System.Text.RegularExpressions;
 
 namespace mixdrop_back.Services;
 
@@ -28,7 +23,7 @@ public class UserService
 
 
     // buscar usuario
-    public async Task<List<UserDto>> SearchUser( string search)
+    public async Task<List<UserDto>> SearchUser(string search)
     {
 
         string searchSinTildes = Regex.Replace(search.Normalize(NormalizationForm.FormD), @"[^a-zA-z0-9 ]+", "");
@@ -144,18 +139,19 @@ public class UserService
     {
         // validacion email
 
-        if (!emailRegex.IsMatch(model.Email)) {
+        if (!emailRegex.IsMatch(model.Email))
+        {
             throw new Exception("Email no valido.");
         }
 
-        if(model.Password == null || model.Password.Length < 6)
+        if (model.Password == null || model.Password.Length < 6)
         {
             throw new Exception("Contraseña no válida");
         }
 
         try
         {
-            
+
             // Verifica si el usuario ya existe
             var existingUser = await GetUserByEmailAsync(model.Email.ToLower());
 
@@ -177,7 +173,7 @@ public class UserService
                 StateId = 1
             };
 
-            if(model.Image != null)
+            if (model.Image != null)
             {
                 newUser.AvatarPath = "/" + await imageService.InsertAsync(model.Image);
             }
@@ -233,9 +229,9 @@ public class UserService
 
             existingUser.Email = model.Email.ToLower();
             existingUser.Nickname = model.Nickname.ToLower();
-            
+
             // Si han pasado que la imagen debe cambiar y no es nula, guardo la imagen, pero si es nula, borro la que ya tenía
-            if(model.ChangeImage.Equals("true"))
+            if (model.ChangeImage.Equals("true"))
             {
                 if (model.Image != null)
                 {
@@ -249,7 +245,7 @@ public class UserService
 
             existingUser.Role = role;
 
-            if(model.Password != null && model.Password != "")
+            if (model.Password != null && model.Password != "")
             {
                 existingUser.Password = PasswordHelper.Hash(model.Password);
             }
@@ -267,7 +263,7 @@ public class UserService
             throw new Exception("Error al registrar el usuario. Verifica los datos ingresados.");
         }
     }
-    
+
     public UserDto ToDto(User user)
     {
         return _userMapper.ToDto(user);

@@ -8,7 +8,7 @@ public class BattleRepository : Repository<Battle, int>
 {
     public BattleRepository(MixDropContext context) : base(context) { }
 
-    public async Task<Battle> GetBattleByUsersAsync (int userId1, int userId2)
+    public async Task<Battle> GetBattleByUsersAsync(int userId1, int userId2)
     {
         return await GetQueryable()
             .Include(friendship => friendship.BattleUsers
@@ -16,7 +16,6 @@ public class BattleRepository : Repository<Battle, int>
                 .Where(userFriend => userFriend.UserId == userId2)
             )
             .FirstOrDefaultAsync();
-
     }
 
     public async Task<Battle> GetCompleteBattleAsync(int battleId)
