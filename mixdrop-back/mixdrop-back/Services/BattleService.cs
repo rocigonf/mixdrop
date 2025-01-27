@@ -11,7 +11,7 @@ public class BattleService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateBattle(User user1, User user2)
+    public async Task CreateBattle(User user1, User user2 = null, bool isRandom = false)
     {
         User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
         if (existingUser == null)
@@ -27,7 +27,7 @@ public class BattleService
             return;
         }
 
-        Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync(new Battle());
+        Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync(isRandom ? new Battle() { Accepted = true } : new Battle());
 
         UserBattle newUserBattle1 = new UserBattle
         {
@@ -91,6 +91,24 @@ public class BattleService
 
         _unitOfWork.BattleRepository.Delete(existingBattle);
         await _unitOfWork.SaveAsync();
+    }
+
+    // Emparejamiento aleatorio
+    public async Task RandomBattle(User user)
+    {
+        User userInQueue = await _unitOfWork.UserRepository.GetUserInQueueAsync();
+        if (userInQueue == null)
+        {
+            user.IsInQueue = true;
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveAsync();
+        }
+        else
+        {
+            userInQueue.IsInQueue = false;
+            _unitOfWork.UserRepository.Update(userInQueue);
+            await CreateBattle(user, userInQueue, true);
+        }
     }
 
     public async Task<ICollection<Battle>> GetBattleList(int userId)

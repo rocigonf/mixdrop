@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Services;
@@ -64,6 +63,14 @@ public class BattleController : ControllerBase
         await _battleService.DeleteBattle(id, userId);
     }
 
+    // Emparejamiento aleatorio
+    [Authorize]
+    [HttpPost("/matchmaking")]
+    public async Task RandomBattle()
+    {
+        User user = await GetAuthorizedUser();
+        await _battleService.RandomBattle(user);
+    }
     private async Task<User> GetAuthorizedUser()
     {
         System.Security.Claims.ClaimsPrincipal currentUser = this.User;

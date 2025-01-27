@@ -65,4 +65,9 @@ public class UserRepository : Repository<User, int>
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
+    public async Task<User> GetUserInQueueAsync()
+    {
+        return await GetQueryable()
+            .FirstOrDefaultAsync(user => user.IsInQueue == true);
+    }
 }

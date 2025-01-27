@@ -1,5 +1,4 @@
-﻿using mixdrop_back.Models.Entities;
-using mixdrop_back.Services;
+﻿using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -16,7 +15,8 @@ public class UserSocket
 
     public event Func<UserSocket, Task> Disconnected;
 
-    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, int userId) {
+    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, int userId)
+    {
         _serviceProvider = serviceProvider;
         Socket = socket;
         UserId = userId;
@@ -52,7 +52,7 @@ public class UserSocket
                     // En función del switch, obtengo unos datos u otros, y los envío en JSON
                     switch (messageType)
                     {
-                        case MessageType.Friend:                           
+                        case MessageType.Friend:
                             FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
                             var friendList = await friendshipService.GetFriendList(UserId);
                             dict.Add("friends", friendList);

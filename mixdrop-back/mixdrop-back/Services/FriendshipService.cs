@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.Entities;
 using mixdrop_back.Sockets;
-using System.Runtime.Intrinsics.X86;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -40,7 +38,7 @@ namespace mixdrop_back.Services
             }
 
             // Se crea una nueva "plantilla" de amistad
-            var newFriendship = await _unitOfWork.FriendshipRepository.InsertAsync(new Friendship() 
+            var newFriendship = await _unitOfWork.FriendshipRepository.InsertAsync(new Friendship()
             {
                 SenderUserId = user1.Id,
                 ReceiverUserId = user2.Id,
@@ -127,9 +125,9 @@ namespace mixdrop_back.Services
         {
             ICollection<Friendship> friendships = await _unitOfWork.FriendshipRepository.GetFriendshipsByUserAsync(userId);
 
-            foreach(Friendship friendship in friendships)
+            foreach (Friendship friendship in friendships)
             {
-                if(friendship.SenderUserId == userId)
+                if (friendship.SenderUserId == userId)
                 {
                     friendship.SenderUser = null;
                     friendship.ReceiverUser.Password = null;
