@@ -12,7 +12,7 @@ import { PasswordValidatorService } from '../../services/password-validator.serv
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule,  NgIf],
+  imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule, NgIf],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -29,6 +29,8 @@ export class LoginComponent {
 
   image: File | null = null
 
+  imgSeleccionada: Boolean = false;
+
   imagePreview!: string;
 
   constructor(
@@ -36,7 +38,7 @@ export class LoginComponent {
     private router: Router,
     private authService: AuthService,
     private webSocketService: WebsocketService,
-    private passwordValidator : PasswordValidatorService
+    private passwordValidator: PasswordValidatorService
   ) {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
@@ -67,7 +69,7 @@ export class LoginComponent {
       alert("inicio sesion exitoso");
 
       this.router.navigateByUrl("menu"); // redirige a inicio
-      
+
       this.webSocketService.connectRxjs()
     } else {
       alert("error al iniciar sesion")
@@ -80,14 +82,15 @@ export class LoginComponent {
   async register() {
     console.log(this.registerForm.value)
 
-
-    if (this.registerForm.valid && this.image) {
+    if (this.registerForm.valid) {
 
       const formData = new FormData();
-      formData.append( "Nickname" ,this.registerForm.value.nickname )
-      formData.append( "Image" ,this.image, this.image.name )
-      formData.append( "Email" ,this.registerForm.value.email )
-      formData.append( "Password" ,this.registerForm.value.password )
+      formData.append("Nickname", this.registerForm.value.nickname)
+      if (this.image) {
+        formData.append("Image", this.image, this.image.name)
+      }
+      formData.append("Email", this.registerForm.value.email)
+      formData.append("Password", this.registerForm.value.password)
 
       const registerResult = await this.authService.register(formData);
 
@@ -99,10 +102,6 @@ export class LoginComponent {
         const loginResult = await this.authService.login(authData, false);
 
         if (loginResult.success) {
-
-          const user = this.authService.getUser();
-          const nickname = user ? user.nickname : null;
-
           alert("Te has registrado con éxito.")
           this.router.navigateByUrl("menu"); // redirige a inicio
 
@@ -125,9 +124,11 @@ export class LoginComponent {
     const image = event.target.files[0] as File;
     this.image = image
 
-    if(event.target.files.length > 0){
+    this.imgSeleccionada = true;
+
+    if (event.target.files.length > 0) {
       const reader = new FileReader();
-      reader.onload = (event:any) => {
+      reader.onload = (event: any) => {
         this.imagePreview = event.target.result;
       }
       reader.readAsDataURL(event.target.files[0])

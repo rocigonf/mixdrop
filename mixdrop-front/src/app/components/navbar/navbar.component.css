@@ -31,11 +31,8 @@ span {
     vertical-align: middle;
     height: 40px;
     width: 40px;
-    cursor: pointer;
     padding-left: 10px;
     padding-top: 5px;
-    
-   
 }
 
 .marco {
@@ -44,6 +41,7 @@ span {
     height: 50px;
     width: 60px;
     margin: 0;
+    cursor: pointer;
 }
 
 .nav-right {

@@ -26,4 +26,14 @@ public class BattleRepository : Repository<Battle, int>
             .FirstOrDefaultAsync(battle => battle.Id == battleId);
 
     }
+
+    public async Task<ICollection<Battle>> GetBattleByUserIdAsync(int userId)
+    {
+        // Con el Any obtengo todas las batallas que incluyan al id del usuario :'D
+        return await GetQueryable()
+            .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
+                .Include(battle => battle.BattleUsers.Where(user => user.UserId != userId))
+                .ThenInclude(userBattle => userBattle.User)
+                .ToListAsync();
+    }
 }

@@ -10,19 +10,28 @@ namespace mixdrop_back.Repositories
         public async Task<Friendship> GetFriendshipAsync(int userId1, int userId2)
         {
             return await GetQueryable()
-                .Include(friendship => friendship.UserFriends
-                    .Where(userFriend => userFriend.UserId == userId1)
-                    .Where(userFriend => userFriend.UserId == userId2)
-                )
-                .FirstOrDefaultAsync();
+                .Include(friendship => friendship.SenderUser)
+                .Include(f => f.ReceiverUser)
+                .FirstOrDefaultAsync(f => f.SenderUserId == userId1 && f.ReceiverUserId == userId2);
 
         }
-        public async Task<Friendship> GetAllFriendshipsAsync(int friendshipId)
+
+        /*public async Task<Friendship> GetFriendshipByIdAsync(int id)
         {
             return await GetQueryable()
-                .Include(friendship => friendship.UserFriends)
-                .FirstOrDefaultAsync(friendship => friendship.Id == friendshipId);
+                .Include(friendship => friendship.SenderUser)
+                .Include(f => f.ReceiverUser)
+                .FirstOrDefaultAsync(f => f.Id == id);
 
+        }*/
+
+        public async Task<ICollection<Friendship>> GetFriendshipsByUserAsync(int userId)
+        {
+            return await GetQueryable()
+                .Include(friendship => friendship.SenderUser)
+                .Include(f => f.ReceiverUser)
+                .Where(f => f.SenderUserId == userId || f.ReceiverUserId == userId)
+                .ToListAsync();
         }
     }
 }

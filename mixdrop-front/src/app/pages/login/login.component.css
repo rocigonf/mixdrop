@@ -55,18 +55,21 @@ input[type="checkbox"] {
     width: 100%;
     font-size: 1rem;
     margin-bottom: 18px;
+    margin-top: 5px;
 }
 
 #preview-img{
-    border-radius: 50%;
     width: 45px;
     height: 45px;
     margin: 5px;
+    object-fit: cover; /* Recorta la imagen sin deformarla */
+    object-position: center;
 }
 
 label {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
 }
+
 
 button {
     font-size: 1.5rem;

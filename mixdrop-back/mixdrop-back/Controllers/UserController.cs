@@ -66,9 +66,13 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("search")]
     public async Task<IActionResult> SearchUser([FromQuery] string query)
     {
+
+        User currentUser = await GetAuthorizedUser();
+
         if (query == null)
         {
             return BadRequest("Busqueda fallida.");
@@ -76,10 +80,13 @@ public class UserController : ControllerBase
 
         var result = await _userService.SearchUser(query);
 
+        result.Remove(result.Find(user => user.Id == currentUser.Id));
+
         if (result.Count == 0)
         {
             return Ok(new { users = new List<UserDto>()});
         }
+
 
         return Ok(new { users = result });
 

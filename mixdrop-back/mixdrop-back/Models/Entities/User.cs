@@ -16,6 +16,6 @@ public class User
     public bool Banned { get; set; } = false;
     public int StateId { get; set; }
     public State State { get; set; }
-    public ICollection<UserFriend> UserFriends { get; set; } = new List<UserFriend>();
+    public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
     public ICollection<UserBattle> BattleUsers { get; set; } = new List<UserBattle>();
 }

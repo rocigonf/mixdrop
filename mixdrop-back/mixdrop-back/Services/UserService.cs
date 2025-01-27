@@ -64,9 +64,7 @@ public class UserService
 
         await _unitOfWork.SaveAsync();
 
-        Console.WriteLine("Usuario desconectado: " + existingUser.Nickname);
-
-        await WebSocketHandler.RemoveSocket(userId);
+        //await WebSocketHandler.RemoveSocket(userId);
     }
 
 
@@ -79,6 +77,11 @@ public class UserService
     public async Task<User> GetBasicUserByIdAsync(int userId)
     {
         return await _unitOfWork.UserRepository.GetByIdAsync(userId);
+    }
+
+    public async Task<User> GetFullUserByIdAsync(int userId)
+    {
+        return await _unitOfWork.UserRepository.GetUserById(userId);
     }
 
     public async Task<UserDto> GetUserByEmailAsync(string email)
