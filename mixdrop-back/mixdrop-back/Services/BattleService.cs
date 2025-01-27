@@ -28,15 +28,17 @@ public class BattleService
         }
 
 
-        // q si estan en batalla los jugadores, no pueda estar en otra
+        // q si estan en batalla los jugadores, no pueda estar en otra -------- falta por hacer
+        /*
         Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
         if (existingBattle != null)
         {
             Console.WriteLine("Esta batalla ya existe");
             return;
-        }
+        }*/
 
         // adaptar websocket a esto tamb
+
         Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync( isRandom ? new Battle() { Accepted = true } : new Battle());
 
         UserBattle newUserBattle1 = new UserBattle
@@ -58,6 +60,10 @@ public class BattleService
 
             await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle2);
         }
+
+        // falla por las foreign keys
+
+
 
         await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle1);
         await _unitOfWork.SaveAsync();
