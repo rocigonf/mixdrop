@@ -109,6 +109,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
+        
       }
       if(friend.accepted === false)
       {
@@ -129,7 +130,15 @@ export class MenuComponent implements OnInit, OnDestroy {
   async removeFriend(friend: Friend) {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
-    await this.friendshipService.removeFriendById(friend.id)
+
+    const nickname = friend.receiverUser?.nickname || friend.senderUser?.nickname;
+
+    const confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+  
+    if (confirmed) {
+      await this.friendshipService.removeFriendById(friend.id)
+      alert(`Has dejado de ser amigo de ${nickname}.`);
+    } 
   }
 
   async addFriend(user: User) {
@@ -158,6 +167,20 @@ export class MenuComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.messageReceived$?.unsubscribe();
   }
+
+  navigateToUrl(url: string)
+  {
+    this.router.navigateByUrl(url);
+  }
+
+  visitUserPorfile(user: User | null)
+  {
+    if(user){
+      this.router.navigateByUrl("profile/" +user?.id  );
+
+    }
+  }
+
 
   async getSearchedUsers(queryuser: string): Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
@@ -201,7 +224,14 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     // aqui tambien se pueden guardar los usuarios USER de los amigos 
     this.searchedFriends = encontrados;
+  }
 
+  // comprueba q el usuatio ya tiene amistad (aceptada o no) con otro usuario
+  hasFriendship(user: User): boolean {
+    return this.friendsRaw.some(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) || 
+      (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
+    );
   }
 
   // quita tildes y pone minuscula

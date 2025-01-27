@@ -41,50 +41,140 @@
                 <form (submit)="searchFriend(queryfriend)">
                     <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
                         [ngModelOptions]="{standalone: true}" />
-    
+
                     <button type="submit" [disabled]="!queryfriend"> Buscar</button>
                 </form>
 
 
-                @if (acceptedFriends.length < 1) {
-                    <p> No tienes amigos :C</p>
-                }
-                
-                @else if (searchedFriends) {
+                @if (acceptedFriends.length < 1) { <p> No tienes amigos :C</p> }
 
-                @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
-                    @else {
+                    @else if (searchedFriends) {
 
-                    <div class="listaUsuarios">
-                        @for (friend of searchedFriends; track $index)
-                        {
-                        <div class="tarjetaUsuario">
-                            @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath != undefined) {
-                            <div class="contenedorAvatar">
-                                <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath" alt="usuario avatar"
-                                    width="50px">
+                    @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
+                        @else {
+
+                        <p>CONECTADOS</p>
+
+                        <div class="listaUsuarios">
+
+                            @for (friend of searchedFriends; track $index)
+                            {
+
+
+                            @if (friend.senderUser?.stateId == 2 || friend.receiverUser?.stateId == 2) {
+
+                            <div class="tarjetaConectado">
+                                @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+
+
+                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                                </span>
+                                <div class="contenedorIcono">
+                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                        alt="eliminar amigo">
+                                </div>
                             </div>
+
                             }
-                            @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
-                            undefined) {
-                            <div class="contenedorAvatar">
-                                <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
-                                    alt="usuario avatar" width="50px">
-                            </div>
+
                             }
 
-
-                            <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                                }}</span>
-                            <div class="contenedorIcono">
-                                <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
-                                    alt="eliminar amigo">
-                            </div>
                         </div>
+
+                        <p>DESCONECTADOS</p>
+
+                        <div class="listaUsuarios">
+
+                            @for (friend of searchedFriends; track $index)
+                            {
+
+                            @if (friend.senderUser?.stateId == 1 || friend.receiverUser?.stateId == 1) {
+
+                            <div class="tarjetaUsuario">
+                                @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+
+                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                                </span>
+
+                                <div class="contenedorIcono">
+                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                        alt="eliminar amigo">
+                                </div>
+                            </div>
+                            }
+                            }
+                        </div>
+
+                        <p>EN BATALLA</p>
+
+                        <div class="listaUsuarios">
+
+                            @for (friend of searchedFriends; track $index)
+                            {
+
+                            @if (friend.senderUser?.stateId == 3 || friend.receiverUser?.stateId == 3) {
+
+                            <div class="tarjetaJugando">
+                                @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+
+
+                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                                </span>
+
+                                <div class="contenedorIcono">
+                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                        alt="eliminar amigo">
+                                </div>
+                            </div>
+                            }
+                            }
+                        </div>
+
+
                         }
-                    </div>
-                    }
-                    }
+                        }
             </div>
 
         </div>
@@ -115,11 +205,16 @@
                         <div class="contenedorAvatar">
                             <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
                         </div>
-                        <span class="nickname">{{user.nickname}}</span>
+
+                        <span (click)="visitUserPorfile(user )" class="nickname">{{user.nickname}}</span>
+
                         <div class="contenedorIcono">
-                            <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp"
-                                alt="añadir amigo">
+                            @if (!hasFriendship(user)) { <img class="icono" (click)="addFriend(user)"
+                                src="/images/addFriend.webp" alt="añadir amigo">
+                            }
                         </div>
+
+
                     </div>
                     }
                 </div>
@@ -145,8 +240,10 @@
                     </div>
 
 
-                    <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                        }}</span>
+                    <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                        {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                    </span>
+                    
                     <div class="contenedorIcono">
                         <img class="icono" (click)="acceptFriendship(friend.id)" src="/images/addFriend.webp"
                             alt="aceptar amigo">
@@ -170,7 +267,17 @@
             }
 
     </section>
+
+
 </div>
+
+<div class="container">
+    <p>Total de jugadores conectados: {{ totalPlayers }}</p>
+
+    
+</div>
+
+
 <br><br><br><br>
 <div>
     <button (click)="askForInfo(0)">Pedir dato 1</button>
