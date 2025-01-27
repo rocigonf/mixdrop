@@ -34,8 +34,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
-  conectedFriends : Friend[] = []
-
   pendingBattles: Battle[] = []
   battleId: number = 0
 
@@ -132,7 +130,16 @@ export class MenuComponent implements OnInit, OnDestroy {
   async removeFriend(friend: Friend) {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
-    await this.friendshipService.removeFriendById(friend.id)
+
+    const nickname = friend.receiverUser?.nickname || friend.senderUser?.nickname;
+
+    const confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+  
+    if (confirmed) {
+      // Si el usuario confirma, eliminar al amigo
+      await this.friendshipService.removeFriendById(friend.id)
+      alert(`Has dejado de ser amigo de ${nickname}.`);
+    } 
   }
 
   async addFriend(user: User) {
