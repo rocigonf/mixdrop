@@ -201,7 +201,14 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     // aqui tambien se pueden guardar los usuarios USER de los amigos 
     this.searchedFriends = encontrados;
+  }
 
+  // comprueba q el usuatio ya tiene amistad (aceptada o no) con otro usuario
+  hasFriendship(user: User): boolean {
+    return this.friendsRaw.some(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) || 
+      (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
+    );
   }
 
   // quita tildes y pone minuscula

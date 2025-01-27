@@ -41,50 +41,50 @@
                 <form (submit)="searchFriend(queryfriend)">
                     <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
                         [ngModelOptions]="{standalone: true}" />
-    
+
                     <button type="submit" [disabled]="!queryfriend"> Buscar</button>
                 </form>
 
 
-                @if (acceptedFriends.length < 1) {
-                    <p> No tienes amigos :C</p>
-                }
-                
-                @else if (searchedFriends) {
+                @if (acceptedFriends.length < 1) { <p> No tienes amigos :C</p>
+                    }
 
-                @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
-                    @else {
+                    @else if (searchedFriends) {
 
-                    <div class="listaUsuarios">
-                        @for (friend of searchedFriends; track $index)
-                        {
-                        <div class="tarjetaUsuario">
-                            @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath != undefined) {
-                            <div class="contenedorAvatar">
-                                <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath" alt="usuario avatar"
-                                    width="50px">
+                    @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
+                        @else {
+
+                        <div class="listaUsuarios">
+                            @for (friend of searchedFriends; track $index)
+                            {
+                            <div class="tarjetaUsuario">
+                                @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                undefined) {
+                                <div class="contenedorAvatar">
+                                    <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
+                                        alt="usuario avatar" width="50px">
+                                </div>
+                                }
+
+
+                                <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
+                                    }}</span>
+                                <div class="contenedorIcono">
+                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                        alt="eliminar amigo">
+                                </div>
                             </div>
                             }
-                            @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
-                            undefined) {
-                            <div class="contenedorAvatar">
-                                <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
-                                    alt="usuario avatar" width="50px">
-                            </div>
-                            }
-
-
-                            <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                                }}</span>
-                            <div class="contenedorIcono">
-                                <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
-                                    alt="eliminar amigo">
-                            </div>
                         </div>
                         }
-                    </div>
-                    }
-                    }
+                        }
             </div>
 
         </div>
@@ -116,10 +116,15 @@
                             <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
                         </div>
                         <span class="nickname">{{user.nickname}}</span>
+
+
                         <div class="contenedorIcono">
-                            <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp"
-                                alt="añadir amigo">
+                            @if (!hasFriendship(user)) { <img class="icono" (click)="addFriend(user)"
+                                src="/images/addFriend.webp" alt="añadir amigo">
+                            } 
                         </div>
+
+
                     </div>
                     }
                 </div>
