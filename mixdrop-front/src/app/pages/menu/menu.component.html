@@ -80,8 +80,9 @@
                                 }
 
 
-                                <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                                    }}</span>
+                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                                </span>
                                 <div class="contenedorIcono">
                                     <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
@@ -119,9 +120,10 @@
                                 </div>
                                 }
 
+                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                                </span>
 
-                                <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                                    }}</span>
                                 <div class="contenedorIcono">
                                     <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
@@ -157,8 +159,10 @@
                                 }
 
 
-                                <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                                    }}</span>
+                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                                </span>
+
                                 <div class="contenedorIcono">
                                     <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
@@ -201,8 +205,8 @@
                         <div class="contenedorAvatar">
                             <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
                         </div>
-                        <span class="nickname">{{user.nickname}}</span>
 
+                        <span (click)="visitUserPorfile(user )" class="nickname">{{user.nickname}}</span>
 
                         <div class="contenedorIcono">
                             @if (!hasFriendship(user)) { <img class="icono" (click)="addFriend(user)"
@@ -236,8 +240,10 @@
                     </div>
 
 
-                    <span class="nickname">{{ friend.senderUser?.nickname || friend.receiverUser?.nickname
-                        }}</span>
+                    <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                        {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
+                    </span>
+                    
                     <div class="contenedorIcono">
                         <img class="icono" (click)="acceptFriendship(friend.id)" src="/images/addFriend.webp"
                             alt="aceptar amigo">

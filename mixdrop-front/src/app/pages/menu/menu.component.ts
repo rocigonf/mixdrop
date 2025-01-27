@@ -168,6 +168,20 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.messageReceived$?.unsubscribe();
   }
 
+  navigateToUrl(url: string)
+  {
+    this.router.navigateByUrl(url);
+  }
+
+  visitUserPorfile(user: User | null)
+  {
+    if(user){
+      this.router.navigateByUrl("profile/" +user?.id  );
+
+    }
+  }
+
+
   async getSearchedUsers(queryuser: string): Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
     console.log(result)
