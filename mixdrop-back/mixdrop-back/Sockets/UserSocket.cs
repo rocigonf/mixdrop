@@ -12,14 +12,14 @@ public class UserSocket
     private static IServiceProvider _serviceProvider;
 
     public WebSocket Socket;
-    public int UserId { get; set; }
+    public User User { get; set; }
 
     public event Func<UserSocket, Task> Disconnected;
 
-    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, int userId) {
+    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, User user) {
         _serviceProvider = serviceProvider;
         Socket = socket;
-        UserId = userId;
+        User = user;
     }
 
     public async Task ProcessWebSocket()
@@ -52,17 +52,16 @@ public class UserSocket
                     // En función del switch, obtengo unos datos u otros, y los envío en JSON
                     switch (messageType)
                     {
-                        case MessageType.Friend:                           
-                            FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
-                            var friendList = await friendshipService.GetFriendList(UserId);
-                            dict.Add("friends", friendList);
+                        case MessageType.Friend:
+                            var friendlist = await GetFriendList(scope);
+                            dict.Add("friends", friendlist);
                             break;
                         case MessageType.Stats:
                             dict.Add("total", WebSocketHandler.Total);
                             break;
                         case MessageType.Play:
                             BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
-                            var battleList = await battleService.GetBattleList(UserId);
+                            var battleList = await battleService.GetBattleList(User.Id);
                             dict.Add("battles", battleList);
                             break;
                     }
@@ -89,6 +88,13 @@ public class UserSocket
         {
             await Disconnected.Invoke(this);
         }
+    }
+
+    public async Task<ICollection<Friendship>> GetFriendList(IServiceScope scope)
+    {
+        FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
+        var friendList = await friendshipService.GetFriendList(User.Id);
+        return friendList;
     }
 
 

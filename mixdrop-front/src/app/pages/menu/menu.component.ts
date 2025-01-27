@@ -41,8 +41,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   searchedFriends: Friend[] = [];
   queryuser: string = '';
   queryfriend: string = '';
-  askedForFriend: boolean = false
-
 
   menuSelector: string = 'myFriends';  // myFriends, searchUsers, friendRequest, battleRequest
 
@@ -78,12 +76,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     switch (jsonResponse.messageType) {
       case MessageType.Friend:
         // Es posible que haya que hacer JSON.parse() otra vez
-        this.askedForFriend = true
         this.friendsRaw = jsonResponse.friends
         this.processFriends()
         break
       case MessageType.Stats:
         this.totalPlayers = jsonResponse.total
+        this.askForInfo(MessageType.Friend)
         break
       case MessageType.AskForFriend:
         this.askForInfo(MessageType.Friend)
@@ -93,9 +91,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         alert("Partida encontrada :3")
         this.battleId = jsonResponse.battleId
         break
-    }
-    if (!this.askedForFriend) {
-      this.askForInfo(MessageType.Friend)
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
