@@ -33,6 +33,8 @@ export class LoginComponent {
 
   imagePreview!: string;
 
+  pressedEnter : Boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -51,6 +53,9 @@ export class LoginComponent {
 
 
   async login() {
+    if(this.pressedEnter) return;
+    this.pressedEnter = true;
+
     const authData = { emailOrNickname: this.emailOrNickname, password: this.password };
     const result = await this.authService.login(authData, this.rememberMe);
 
@@ -73,6 +78,7 @@ export class LoginComponent {
       this.webSocketService.connectRxjs()
     } else {
       alert("error al iniciar sesion")
+      this.pressedEnter = false
 
     }
   }
@@ -80,7 +86,9 @@ export class LoginComponent {
 
   // Registro
   async register() {
+    if(this.pressedEnter) return;
     console.log(this.registerForm.value)
+    this.pressedEnter = true
 
     if (this.registerForm.valid) {
 
@@ -109,14 +117,17 @@ export class LoginComponent {
 
         } else {
           alert("Error en el inicio de sesión");
+          this.pressedEnter = false
         }
 
       } else {
         alert("Error en el registro");
+        this.pressedEnter = false;
       }
 
     } else {
       alert("Formulario no válido");
+      this.pressedEnter = false;
     }
   }
 

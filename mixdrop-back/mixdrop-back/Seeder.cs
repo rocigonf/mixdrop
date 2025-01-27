@@ -75,4 +75,24 @@ public class Seeder
         await _context.States.AddRangeAsync(states);
     }
 
+    private async Task SeedBattleResult()
+    {
+        BattleResult[] results = [
+                new BattleResult {
+                    Name = "Jugando"
+                },
+                new BattleResult {
+                    Name = "Victoria"
+                },
+                new BattleResult {
+                    Name = "Derrota"
+                },
+                new BattleResult {
+                    Name = "Empate"
+                }
+            ];
+
+        await _context.BattleResults.AddRangeAsync(results);
+    }
+
 }
