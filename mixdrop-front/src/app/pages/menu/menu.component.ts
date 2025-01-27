@@ -136,7 +136,6 @@ export class MenuComponent implements OnInit, OnDestroy {
     const confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
   
     if (confirmed) {
-      // Si el usuario confirma, eliminar al amigo
       await this.friendshipService.removeFriendById(friend.id)
       alert(`Has dejado de ser amigo de ${nickname}.`);
     } 
