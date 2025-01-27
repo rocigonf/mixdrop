@@ -34,6 +34,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
+  conectedFriends : Friend[] = []
+
   pendingBattles: Battle[] = []
   battleId: number = 0
 
@@ -109,6 +111,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
+        
       }
       if(friend.accepted === false)
       {
