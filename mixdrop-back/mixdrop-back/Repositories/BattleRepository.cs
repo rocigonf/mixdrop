@@ -16,7 +16,6 @@ public class BattleRepository : Repository<Battle, int>
                 .Where(userFriend => userFriend.UserId == userId2)
             )
             .FirstOrDefaultAsync();
-
     }
 
     public async Task<Battle> GetCompleteBattleAsync(int battleId)

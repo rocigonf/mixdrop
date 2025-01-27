@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Services;
 
@@ -36,14 +37,18 @@ public class BattleController : ControllerBase
         return friendship;
     }*/
 
-    // Enviar solicitud de batalla
+    // Crear batalla
     [Authorize]
     [HttpPost]
-    public async Task AddBattle([FromBody] User user2)
+    public async Task AddBattle([FromBody] BattleRequest request)
     {
+        User user2 = request.user2;
+        bool isRandom = request.isRandom;
+
         User user1 = await GetAuthorizedUser();
-        await _battleService.CreateBattle(user1, user2);
+        await _battleService.CreateBattle(user1, user2, isRandom);
     }
+
 
     // Aceptar solicitud de batalla
     [Authorize]

@@ -41,8 +41,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   searchedFriends: Friend[] = [];
   queryuser: string = '';
   queryfriend: string = '';
-  askedForFriend: boolean = false
-
 
   menuSelector: string = 'myFriends';  // myFriends, searchUsers, friendRequest, battleRequest
 
@@ -78,12 +76,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     switch (jsonResponse.messageType) {
       case MessageType.Friend:
         // Es posible que haya que hacer JSON.parse() otra vez
-        this.askedForFriend = true
         this.friendsRaw = jsonResponse.friends
         this.processFriends()
         break
       case MessageType.Stats:
         this.totalPlayers = jsonResponse.total
+        this.askForInfo(MessageType.Friend)
         break
       case MessageType.AskForFriend:
         this.askForInfo(MessageType.Friend)
@@ -93,9 +91,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         alert("Partida encontrada :3")
         this.battleId = jsonResponse.battleId
         break
-    }
-    if (!this.askedForFriend) {
-      this.askForInfo(MessageType.Friend)
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
@@ -177,7 +172,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     if(user){
       this.router.navigateByUrl("profile/" +user?.id  );
-
     }
   }
 
@@ -190,6 +184,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     return result;
   }
+
 
   searchFriend(queryfriend: string): void {
 
@@ -221,7 +216,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
     } 
   );
-
     // aqui tambien se pueden guardar los usuarios USER de los amigos 
     this.searchedFriends = encontrados;
   }
@@ -239,13 +233,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
 
-
-
   emparejar() {
-
-    // se crea una partida
-
-    // HAY QUE PASARLE EL ID DE LA PARTIDA CREADA A LA RUTA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // te lleva al emparejamiento
     this.router.navigateByUrl("matching");
   }
 

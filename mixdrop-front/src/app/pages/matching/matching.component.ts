@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
+import { Friend } from '../../models/friend';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-matching',
@@ -21,17 +23,37 @@ export class MatchingComponent {
 
   constructor (private webSocketService : WebsocketService, 
     private router: Router, 
-    private battleService: BattleService, 
     public authService: AuthService,
+    public battleService : BattleService
   ){}
+
+
+  messageReceived$: Subscription | null = null;
+  serverResponse: string = '';
+
+
 
   ngOnInit(): void 
   {
     this.user = this.authService.getUser();
   }
 
-  async createRandomBattle(){
-    const response = await this.battleService.randomBattle();
-    console.log("Respuesta de batalla aleatoria: ", response);
+//  async createRandomBattle(){
+//    const response = await this.battleService.randomBattle();
+//    console.log("Respuesta de batalla aleatoria: ", response);
+//  }
+  
+  gameWithBot(){
+    // el user 2 es nulo y el false de que no es random
+    this.battleService.createBattle(null, false )
   }
+
+  gameWithFriend(friend : User){
+    this.battleService.createBattle(friend, false )
+  }
+
+  gameRandom(){
+    this.battleService.createBattle(null, true )
+  }
+
 }
