@@ -16,6 +16,9 @@ export class BattleService {
     return result
   }
 
-
-    
+  async randomBattle()
+  {
+    const result = await this.api.post("Battle/Matchmaking")
+    return result
+  }
 }
