@@ -62,6 +62,8 @@ input[type="checkbox"] {
     width: 45px;
     height: 45px;
     margin: 5px;
+    object-fit: cover; /* Recorta la imagen sin deformarla */
+    object-position: center;
 }
 
 label {

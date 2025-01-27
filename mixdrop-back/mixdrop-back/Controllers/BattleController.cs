@@ -37,7 +37,7 @@ public class BattleController : ControllerBase
         return friendship;
     }*/
 
-    // Enviar solicitud de amistad
+    // Enviar solicitud de batalla
     [Authorize]
     [HttpPost]
     public async Task AddBattle([FromBody] User user2)

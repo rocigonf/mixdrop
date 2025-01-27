@@ -14,7 +14,7 @@
     <form (submit)="login()">
       <div>
 
-        <input type="text" placeholder="Apodo o email" class="icon-input" required
+        <input type="text" [maxlength]="16" placeholder="Apodo o email" class="icon-input" required
           [(ngModel)]="emailOrNickname" [ngModelOptions]="{standalone: true}" />
 
         <input type="password" placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
@@ -38,7 +38,7 @@
   <div class="contenido registro">
     <form [formGroup]="registerForm" (submit)="register()">
 
-      <input type="text" placeholder="Nickname" formControlName="nickname" />
+      <input type="text" [maxlength]="16" placeholder="Nickname" formControlName="nickname" />
 
       <div class="error">
         <div *ngIf="registerForm.get('nickname')?.invalid && registerForm.get('nickname')?.touched">
@@ -85,7 +85,7 @@
 
       
       <br>
-      <button [disabled]="!registerForm.valid || !imgSeleccionada " type="submit">Crear Cuenta</button>
+      <button [disabled]="!registerForm.valid" type="submit">Crear Cuenta</button>
     </form>
 
   </div>
