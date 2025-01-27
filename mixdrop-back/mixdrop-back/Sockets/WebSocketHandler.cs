@@ -1,4 +1,6 @@
-﻿using System.Net.WebSockets;
+﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Services;
+using System.Net.WebSockets;
 using System.Text.Json;
 
 namespace mixdrop_back.Sockets;
@@ -17,10 +19,10 @@ public class WebSocketHandler
         _serviceProvider = serviceProvider;
     }
 
-    public async Task HandleWebsocketAsync(WebSocket webSocket, int userId)
+    public async Task HandleWebsocketAsync(WebSocket webSocket, User user)
     {
         // Creamos un nuevo WebSocketHandler a partir del WebSocket recibido y lo añadimos a la lista
-        UserSocket handler = await AddWebsocketAsync(webSocket, userId);
+        UserSocket handler = await AddWebsocketAsync(webSocket, user);
 
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
@@ -29,36 +31,21 @@ public class WebSocketHandler
         };
 
         await SendStatsMessage();
+
         await handler.ProcessWebSocket();
     }
 
-    private async Task<UserSocket> AddWebsocketAsync(WebSocket webSocket, int userId)
+    private async Task<UserSocket> AddWebsocketAsync(WebSocket webSocket, User user)
     {
         // Esperamos a que haya un hueco disponible
         await _semaphore.WaitAsync();
 
         // Sección crítica
 
-        UserSocket handler = new UserSocket(_serviceProvider, webSocket, userId);
+        UserSocket handler = new UserSocket(_serviceProvider, webSocket, user);
         handler.Disconnected += OnDisconnectedAsync;
         USER_SOCKETS.Add(handler);
         Total++;
-
-        /*var existingSocket = USER_SOCKETS.FirstOrDefault(u => u.UserId == userId);
-
-        if (existingSocket == null || existingSocket.Socket == null || existingSocket.Socket.State == WebSocketState.Closed)
-        {
-            if(existingSocket != null)
-            {
-                USER_SOCKETS.Remove(existingSocket);
-                Total--;
-            }
-
-            existingSocket = new UserSocket(webSocket, userId);
-            existingSocket.Disconnected += OnDisconnectedAsync;
-            USER_SOCKETS.Add(existingSocket);
-            Total++;
-        }*/
 
         // Liberamos el semáforo
         _semaphore.Release();
@@ -77,6 +64,20 @@ public class WebSocketHandler
         USER_SOCKETS.Remove(disconnectedHandler);
         Total--;
 
+        using IServiceScope scope = _serviceProvider.CreateScope();
+
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+
+        disconnectedHandler.User.StateId = 1;
+        unitOfWork.UserRepository.Update(disconnectedHandler.User);
+        await unitOfWork.SaveAsync();
+
+        //await SendStatsMessage();
+
+        scope.Dispose();
+
+        //await SendStatsMessage();
+
         // Liberamos el semáforo
         _semaphore.Release();
 
@@ -85,28 +86,15 @@ public class WebSocketHandler
         // Guardamos una copia de los WebSocketHandler para evitar problemas de concurrencia
         UserSocket[] handlers = USER_SOCKETS.ToArray();
 
+        tasks.Add(SendStatsMessage());
+
         // Esperamos a que todas las tareas de envío de mensajes se completen
         await Task.WhenAll(tasks);
     }
 
-    /*public static async Task RemoveSocket(int userId)
-    {
-        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
-        if (userSocket != null)
-        {
-            USER_SOCKETS.Remove(userSocket);
-            Total -= 1;
-            userSocket.Socket = null;
-            userSocket.Socket.Dispose(); // Para cerrar el websocket
-            userSocket = null;
-
-            await SendStatsMessage();
-        }
-    }*/
-
     public static async Task NotifyOneUser(string jsonToSend, int userId)
     {
-        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.UserId == userId);
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.User.Id == userId);
         if (userSocket != null && userSocket.Socket.State == WebSocketState.Open)
         {
             await userSocket.SendAsync(jsonToSend);
