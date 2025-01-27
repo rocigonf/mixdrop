@@ -16,6 +16,21 @@ export class BattleService {
     return result
   }
 
+  
+  async createBattle(user: User): Promise<any> {
+    const result = await this.api.post("Battle", user)
+    return result
+  }
+
+  async acceptBattleById(id: number): Promise<any> {
+    const result = await this.api.put(`Battle/${id}`)
+    return result
+  }
+
+  async removebattleById(id: number): Promise<any> {
+    await this.api.delete(`Battle/${id}`)
+  }
+
 
     
 }

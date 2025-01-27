@@ -31,4 +31,8 @@ export class MatchingComponent {
     this.user = this.authService.getUser();
   }
 
+  gameWithBot(){
+    
+  }
+
 }

@@ -1,4 +1,5 @@
 ﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Sockets;
 
 namespace mixdrop_back.Services;
 
@@ -11,15 +12,23 @@ public class BattleService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateBattle(User user1, User user2)
+    public async Task CreateBattle(User user1, User user2 = null, bool isRandom = false)
     {
-        User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
-        if (existingUser == null)
+
+        if (user2 != null)
         {
-            Console.WriteLine("Este usuario no existe.");
-            return;
+            // q pueda ser nulo el user 2 porque puede ser el bot
+            User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
+
+            if (existingUser == null)
+            {
+                Console.WriteLine("Este usuario 2 no existe.");
+                return;
+            }
         }
 
+
+        // q si estan en batalla los jugadores, no pueda estar en otra
         Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
         if (existingBattle != null)
         {
@@ -27,7 +36,8 @@ public class BattleService
             return;
         }
 
-        Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync(new Battle());
+        // adaptar websocket a esto tamb
+        Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync( isRandom ? new Battle() { Accepted = true } : new Battle());
 
         UserBattle newUserBattle1 = new UserBattle
         {
@@ -35,17 +45,24 @@ public class BattleService
             UserId = user1.Id,
             Receiver = false
         };
-        UserBattle newUserBattle2 = new UserBattle
+
+
+        if (user2 != null)
         {
-            BattleId = newBattle.Id,
-            UserId = user2.Id,
-            Receiver = true,
-        };
+            UserBattle newUserBattle2 = new UserBattle
+            {
+                BattleId = newBattle.Id,
+                UserId = user2.Id,
+                Receiver = true,
+            };
+
+            await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle2);
+        }
 
         await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle1);
-        await _unitOfWork.UserBattleRepository.InsertAsync(newUserBattle2);
         await _unitOfWork.SaveAsync();
     }
+
 
     // Método solicitud de batalla
     public async Task AcceptBattle(int battleId, int userId)

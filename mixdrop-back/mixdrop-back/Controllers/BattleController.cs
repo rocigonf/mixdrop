@@ -37,14 +37,15 @@ public class BattleController : ControllerBase
         return friendship;
     }*/
 
-    // Enviar solicitud de batalla
+    // Crear batalla
     [Authorize]
     [HttpPost]
-    public async Task AddBattle([FromBody] User user2)
+    public async Task AddBattle([FromBody] User? user2, bool isRandom)
     {
         User user1 = await GetAuthorizedUser();
-        await _battleService.CreateBattle(user1, user2);
+        await _battleService.CreateBattle(user1, user2, isRandom);
     }
+
 
     // Aceptar solicitud de batalla
     [Authorize]
@@ -63,6 +64,8 @@ public class BattleController : ControllerBase
         int userId = GetAuthorizedId();
         await _battleService.DeleteBattle(id, userId);
     }
+
+
 
     private async Task<User> GetAuthorizedUser()
     {
