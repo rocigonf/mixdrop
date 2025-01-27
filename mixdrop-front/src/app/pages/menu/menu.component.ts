@@ -177,7 +177,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   {
     if(user){
       this.router.navigateByUrl("profile/" +user?.id  );
-
     }
   }
 
@@ -190,6 +189,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     return result;
   }
+
 
   searchFriend(queryfriend: string): void {
 
@@ -221,7 +221,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
     } 
   );
-
     // aqui tambien se pueden guardar los usuarios USER de los amigos 
     this.searchedFriends = encontrados;
   }
@@ -239,13 +238,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
 
-
-
   emparejar() {
-
-    // se crea una partida
-
-    // HAY QUE PASARLE EL ID DE LA PARTIDA CREADA A LA RUTA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // te lleva al emparejamiento
     this.router.navigateByUrl("matching");
   }
 
