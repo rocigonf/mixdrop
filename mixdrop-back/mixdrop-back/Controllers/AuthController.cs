@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -83,12 +82,12 @@ public class AuthController : ControllerBase
         }
     }
 
-    
+
     // CREAR NUEVO USUARIO
     [HttpPost("register")]
     public async Task<ActionResult<RegisterDto>> SignUp([FromForm] RegisterDto model)
     {
-        
+
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);

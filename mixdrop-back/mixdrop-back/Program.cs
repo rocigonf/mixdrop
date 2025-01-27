@@ -1,10 +1,8 @@
 ﻿
 using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.Mappers;
-using mixdrop_back.Repositories;
 using mixdrop_back.Services;
 using mixdrop_back.Sockets;
-using System.Net.Sockets;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -53,14 +51,14 @@ public class Program
             difference += 12;
 
         Console.WriteLine("Procesando...");
-        
+
         //HellIsForever.ChangeBPM("songs/music.wav", "output.wav", 1, (float) downOneTone);
 
         // HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
         // HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);
 
         // HellIsForever.MixFiles("songs/input/insane.wav", "songs/input/rickroll.wav", "songs/output/mixed.wav");
-        
+
         Console.WriteLine("Procesado");
 
         // AQUÍ EMPIEZA EL SERVIDOR COMO TAL
@@ -77,7 +75,7 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<FriendshipService>();
         builder.Services.AddScoped<BattleService>();
-        
+
         builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
 
         // Inyección del servicio de WebSocket como Singleton

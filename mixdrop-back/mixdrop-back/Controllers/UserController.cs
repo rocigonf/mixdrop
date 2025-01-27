@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
@@ -38,13 +37,13 @@ public class UserController : ControllerBase
             User currentUser = await GetAuthorizedUser();
 
             // Si no es admin y está intentando modificar a otro usuario
-            if(!currentUser.Role.Equals("Admin") && user.Id != currentUser.Id)
+            if (!currentUser.Role.Equals("Admin") && user.Id != currentUser.Id)
             {
                 return null;
             }
 
             string role = "User";
-            if(currentUser.Role.Equals("Admin"))
+            if (currentUser.Role.Equals("Admin"))
             {
                 role = user.Role;
             }
@@ -84,7 +83,7 @@ public class UserController : ControllerBase
 
         if (result.Count == 0)
         {
-            return Ok(new { users = new List<UserDto>()});
+            return Ok(new { users = new List<UserDto>() });
         }
 
 

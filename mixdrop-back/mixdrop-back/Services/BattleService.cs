@@ -37,6 +37,7 @@ public class BattleService
             return;
         }*/
 
+
         // adaptar websocket a esto tamb
 
         Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync( isRandom ? new Battle() { Accepted = true } : new Battle());
@@ -114,6 +115,24 @@ public class BattleService
 
         _unitOfWork.BattleRepository.Delete(existingBattle);
         await _unitOfWork.SaveAsync();
+    }
+
+    // Emparejamiento aleatorio
+    public async Task RandomBattle(User user)
+    {
+        User userInQueue = await _unitOfWork.UserRepository.GetUserInQueueAsync();
+        if (userInQueue == null)
+        {
+            user.IsInQueue = true;
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveAsync();
+        }
+        else
+        {
+            userInQueue.IsInQueue = false;
+            _unitOfWork.UserRepository.Update(userInQueue);
+            await CreateBattle(user, userInQueue, true);
+        }
     }
 
     public async Task<ICollection<Battle>> GetBattleList(int userId)
