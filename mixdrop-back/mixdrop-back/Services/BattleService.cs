@@ -50,14 +50,13 @@ public class BattleService
         }
 
 
-        // q si estan en batalla los jugadores, no pueda estar en otra -------- falta por hacer
-        /*
+        // q si estan en batalla los jugadores, no pueda estar en otra
         Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
         if (existingBattle != null)
         {
-            Console.WriteLine("Esta batalla ya existe");
+            Console.WriteLine("Ya hay una batalla entre ambos usuarios");
             return;
-        }*/
+        }
 
 
         // adaptar websocket a esto tamb
@@ -106,6 +105,7 @@ public class BattleService
 
 
     // Método solicitud de batalla
+    // TODO: Verificar que el usuario no esté ya en una batalla
     public async Task AcceptBattle(int battleId, int userId)
     {
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
@@ -139,7 +139,7 @@ public class BattleService
     }
 
     // Método borrar amigo o rechazar solicitud de batalla
-    public async Task DeleteBattle(int battleId, int userId)
+    public async Task DeleteBattleById(int battleId, int userId, bool wasAlreadyInRoom = false)
     {
         // Comprobamos que la batalla existe
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
@@ -149,6 +149,11 @@ public class BattleService
             return;
         }
 
+        await DeleteBattleByObject(existingBattle, userId, wasAlreadyInRoom);
+    }
+
+    public async Task DeleteBattleByObject(Battle existingBattle, int userId, bool wasAlreadyInRoom)
+    {
         // Comprobamos que el usuario es parte de la batalla
         UserBattle userBattle = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
         if (userBattle == null)
@@ -165,10 +170,17 @@ public class BattleService
 
         UserBattle otherUser = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId != userId);
 
+        // Si ya estaba en la sala, le digo al otro jugador que se ha desconectado
+        if (wasAlreadyInRoom)
+        {
+            dict["messageType"] = MessageType.DisconnectedFromBattle;
+        }
+
         // Notifico a ambos usuarios a que vuelvan a solicitar las peticiones de batallas
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userId);
     }
+
 
     // Emparejamiento aleatorio
     public async Task RandomBattle(User user)

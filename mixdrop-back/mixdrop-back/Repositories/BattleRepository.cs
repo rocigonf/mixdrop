@@ -11,6 +11,9 @@ public class BattleRepository : Repository<Battle, int>
     public async Task<Battle> GetBattleByUsersAsync(int userId1, int userId2)
     {
         return await GetQueryable()
+            // Batallas no aceptadas o que estando aceptadas, se está jugando (si está aceptada y no se está jugando significa que ya ha acabado)
+            // Es decir, si hay una batalla que ya se está jugando o una petición de batalla, no se envía otra
+            .Where(battle => battle.Accepted == false || (battle.Accepted == true && battle.IsPlaying == true))
             .Include(friendship => friendship.BattleUsers
                 .Where(userFriend => userFriend.UserId == userId1)
                 .Where(userFriend => userFriend.UserId == userId2)
@@ -35,5 +38,14 @@ public class BattleRepository : Repository<Battle, int>
                 .Include(battle => battle.BattleUsers.Where(user => user.UserId != userId))
                 .ThenInclude(userBattle => userBattle.User)
                 .ToListAsync();
+    }
+
+    public async Task<ICollection<Battle>> GetCurrentBattleByUser(int userId)
+    {
+        return await GetQueryable()
+            .Where(battle => battle.IsPlaying == true)
+            .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
+            .Include(battle => battle.BattleUsers)
+            .ToListAsync();
     }
 }
