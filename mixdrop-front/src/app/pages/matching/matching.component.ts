@@ -10,6 +10,7 @@ import { BattleService } from '../../services/battle.service';
 import { Subscription } from 'rxjs';
 import { Battle } from '../../models/battle';
 import { MessageType } from '../../models/message-type';
+import { Friend } from '../../models/friend';
 
 @Component({
   selector: 'app-matching',

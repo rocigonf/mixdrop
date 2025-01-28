@@ -18,11 +18,20 @@
         <div (click)="menuSelector='searchUsers'">
             <img src="/images/buzon.png" alt="icono buzon"> Añadir a un amigo
         </div>
-        <div (click)="menuSelector='friendRequest'">
-            <img src="/images/invitacion.png" alt="icono carta"> Solicitudes de amistad
+        <div class="mostrarNoti" (click)="menuSelector='friendRequest'">
+            <img src="/images/invitacion.png" alt="icono carta">
+            @if (pendingFriends.length>0) {
+                <span class="notificacionNum">{{pendingFriends.length}}</span>
+            }
+            Solicitudes de amistad
         </div>
-        <div (click)="menuSelector='battleRequest'">
-            <img src="/images/juego.png" alt="icono juego"> Solicitudes de batalla
+        <div class="mostrarNoti" (click)="menuSelector='battleRequest'">
+            <img src="/images/juego.png" alt="icono juego">
+
+            @if (pendingBattles.length>0) {
+                <span class="notificacionNum">{{pendingBattles.length}}</span>
+            }
+            Solicitudes de batalla
         </div>
     </aside>
 
@@ -79,7 +88,8 @@
                                 }
 
 
-                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                <span class="nickname"
+                                    (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
                                     {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                                 </span>
                                 <div class="contenedorIcono">
@@ -87,8 +97,8 @@
                                         alt="eliminar amigo">
                                 </div>
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="createBattle(friend.receiverUser || friend.senderUser)" src="/images/battle.png"
-                                        alt="retar a batalla">
+                                    <img class="icono" (click)="createBattle(friend.receiverUser || friend.senderUser)"
+                                        src="/images/battle.png" alt="retar a batalla">
                                 </div>
                             </div>
 
@@ -123,7 +133,8 @@
                                 </div>
                                 }
 
-                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                <span class="nickname"
+                                    (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
                                     {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                                 </span>
 
@@ -162,7 +173,8 @@
                                 }
 
 
-                                <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                <span class="nickname"
+                                    (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
                                     {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                                 </span>
 
@@ -246,7 +258,7 @@
                     <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
                         {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                     </span>
-                    
+
                     <div class="contenedorIcono">
                         <img class="icono" (click)="acceptFriendship(friend.id)" src="/images/addFriend.webp"
                             alt="aceptar amigo">
@@ -266,13 +278,38 @@
             <!-- SOLICITUDES DE BATALLA-->
             @case ('battleRequest') {
             SOLICITUDES DE BATALLA
-                @for (battle of pendingBattles; track battle.id){
-                    <div>
-                        <p>Nombre: {{ battle.user.nickname }}</p>
-                        <button (click)="acceptBattle(battle)">Aceptar batalla</button>
-                        <button (click)="deleteBattle(battle)">Rechazar batalla</button>
+
+            <div class="listaUsuarios">
+
+                @if (pendingBattles.length<1) { <p> No tienes solicitudes de batalla :C</p>
+                    } @else
+                    { @for (battle of pendingBattles; track battle.id){ <!--<div>
+                    <p>Nombre: {{ battle.user.nickname }}</p>
+                    <button (click)="acceptBattle(battle)">Aceptar batalla</button>
+                    <button (click)="deleteBattle(battle)">Rechazar batalla</button>
+            </div>-->
+
+                    <div class="tarjetaBatalla">
+                        <div class="contenedorAvatar">
+                            <img class="avatar" [src]="IMG_URL + battle.user.avatarPath" alt="usuario avatar"
+                                width="50px">
+                        </div>
+
+                        <span class="nickname" (click)="visitUserPorfile(battle.user)  ">
+                            {{ battle.user.nickname }}
+                        </span>
+
+                        <div class="contenedorIcono">
+                            <img class="icono" (click)="acceptBattle(battle)" src="/images/battle.png"
+                                alt="aceptar batalla">
+                        </div>
+                        <div class="contenedorIcono">
+                            <img class="icono" (click)="deleteBattle(battle)" src="/images/delete.png"
+                                alt="rechazar batalla">
+                        </div>
                     </div>
-                }
+                    } }
+            </div>
             }
             }
 
@@ -284,7 +321,7 @@
 <div class="container">
     <p>Total de jugadores conectados: {{ totalPlayers }}</p>
 
-    
+
 </div>
 
 
