@@ -67,6 +67,21 @@ public class WebSocketHandler
         using IServiceScope scope = _serviceProvider.CreateScope();
 
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+        var battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
+
+        ICollection<Battle> battles = await unitOfWork.BattleRepository.GetCurrentBattleByUser(disconnectedHandler.User.Id);
+        if(battles.Count > 1)
+        {
+            throw new Exception("El usuario está en más de una batalla al mismo tiempo :(");
+        }
+        else
+        {
+            // Borro al usuario de la batalla
+            if(battles.Count == 1)
+            {
+                await battleService.DeleteBattleByObject(battles.First(), disconnectedHandler.User.Id, true);
+            }
+        }
 
         disconnectedHandler.User.StateId = 1;
         unitOfWork.UserRepository.Update(disconnectedHandler.User);

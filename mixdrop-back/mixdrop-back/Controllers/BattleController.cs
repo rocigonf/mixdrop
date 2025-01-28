@@ -65,7 +65,7 @@ public class BattleController : ControllerBase
     public async Task DeleteBattle(int id)
     {
         int userId = GetAuthorizedId();
-        await _battleService.DeleteBattle(id, userId);
+        await _battleService.DeleteBattleById(id, userId);
     }
 
     // Emparejamiento aleatorio

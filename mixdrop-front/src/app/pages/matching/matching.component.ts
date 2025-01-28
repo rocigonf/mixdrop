@@ -1,14 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { environment } from '../../../environments/environment';
 import { WebsocketService } from '../../services/websocket.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { FriendshipService } from '../../services/friendship.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
-import { Friend } from '../../models/friend';
 import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 
@@ -19,7 +17,7 @@ import { MessageType } from '../../models/message-type';
   templateUrl: './matching.component.html',
   styleUrl: './matching.component.css'
 })
-export class MatchingComponent {
+export class MatchingComponent implements OnInit {
 
   user: User | null = null;
   public readonly IMG_URL = environment.apiImg;
@@ -34,7 +32,6 @@ export class MatchingComponent {
 
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
-
 
 
   ngOnInit(): void {
