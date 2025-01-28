@@ -1,14 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { environment } from '../../../environments/environment';
 import { WebsocketService } from '../../services/websocket.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { FriendshipService } from '../../services/friendship.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
-import { Friend } from '../../models/friend';
 import { Subscription } from 'rxjs';
 import { Battle } from '../../models/battle';
 import { MessageType } from '../../models/message-type';
@@ -20,7 +18,7 @@ import { MessageType } from '../../models/message-type';
   templateUrl: './matching.component.html',
   styleUrl: './matching.component.css'
 })
-export class MatchingComponent {
+export class MatchingComponent implements OnInit {
 
   user: User | null = null;
   public readonly IMG_URL = environment.apiImg;
@@ -40,10 +38,6 @@ export class MatchingComponent {
   myFriends: Friend[] = []
   conenctedFriends: User[] = []
 
-  battleId: number = 0
-
-  askedForFriend: boolean = false
-
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -53,9 +47,25 @@ export class MatchingComponent {
     // pide info de amigos 
     this.askForInfo(MessageType.Friend)
     this.processFriends()
-
   }
 
+  processMessage(message: any) {
+    this.serverResponse = message
+    const jsonResponse = JSON.parse(this.serverResponse)
+
+    switch (jsonResponse.messageType) {
+      case MessageType.Play:
+        // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
+        alert("Partida encontrada :3")
+        break
+    }
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
+  }
+
+  askForInfo(messageType: MessageType) {
+    console.log("Mensaje pedido: ", messageType)
+    this.webSocketService.sendRxjs(messageType.toString())
+  }
 
 
   gameWithBot() {
@@ -69,31 +79,7 @@ export class MatchingComponent {
 
   gameRandom() {
     this.battleService.createBattle(null, true)
-  }
 
-
-
-  processMessage(message: any) {
-    this.serverResponse = message
-    const jsonResponse = JSON.parse(this.serverResponse)
-
-    if (jsonResponse.messageType == MessageType.Friend) {
-      // Es posible que haya que hacer JSON.parse() otra vez
-      this.askedForFriend = true
-      this.friendsRaw = jsonResponse.friends
-      this.processFriends()
-    }
-    if (!this.askedForFriend) {
-      this.askForInfo(MessageType.Friend)
-    }
-
-
-  }
-
-
-  askForInfo(messageType: MessageType) {
-    console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
   }
 
 

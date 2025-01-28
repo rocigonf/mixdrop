@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using mixdrop_back.Models.Entities;
+using mixdrop_back.Services;
 using mixdrop_back.Sockets;
 using System.Net.WebSockets;
 
@@ -10,9 +12,12 @@ namespace mixdrop_back.Controllers;
 public class WebSocketController : ControllerBase
 {
     private readonly WebSocketHandler _webSocketHandler;
-    public WebSocketController(WebSocketHandler webSocketHandler)
+    private readonly UserService _userService;
+
+    public WebSocketController(WebSocketHandler webSocketHandler, UserService userService)
     { 
         _webSocketHandler = webSocketHandler;
+        _userService = userService;
     }
 
     [Authorize]
@@ -26,8 +31,12 @@ public class WebSocketController : ControllerBase
             // Aceptamos la solicitud
             WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
 
+            User user = await GetAuthorizedUser();
+            user.StateId = 2;
+            await _userService.ConnectUser(user);
+
             // Manejamos la solicitud.
-            await _webSocketHandler.HandleWebsocketAsync(webSocket, GetCurrentUserId());
+            await _webSocketHandler.HandleWebsocketAsync(webSocket, user);
         }
         // En caso contrario la rechazamos
         else
@@ -38,17 +47,14 @@ public class WebSocketController : ControllerBase
         // Cuando este método finalice, se cerrará automáticamente la conexión con el websocket
     }
 
-
-    private int GetCurrentUserId()
+    private async Task<User> GetAuthorizedUser()
     {
-        // Pilla el usuario autenticado según ASP
         System.Security.Claims.ClaimsPrincipal currentUser = this.User;
         string firstClaim = currentUser.Claims.First().ToString();
-
-        // Un poco hardcodeado por mi parte la verdad xD
         string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
 
-        return int.Parse(idString);
+        // Pilla el usuario de la base de datos
+        return await _userService.GetBasicUserByIdAsync(int.Parse(idString));
     }
 
 }

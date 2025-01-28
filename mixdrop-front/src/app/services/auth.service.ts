@@ -75,9 +75,9 @@ export class AuthService implements OnDestroy {
 
   async disconnectUser()
   {
-    const headers = this.api.getHeader();
+    //const headers = this.api.getHeader();
     this.webSocket.disconnectRxjs()
-    return this.api.put(`Auth/disconnect`, { headers, responseType: 'text' })
+    //return this.api.put(`Auth/disconnect`, { headers, responseType: 'text' })
   }
 
 

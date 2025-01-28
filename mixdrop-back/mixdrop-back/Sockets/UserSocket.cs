@@ -1,4 +1,6 @@
-﻿using mixdrop_back.Services;
+﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Models.Mappers;
+using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -11,15 +13,14 @@ public class UserSocket
     private static IServiceProvider _serviceProvider;
 
     public WebSocket Socket;
-    public int UserId { get; set; }
+    public User User { get; set; }
 
     public event Func<UserSocket, Task> Disconnected;
 
-    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, int userId)
-    {
+    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, User user) {
         _serviceProvider = serviceProvider;
         Socket = socket;
-        UserId = userId;
+        User = user;
     }
 
     public async Task ProcessWebSocket()
@@ -53,17 +54,24 @@ public class UserSocket
                     switch (messageType)
                     {
                         case MessageType.Friend:
-                            FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
-                            var friendList = await friendshipService.GetFriendList(UserId);
-                            dict.Add("friends", friendList);
+                            var friendlist = await GetFriendList(scope);
+                            dict.Add("friends", friendlist);
                             break;
                         case MessageType.Stats:
                             dict.Add("total", WebSocketHandler.Total);
                             break;
-                        case MessageType.Play:
+                        case MessageType.PendingBattle:
                             BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
-                            var battleList = await battleService.GetBattleList(UserId);
-                            dict.Add("battles", battleList);
+                            var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);
+
+                            BattleMapper battleMapper = new BattleMapper();
+                            var battleListDto = battleMapper.ToDto(battleList);
+
+                            dict.Add("battles", battleListDto);
+                            break;
+
+                        // TODO: La lógica del juego probablemente habrá que llevarla a cabo en otro sitio
+                        case MessageType.Play:
                             break;
                     }
 
@@ -89,6 +97,13 @@ public class UserSocket
         {
             await Disconnected.Invoke(this);
         }
+    }
+
+    public async Task<ICollection<Friendship>> GetFriendList(IServiceScope scope)
+    {
+        FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
+        var friendList = await friendshipService.GetFriendList(User.Id);
+        return friendList;
     }
 
 

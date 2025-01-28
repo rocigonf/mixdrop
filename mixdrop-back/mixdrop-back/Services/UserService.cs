@@ -192,6 +192,12 @@ public class UserService
         }
     }
 
+    public async Task ConnectUser(User user)
+    {
+        _unitOfWork.UserRepository.Update(user);
+        await _unitOfWork.SaveAsync();
+    }
+
     public async Task<UserDto> UpdateUser(RegisterDto model, User existingUser, string role)
     {
         // validacion email
