@@ -3,14 +3,18 @@
 <button (click)="emparejar()">Jugar</button>
 
 <div class="cabecera">
-    <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span>{{user?.nickname}}</span> <!-- nickname del usuario-->
+    @if (user?.avatarPath) {
+        <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
+    } @else {
+        <img src="images/user.png" alt="avatar de usuario">
+    }
+    <span>{{user?.nickname}}</span>
 </div>
 
 <!-- contenido -->
 <div class="container">
 
-    <!-- MENU LATERAL -->
+    <!----------------------MENU LATERAL ------------------------------->
     <aside>
         <div (click)=" menuSelector='myFriends'">
             <img src="/images/amigos.png" alt="icono amigo"> Tus amigos
@@ -21,7 +25,7 @@
         <div class="mostrarNoti" (click)="menuSelector='friendRequest'">
             <img src="/images/invitacion.png" alt="icono carta">
             @if (pendingFriends.length>0) {
-                <span class="notificacionNum">{{pendingFriends.length}}</span>
+            <span class="notificacionNum">{{pendingFriends.length}}</span>
             }
             Solicitudes de amistad
         </div>
@@ -29,7 +33,7 @@
             <img src="/images/juego.png" alt="icono juego">
 
             @if (pendingBattles.length>0) {
-                <span class="notificacionNum">{{pendingBattles.length}}</span>
+            <span class="notificacionNum">{{pendingBattles.length}}</span>
             }
             Solicitudes de batalla
         </div>
@@ -41,7 +45,7 @@
     <section class="seccionAmigos">
         @switch (menuSelector) {
 
-        <!-- LISTA DE AMIGOS-->
+        <!------------------------ LISTA DE AMIGOS----------------------------->
         @case ('myFriends') {
 
         <div class="busquedaUsuarios">
@@ -74,32 +78,40 @@
                             <div class="tarjetaConectado">
                                 @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
                                 undefined) {
-                                <div class="contenedorAvatar">
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
                                     <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
                                         alt="usuario avatar" width="50px">
                                 </div>
                                 }
-                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                @else if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
                                 undefined) {
-                                <div class="contenedorAvatar">
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
                                     <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
                                         alt="usuario avatar" width="50px">
                                 </div>
+                                } @else {
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
+                                    <img class="avatar" src="images/user.png" alt="usuario avatar" width="50px">
+                                </div>
                                 }
-
 
                                 <span class="nickname"
                                     (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
                                     {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                                 </span>
+
                                 <div class="contenedorIcono">
                                     <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
-                                </div>
+                                </div> 
+                                @if (!hasBattle(friend.receiverUser|| friend.senderUser)) {
                                 <div class="contenedorIcono">
                                     <img class="icono" (click)="createBattle(friend.receiverUser || friend.senderUser)"
                                         src="/images/battle.png" alt="retar a batalla">
-                                </div>
+                                </div>}
                             </div>
 
                             }
@@ -120,16 +132,23 @@
                             <div class="tarjetaUsuario">
                                 @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
                                 undefined) {
-                                <div class="contenedorAvatar">
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
                                     <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
                                         alt="usuario avatar" width="50px">
                                 </div>
                                 }
-                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                @else if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
                                 undefined) {
-                                <div class="contenedorAvatar">
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
                                     <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
                                         alt="usuario avatar" width="50px">
+                                </div>
+                                } @else {
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
+                                    <img class="avatar" src="images/user.png" alt="usuario avatar" width="50px">
                                 </div>
                                 }
 
@@ -159,22 +178,28 @@
                             <div class="tarjetaJugando">
                                 @if (friend.senderUser?.avatarPath != null && friend.senderUser?.avatarPath !=
                                 undefined) {
-                                <div class="contenedorAvatar">
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
                                     <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath"
                                         alt="usuario avatar" width="50px">
                                 </div>
                                 }
-                                @if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
+                                @else if (friend.receiverUser?.avatarPath != null && friend.receiverUser?.avatarPath !=
                                 undefined) {
-                                <div class="contenedorAvatar">
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
                                     <img class="avatar" [src]="IMG_URL + friend.receiverUser?.avatarPath"
                                         alt="usuario avatar" width="50px">
                                 </div>
+                                } @else {
+                                <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)"
+                                    class="contenedorAvatar">
+                                    <img class="avatar" src="images/user.png" alt="usuario avatar" width="50px">
+                                </div>
                                 }
 
-
                                 <span class="nickname"
-                                    (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                                    (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)">
                                     {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                                 </span>
 
@@ -186,8 +211,6 @@
                             }
                             }
                         </div>
-
-
                         }
                         }
             </div>
@@ -195,7 +218,7 @@
         </div>
         }
 
-        <!-- BUSCAR USUARIOS-->
+        <!---------------- BUSCAR USUARIOS-------------------------------------->
         @case ('searchUsers') {
         <div class="busquedaUsuarios">
             <div>
@@ -217,19 +240,24 @@
                     @for (user of searchedUsers; track $index)
                     {
                     <div class="tarjetaUsuario">
-                        <div class="contenedorAvatar">
+                        <div (click)="visitUserPorfile(user)" class="contenedorAvatar">
+                            @if (user?.avatarPath) {
                             <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="usuario avatar" width="50px">
-                        </div>
-
-                        <span (click)="visitUserPorfile(user )" class="nickname">{{user.nickname}}</span>
-
-                        <div class="contenedorIcono">
-                            @if (!hasFriendship(user)) { <img class="icono" (click)="addFriend(user)"
-                                src="/images/addFriend.webp" alt="añadir amigo">
+                            } @else {
+                            <img class="avatar" src="images/user.png" alt="usuario avatar" width="50px">
                             }
                         </div>
 
+                        <span (click)="visitUserPorfile(user)" class="nickname">{{user.nickname}}</span>
 
+                        <div class="contenedorIcono">
+                            @if (!hasFriendship(user)) {
+                            <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp"
+                                alt="añadir amigo">
+                            } @else if (waitingFriendship(user)) {
+                            <img class="icono" src="/images/waiting.gif" alt="esperando solicitud de amistad">
+                            }
+                        </div>
                     </div>
                     }
                 </div>
@@ -238,7 +266,7 @@
         </div>
         }
 
-        <!-- SOLICITUDES DE AMISTAD-->
+        <!----------------------- SOLICITUDES DE AMISTAD-------------------------->
         @case ('friendRequest') {
         SOLICITUDES DE AMISTAD
 
@@ -249,23 +277,26 @@
                 @for (friend of pendingFriends; track $index)
                 {
                 <div class="tarjetaUsuario">
-                    <div class="contenedorAvatar">
+                    <div (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)" class="contenedorAvatar">
+                        @if (friend.senderUser?.avatarPath) {
                         <img class="avatar" [src]="IMG_URL + friend.senderUser?.avatarPath" alt="usuario avatar"
-                            width="50px">
+                            width="50px">}
+                        @else {
+                        <img class="avatar" src="images/user.png" alt="usuario avatar" width="50px">
+                        }
                     </div>
 
-
-                    <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)  ">
+                    <span class="nickname" (click)="visitUserPorfile(friend.receiverUser  || friend.senderUser)">
                         {{ friend.senderUser?.nickname || friend.receiverUser?.nickname }}
                     </span>
 
                     <div class="contenedorIcono">
                         <img class="icono" (click)="acceptFriendship(friend.id)" src="/images/addFriend.webp"
-                            alt="aceptar amigo">
+                            alt="aceptar solicitud de amistad">
                     </div>
                     <div class="contenedorIcono">
-                        <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
-                            alt="eliminar amigo">
+                        <img class="icono" (click)="removeFriend(friend)" src="/images/delete.png"
+                            alt="rechazar solicitud de amistad">
                     </div>
                 </div>
                 }
@@ -275,7 +306,7 @@
 
             }
 
-            <!-- SOLICITUDES DE BATALLA-->
+            <!------------------------------ SOLICITUDES DE BATALLA------------------------->
             @case ('battleRequest') {
             SOLICITUDES DE BATALLA
 
@@ -283,16 +314,17 @@
 
                 @if (pendingBattles.length<1) { <p> No tienes solicitudes de batalla :C</p>
                     } @else
-                    { @for (battle of pendingBattles; track battle.id){ <!--<div>
-                    <p>Nombre: {{ battle.user.nickname }}</p>
-                    <button (click)="acceptBattle(battle)">Aceptar batalla</button>
-                    <button (click)="deleteBattle(battle)">Rechazar batalla</button>
-            </div>-->
+                    { @for (battle of pendingBattles; track battle.id){
 
                     <div class="tarjetaBatalla">
-                        <div class="contenedorAvatar">
+                        <div (click)="visitUserPorfile(battle.user)" class="contenedorAvatar">
+                            @if (battle.user.avatarPath) {
                             <img class="avatar" [src]="IMG_URL + battle.user.avatarPath" alt="usuario avatar"
                                 width="50px">
+                            } @else {
+                            <img class="avatar" src="images/user.png" alt="usuario avatar" width="50px">
+                            }
+
                         </div>
 
                         <span class="nickname" (click)="visitUserPorfile(battle.user)  ">
@@ -320,8 +352,6 @@
 
 <div class="container">
     <p>Total de jugadores conectados: {{ totalPlayers }}</p>
-
-
 </div>
 
 
