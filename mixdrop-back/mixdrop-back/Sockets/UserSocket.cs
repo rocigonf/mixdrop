@@ -1,4 +1,5 @@
 ﻿using mixdrop_back.Models.Entities;
+using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
 using System.Net.WebSockets;
 using System.Text;
@@ -59,10 +60,18 @@ public class UserSocket
                         case MessageType.Stats:
                             dict.Add("total", WebSocketHandler.Total);
                             break;
-                        case MessageType.Play:
+                        case MessageType.PendingBattle:
                             BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
-                            var battleList = await battleService.GetBattleList(User.Id);
-                            dict.Add("battles", battleList);
+                            var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);
+
+                            BattleMapper battleMapper = new BattleMapper();
+                            var battleListDto = battleMapper.ToDto(battleList);
+
+                            dict.Add("battles", battleListDto);
+                            break;
+
+                        // TODO: La lógica del juego probablemente habrá que llevarla a cabo en otro sitio
+                        case MessageType.Play:
                             break;
                     }
 

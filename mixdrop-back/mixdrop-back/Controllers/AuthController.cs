@@ -114,7 +114,7 @@ public class AuthController : ControllerBase
         return CreatedAtAction(nameof(Login), new { email = userDto.Email }, userDto);
     }
 
-    [Authorize]
+    /*[Authorize]
     [HttpPut("disconnect")]
     public async Task<IActionResult> DisconnectUser()
     {
@@ -129,7 +129,7 @@ public class AuthController : ControllerBase
         {
             return BadRequest("No pudo modificarse el estado.");
         }
-    }
+    }*/
 
 
     // Leer datos del token

@@ -10,17 +10,17 @@ export class BattleService {
 
   constructor(private api: ApiService) { }
 
-  async modifyBattle(battle : Battle)
+  async modifyBattle(id : number)
   {
-    const result = await this.api.put("Battle", battle)
+    const result = await this.api.put(`Battle/${id}`)
     return result
   }
 
   
   async createBattle(user: User | null, isRandom : boolean ) : Promise<any> {
     const body = {
-      "user" : user,
-      "isRandom" : isRandom
+      "User2" : user,
+      "IsRandom" : isRandom
     }
     const result = await this.api.post("Battle", body)
     return result

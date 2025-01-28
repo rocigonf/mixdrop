@@ -86,6 +86,10 @@
                                     <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div>
+                                <div class="contenedorIcono">
+                                    <img class="icono" (click)="createBattle(friend.receiverUser || friend.senderUser)" src="/images/battle.png"
+                                        alt="retar a batalla">
+                                </div>
                             </div>
 
                             }
@@ -262,6 +266,13 @@
             <!-- SOLICITUDES DE BATALLA-->
             @case ('battleRequest') {
             SOLICITUDES DE BATALLA
+                @for (battle of pendingBattles; track battle.id){
+                    <div>
+                        <p>Nombre: {{ battle.user.nickname }}</p>
+                        <button (click)="acceptBattle(battle)">Aceptar batalla</button>
+                        <button (click)="deleteBattle(battle)">Rechazar batalla</button>
+                    </div>
+                }
             }
             }
 
