@@ -247,6 +247,18 @@ export class MenuComponent implements OnInit, OnDestroy {
     );
   }
 
+  // comprueba si se le ha enviado una solicitud de amistad y esta en espera
+  waitingFriendship(user: User): boolean {
+    const amistad : Friend | undefined= this.friendsRaw.find(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) || 
+      (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
+    )
+    if(amistad) {
+      return !amistad.accepted
+    } else return false
+  }
+
+
   // quita tildes y pone minuscula
   removeAccents(str: string): string {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
