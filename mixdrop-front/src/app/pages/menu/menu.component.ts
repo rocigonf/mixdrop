@@ -62,7 +62,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.askForInfo(MessageType.Stats)
 
-    
   }
 
   processMessage(message: any) {
@@ -93,7 +92,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         break
       case MessageType.PendingBattle:
         this.pendingBattles = jsonResponse.battles
-        
         break
       case MessageType.Play:
         // TODO: Redirigir a la vista
@@ -112,14 +110,11 @@ export class MenuComponent implements OnInit, OnDestroy {
       if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
-        
       }
       if(friend.accepted === false)
       {
-
         if(this.user?.id == friend.receiverUserId)
         {
-
           this.pendingFriends.push(friend)
         }
       }
@@ -171,6 +166,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     if(user == null) { return }
     const response = await this.battleService.createBattle(user, false) // En esta vista siempre será no random
     console.log("Respuesta de borrar la batalla: ", response)
+    this.askForInfo(MessageType.PendingBattle)
   }
 
   askForInfo(messageType: MessageType) {
@@ -193,7 +189,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl("profile/" +user?.id  );
     }
   }
-
 
   async getSearchedUsers(queryuser: string): Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
@@ -258,6 +253,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     } else return false
   }
 
+
+    // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro
+    hasBattle(user: User | null): boolean {
+      const has : boolean =  this.pendingBattles.some(battle =>
+        (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
+        || (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+      );
+      return has;
+    }
 
   // quita tildes y pone minuscula
   removeAccents(str: string): string {

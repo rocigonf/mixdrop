@@ -111,6 +111,11 @@ aside img {
     left: 1.8rem;
     top: 0.4rem;
 }
+
+.contenedorAvatar:hover{
+    cursor: pointer;
+}
+
 .tarjetaJugando {
     display: flex;
     align-items: center;
