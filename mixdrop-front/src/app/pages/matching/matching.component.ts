@@ -10,6 +10,7 @@ import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
 import { Friend } from '../../models/friend';
 import { Subscription } from 'rxjs';
+import { MessageType } from '../../models/message-type';
 
 @Component({
   selector: 'app-matching',
@@ -23,12 +24,12 @@ export class MatchingComponent {
   user: User | null = null;
   public readonly IMG_URL = environment.apiImg;
 
-  constructor (private webSocketService : WebsocketService, 
-    private router: Router, 
-    private userService: UserService, 
+  constructor(private webSocketService: WebsocketService,
+    private router: Router,
+    private userService: UserService,
     public authService: AuthService,
-    public battleService : BattleService
-  ){}
+    public battleService: BattleService
+  ) { }
 
 
   messageReceived$: Subscription | null = null;
@@ -36,23 +37,40 @@ export class MatchingComponent {
 
 
 
-  ngOnInit(): void 
-  {
+  ngOnInit(): void {
+    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
     this.user = this.authService.getUser();
   }
 
-  
-  gameWithBot(){
+  processMessage(message: any) {
+    this.serverResponse = message
+    const jsonResponse = JSON.parse(this.serverResponse)
+
+    switch (jsonResponse.messageType) {
+      case MessageType.Play:
+        // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
+        alert("Partida encontrada :3")
+        break
+    }
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
+  }
+
+  askForInfo(messageType: MessageType) {
+    console.log("Mensaje pedido: ", messageType)
+    this.webSocketService.sendRxjs(messageType.toString())
+  }
+
+  gameWithBot() {
     // el user 2 es nulo y el false de que no es random
-    this.battleService.createBattle(null, false )
+    this.battleService.createBattle(null, false)
   }
 
-  gameWithFriend(friend : User){
-    this.battleService.createBattle(friend, false )
+  gameWithFriend(friend: User) {
+    this.battleService.createBattle(friend, false)
   }
 
-  gameRandom(){
-    this.battleService.createBattle(null, true )
+  gameRandom() {
+    this.battleService.createBattle(null, true)
   }
 
 }
