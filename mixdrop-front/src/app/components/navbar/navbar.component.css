@@ -55,6 +55,10 @@ a {
     color: white;
 }
 
+a :hover{
+    cursor: pointer;
+}
+
 .logout {
     cursor: pointer;
 }
