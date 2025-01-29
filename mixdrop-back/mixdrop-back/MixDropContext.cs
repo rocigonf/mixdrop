@@ -9,10 +9,10 @@ public class MixDropContext : DbContext
     
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Battle> Battles { get; set; }
-    public DbSet<BattleCart> BattlesCarts { get; set; }
+    public DbSet<BattleCard> BattlesCards { get; set; }
     public DbSet<BattleResult> BattleResults { get; set; }
-    public DbSet<Cart> Carts { get; set; }
-    public DbSet<CartType> CartTypes { get; set; }
+    public DbSet<Card> Cards { get; set; }
+    public DbSet<CardType> CardTypes { get; set; }
     public DbSet<Collection> Collections { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
     public DbSet<Part> Parts { get; set; }

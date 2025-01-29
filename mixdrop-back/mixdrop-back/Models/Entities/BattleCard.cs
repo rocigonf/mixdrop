@@ -1,10 +1,10 @@
 ﻿namespace mixdrop_back.Models.Entities;
 
-public class BattleCart
+public class BattleCard
 {
     public int Id { get; set; }
-    public int CartId { get; set; }
+    public int CardId { get; set; }
     public int BattleId { get; set; }
-    public Cart Cart { get; set; }
+    public Card Card { get; set; }
     public Battle Battle { get; set; }
 }
