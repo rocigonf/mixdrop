@@ -84,6 +84,7 @@ public class WebSocketHandler
         }
 
         disconnectedHandler.User.StateId = 1;
+        disconnectedHandler.User.IsInQueue = false;
         unitOfWork.UserRepository.Update(disconnectedHandler.User);
         await unitOfWork.SaveAsync();
 

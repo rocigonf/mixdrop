@@ -8,18 +8,17 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
 import { Subscription } from 'rxjs';
-import { Battle } from '../../models/battle';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 
 @Component({
-  selector: 'app-matching',
+  selector: 'app-matchmaking',
   standalone: true,
   imports: [NavbarComponent],
-  templateUrl: './matching.component.html',
-  styleUrl: './matching.component.css'
+  templateUrl: './matchmaking.component.html',
+  styleUrl: './matchmaking.component.css'
 })
-export class MatchingComponent implements OnInit {
+export class MatchmakingComponent implements OnInit {
 
   user: User | null = null;
   public readonly IMG_URL = environment.apiImg;
