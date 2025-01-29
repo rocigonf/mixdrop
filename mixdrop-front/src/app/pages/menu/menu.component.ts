@@ -35,7 +35,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   pendingFriends: Friend[] = []
 
   pendingBattles: Battle[] = []
-  battleId: number = 0
 
   searchedUsers!: User[];
   searchedFriends: Friend[] = [];
@@ -63,7 +62,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.askForInfo(MessageType.Stats)
 
-    
   }
 
   processMessage(message: any) {
@@ -81,15 +79,23 @@ export class MenuComponent implements OnInit, OnDestroy {
         break
       case MessageType.Stats:
         this.totalPlayers = jsonResponse.total
+        
+        // Después de recibir las estadísticas, pido todo lo demás
         this.askForInfo(MessageType.Friend)
+        this.askForInfo(MessageType.PendingBattle)
         break
       case MessageType.AskForFriend:
         this.askForInfo(MessageType.Friend)
         break
+      case MessageType.AskForBattle:
+        this.askForInfo(MessageType.PendingBattle)
+        break
+      case MessageType.PendingBattle:
+        this.pendingBattles = jsonResponse.battles
+        break
       case MessageType.Play:
-        // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
+        // TODO: Redirigir a la vista
         alert("Partida encontrada :3")
-        this.battleId = jsonResponse.battleId
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -104,14 +110,11 @@ export class MenuComponent implements OnInit, OnDestroy {
       if(friend.accepted)
       {
         this.acceptedFriends.push(friend)
-        
       }
       if(friend.accepted === false)
       {
-
         if(this.user?.id == friend.receiverUserId)
         {
-
           this.pendingFriends.push(friend)
         }
       }
@@ -147,11 +150,23 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log("Respuesta de aceptar al amigo: ", response)
   }
 
-  async modifyBattle(battle: Battle) {
-    // Aquí actualizaría el estado de la batalla con una petición, ( wesoque ->) que notificaría a todos los usuarios y los llevaría a ambos a la vista de batalla si se acepta
-    // Si se rechaza, se borra de la BBDD
-    const response = await this.battleService.modifyBattle(battle)
+  async acceptBattle(battle: Battle) {
+    const response = await this.battleService.acceptBattleById(battle.id)
     console.log("Respuesta de aceptar la batalla: ", response)
+  }
+
+  async deleteBattle(battle : Battle)
+  {
+    const response = await this.battleService.removebattleById(battle.id)
+    console.log("Respuesta de borrar la batalla: ", response)
+  }
+
+  async createBattle(user : User | null)
+  {
+    if(user == null) { return }
+    const response = await this.battleService.createBattle(user, false) // En esta vista siempre será no random
+    console.log("Respuesta de borrar la batalla: ", response)
+    this.askForInfo(MessageType.PendingBattle)
   }
 
   askForInfo(messageType: MessageType) {
@@ -174,7 +189,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl("profile/" +user?.id  );
     }
   }
-
 
   async getSearchedUsers(queryuser: string): Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
@@ -227,6 +241,27 @@ export class MenuComponent implements OnInit, OnDestroy {
       (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
     );
   }
+
+  // comprueba si se le ha enviado una solicitud de amistad y esta en espera
+  waitingFriendship(user: User): boolean {
+    const amistad : Friend | undefined= this.friendsRaw.find(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) || 
+      (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
+    )
+    if(amistad) {
+      return !amistad.accepted
+    } else return false
+  }
+
+
+    // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro
+    hasBattle(user: User | null): boolean {
+      const has : boolean =  this.pendingBattles.some(battle =>
+        (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
+        || (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+      );
+      return has;
+    }
 
   // quita tildes y pone minuscula
   removeAccents(str: string): string {

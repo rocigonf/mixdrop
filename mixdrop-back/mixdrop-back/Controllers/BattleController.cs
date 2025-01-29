@@ -42,8 +42,8 @@ public class BattleController : ControllerBase
     [HttpPost]
     public async Task AddBattle([FromBody] BattleRequest request)
     {
-        User user2 = request.user2;
-        bool isRandom = request.isRandom;
+        User user2 = request.User2;
+        bool isRandom = request.IsRandom;
 
         User user1 = await GetAuthorizedUser();
         await _battleService.CreateBattle(user1, user2, isRandom);
@@ -65,7 +65,7 @@ public class BattleController : ControllerBase
     public async Task DeleteBattle(int id)
     {
         int userId = GetAuthorizedId();
-        await _battleService.DeleteBattle(id, userId);
+        await _battleService.DeleteBattleById(id, userId);
     }
 
     // Emparejamiento aleatorio

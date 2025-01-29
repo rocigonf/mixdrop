@@ -42,7 +42,8 @@ export class HomeComponent implements OnInit {
     "/songs/cat.flac" : 112,
     "/songs/hopes_and_dreams.mp3" : 171,
     "/songs/underground.mp3" : 120,
-    "/songs/natures_crescendo.mp3" : 121
+    "/songs/natures_crescendo.mp3" : 121,
+    "/songs/temazo.mp3" : 129
   }
 
 

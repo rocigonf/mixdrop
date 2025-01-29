@@ -6,5 +6,7 @@ public enum MessageType
     Stats,
     Play,
     AskForFriend,
-    AskForBattle
+    AskForBattle,
+    PendingBattle,
+    DisconnectedFromBattle
 }
