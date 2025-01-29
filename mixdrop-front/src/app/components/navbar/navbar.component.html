@@ -22,7 +22,7 @@
             <a (click)="navigateToUrl('profile/' + user?.id)">
                 @if(user?.avatarPath != "")
                 {
-                    <img class="marco" src="/images/marco.png" alt=""  >
+                    <img class="marco" src="/images/marco.webp" alt=""  >
                 <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
                 }
                 @else 
@@ -32,7 +32,7 @@
             </a>
 
             <a class="logout" (click)="authClick()">
-                <img src="/images/acceso.png" alt="cerrar sesion">
+                <img src="/images/acceso.webp" alt="cerrar sesion">
             </a>
             
         } @else {
