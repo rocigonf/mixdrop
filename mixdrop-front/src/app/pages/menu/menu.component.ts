@@ -94,8 +94,8 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.pendingBattles = jsonResponse.battles
         break
       case MessageType.Play:
-        // TODO: Redirigir a la vista
         alert("Partida encontrada :3")
+        this.router.navigateByUrl("game") // Redirigir a la vista juego
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -157,7 +157,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   async deleteBattle(battle : Battle)
   {
-    const response = await this.battleService.removebattleById(battle.id)
+    const response = await this.battleService.removeBattleById(battle.id)
     console.log("Respuesta de borrar la batalla: ", response)
   }
 

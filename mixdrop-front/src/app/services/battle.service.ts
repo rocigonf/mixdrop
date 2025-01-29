@@ -36,7 +36,7 @@ export class BattleService {
     return result
   }
 
-  async removebattleById(id: number): Promise<any> {
+  async removeBattleById(id: number): Promise<any> {
     await this.api.delete(`Battle/${id}`)
   }
 }
