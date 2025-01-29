@@ -69,6 +69,10 @@ export class MatchmakingComponent implements OnInit {
       case MessageType.PendingBattle:
         this.pendingBattles = jsonResponse.battles
         break
+      case MessageType.DisconnectedFromBattle:
+        this.router.navigateByUrl("menu")
+        //window.location.reload()
+        break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
