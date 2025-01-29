@@ -39,6 +39,7 @@ export class MatchingComponent implements OnInit {
   myFriends: Friend[] = []
   conenctedFriends: User[] = []
 
+  pendingBattles: Battle[] = []
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -47,6 +48,7 @@ export class MatchingComponent implements OnInit {
 
     // pide info de amigos 
     this.askForInfo(MessageType.Friend)
+    this.askForInfo(MessageType.PendingBattle)
     this.processFriends()
   }
 
@@ -58,6 +60,13 @@ export class MatchingComponent implements OnInit {
       case MessageType.Play:
         // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
         alert("Partida encontrada :3")
+        break
+      case MessageType.Friend:
+        this.friendsRaw = jsonResponse.friends
+        this.processFriends()
+        break
+      case MessageType.PendingBattle:
+        this.pendingBattles = jsonResponse.battles
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -83,28 +92,34 @@ export class MatchingComponent implements OnInit {
 
   }
 
+  // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro
+  hasBattle(user: User | null): boolean {
+    const has: boolean = this.pendingBattles.some(battle =>
+      (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
+      || (battle.battleUsers[0].id === this.user?.id)  || (battle.battleUsers[1].id === this.user?.id) 
+    );
+    return has;
+  }
 
 
   processFriends() {
+
     this.myFriends = []
+    this.conenctedFriends = []
+
+    console.log(this.friendsRaw)
+
     for (const friend of this.friendsRaw) {
       if (friend.accepted) {
         this.myFriends.push(friend)
 
-        if (friend.receiverUser?.stateId == 2 || friend.senderUser?.stateId == 2) {
+        if (friend.senderUser?.stateId == 2 || friend.receiverUser?.stateId == 2) {
 
-          // esto coge 2 veces a cada usuario nose pq
-          if (friend.receiverUser !== null) {
-            this.conenctedFriends.push(friend.receiverUser);
-          }
-          if (friend.senderUser !== null){
-            this.conenctedFriends.push(friend.senderUser);
+          if (friend.senderUser) this.conenctedFriends.push(friend.senderUser)
+          else if (friend.receiverUser) this.conenctedFriends.push(friend.receiverUser)
         }
-
-        console.log(" amigos conectados : ", this.conenctedFriends)
       }
     }
-  }
     console.log("amigos: ", this.myFriends)
-}
+  }
 }
