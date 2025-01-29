@@ -270,7 +270,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   emparejar() {
     // te lleva al emparejamiento
-    this.router.navigateByUrl("matching");
+    this.router.navigateByUrl("matchmaking");
   }
 
 }
