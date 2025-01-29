@@ -70,7 +70,7 @@ public class BattleController : ControllerBase
 
     // Emparejamiento aleatorio
     [Authorize]
-    [HttpPost("/matchmaking")]
+    [HttpPost("Matchmaking")]
     public async Task RandomBattle()
     {
         User user = await GetAuthorizedUser();

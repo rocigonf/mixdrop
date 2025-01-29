@@ -17,20 +17,20 @@
     <!----------------------MENU LATERAL ------------------------------->
     <aside>
         <div (click)=" menuSelector='myFriends'">
-            <img src="/images/amigos.png" alt="icono amigo"> Tus amigos
+            <img src="/images/amigos.webp" alt="icono amigo"> Tus amigos
         </div>
         <div (click)="menuSelector='searchUsers'">
-            <img src="/images/buzon.png" alt="icono buzon"> Añadir a un amigo
+            <img src="/images/buzon.webp" alt="icono buzon"> Añadir a un amigo
         </div>
         <div class="mostrarNoti" (click)="menuSelector='friendRequest'">
-            <img src="/images/invitacion.png" alt="icono carta">
+            <img src="/images/invitacion.webp" alt="icono carta">
             @if (pendingFriends.length>0) {
             <span class="notificacionNum">{{pendingFriends.length}}</span>
             }
             Solicitudes de amistad
         </div>
         <div class="mostrarNoti" (click)="menuSelector='battleRequest'">
-            <img src="/images/juego.png" alt="icono juego">
+            <img src="/images/juego.webp" alt="icono juego">
 
             @if (pendingBattles.length>0) {
             <span class="notificacionNum">{{pendingBattles.length}}</span>
@@ -110,7 +110,7 @@
                                 @if (!hasBattle(friend.receiverUser|| friend.senderUser)) {
                                 <div class="contenedorIcono">
                                     <img class="icono" (click)="createBattle(friend.receiverUser || friend.senderUser)"
-                                        src="/images/battle.png" alt="retar a batalla">
+                                        src="/images/battle.webp" alt="retar a batalla">
                                 </div>}
                             </div>
 
@@ -295,7 +295,7 @@
                             alt="aceptar solicitud de amistad">
                     </div>
                     <div class="contenedorIcono">
-                        <img class="icono" (click)="removeFriend(friend)" src="/images/delete.png"
+                        <img class="icono" (click)="removeFriend(friend)" src="/images/delete.webp"
                             alt="rechazar solicitud de amistad">
                     </div>
                 </div>
@@ -332,11 +332,11 @@
                         </span>
 
                         <div class="contenedorIcono">
-                            <img class="icono" (click)="acceptBattle(battle)" src="/images/battle.png"
+                            <img class="icono" (click)="acceptBattle(battle)" src="/images/battle.webp"
                                 alt="aceptar batalla">
                         </div>
                         <div class="contenedorIcono">
-                            <img class="icono" (click)="deleteBattle(battle)" src="/images/delete.png"
+                            <img class="icono" (click)="deleteBattle(battle)" src="/images/delete.webp"
                                 alt="rechazar batalla">
                         </div>
                     </div>

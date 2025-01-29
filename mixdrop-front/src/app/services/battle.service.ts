@@ -16,6 +16,11 @@ export class BattleService {
     return result
   }
 
+  async randomBattle()
+  {
+    const result = await this.api.post("Battle/Matchmaking")
+    return result
+  }
   
   async createBattle(user: User | null, isRandom : boolean ) : Promise<any> {
     const body = {
@@ -31,10 +36,7 @@ export class BattleService {
     return result
   }
 
-  async removebattleById(id: number): Promise<any> {
+  async removeBattleById(id: number): Promise<any> {
     await this.api.delete(`Battle/${id}`)
   }
-
-
-    
 }

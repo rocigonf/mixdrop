@@ -58,6 +58,7 @@ export class MatchingComponent implements OnInit {
       case MessageType.Play:
         // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
         alert("Partida encontrada :3")
+        this.router.navigateByUrl("game") // Redirigir a la vista juego
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -79,8 +80,8 @@ export class MatchingComponent implements OnInit {
   }
 
   gameRandom() {
-    this.battleService.createBattle(null, true)
-
+    this.battleService.randomBattle()
+    console.log("mortadela");
   }
 
 
