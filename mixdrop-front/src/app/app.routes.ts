@@ -11,6 +11,6 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'menu', component: MenuComponent },
     { path: 'profile/:id', component: ProfileComponent},
-    { path: 'game/:id', component: GameComponent},
+    { path: 'game', component: GameComponent},
     { path: 'matching', component: MatchingComponent }, // PONERLE ID !!!!!!
 ];

@@ -197,6 +197,13 @@ public class BattleService
             userInQueue.IsInQueue = false;
             _unitOfWork.UserRepository.Update(userInQueue);
             await CreateBattle(user, userInQueue, true);
+            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+            dict["messageType"] = MessageType.Play;
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user.Id);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userInQueue.Id);
+            Console.WriteLine("Partida encontrada B)");
         }
     }
 

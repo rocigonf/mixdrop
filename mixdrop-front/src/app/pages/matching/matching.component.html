@@ -9,7 +9,6 @@
 
 <p>si es anitrion</p>
 <button (click)="gameWithBot()">Jugar contra un bot</button>
-
 <button (click)="gameRandom()">Jugar con oponente aleatorio</button>
 
 <!-- q te abra ventana model con amigos conectados ? -->
@@ -19,9 +18,21 @@
     } @else {
     @for (friend of conenctedFriends; track $index) {
 
-    <div class="tarjetaUsuario">
-        <div class="contenedorAvatar">
-            <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
+
+        <div class="tarjetaUsuario">
+            <div class="contenedorAvatar">
+                <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
+            </div>
+    
+            <span class="nickname">
+                {{ friend.nickname }}
+            </span>
+
+            <div class="contenedorIcono">
+                <img class="icono" (click)="gameWithFriend(friend)" src="/images/addFriend.webp"
+                    alt="invitar a jugar a amigo">
+            </div>
+
         </div>
 
         <span class="nickname">
