@@ -8,7 +8,9 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
 import { Subscription } from 'rxjs';
+import { Battle } from '../../models/battle';
 import { MessageType } from '../../models/message-type';
+import { Friend } from '../../models/friend';
 
 @Component({
   selector: 'app-matching',
@@ -33,10 +35,19 @@ export class MatchingComponent implements OnInit {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
+  friendsRaw: Friend[] = []
+  myFriends: Friend[] = []
+  conenctedFriends: User[] = []
+
 
   ngOnInit(): void {
-    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
     this.user = this.authService.getUser();
+
+    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+
+    // pide info de amigos 
+    this.askForInfo(MessageType.Friend)
+    this.processFriends()
   }
 
   processMessage(message: any) {
@@ -57,6 +68,7 @@ export class MatchingComponent implements OnInit {
     this.webSocketService.sendRxjs(messageType.toString())
   }
 
+
   gameWithBot() {
     // el user 2 es nulo y el false de que no es random
     this.battleService.createBattle(null, false)
@@ -68,6 +80,31 @@ export class MatchingComponent implements OnInit {
 
   gameRandom() {
     this.battleService.createBattle(null, true)
+
   }
 
+
+
+  processFriends() {
+    this.myFriends = []
+    for (const friend of this.friendsRaw) {
+      if (friend.accepted) {
+        this.myFriends.push(friend)
+
+        if (friend.receiverUser?.stateId == 2 || friend.senderUser?.stateId == 2) {
+
+          // esto coge 2 veces a cada usuario nose pq
+          if (friend.receiverUser !== null) {
+            this.conenctedFriends.push(friend.receiverUser);
+          }
+          if (friend.senderUser !== null){
+            this.conenctedFriends.push(friend.senderUser);
+        }
+
+        console.log(" amigos conectados : ", this.conenctedFriends)
+      }
+    }
+  }
+    console.log("amigos: ", this.myFriends)
+}
 }
