@@ -33,36 +33,6 @@ public class UserService
         return _userMapper.ToDto(users).ToList();
     }
 
-
-
-    // desconectar usuario
-    public async Task DisconnectUser(int userId)
-    {
-        if (userId == 0)
-        {
-            throw new InvalidOperationException("El usuario no es valido.");
-        }
-
-        var existingUser = await _unitOfWork.UserRepository.GetByIdAsync(userId);
-        if (existingUser == null)
-        {
-            throw new InvalidOperationException("El usuario no existe.");
-        }
-
-        // desconectado
-        var estadoDesconectado = await _unitOfWork.StateRepositoty.GetByIdAsync(1);
-
-        existingUser.StateId = 1; // desconectado
-        existingUser.State = estadoDesconectado;
-
-        _unitOfWork.UserRepository.Update(existingUser);
-
-        await _unitOfWork.SaveAsync();
-
-        //await WebSocketHandler.RemoveSocket(userId);
-    }
-
-
     public async Task<List<UserDto>> GetAllUsersAsync()
     {
         var users = await _unitOfWork.UserRepository.GetAllAsync();
@@ -123,13 +93,13 @@ public class UserService
         }
 
         // estado de conectado
-        var estadoConectado = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
+        /*var estadoConectado = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
 
         user.StateId = 2; // conectado
         user.State = estadoConectado;
 
         _unitOfWork.UserRepository.Update(user);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync();*/
 
         return user;
     }

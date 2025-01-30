@@ -8,5 +8,6 @@ public enum MessageType
     AskForFriend,            // cuando ha habido un cambio en la lista de amigos, le pide al front que se la pida 
     AskForBattle,            // cuando ha habido un cambio en la lista de batallas,  " " "
     PendingBattle,           // batallas pendientes    
-    DisconnectedFromBattle   // que alguien se ha desconectado de una batalla
+    DisconnectedFromBattle,   // que alguien se ha desconectado de una batalla
+    StartBattle
 }

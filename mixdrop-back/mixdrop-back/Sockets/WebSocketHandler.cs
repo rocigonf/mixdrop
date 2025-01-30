@@ -9,7 +9,7 @@ public class WebSocketHandler
 {
     private static IServiceProvider _serviceProvider;
     private static GayNetwork _gayNetwork;
-    private static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
+    public static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
     
     public static int Total { get; set; } = 0;
 
