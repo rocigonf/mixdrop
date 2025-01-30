@@ -7,5 +7,5 @@ public class Battle
     public bool IsPlaying { get; set; } = false;
 
     public ICollection<UserBattle> BattleUsers { get; set; } = new List<UserBattle>();
-    public ICollection<BattleCart> BattleCarts { get; set; } = new List<BattleCart>();
+    public ICollection<BattleCard> BattleCarts { get; set; } = new List<BattleCard>();
 }

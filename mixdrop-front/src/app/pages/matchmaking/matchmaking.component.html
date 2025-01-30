@@ -18,7 +18,6 @@
         } @else {
         @for (friend of conenctedFriends; track $index) {
 
-
         <div class="tarjetaUsuario">
             <div class="contenedorAvatar">
                 <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
@@ -29,23 +28,16 @@
             </span>
 
             <div class="contenedorIcono">
-                <img class="icono" (click)="gameWithFriend(friend)" src="/images/addFriend.webp"
+                <img class="icono" (click)="gameWithFriend(friend)" src="/images/battle.webp"
                     alt="invitar a jugar a amigo">
             </div>
 
         </div>
-
-        <span class="nickname">
-            {{ friend.nickname }}
-        </span>
-
-        <div class="contenedorIcono">
-            <img class="icono" (click)="gameWithFriend(friend)" src="/images/battle.png" alt="invitar a jugar a amigo">
-        </div>
-
         }
         }
-    </div>
-
+   
+</div>
+<br>
 <hr>
+
 <p>si es invitado esta esperando a q empiece el juego</p>

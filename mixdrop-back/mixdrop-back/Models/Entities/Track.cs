@@ -7,5 +7,5 @@ public class Track
     public int PartId { get; set; }
     public Song Song { get; set; }
     public Part Part { get; set; }
-    public ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public ICollection<Card> Cards { get; set; } = new List<Card>();
 }
