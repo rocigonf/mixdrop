@@ -59,6 +59,15 @@ public class BattleController : ControllerBase
         await _battleService.AcceptBattle(id, userId);
     }
 
+    // Aceptar solicitud de batalla
+    [Authorize]
+    [HttpPut("start/{id}")]
+    public async Task StartBattle(int id)
+    {
+        int userId = GetAuthorizedId();
+        await _battleService.StartBattle(id, userId);
+    }
+
     // Rechazar solicitud de batalla
     [Authorize]
     [HttpDelete("{id}")]

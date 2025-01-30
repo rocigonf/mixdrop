@@ -22,14 +22,17 @@ public class BattleService
 
     public async Task CreateBattle(User user1, User user2 = null, bool isRandom = false)
     {
+        BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(1);
+
         Battle battle = new Battle();
         if (user2 != null)
         {
             // Si es random significa que deben pelear directamente
             if (isRandom)
             {
-                dict["messageType"] = MessageType.Play;
+                dict["messageType"] = MessageType.StartBattle;
                 battle.BattleStateId = 3;
+                battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(3);
             }
 
             // q pueda ser nulo el user 2 porque puede ser el bot
@@ -44,7 +47,9 @@ public class BattleService
         else
         {
             // Si es contra un bot, se acepta y se pone como jugando
+            dict["messageType"] = MessageType.StartBattle;
             battle.BattleStateId = 3;
+            battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(3);
         }
 
 
@@ -58,6 +63,8 @@ public class BattleService
 
 
         // adaptar websocket a esto tamb
+
+        battle.BattleState = battleState;
 
         Battle newBattle = await _unitOfWork.BattleRepository.InsertAsync(battle);
 
@@ -131,8 +138,43 @@ public class BattleService
         UserBattle sender = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == false);
 
         dict["messageType"] = MessageType.Play;
-        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), sender.UserId);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), receiverUser.UserId);
+
+        dict.Add("battle", existingBattle);
+        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), sender.UserId);
+        
+    }
+
+    public async Task StartBattle(int battleId, int userId)
+    {
+        Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
+        if (existingBattle == null)
+        {
+            Console.WriteLine("Esta solicitud no existe");
+            return;
+        }
+
+        UserBattle receiverUser = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == false);
+        if (receiverUser.UserId != userId)
+        {
+            Console.WriteLine("Este usuario no es recibidor");
+            return;
+        }
+
+        existingBattle.BattleStateId = 3;
+
+        _unitOfWork.BattleRepository.Update(existingBattle);
+        await _unitOfWork.SaveAsync();
+
+        JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+        UserBattle sender = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == true);
+
+        dict["messageType"] = MessageType.StartBattle;
+        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), receiverUser.UserId);
+        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), sender.UserId);
+
     }
 
     // Método borrar amigo o rechazar solicitud de batalla

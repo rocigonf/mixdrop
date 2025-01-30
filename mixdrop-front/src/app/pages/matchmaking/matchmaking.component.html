@@ -5,6 +5,11 @@
     <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
 </div>
 
+@if(readyForBattle)
+{
+    <button (click)="startBattle()">Comenzar partida</button>
+}
+
 <!--mostrar tamb avatar de invitado / anfitrion-->
 
 <p>si es anitrion</p>

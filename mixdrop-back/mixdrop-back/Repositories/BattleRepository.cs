@@ -13,11 +13,9 @@ public class BattleRepository : Repository<Battle, int>
         return await GetQueryable()
             // Batallas no aceptadas o que se están jugando
             // Es decir, si hay una batalla que ya se está jugando o una petición de batalla, no se envía otra
-            .Where(battle => battle.BattleStateId <= 3)
-            .Include(friendship => friendship.BattleUsers
-                .Where(userFriend => userFriend.UserId == userId1)
-                .Where(userFriend => userFriend.UserId == userId2)
-            )
+            .Where(battle => battle.BattleUsers.Any(userBattle => userBattle.UserId == userId1))
+            .Where(battle => battle.BattleUsers.Any(userBattle => userBattle.UserId == userId2))
+            .Where(battle => battle.BattleStateId == 1 || battle.BattleStateId == 2 || battle.BattleStateId == 3)
             .FirstOrDefaultAsync();
     }
 
