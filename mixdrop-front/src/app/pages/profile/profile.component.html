@@ -13,6 +13,16 @@
     <p>Apodo: {{user.nickname}}</p>
     <p>Mail: {{user.email}}</p>
     
+    @if (hasFriendship(this.user) && !waitingFriendship(this.user)  ) {
+        <button (click)="removeFriend( hasFriendship(this.user) )">Eliminar amigo</button>
+
+    } @else if (hasFriendship(this.user) && waitingFriendship(this.user) ) {
+       Solicitud de amistad en espera de ser aceptada
+
+    } @else if(!hasFriendship(this.user) ){
+        <button (click)="addFriend(this.user)">Añadir amigo</button>
+    }
+
     @if(isItself)
     {
         @if (this.image) {

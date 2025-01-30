@@ -39,4 +39,10 @@ export class BattleService {
   async removeBattleById(id: number): Promise<any> {
     await this.api.delete(`Battle/${id}`)
   }
+
+  async startBattle(id : number): Promise<any>
+  {
+    const result = await this.api.put(`Battle/start/${id}`)
+    return result
+  }
 }

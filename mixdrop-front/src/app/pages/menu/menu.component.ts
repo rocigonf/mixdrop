@@ -154,6 +154,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   async acceptBattle(battle: Battle) {
     const response = await this.battleService.acceptBattleById(battle.id)
     console.log("Respuesta de aceptar la batalla: ", response)
+    this.navigateToUrl("/matchmaking")
   }
 
   async deleteBattle(battle : Battle)
