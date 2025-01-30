@@ -11,6 +11,7 @@ public class UnitOfWork
     //private UserFriendRepository _userFriendRepository;
     private BattleRepository _battleRepository;
     private UserBattleRepository _userBattleRepository;
+    private BattleStateRepository _battleStateRepository;
 
     // poner todos los repositorys
 
@@ -20,6 +21,7 @@ public class UnitOfWork
     //public UserFriendRepository UserFriendRepository => _userFriendRepository ??= new UserFriendRepository(_context);
     public BattleRepository BattleRepository => _battleRepository ??= new BattleRepository(_context);
     public UserBattleRepository UserBattleRepository => _userBattleRepository ??= new UserBattleRepository(_context);
+    public BattleStateRepository BattleStateRepository => _battleStateRepository ??= new BattleStateRepository(_context);
 
     // poner todos los repositorys
 

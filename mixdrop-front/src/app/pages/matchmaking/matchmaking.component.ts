@@ -26,7 +26,6 @@ export class MatchmakingComponent implements OnInit {
 
   constructor(private webSocketService: WebsocketService,
     private router: Router,
-    private userService: UserService,
     public authService: AuthService,
     public battleService: BattleService
   ) { }
@@ -40,6 +39,9 @@ export class MatchmakingComponent implements OnInit {
   conenctedFriends: User[] = []
 
   pendingBattles: Battle[] = []
+
+  readyForBattle = false
+  battle : Battle | null = null
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -58,9 +60,12 @@ export class MatchmakingComponent implements OnInit {
 
     switch (jsonResponse.messageType) {
       case MessageType.Play:
-        // TODO: Redirigir a la vista (por ruta se pasa el id de la batalla)
         alert("Partida encontrada :3")
-        this.router.navigateByUrl("game") // Redirigir a la vista juego
+        if(jsonResponse.battle)
+        {
+          this.readyForBattle = true
+          this.battle = jsonResponse.battle
+        }
         break
       case MessageType.Friend:
         this.friendsRaw = jsonResponse.friends
@@ -73,6 +78,9 @@ export class MatchmakingComponent implements OnInit {
         this.router.navigateByUrl("menu")
         //window.location.reload()
         break
+      case MessageType.StartBattle:
+        this.router.navigateByUrl("game")
+        break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
@@ -80,6 +88,12 @@ export class MatchmakingComponent implements OnInit {
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendRxjs(messageType.toString())
+  }
+
+  async startBattle()
+  {
+    if(!this.battle) return 
+    await this.battleService.acceptBattleById(this.battle.id)
   }
 
 
