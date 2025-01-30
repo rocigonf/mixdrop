@@ -112,8 +112,6 @@ export class MatchmakingComponent implements OnInit {
     this.myFriends = []
     this.conenctedFriends = []
 
-    console.log(this.friendsRaw)
-
     for (const friend of this.friendsRaw) {
       if (friend.accepted) {
         this.myFriends.push(friend)
@@ -125,6 +123,5 @@ export class MatchmakingComponent implements OnInit {
         }
       }
     }
-    console.log("amigos: ", this.myFriends)
   }
 }
