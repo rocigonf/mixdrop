@@ -49,6 +49,9 @@ public class UserSocket
 
                     using IServiceScope scope = _serviceProvider.CreateScope();
 
+                    BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
+                    BattleMapper battleMapper = new BattleMapper();
+
                     // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
                     // En función del switch, obtengo unos datos u otros, y los envío en JSON
                     switch (messageType)
@@ -61,17 +64,21 @@ public class UserSocket
                             dict.Add("total", WebSocketHandler.Total);
                             break;
                         case MessageType.PendingBattle:
-                            BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
                             var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);
 
-                            BattleMapper battleMapper = new BattleMapper();
                             var battleListDto = battleMapper.ToDto(battleList);
 
                             dict.Add("battles", battleListDto);
                             break;
+                        case MessageType.ShuffleDeckStart:
+                            Battle currentBattle = await battleService.GetCurrentBattleByUserAsync(User.Id);
+                            if (currentBattle == null)
+                            {
+                                Console.WriteLine("Si es nulo a tomar por culo");
+                                continue;
+                            }
+                            await GayNetwork.StartGame(currentBattle);
 
-                        // TODO: La lógica del juego probablemente habrá que llevarla a cabo en otro sitio
-                        case MessageType.Play:
                             break;
                     }
 

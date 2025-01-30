@@ -9,5 +9,6 @@ public enum MessageType
     AskForBattle,            // cuando ha habido un cambio en la lista de batallas,  " " "
     PendingBattle,           // batallas pendientes    
     DisconnectedFromBattle,   // que alguien se ha desconectado de una batalla
-    StartBattle
+    StartBattle,
+    ShuffleDeckStart
 }
