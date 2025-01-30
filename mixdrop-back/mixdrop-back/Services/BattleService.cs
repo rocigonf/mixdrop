@@ -1,9 +1,7 @@
 ﻿using mixdrop_back.Models.Entities;
 using mixdrop_back.Sockets;
-using System.Text.Json.Serialization;
 using System.Text.Json;
-using System.Runtime.Intrinsics.X86;
-using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace mixdrop_back.Services;
 
@@ -47,13 +45,15 @@ public class BattleService
             battle.BattleStateId = 3;
         }
 
-
-        // q si estan en batalla los jugadores, no pueda estar en otra
-        Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
-        if (existingBattle != null)
+        if (user2 != null)
         {
-            Console.WriteLine("Ya hay una batalla entre ambos usuarios");
-            return;
+            // q si estan en batalla los jugadores, no pueda estar en otra
+            Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
+            if (existingBattle != null)
+            {
+                Console.WriteLine("Ya hay una batalla entre ambos usuarios");
+                return;
+            }
         }
 
 
