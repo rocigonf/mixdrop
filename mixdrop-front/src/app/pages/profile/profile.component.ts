@@ -9,6 +9,10 @@ import { PasswordValidatorService } from '../../services/password-validator.serv
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { WebsocketService } from '../../services/websocket.service';
+import { MessageType } from '../../models/message-type';
+import { Friend } from '../../models/friend';
+import { FriendshipService } from '../../services/friendship.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,12 +23,13 @@ import { AuthService } from '../../services/auth.service';
 })
 export class ProfileComponent implements OnInit {
 
-  id : number = 0;
+  id: number = 0;
   userForm: FormGroup;
   passwordForm: FormGroup;
   isNewPasswordHidden = true // Mostrar div de cambiar contraseña
 
   user: User | null = null
+  myUser: User | null = null;
   isItself = false
   routeParamMap$: Subscription | null = null;
   public readonly IMG_URL = environment.apiImg;
@@ -34,15 +39,25 @@ export class ProfileComponent implements OnInit {
 
   isEditing = false; //modo edición
   deleteAvatar = false;
-  
+
+  messageReceived$: Subscription | null = null;
+  serverResponse: string = '';
+
+
+  friendsRaw: Friend[] = []
+  acceptedFriends: Friend[] = []
+  pendingFriends: Friend[] = []
+
+
   constructor(
-    private activatedRoute: ActivatedRoute, 
-    private userService: UserService, 
-    private passwordValidator : PasswordValidatorService,
+    private activatedRoute: ActivatedRoute,
+    private userService: UserService,
+    private passwordValidator: PasswordValidatorService,
     private formBuild: FormBuilder,
-    private authService: AuthService
-  )
-  {
+    private authService: AuthService,
+    private webSocketService: WebsocketService,
+    private friendshipService: FriendshipService
+  ) {
     this.userForm = this.formBuild.group({
       nickname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]]
@@ -61,64 +76,157 @@ export class ProfileComponent implements OnInit {
       await this.getUser()
       this.userForm.reset(this.user)
     })
+
+    this.myUser = this.authService.getUser();
+
+
+    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+
   }
 
-  async getUser()
-  {
+  async getUser() {
     const result = await this.userService.getUserById(this.id)
-      console.log("Resultado de pedir el perfil ", this.id, ": ", result)
+    console.log("Resultado de pedir el perfil ", this.id, ": ", result)
 
-      if (result != null) {
-        this.user = result
+    if (result != null) {
+      this.user = result
 
-        // Pillo el id del JWT como en el ECommerce y si coincide con el usuario que he pedido, intenta acceder a sí mismo
-        const jwt = this.userService.api.jwt
-        if(jwt)
-        {
-          const id = JSON.parse(window.atob(jwt.split('.')[1])).nameid;
-          if(id == this.user?.id)
-          {
-            this.isItself = true
-          }
-          //console.log(id)
+      // Pillo el id del JWT como en el ECommerce y si coincide con el usuario que he pedido, intenta acceder a sí mismo
+      const jwt = this.userService.api.jwt
+      if (jwt) {
+        const id = JSON.parse(window.atob(jwt.split('.')[1])).nameid;
+        if (id == this.user?.id) {
+          this.isItself = true
         }
+        //console.log(id)
       }
+    }
   }
 
   onFileSelected(event: any) {
     const image = event.target.files[0] as File;
     this.image = image
 
-    if(event.target.files.length > 0){
+    if (event.target.files.length > 0) {
       const reader = new FileReader();
-      reader.onload = (event:any) => {
+      reader.onload = (event: any) => {
         this.imagePreview = event.target.result;
       }
       reader.readAsDataURL(event.target.files[0])
     }
   }
-  
+
+  processMessage(message: any) {
+    this.serverResponse = message
+    const jsonResponse = JSON.parse(this.serverResponse)
+
+    // En función del tipo de mensaje que he recibido, sé que me han enviado unos datos u otros
+
+    // Es posible que haya que hacer JSON.parse() otra vez en alguno de los casos
+    switch (jsonResponse.messageType) {
+      case MessageType.Friend:
+        // Es posible que haya que hacer JSON.parse() otra vez
+        this.friendsRaw = jsonResponse.friends
+        this.processFriends()
+        break
+      case MessageType.Stats:
+        this.askForInfo(MessageType.Friend)
+        break
+      case MessageType.AskForFriend:
+        this.askForInfo(MessageType.Friend)
+        break
+    }
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
+  }
+
+  askForInfo(messageType: MessageType) {
+    console.log("Mensaje pedido: ", messageType)
+    this.webSocketService.sendRxjs(messageType.toString())
+  }
+
+
+  processFriends() {
+    this.acceptedFriends = []
+    console.log(this.friendsRaw)
+
+    for (const friend of this.friendsRaw) {
+      if (friend.accepted) {
+        this.acceptedFriends.push(friend)
+      }
+      if (friend.accepted === false) {
+        if (this.user?.id == friend.receiverUserId) {
+          this.pendingFriends.push(friend)
+        }
+      }
+    }
+    console.log("amigos: ", this.acceptedFriends)
+    console.log("solicitudes: ", this.pendingFriends)
+
+  }
+
+
+  async removeFriend(friend: Friend | undefined) {
+    // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
+    // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
+
+    if (friend != undefined) {
+      const nickname = friend.receiverUser?.nickname || friend.senderUser?.nickname;
+
+      const confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+
+      if (confirmed) {
+        await this.friendshipService.removeFriendById(friend.id)
+        alert(`Has dejado de ser amigo de ${nickname}.`);
+      }
+    }
+
+  }
+
+  async addFriend(user: User) {
+    // Hago una petición para que cree el amigo, ( wesoque ->) y en back el servidor debería notificar a ambos usuarios enviando la lista de amigos
+    const response = await this.friendshipService.addFriend(user)
+    console.log("Respuesta de agregar al amigo: ", response)
+  }
+
+  async acceptFriendship(id: number) {
+    const response = await this.friendshipService.acceptFriendship(id)
+    console.log("Respuesta de aceptar al amigo: ", response)
+  }
+
+
+  // comprueba si se le ha enviado una solicitud de amistad y esta en espera
+  waitingFriendship(user: User): boolean {
+
+    const amistad: Friend | undefined = this.friendsRaw.find(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.myUser?.id) ||
+      (friend.receiverUserId === user.id && friend.senderUserId === this.myUser?.id)
+    )
+    if (amistad) {
+      return !amistad.accepted
+    } else return false
+  }
+
+
+
+
   // TODO: Agregar verificación
-  async updateUser() : Promise<void>
-  {
+  async updateUser(): Promise<void> {
     const role = this.user?.role.toString();
     const formData = new FormData();
-    formData.append( "Nickname" ,this.userForm.value.nickname )
+    formData.append("Nickname", this.userForm.value.nickname)
 
-    if(this.image)
-    {
-      formData.append( "Image" ,this.image, this.image.name )
-      formData.append( "ChangeImage", "true")
-    }
-    else if(this.deleteAvatar)
-    {
+    if (this.image) {
+      formData.append("Image", this.image, this.image.name)
       formData.append("ChangeImage", "true")
     }
-    
-    formData.append( "Email" ,this.userForm.value.email )
-    formData.append( "Password" , this.passwordForm.get('newPassword')?.value )
-    
-    if(role)formData.append( "Role" , role )
+    else if (this.deleteAvatar) {
+      formData.append("ChangeImage", "true")
+    }
+
+    formData.append("Email", this.userForm.value.email)
+    formData.append("Password", this.passwordForm.get('newPassword')?.value)
+
+    if (role) formData.append("Role", role)
 
     const result = await this.userService.updateUser(formData, this.id)
     console.error(result)
@@ -136,13 +244,13 @@ export class ProfileComponent implements OnInit {
   editPassword() {
     const newPassword = this.passwordForm.get('newPassword')?.value;
 
-      if (!newPassword) {
-        console.error("Error: El campo de la contraseña está vacío.");
-        
-        return;
-      }
-      
-      this.showEditPassword()
+    if (!newPassword) {
+      console.error("Error: El campo de la contraseña está vacío.");
+
+      return;
+    }
+
+    this.showEditPassword()
     /*if (this.passwordForm.valid) {
       
     } else{
@@ -167,8 +275,19 @@ export class ProfileComponent implements OnInit {
       this.isEditing = false
       // ACTUALIZAR
 
-    } else{
+    } else {
       alert("Los datos introducidos no son válidos")
     }
   }
+
+
+  // comprueba q el usuatio ya tiene amistad (aceptada o no) con otro usuario
+  hasFriendship(user: User): Friend | undefined {
+    return this.friendsRaw.find(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.myUser?.id) ||
+      (friend.receiverUserId === user.id && friend.senderUserId === this.myUser?.id)
+    );
+  }
+
+
 }
