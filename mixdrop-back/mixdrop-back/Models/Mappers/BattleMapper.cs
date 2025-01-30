@@ -16,8 +16,7 @@ public class BattleMapper
 
             BattleDto battleDto = new BattleDto();
             battleDto.Id = battle.Id;
-            battleDto.Accepted = battle.Accepted;
-            battleDto.IsPlaying = battle.IsPlaying;
+            battleDto.BattleStateId = battle.BattleStateId;
             battleDto.User = user.User;
             battleDto.UserId = user.Id;
 

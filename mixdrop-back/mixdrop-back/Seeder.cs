@@ -22,6 +22,12 @@ public class Seeder
 
         await SeedUsersAsync();
         await _context.SaveChangesAsync();
+
+        await SeedBattleResultAsync();
+        await _context.SaveChangesAsync();
+
+        await SeedBattleStateAsync();
+        await _context.SaveChangesAsync();
     }
 
 
@@ -57,7 +63,6 @@ public class Seeder
         await _context.Users.AddRangeAsync(users);
     }
 
-
     private async Task SeedStateAsync()
     {
         State[] states = [
@@ -75,12 +80,9 @@ public class Seeder
         await _context.States.AddRangeAsync(states);
     }
 
-    private async Task SeedBattleResult()
+    private async Task SeedBattleResultAsync()
     {
         BattleResult[] results = [
-                new BattleResult {
-                    Name = "Jugando"
-                },
                 new BattleResult {
                     Name = "Victoria"
                 },
@@ -93,6 +95,25 @@ public class Seeder
             ];
 
         await _context.BattleResults.AddRangeAsync(results);
+    }
+
+    private async Task SeedBattleStateAsync()
+    {
+        BattleState[] battleStates = [
+            new BattleState {
+                Name = "Pendiente de aceptar", // No está aceptado aún
+            },
+            new BattleState {
+                Name = "Pendiente de empezar", // Está aceptado pero no está jugando aún
+            },
+            new BattleState {
+                Name = "Jugando",
+            },
+            new BattleState {
+                Name = "Finalizada",
+            }
+        ];
+        await _context.BattleStates.AddRangeAsync(battleStates);
     }
 
 }

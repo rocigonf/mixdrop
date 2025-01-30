@@ -29,8 +29,7 @@ public class BattleService
             if (isRandom)
             {
                 dict["messageType"] = MessageType.Play;
-                battle.Accepted = true;
-                battle.IsPlaying = true;
+                battle.BattleStateId = 3;
             }
 
             // q pueda ser nulo el user 2 porque puede ser el bot
@@ -45,8 +44,7 @@ public class BattleService
         else
         {
             // Si es contra un bot, se acepta y se pone como jugando
-            battle.Accepted = true;
-            battle.IsPlaying = true;
+            battle.BattleStateId = 3;
         }
 
 
@@ -122,8 +120,7 @@ public class BattleService
             return;
         }
 
-        existingBattle.Accepted = true;
-        existingBattle.IsPlaying = true;
+        existingBattle.BattleStateId = 2;
 
         _unitOfWork.BattleRepository.Update(existingBattle);
         await _unitOfWork.SaveAsync();

@@ -80,6 +80,7 @@ public class Program
 
         // Inyección del servicio de WebSocket como Singleton
         builder.Services.AddSingleton<WebSocketHandler>();
+        builder.Services.AddSingleton<GayNetwork>();
 
         // Inyección de Middleware
         builder.Services.AddTransient<PreAuthMiddleware>();
