@@ -174,4 +174,11 @@ aside img {
     width: 32px;
     cursor: pointer;
     vertical-align: middle;
+
+}
+
+::ng-deep .tooltip{
+    background-color: #888484;
+    border-radius: 5px;
+    text-align: center;
 }

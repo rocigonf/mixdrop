@@ -13,12 +13,13 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [NavbarComponent, FormsModule],
+  imports: [NavbarComponent, FormsModule, MatTooltipModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })

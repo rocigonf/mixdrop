@@ -104,7 +104,8 @@
                                 </span>
 
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                    <img #tooltip="matTooltip"
+                                        matTooltip="Eliminar amigo" matTooltipPosition="above" matTooltipClass="tooltip" class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div> 
                                 @if (!hasBattle(friend.receiverUser|| friend.senderUser)) {
