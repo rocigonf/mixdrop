@@ -17,5 +17,5 @@ public class GayHandler // GameHandler :3
         // TODO: Lógica que maneja el juego 💀
 
         _semaphore.Release();
-    }    
+    }
 }

@@ -11,9 +11,9 @@ public class BattleRepository : Repository<Battle, int>
     public async Task<Battle> GetBattleByUsersAsync(int userId1, int userId2)
     {
         return await GetQueryable()
-            // Batallas no aceptadas o que estando aceptadas, se está jugando (si está aceptada y no se está jugando significa que ya ha acabado)
+            // Batallas no aceptadas o que se están jugando
             // Es decir, si hay una batalla que ya se está jugando o una petición de batalla, no se envía otra
-            .Where(battle => battle.Accepted == false || (battle.Accepted == true && battle.IsPlaying == true))
+            .Where(battle => battle.BattleStateId <= 3)
             .Include(friendship => friendship.BattleUsers
                 .Where(userFriend => userFriend.UserId == userId1)
                 .Where(userFriend => userFriend.UserId == userId2)
@@ -33,7 +33,7 @@ public class BattleRepository : Repository<Battle, int>
     {
         // Con el Any obtengo todas las batallas que incluyan al id del usuario :'D
         return await GetQueryable()
-            .Where(battle => battle.Accepted == false)
+            .Where(battle => battle.BattleStateId == 1)
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId && user.Receiver == true))
                 .Include(battle => battle.BattleUsers.Where(user => user.UserId != userId))
                 .ThenInclude(userBattle => userBattle.User)
@@ -43,7 +43,7 @@ public class BattleRepository : Repository<Battle, int>
     public async Task<ICollection<Battle>> GetCurrentBattleByUser(int userId)
     {
         return await GetQueryable()
-            .Where(battle => battle.IsPlaying == true)
+            .Where(battle => battle.BattleStateId == 3)
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
             .Include(battle => battle.BattleUsers)
             .ToListAsync();

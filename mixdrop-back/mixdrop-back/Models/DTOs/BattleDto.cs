@@ -8,6 +8,5 @@ public class BattleDto
     public User User { get; set; }
     public int BattleId { get; set; }
     public int UserId { get; set; }
-    public bool Accepted { get; set; }
-    public bool IsPlaying { get; set; }
+    public int BattleStateId { get; set; }
 }
