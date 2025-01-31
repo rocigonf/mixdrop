@@ -6,7 +6,14 @@ namespace mixdrop_back;
 public class MixDropContext : DbContext
 {
     private const string DATABASE_PATH = "mixdrop.db";
-    
+
+    private readonly Settings _settings;
+    public MixDropContext(Settings settings)
+    {
+        _settings = settings;
+    }
+
+
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Battle> Battles { get; set; }
     public DbSet<BattleState> BattleStates { get; set; }
@@ -26,8 +33,13 @@ public class MixDropContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+# if DEBUG
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         optionsBuilder.UseSqlite($"DataSource={baseDir}{DATABASE_PATH}");
+#else
+
+            optionsBuilder.UseMySql(_settings.DatabaseConnection, ServerVersion.AutoDetect(_settings.DatabaseConnection));
+#endif
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

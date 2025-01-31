@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
@@ -64,6 +65,9 @@ public class Program
         // AQUÍ EMPIEZA EL SERVIDOR COMO TAL
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
+        builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
+
         // Inyectamos el DbContext
         builder.Services.AddScoped<MixDropContext>();
         builder.Services.AddScoped<UnitOfWork>();
@@ -113,7 +117,7 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         // Configuración de CORS
-        builder.Services.AddCors(options =>
+        /*builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAllOrigins", builder =>
             {
@@ -121,7 +125,18 @@ public class Program
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
-        });
+        });*/
+        builder.Services.AddCors(
+                options =>
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                        ;
+                    })
+                );
 
 
         builder.Services.AddScoped<MixDropContext>();
