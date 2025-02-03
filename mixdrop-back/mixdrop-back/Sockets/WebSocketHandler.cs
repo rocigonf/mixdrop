@@ -45,6 +45,13 @@ public class WebSocketHandler
 
         // Sección crítica
 
+        UserSocket existingSocket = USER_SOCKETS.FirstOrDefault(u => u.User.Id == user.Id);
+        if (existingSocket != null)
+        {
+            USER_SOCKETS.Remove(existingSocket);
+            Total--;
+        }
+
         UserSocket handler = new UserSocket(_serviceProvider, webSocket, user);
         handler.Disconnected += OnDisconnectedAsync;
         USER_SOCKETS.Add(handler);
