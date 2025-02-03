@@ -130,7 +130,7 @@ public class Seeder
     {
         Card[] cards = {
             new Card {
-                ImagePath = "",
+                ImagePath = "cards/minero.jpg",
                 Level = 1,
                 Track = new Track
                 {
@@ -153,7 +153,7 @@ public class Seeder
                 }
             },
             new Card {
-                ImagePath = "",
+                ImagePath = "cards/insane.png",
                 Level = 2,
                 Track = new Track
                 {
@@ -176,7 +176,7 @@ public class Seeder
                 }
             },
             new Card {
-                ImagePath = "",
+                ImagePath = "cards/theline.jpg",
                 Level = 1,
                 Track = new Track
                 {
@@ -199,7 +199,7 @@ public class Seeder
                 }
             },
             new Card {
-                ImagePath = "",
+                ImagePath = "cards/getJinxed.png",
                 Level = 2,
                 Track = new Track
                 {
@@ -222,7 +222,7 @@ public class Seeder
                 }
             },
             new Card {
-                ImagePath = "",
+                ImagePath = "cards/warden.gif",
                 Level = 1,
                 Track = new Track
                 {
@@ -245,7 +245,7 @@ public class Seeder
                 }
             },
             new Card {
-                ImagePath = "",
+                ImagePath = "cards/himnoEspana.png",
                 Level = 2,
                 Track = new Track
                 {
