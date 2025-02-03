@@ -6,7 +6,7 @@ namespace mixdrop_back.Sockets
     {
         private static readonly ICollection<GayHandler> _handlers = new List<GayHandler>();
         
-        public static async Task<ICollection<Card>> StartGame(Battle battle, User user, UnitOfWork unitOfWork) // 🦙📲🦙🔥
+        public static async Task<UserBattleDto> StartGame(Battle battle, User user, UnitOfWork unitOfWork) // 🦙📲🦙🔥
         {
             GayHandler handler = _handlers.FirstOrDefault(warden => warden._timmyBattleId == battle.Id);
             if (handler == null)

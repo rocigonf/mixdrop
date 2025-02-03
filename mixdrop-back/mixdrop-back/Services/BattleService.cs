@@ -127,7 +127,8 @@ public class BattleService
             return;
         }
 
-        existingBattle.BattleStateId = 2;
+        // TODO: Algo :(
+        existingBattle.BattleStateId = 3;
 
         _unitOfWork.BattleRepository.Update(existingBattle);
         await _unitOfWork.SaveAsync();
