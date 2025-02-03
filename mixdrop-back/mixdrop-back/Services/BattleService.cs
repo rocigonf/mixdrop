@@ -245,6 +245,20 @@ public class BattleService
             Console.WriteLine("Partida encontrada B)");
         }
     }
+    public async Task<Battle> GetCurrentBattleByUserAsync(int userId)
+    {
+        ICollection<Battle> currentBattles = await _unitOfWork.BattleRepository.GetCurrentBattleByUser(userId);
+        if (currentBattles.Count() > 1)
+        {
+            throw new Exception("Cagaste chiquiluqui");
+        }
+        else if (currentBattles.Count() == 0)
+        {
+            Console.WriteLine("Empanada con queso");
+            return null;
+        }
+        return currentBattles.First();
+    }
 
     public async Task<ICollection<Battle>> GetPendingBattlesByUserIdAsync(int userId)
     {
