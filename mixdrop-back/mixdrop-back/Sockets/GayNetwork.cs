@@ -6,20 +6,17 @@ namespace mixdrop_back.Sockets
     {
         private static readonly ICollection<GayHandler> _handlers = new List<GayHandler>();
         
-        public static GayHandler StartGame(Battle battle, User user)
+        public static async Task<ICollection<Card>> StartGame(Battle battle, User user, UnitOfWork unitOfWork) // 🦙📲🦙🔥
         {
-            // TODO: Agregar verificación de que no existe un gayhandler
-            GayHandler gayHandler = new GayHandler();
-            gayHandler._participants.Add("user1", battle.BattleUsers.First());
-            gayHandler._participants.Add("user2", battle.BattleUsers.Last());
+            GayHandler handler = _handlers.FirstOrDefault(warden => warden._timmyBattleId == battle.Id);
+            if (handler == null)
+            {
+                handler = new GayHandler();
+                handler._timmyBattleId = battle.Id;
+                _handlers.Add(handler);
+            }
 
-            gayHandler._timmyTurnerId = user.Id;
-
-            _handlers.Add(gayHandler);
-
-            // TODO: Repartir cartas
-
-            return gayHandler;
+            return await handler.AddParticipant(battle, user.Id, unitOfWork);
         }
     }
 }

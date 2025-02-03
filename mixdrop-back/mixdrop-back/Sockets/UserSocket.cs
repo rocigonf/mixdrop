@@ -77,8 +77,11 @@ public class UserSocket
                                 Console.WriteLine("Si es nulo a tomar por culo");
                                 continue;
                             }
-                            await GayNetwork.StartGame(currentBattle);
 
+                            var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
+                            Console.WriteLine("¿Qué es VALORANT? 😨");
+                            dict.Add("cards", valorant);
                             break;
                     }
 
