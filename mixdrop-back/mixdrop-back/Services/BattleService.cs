@@ -127,8 +127,7 @@ public class BattleService
             return;
         }
 
-        // TODO: Algo :(
-        existingBattle.BattleStateId = 3;
+        existingBattle.BattleStateId = 2;
 
         _unitOfWork.BattleRepository.Update(existingBattle);
         await _unitOfWork.SaveAsync();
@@ -158,7 +157,7 @@ public class BattleService
         UserBattle receiverUser = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == false);
         if (receiverUser.UserId != userId)
         {
-            Console.WriteLine("Este usuario no es recibidor");
+            Console.WriteLine("Este usuario no es el anfitrión");
             return;
         }
 
@@ -240,9 +239,9 @@ public class BattleService
             JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-            dict["messageType"] = MessageType.Play;
+            /*dict["messageType"] = MessageType.Play;
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user.Id);
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userInQueue.Id);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userInQueue.Id);*/
             Console.WriteLine("Partida encontrada B)");
         }
     }

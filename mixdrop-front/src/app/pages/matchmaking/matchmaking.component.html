@@ -7,7 +7,14 @@
 
 @if(readyForBattle)
 {
-    <button (click)="startBattle()">Comenzar partida</button>
+    @if(battle)
+    {
+        <button (click)="startBattle()">Comenzar partida</button>
+    }
+    @else 
+    {
+        <p>Esperando a que el anfitrión comience la partida...</p>
+    }
 }
 
 <!--mostrar tamb avatar de invitado / anfitrion-->
