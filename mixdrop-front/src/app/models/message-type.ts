@@ -6,5 +6,6 @@ export enum MessageType {
     AskForBattle,
     PendingBattle,
     DisconnectedFromBattle,
-    StartBattle
+    StartBattle,
+    ShuffleDeckStart
 }

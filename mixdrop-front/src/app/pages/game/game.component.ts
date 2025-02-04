@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { BattleService } from '../../services/battle.service';
+import { Subscription } from 'rxjs';
+import { WebsocketService } from '../../services/websocket.service';
+import { MessageType } from '../../models/message-type';
+import { Card } from '../../models/card';
 
 @Component({
   selector: 'app-game',
@@ -19,12 +23,33 @@ export class GameComponent implements OnInit {
   // 7) El server notifica que se acabó la batalla
   // 8) Se muestran los resultados y se procede
 
-  constructor(private battleService : BattleService)
-  {
+  messageReceived$: Subscription | null = null;
+  serverResponse: string = '';
+  cards: Card[] = []
+
+  constructor(private webSocketService: WebsocketService) {
 
   }
 
-  async ngOnInit(): Promise<void>
-  {
+  async ngOnInit(): Promise<void> {
+    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+    this.askForInfo(MessageType.ShuffleDeckStart)
+  }
+
+  processMessage(message: any) {
+    this.serverResponse = message
+    const jsonResponse = JSON.parse(this.serverResponse)
+
+    switch (jsonResponse.messageType) {
+      case MessageType.ShuffleDeckStart:
+        this.cards = jsonResponse.cards
+        break
+    }
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
+  }
+
+  askForInfo(messageType: MessageType) {
+    console.log("Mensaje pedido: ", messageType)
+    this.webSocketService.sendRxjs(messageType.toString())
   }
 }
