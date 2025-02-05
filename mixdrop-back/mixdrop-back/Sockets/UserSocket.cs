@@ -39,7 +39,6 @@ public class UserSocket
                 if (!string.IsNullOrWhiteSpace(message))
                 {
                     // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH (POR AHORA) (ahora el messageType está en el catch de GetActionMessage()
-                    Console.WriteLine(dictInput);
                     JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                     options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
@@ -116,7 +115,6 @@ public class UserSocket
         try
         {
             Dictionary<object, object> deserializedMessage = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
-                //JsonSerializer.Deserialize<Dictionary<object, object>>(message);
             return deserializedMessage;
         }
         catch
