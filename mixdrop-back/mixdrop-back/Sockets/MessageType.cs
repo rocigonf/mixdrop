@@ -10,5 +10,6 @@ public enum MessageType
     PendingBattle,           // batallas pendientes    
     DisconnectedFromBattle,   // que alguien se ha desconectado de una batalla
     StartBattle,
-    ShuffleDeckStart
+    ShuffleDeckStart,
+    TurnPlayed,             // el usuario ya ha jugado su turno
 }

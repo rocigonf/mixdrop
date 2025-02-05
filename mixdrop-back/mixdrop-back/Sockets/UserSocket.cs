@@ -79,9 +79,19 @@ public class UserSocket
                             }
 
                             var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
-                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
+                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork); // userBatleDto
                             Console.WriteLine("¿Qué es VALORANT? 😨");
                             dict.Add("cards", valorant);
+                            break;
+                        case MessageType.TurnPlayed:
+                            Battle currentBattle2 = await battleService.GetCurrentBattleByUserAsync(User.Id);
+                            if (currentBattle2 == null)
+                            {
+                                Console.WriteLine("Si es nulo a tomar por culo");
+                                continue;
+                            }
+                            var userTurn = await GayNetwork.PlayTurn(currentBattle2, User);
+                            dict.Add("turn", userTurn); 
                             break;
                     }
 

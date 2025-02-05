@@ -27,6 +27,8 @@ export class GameComponent implements OnInit {
   serverResponse: string = '';
   cards: Card[] = []
 
+  myTurn: Boolean = false;
+
   constructor(private webSocketService: WebsocketService) {
 
   }
@@ -43,7 +45,12 @@ export class GameComponent implements OnInit {
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
         this.cards = jsonResponse.cards
+        this.myTurn = jsonResponse.cards.isTheirTurn
         break
+      case MessageType.TurnPlayed:
+        this.myTurn = jsonResponse.turn.isTheirTurn
+        break;
+
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
@@ -51,5 +58,10 @@ export class GameComponent implements OnInit {
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendRxjs(messageType.toString())
+  }
+
+  // nose porque solo funciona la primera vez q lo pulso :(
+  playTurn() {
+    this.askForInfo(MessageType.TurnPlayed)
   }
 }
