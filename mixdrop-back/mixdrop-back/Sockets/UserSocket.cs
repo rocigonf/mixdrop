@@ -65,9 +65,7 @@ public class UserSocket
                             break;
                         case MessageType.PendingBattle:
                             var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);
-
                             var battleListDto = battleMapper.ToDto(battleList);
-
                             dict.Add("battles", battleListDto);
                             break;
                         case MessageType.ShuffleDeckStart:
@@ -82,6 +80,8 @@ public class UserSocket
                             var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
                             Console.WriteLine("¿Qué es VALORANT? 😨");
                             dict.Add("cards", valorant);
+                            break;
+                        case MessageType.PlayCard:
                             break;
                     }
 
