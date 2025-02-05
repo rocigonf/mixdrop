@@ -48,6 +48,16 @@ export class MatchmakingComponent implements OnInit {
 
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
 
+    const battle = sessionStorage.getItem("battle")
+    if(battle)
+    {
+      this.readyForBattle = true
+      if(battle != "null")
+      {
+        this.battle = JSON.parse(battle)
+      }
+    }
+
     // pide info de amigos 
     this.askForInfo(MessageType.Friend)
     this.askForInfo(MessageType.PendingBattle)
@@ -61,9 +71,9 @@ export class MatchmakingComponent implements OnInit {
     switch (jsonResponse.messageType) {
       case MessageType.Play:
         alert("Partida encontrada :3")
+        this.readyForBattle = true
         if(jsonResponse.battle)
         {
-          this.readyForBattle = true
           this.battle = jsonResponse.battle
         }
         break
@@ -93,7 +103,7 @@ export class MatchmakingComponent implements OnInit {
   async startBattle()
   {
     if(!this.battle) return 
-    await this.battleService.acceptBattleById(this.battle.id)
+    await this.battleService.startBattle(this.battle.id)
   }
 
 

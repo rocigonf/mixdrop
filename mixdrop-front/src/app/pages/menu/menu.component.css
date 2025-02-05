@@ -178,7 +178,7 @@ aside img {
 }
 
 ::ng-deep .tooltip{
-    background-color: #888484;
+    background-color: #686868;
     border-radius: 5px;
     text-align: center;
 }

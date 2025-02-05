@@ -8,7 +8,6 @@ namespace mixdrop_back.Sockets;
 public class WebSocketHandler
 {
     private static IServiceProvider _serviceProvider;
-    private static GayNetwork _gayNetwork;
     public static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
     
     public static int Total { get; set; } = 0;
@@ -16,10 +15,9 @@ public class WebSocketHandler
     // Semáforo para controlar el acceso a la lista de WebSocketHandler
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-    public WebSocketHandler(IServiceProvider serviceProvider, GayNetwork gayNetwork)
+    public WebSocketHandler(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _gayNetwork = gayNetwork;
     }
 
     public async Task HandleWebsocketAsync(WebSocket webSocket, User user)
@@ -44,6 +42,13 @@ public class WebSocketHandler
         await _semaphore.WaitAsync();
 
         // Sección crítica
+
+        UserSocket existingSocket = USER_SOCKETS.FirstOrDefault(u => u.User.Id == user.Id);
+        if (existingSocket != null)
+        {
+            USER_SOCKETS.Remove(existingSocket);
+            Total--;
+        }
 
         UserSocket handler = new UserSocket(_serviceProvider, webSocket, user);
         handler.Disconnected += OnDisconnectedAsync;

@@ -96,7 +96,15 @@ export class MenuComponent implements OnInit, OnDestroy {
         break
       case MessageType.Play:
         alert("Partida encontrada :3")
-        this.router.navigateByUrl("game") // Redirigir a la vista juego
+        this.router.navigateByUrl("matchmaking")
+        if(jsonResponse.battle)
+        {
+          sessionStorage.setItem("battle", JSON.stringify(jsonResponse.battle))
+        }
+        else
+        {
+          sessionStorage.setItem("battle", "null")
+        }
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -154,7 +162,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   async acceptBattle(battle: Battle) {
     const response = await this.battleService.acceptBattleById(battle.id)
     console.log("Respuesta de aceptar la batalla: ", response)
-    this.navigateToUrl("/matchmaking")
   }
 
   async deleteBattle(battle : Battle)
