@@ -5,6 +5,12 @@ import { Subscription } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
+import { Action } from '../../models/action';
+import { CardToPlay } from '../../models/CardToPlay';
+import { Track } from '../../models/track';
+import { Part } from '../../models/part';
+import { Song } from '../../models/song';
+import { ActionType } from '../../models/actionType';
 
 @Component({
   selector: 'app-game',
@@ -25,10 +31,55 @@ export class GameComponent implements OnInit {
 
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
-  cards: Card[] = []
+  //cards: Card[] = []
+
+  ///TEST BORRAR ESTO DESPUES
+  songTest: Song = {
+    name: "socorro"
+  }
+
+  partTest: Part = {
+  }
+
+  trackTest: Track = {
+    id: 1,
+    part: this.partTest,
+    song: this.songTest
+  }
+
+  cartaTest: Card = {
+    id : 1,
+    imagePath : "mondongo",
+    level : 3,
+    track: this.trackTest
+  }
+
+  cartToPlayTest1: CardToPlay = {
+    card: this.cartaTest,
+    position: 1
+  }
+
+  cartToPlayTest2: CardToPlay = {
+    card: this.cartaTest,
+    position: 2
+  }
+
+  actionTypeTest1: ActionType = {
+    name : "playCard",
+  }
+
+  actionTypeTest2: ActionType = {
+    name : "playCard",
+  }
+
+  actionTest: Action = {
+    cards : [this.cartToPlayTest1, this.cartToPlayTest2],
+    type : [this.actionTypeTest1, this.actionTypeTest2]
+  }
+
+  ///TEST BORRAR ESTO DESPUES
 
   constructor(private webSocketService: WebsocketService) {
-
   }
 
   async ngOnInit(): Promise<void> {
@@ -42,7 +93,7 @@ export class GameComponent implements OnInit {
 
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
-        this.cards = jsonResponse.cards
+        //this.cards = jsonResponse.cards
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -52,4 +103,14 @@ export class GameComponent implements OnInit {
     console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendRxjs(messageType.toString())
   }
+
+  // Envía la acción del usuario al servidor
+  sendAction(action: Action){
+    const data = {
+      "action" : action, 
+      "messageType" : MessageType.PlayCard
+    }
+    const message = JSON.stringify(data)
+    this.webSocketService.sendRxjs(message)
+  }  
 }
