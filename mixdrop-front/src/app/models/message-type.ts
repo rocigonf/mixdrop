@@ -7,5 +7,6 @@ export enum MessageType {
     PendingBattle,
     DisconnectedFromBattle,
     StartBattle,
-    ShuffleDeckStart
+    ShuffleDeckStart,
+    PlayCard
 }

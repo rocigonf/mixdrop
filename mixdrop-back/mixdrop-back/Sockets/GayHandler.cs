@@ -8,7 +8,12 @@ public class GayHandler // GameHandler :3
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
     private readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public int _timmyBattleId = 0;
+
+    // Lista obtenida de la base de datos
     private static ICollection<Card> _cards = new List<Card>();
+
+    private readonly Board _board = new Board();
+    private int _totalTurns { get; set; }
 
     /// <summary>
     /// Método que agrega participantes a la batalla

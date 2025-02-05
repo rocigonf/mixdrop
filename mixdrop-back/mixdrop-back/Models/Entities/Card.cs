@@ -9,7 +9,7 @@ public class Card
     public int CardTypeId { get; set; }
     public int CollectionId { get; set; }
     public Track Track { get; set; }
-    public CardType CardType { get; set; }
+    public CardType CardType { get; set; } // Si es comodín o no
     public Collection Collection { get; set; }
     public ICollection<BattleCard> BattleCards { get; set; } = new List<BattleCard>();
 }
