@@ -1,4 +1,6 @@
-﻿namespace mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.Entities;
+
+namespace mixdrop_back.Models.DTOs;
 
 public class Slot
 {
