@@ -15,6 +15,7 @@ import { UserBattleDto } from '../../models/user-battle-dto';
 import { Board } from '../../models/board';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { J } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-game',
@@ -34,7 +35,7 @@ export class GameComponent implements OnInit {
   // 8) Se muestran los resultados y se procede
 
   public readonly IMG_URL = environment.apiImg;
-  
+
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
@@ -45,6 +46,8 @@ export class GameComponent implements OnInit {
 
   audio = new Audio();
 
+  mix: string = ""
+
   ///TEST BORRAR ESTO DESPUES
   songTest: Song = {
     name: "socorro"
@@ -52,7 +55,7 @@ export class GameComponent implements OnInit {
 
   partTest: Part = {
     id: 0,
-    name:"si"
+    name: "si"
   }
 
   trackTest: Track = {
@@ -62,9 +65,9 @@ export class GameComponent implements OnInit {
   }
 
   cartaTest: Card = {
-    id : 1,
-    imagePath : "mondongo",
-    level : 3,
+    id: 1,
+    imagePath: "mondongo",
+    level: 3,
     track: this.trackTest
   }
 
@@ -79,16 +82,16 @@ export class GameComponent implements OnInit {
   }
 
   actionTypeTest1: ActionType = {
-    name : "playCard",
+    name: "playCard",
   }
 
   actionTypeTest2: ActionType = {
-    name : "playCard",
+    name: "playCard",
   }
 
   actionTest: Action = {
-    cards : [this.cartToPlayTest1, this.cartToPlayTest2],
-    type : [this.actionTypeTest1, this.actionTypeTest2]
+    cards: [this.cartToPlayTest1, this.cartToPlayTest2],
+    type: [this.actionTypeTest1, this.actionTypeTest2]
   }
 
   ///TEST BORRAR ESTO DESPUES
@@ -113,7 +116,9 @@ export class GameComponent implements OnInit {
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
         this.filePath = jsonResponse.filepath
+        this.mix = jsonResponse.mix
         this.reproduceAudio()
+        this.playAudio(this.mix)
         break
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
@@ -127,11 +132,20 @@ export class GameComponent implements OnInit {
   }
 
   // Puede ser que falle
-  reproduceAudio()
-  {
+  reproduceAudio() {
     this.audio = new Audio(this.filePath);
     this.audio.play()
   }
+
+  // reproduce el mix que le envia al jugar una carta
+  async playAudio(encodedAudio: string) {
+    return await new Promise<void>((resolve) => {
+      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
+      audio.onended = () => resolve();
+      audio.play();
+    })
+  }
+
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
@@ -139,12 +153,12 @@ export class GameComponent implements OnInit {
   }
 
   // Envía la acción del usuario al servidor
-  sendAction(action: Action){
+  sendAction(action: Action) {
     const data = {
-      "action" : action, 
-      "messageType" : MessageType.PlayCard
+      "action": action,
+      "messageType": MessageType.PlayCard
     }
     const message = JSON.stringify(data)
     this.webSocketService.sendRxjs(message)
-  }  
+  }
 }

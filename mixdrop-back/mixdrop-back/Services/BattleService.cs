@@ -177,7 +177,7 @@ public class BattleService
 
     }
 
-    // Método borrar amigo o rechazar solicitud de batalla
+    // Método borrar batalla o rechazar solicitud de batalla
     public async Task DeleteBattleById(int battleId, int userId, bool wasAlreadyInRoom = false)
     {
         // Comprobamos que la batalla existe
@@ -239,10 +239,13 @@ public class BattleService
             JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
+            WebSocketHandler.TotalPlayers++;
+
             /*dict["messageType"] = MessageType.Play;
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user.Id);
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userInQueue.Id);*/
             Console.WriteLine("Partida encontrada B)");
+
         }
     }
     public async Task<Battle> GetCurrentBattleByUserAsync(int userId)

@@ -66,6 +66,8 @@ public class UserSocket
                             break;
                         case MessageType.Stats:
                             dict.Add("total", WebSocketHandler.Total);
+                            dict.Add("totalBattles", WebSocketHandler.TotalBattles);
+                            dict.Add("totalPlayers", WebSocketHandler.TotalPlayers);
                             break;
                         case MessageType.PendingBattle:
                             var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);
