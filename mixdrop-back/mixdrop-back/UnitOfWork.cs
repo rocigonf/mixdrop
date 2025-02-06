@@ -13,6 +13,7 @@ public class UnitOfWork
     private UserBattleRepository _userBattleRepository;
     private BattleStateRepository _battleStateRepository;
     private CardRepository _cardRepository;
+    private BattleResultRepository _battleResultRepository;
 
     // poner todos los repositorys
 
@@ -24,6 +25,7 @@ public class UnitOfWork
     public UserBattleRepository UserBattleRepository => _userBattleRepository ??= new UserBattleRepository(_context);
     public BattleStateRepository BattleStateRepository => _battleStateRepository ??= new BattleStateRepository(_context);
     public CardRepository CardRepository => _cardRepository ??= new CardRepository(_context);
+    public BattleResultRepository BattleResultRepository => _battleResultRepository ??= new BattleResultRepository(_context);
 
     // poner todos los repositorys
 

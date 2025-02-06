@@ -1,7 +1,40 @@
 <app-navbar></app-navbar>
-<p>game works!</p>
+@if(userBattle != null)
+{
+    <p>game works!</p>
 
-<button (click)="sendAction(this.actionTest)">AAAAAAAAAAAA</button>
-<div class="chat">
-    
-</div>
+    <button (click)="reproduceAudio()">Reproducir audio</button>
+
+    <button (click)="sendAction(this.actionTest)">AAAAAAAAAAAA</button>
+    <div class="chat">
+        
+    </div>
+
+    <h1>TUS CARTAS</h1>
+    @for (card of userBattle.cards; track card.id)
+    {
+        <div>
+            <p>Nombre: {{ card.track.song.name }}</p>
+            <p>Parte: {{ card.track.part.name }}</p>
+        </div>
+    }
+
+    @if(board)
+    {
+        <h1>CARTAS DEL TABLERO</h1>
+        <div>
+            @for (slot of board.slots; track $index)
+            {
+                <p>Nombre: {{ slot.card.track.song.name }}</p>
+                <p>Parte: {{ slot.card.track.part.name }}</p>
+            }
+        </div>
+    }
+    @else
+    {
+        <p>No hay tablero</p>
+    }
+}
+@else {
+    <p>Cargando...</p>
+}

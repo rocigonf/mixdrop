@@ -44,8 +44,11 @@ public class UserSocket
 
                     using IServiceScope scope = _serviceProvider.CreateScope();
 
+                    // Obtención de los servicios necesarios
                     BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
                     BattleMapper battleMapper = new BattleMapper();
+                    UnitOfWork unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+
                     dictInput.TryGetValue("messageType", out object messageType);
 
                     Dictionary<object, object> dict = new Dictionary<object, object>
@@ -77,12 +80,13 @@ public class UserSocket
                                 continue;
                             }
 
-                            var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
                             var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
                             Console.WriteLine("¿Qué es VALORANT? 😨");
-                            dict.Add("cards", valorant);
+                            dict.Add("userBattleDto", valorant);
                             break;
                         case MessageType.PlayCard:
+                            Models.DTOs.Action action = dictInput["action"] as Models.DTOs.Action;
+                            await GayNetwork.PlayCard(action, User.Id, unitOfWork);
                             break;
                     }
 

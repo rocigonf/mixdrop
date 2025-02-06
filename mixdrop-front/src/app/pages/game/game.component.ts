@@ -11,6 +11,10 @@ import { Track } from '../../models/track';
 import { Part } from '../../models/part';
 import { Song } from '../../models/song';
 import { ActionType } from '../../models/actionType';
+import { UserBattleDto } from '../../models/user-battle-dto';
+import { Board } from '../../models/board';
+import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-game',
@@ -29,9 +33,17 @@ export class GameComponent implements OnInit {
   // 7) El server notifica que se acabó la batalla
   // 8) Se muestran los resultados y se procede
 
+  public readonly IMG_URL = environment.apiImg;
+  
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
-  //cards: Card[] = []
+
+  userBattle: UserBattleDto | null = null
+  board: Board | null = null
+  filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
+  gameEnded: boolean = false
+
+  audio = new Audio();
 
   ///TEST BORRAR ESTO DESPUES
   songTest: Song = {
@@ -39,6 +51,8 @@ export class GameComponent implements OnInit {
   }
 
   partTest: Part = {
+    id: 0,
+    name:"si"
   }
 
   trackTest: Track = {
@@ -79,7 +93,7 @@ export class GameComponent implements OnInit {
 
   ///TEST BORRAR ESTO DESPUES
 
-  constructor(private webSocketService: WebsocketService) {
+  constructor(private webSocketService: WebsocketService, private route: Router) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -93,10 +107,30 @@ export class GameComponent implements OnInit {
 
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
-        //this.cards = jsonResponse.cards
+        this.userBattle = jsonResponse.userBattleDto
+        break
+      case MessageType.TurnResult:
+        this.board = jsonResponse.board
+        this.userBattle = jsonResponse.player
+        this.filePath = jsonResponse.filepath
+        this.reproduceAudio()
+        break
+      case MessageType.EndGame:
+        // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
+        alert("Se acabó el juego :D")
+        this.gameEnded = true
+        this.board = jsonResponse.board
+        this.userBattle = jsonResponse.player
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
+  }
+
+  // Puede ser que falle
+  reproduceAudio()
+  {
+    this.audio = new Audio(this.filePath);
+    this.audio.play()
   }
 
   askForInfo(messageType: MessageType) {
