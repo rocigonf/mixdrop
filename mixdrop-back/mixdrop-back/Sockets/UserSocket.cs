@@ -82,7 +82,7 @@ public class UserSocket
 
                             var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
                             Console.WriteLine("¿Qué es VALORANT? 😨");
-                            dict.Add("cards", valorant);
+                            dict.Add("userBattleDto", valorant);
                             break;
                         case MessageType.PlayCard:
                             Models.DTOs.Action action = dictInput["action"] as Models.DTOs.Action;
