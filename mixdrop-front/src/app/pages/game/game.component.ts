@@ -38,6 +38,9 @@ export class GameComponent implements OnInit {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
+  myTurn: Boolean = false;
+
+  constructor(private webSocketService: WebsocketService) {}
   userBattle: UserBattleDto | null = null
   board: Board | null = null
   filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
@@ -107,6 +110,8 @@ export class GameComponent implements OnInit {
 
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
+        this.cards = jsonResponse.cards
+        this.myTurn = jsonResponse.cards.isTheirTurn
         this.userBattle = jsonResponse.userBattleDto
         break
       case MessageType.TurnResult:
@@ -122,6 +127,10 @@ export class GameComponent implements OnInit {
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
         break
+      case MessageType.TurnPlayed:
+        this.myTurn = jsonResponse.turn.isTheirTurn
+        break;
+
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
@@ -138,6 +147,11 @@ export class GameComponent implements OnInit {
     this.webSocketService.sendRxjs(messageType.toString())
   }
 
+
+  playTurn() {
+    this.askForInfo(MessageType.TurnPlayed)
+  }
+  
   // Envía la acción del usuario al servidor
   sendAction(action: Action){
     const data = {
