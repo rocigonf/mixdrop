@@ -139,7 +139,7 @@ public class Seeder
                     {
                         Name = "Minero",
                         Bpm = 100,
-                        Pitch = 100,
+                        Pitch = "C",
                         Artist = new Artist {
                             Name = "Rubius"
                         }
@@ -162,7 +162,7 @@ public class Seeder
                     {
                         Name = "Insane",
                         Bpm = 200,
-                        Pitch = 200,
+                        Pitch = "F",
                         Artist = new Artist {
                             Name = "Black Gryph0n"
                         }
@@ -185,7 +185,7 @@ public class Seeder
                     {
                         Name = "The Line",
                         Bpm = 100,
-                        Pitch = 100,
+                        Pitch = "D",
                         Artist = new Artist {
                             Name = "Twenty One Pilots"
                         }
@@ -208,7 +208,7 @@ public class Seeder
                     {
                         Name = "Get Jinxed",
                         Bpm = 130,
-                        Pitch = 110,
+                        Pitch = "A",
                         Artist = new Artist {
                             Name = "Djerv"
                         }
@@ -231,7 +231,7 @@ public class Seeder
                     {
                         Name = "Disco 5",
                         Bpm = 10,
-                        Pitch = 1,
+                        Pitch = "B",
                         Artist = new Artist {
                             Name = "Warden?"
                         }
@@ -254,7 +254,7 @@ public class Seeder
                     {
                         Name = "Himno de España",
                         Bpm = 3,
-                        Pitch = 3,
+                        Pitch = "G",
                         Artist = new Artist {
                             Name = "No se jaja"
                         }
