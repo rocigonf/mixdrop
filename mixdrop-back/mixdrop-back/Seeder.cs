@@ -226,22 +226,22 @@ public class Seeder
                 Level = 1,
                 Track = new Track
                 {
-                    TrackPath = "",
+                    TrackPath = "Songs/Input/Drums/NeverGonnaGiveYouUp-RickAstley[drums].ogg",
                     Song = new Song
                     {
-                        Name = "Disco 5",
-                        Bpm = 10,
-                        Pitch = "B",
+                        Name = "Never Gonna Give You Up",
+                        Bpm = 114,
+                        Pitch = "A#",
                         Artist = new Artist {
-                            Name = "Warden?"
+                            Name = "Rick Astley"
                         }
                     },
-                    PartId = 1
+                    PartId = 4
                 },
-                CardTypeId = 1,
+                CardTypeId = 4,
                 Collection = new Collection
                 {
-                    Name = "Minecraft"
+                    Name = "Never Gonna Give You Up"
                 }
             },
             new Card {
@@ -249,22 +249,22 @@ public class Seeder
                 Level = 2,
                 Track = new Track
                 {
-                    TrackPath = "",
+                    TrackPath = "Songs/Input/Vocal/3D-Jungkook[vocals].ogg",
                     Song = new Song
                     {
-                        Name = "Himno de España",
-                        Bpm = 3,
-                        Pitch = "G",
+                        Name = "3D",
+                        Bpm = 108,
+                        Pitch = "C",
                         Artist = new Artist {
-                            Name = "No se jaja"
+                            Name = "Jungkook"
                         }
                     },
-                    PartId = 2
+                    PartId = 1
                 },
-                CardTypeId = 4,
+                CardTypeId = 1,
                 Collection = new Collection
                 {
-                    Name = "Fachasong"
+                    Name = "3D : The Remixes"
                 }
             }
         };
@@ -278,10 +278,10 @@ public class Seeder
                 Name = "Voz"
             },
             new Part {
-                Name = "Piano"
+                Name = "Principal"
             },
             new Part {
-                Name = "Guitarra"
+                Name = "Bajo"
             },
             new Part {
                 Name = "Batería"
@@ -294,6 +294,9 @@ public class Seeder
     {
         CardType[] cardType = {
             new CardType {
+                Name = "Amarillo"
+            },
+            new CardType {
                 Name = "Rojo"
             },
             new CardType {
@@ -301,9 +304,6 @@ public class Seeder
             },
             new CardType {
                 Name = "Azul"
-            },
-            new CardType {
-                Name = "Amarillo"
             }
         };
         await _context.CardTypes.AddRangeAsync(cardType);
