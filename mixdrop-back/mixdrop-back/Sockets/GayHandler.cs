@@ -76,6 +76,7 @@ public class GayHandler // GameHandler :3
         }
 
         string filePath = "";
+        string mix = "";
 
         // Juega las cartas que quiera
         for (int i = 0; i < action.Cards.Length; i++)
@@ -142,7 +143,8 @@ public class GayHandler // GameHandler :3
             total++;
 
             // Establezco la nueva mezcla
-            filePath = PlayMusic(_board.Playing, existingCard);
+            // filePath = PlayMusic(_board.Playing, existingCard);
+            mix = PlayMusic(_board.Playing, existingCard);
 
             // Si ya ha hecho sus acciones, rompo el bucle
             if (total == 2)
@@ -186,7 +188,8 @@ public class GayHandler // GameHandler :3
             { "messageType", MessageType.TurnResult },
             { "board", _board },
             { "player", _mapper.ToDto(playerInTurn) },
-            { "filepath", filePath }
+            // { "filepath", filePath }
+            { "mix" , mix }
         };
 
         // Cambio el turno
@@ -291,7 +294,12 @@ public class GayHandler // GameHandler :3
             HellIsForever.ChangeBPM(card.Track.TrackPath, relativePathNew, newBpmForCard);
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
-            return output;
+            // lo que se envia de la mezcla para q lo pueda reproducir en front en directo sin descargarlo
+            byte[] mixByte = File.ReadAllBytes(output);
+            var mixToSend = Convert.ToBase64String(mixByte);
+
+            // return output;
+            return mixToSend;
         }
     }
 

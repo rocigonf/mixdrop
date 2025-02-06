@@ -3,6 +3,15 @@
 {
     <p>game works!</p>
 
+
+    <p>
+        @if (this.userBattle.isTheirTurn) {
+            Es tu turno
+        } @else {
+            No es tu turno, el contrincante está jugando
+        }
+    </p>
+
     <button (click)="reproduceAudio()">Reproducir audio</button>
 
     <button (click)="sendAction(this.actionTest)">AAAAAAAAAAAA</button>
