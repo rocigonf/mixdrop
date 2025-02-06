@@ -5,6 +5,16 @@ import { Subscription } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
+import { Action } from '../../models/action';
+import { CardToPlay } from '../../models/CardToPlay';
+import { Track } from '../../models/track';
+import { Part } from '../../models/part';
+import { Song } from '../../models/song';
+import { ActionType } from '../../models/actionType';
+import { UserBattleDto } from '../../models/user-battle-dto';
+import { Board } from '../../models/board';
+import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-game',
@@ -23,14 +33,70 @@ export class GameComponent implements OnInit {
   // 7) El server notifica que se acabó la batalla
   // 8) Se muestran los resultados y se procede
 
+  public readonly IMG_URL = environment.apiImg;
+  
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
-  cards: Card[] = []
 
   myTurn: Boolean = false;
 
-  constructor(private webSocketService: WebsocketService) {
+  constructor(private webSocketService: WebsocketService) {}
+  userBattle: UserBattleDto | null = null
+  board: Board | null = null
+  filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
+  gameEnded: boolean = false
 
+  audio = new Audio();
+
+  ///TEST BORRAR ESTO DESPUES
+  songTest: Song = {
+    name: "socorro"
+  }
+
+  partTest: Part = {
+    id: 0,
+    name:"si"
+  }
+
+  trackTest: Track = {
+    id: 1,
+    part: this.partTest,
+    song: this.songTest
+  }
+
+  cartaTest: Card = {
+    id : 1,
+    imagePath : "mondongo",
+    level : 3,
+    track: this.trackTest
+  }
+
+  cartToPlayTest1: CardToPlay = {
+    card: this.cartaTest,
+    position: 1
+  }
+
+  cartToPlayTest2: CardToPlay = {
+    card: this.cartaTest,
+    position: 2
+  }
+
+  actionTypeTest1: ActionType = {
+    name : "playCard",
+  }
+
+  actionTypeTest2: ActionType = {
+    name : "playCard",
+  }
+
+  actionTest: Action = {
+    cards : [this.cartToPlayTest1, this.cartToPlayTest2],
+    type : [this.actionTypeTest1, this.actionTypeTest2]
+  }
+
+  ///TEST BORRAR ESTO DESPUES
+
+  constructor(private webSocketService: WebsocketService, private route: Router) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -46,6 +112,20 @@ export class GameComponent implements OnInit {
       case MessageType.ShuffleDeckStart:
         this.cards = jsonResponse.cards
         this.myTurn = jsonResponse.cards.isTheirTurn
+        this.userBattle = jsonResponse.userBattleDto
+        break
+      case MessageType.TurnResult:
+        this.board = jsonResponse.board
+        this.userBattle = jsonResponse.player
+        this.filePath = jsonResponse.filepath
+        this.reproduceAudio()
+        break
+      case MessageType.EndGame:
+        // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
+        alert("Se acabó el juego :D")
+        this.gameEnded = true
+        this.board = jsonResponse.board
+        this.userBattle = jsonResponse.player
         break
       case MessageType.TurnPlayed:
         this.myTurn = jsonResponse.turn.isTheirTurn
@@ -55,13 +135,30 @@ export class GameComponent implements OnInit {
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
+  // Puede ser que falle
+  reproduceAudio()
+  {
+    this.audio = new Audio(this.filePath);
+    this.audio.play()
+  }
+
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendRxjs(messageType.toString())
   }
 
-  // nose porque solo funciona la primera vez q lo pulso :(
+
   playTurn() {
     this.askForInfo(MessageType.TurnPlayed)
   }
+  
+  // Envía la acción del usuario al servidor
+  sendAction(action: Action){
+    const data = {
+      "action" : action, 
+      "messageType" : MessageType.PlayCard
+    }
+    const message = JSON.stringify(data)
+    this.webSocketService.sendRxjs(message)
+  }  
 }

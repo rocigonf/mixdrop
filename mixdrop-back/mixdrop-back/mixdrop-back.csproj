@@ -15,6 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
@@ -32,7 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Songs\Output\" />
+    <Folder Include="wwwroot\Songs\Output\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Songs\Input\rickroll_full_loop.mp3" />
+    <None Include="wwwroot\Songs\INSTRUCCIONES.txt" />
   </ItemGroup>
 
 </Project>

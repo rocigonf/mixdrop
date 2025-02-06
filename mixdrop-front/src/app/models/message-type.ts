@@ -9,4 +9,7 @@ export enum MessageType {
     StartBattle,
     ShuffleDeckStart,
     TurnPlayed
+    PlayCard,
+    TurnResult,
+    EndGame
 }

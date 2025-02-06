@@ -11,7 +11,9 @@ public class UserBattleMapper
         return new UserBattleDto
         {
             Cards = user.Cards,
+            Punctuation = user.Punctuation,
             IsTheirTurn = user.IsTheirTurn,
+            BattleResultId = user.BattleResultId,
         };
     }
 }
