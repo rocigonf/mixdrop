@@ -1,6 +1,7 @@
 ﻿using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
+using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -17,7 +18,8 @@ public class UserSocket
 
     public event Func<UserSocket, Task> Disconnected;
 
-    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, User user) {
+    public UserSocket(IServiceProvider serviceProvider, WebSocket socket, User user)
+    {
         _serviceProvider = serviceProvider;
         Socket = socket;
         User = user;
@@ -31,19 +33,12 @@ public class UserSocket
             try
             {
                 string message = await ReadAsync();
+                Dictionary<object, object> dictInput = GetActionMessage(message);
 
                 // Si ha recibido algo
                 if (!string.IsNullOrWhiteSpace(message))
                 {
-                    // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH (POR AHORA)
-                    int messageTypeInt = int.Parse(message);
-                    MessageType messageType = (MessageType)messageTypeInt;
-
-                    Dictionary<object, object> dict = new Dictionary<object, object>
-                    {
-                        { "messageType", messageType }
-                    };
-
+                    // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH (POR AHORA) (ahora el messageType está en el catch de GetActionMessage()
                     JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                     options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
@@ -51,6 +46,12 @@ public class UserSocket
 
                     BattleService battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
                     BattleMapper battleMapper = new BattleMapper();
+                    dictInput.TryGetValue("messageType", out object messageType);
+
+                    Dictionary<object, object> dict = new Dictionary<object, object>
+                    {
+                        { "messageType", messageType }
+                    };
 
                     // AQUÍ SE LLAMARÍA A LA CLASE PARA PROCESAR LOS DATOS
                     // En función del switch, obtengo unos datos u otros, y los envío en JSON
@@ -85,7 +86,7 @@ public class UserSocket
                             break;
                     }
 
-                    string outMessage = JsonSerializer.Serialize(dict, options);
+                    string outMessage = System.Text.Json.JsonSerializer.Serialize(dict, options);
                     // Procesamos el mensaje
                     //string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
 
@@ -109,13 +110,34 @@ public class UserSocket
         }
     }
 
+    public Dictionary<object, object> GetActionMessage(string message)
+    {
+        try
+        {
+            Dictionary<object, object> deserializedMessage = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
+            return deserializedMessage;
+        }
+        catch
+        {
+            int messageTypeInt = int.Parse(message);
+            MessageType messageType = (MessageType)messageTypeInt;
+
+            Dictionary<object, object> dict = new Dictionary<object, object>
+                    {
+                        { "messageType", messageType }
+                    };
+
+            return dict;
+        }
+
+    }
+
     public async Task<ICollection<Friendship>> GetFriendList(IServiceScope scope)
     {
         FriendshipService friendshipService = scope.ServiceProvider.GetRequiredService<FriendshipService>();
         var friendList = await friendshipService.GetFriendList(User.Id);
         return friendList;
     }
-
 
     // TANTO READ COMO SEND SON COMUNES, Y SIEMPRE ENVÍAN Y RECIBEN STRINGS EN FORMATO JSON
     // READ RECIBIRÍA EL TIPO DEL MENSAJE (por ejemplo, que quiero info de las partidas), Y HABRÍA UNA O VARIAS CLASES QUE OBTENGA LOS DATOS QUE QUIERE Y ENVÍE LO NECESARIO
