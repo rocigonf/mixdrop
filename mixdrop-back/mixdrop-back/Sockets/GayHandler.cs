@@ -16,10 +16,6 @@ public class GayHandler // GameHandler :3
     // Lista obtenida de la base de datos
     private static ICollection<Card> _cards = new List<Card>();
 
-    private Dictionary<object, object> dict = new Dictionary<object, object>
-    {
-        { "messageType", MessageType.AskForBattle }
-    };
     private readonly Board _board = new Board();
 
     private int TotalActions { get; set; } = 0;
@@ -56,18 +52,12 @@ public class GayHandler // GameHandler :3
             player.Cards.Add(card);
         }
 
-        // asigna turno
-        if (_participants.Count == 0)
-        {
-            player.IsTheirTurn = false;
-        }
-        if (_participants.Count == 1)
+        if (_participants.Count + 1 == 2)
         {
             player.IsTheirTurn = true;
         }
 
         _participants.Add(player);
-
 
         return _mapper.ToDto(player);
     }
@@ -315,59 +305,5 @@ public class GayHandler // GameHandler :3
         {
             return 1 - difference;
         }
-    }
-
-    public async Task<UserBattleDto> TurnPlayed(Battle battle, int userId) //💀💀💀💀
-    {
-
-        UserBattle player = battle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
-
-        UserBattleMapper mapper = new UserBattleMapper();
-
-        if (player.IsTheirTurn)
-        {
-            player.IsTheirTurn = false;
-        }
-        else
-        {
-            player.IsTheirTurn = true;
-        }
-
-
-        // mira a ver quien es su compañero para notificarle y dale el turno
-        var players = battle.BattleUsers.ToList();
-
-
-        var player2id = 0;
-        UserBattle player2 = null;
-
-        if (player.Id == players[0].Id)
-        {
-            player2 = battle.BattleUsers.FirstOrDefault(user => user.UserId == players[1].UserId);
-            players[1].IsTheirTurn = !players[1].IsTheirTurn;
-            player2id = players[1].UserId;
-        }
-        else if (player.Id == players[1].Id)
-        {
-            player2 = battle.BattleUsers.FirstOrDefault(user => user.UserId == players[0].UserId);
-            players[0].IsTheirTurn = !players[0].IsTheirTurn;
-            player2id = players[0].UserId;
-        }
-
-        if (player2id != 0)
-        {
-            // notifica al otro jugador
-            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-            options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-
-            dict["messageType"] = MessageType.TurnPlayed;
-            dict.Add("turn", player2);
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), player2id);
-        }
-
-
-
-        return mapper.ToDto(player);
-
     }
 }

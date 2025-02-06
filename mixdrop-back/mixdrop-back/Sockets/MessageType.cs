@@ -11,7 +11,6 @@ public enum MessageType
     DisconnectedFromBattle,   // que alguien se ha desconectado de una batalla
     StartBattle,
     ShuffleDeckStart,
-    TurnPlayed,             // el usuario ya ha jugado su turno
     PlayCard, // Cuando se juega una carta,
     TurnResult,
     EndGame

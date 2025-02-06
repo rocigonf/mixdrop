@@ -80,25 +80,13 @@ public class UserSocket
                                 continue;
                             }
 
-                            var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
-                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork); // userBatleDto
-
+                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
                             Console.WriteLine("¿Qué es VALORANT? 😨");
                             dict.Add("userBattleDto", valorant);
                             break;
                         case MessageType.PlayCard:
                             Models.DTOs.Action action = dictInput["action"] as Models.DTOs.Action;
                             await GayNetwork.PlayCard(action, User.Id, unitOfWork);
-                            break;
-                        case MessageType.TurnPlayed:
-                            Battle currentBattle2 = await battleService.GetCurrentBattleByUserAsync(User.Id);
-                            if (currentBattle2 == null)
-                            {
-                                Console.WriteLine("Si es nulo a tomar por culo");
-                                continue;
-                            }
-                            var userTurn = await GayNetwork.PlayTurn(currentBattle2, User);
-                            dict.Add("turn", userTurn); 
                             break;
                     }
 
