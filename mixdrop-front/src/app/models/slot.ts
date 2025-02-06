@@ -1,5 +1,5 @@
 import { Card } from "./card";
 
-export interface Slot {
-    card: Card
+export class Slot {
+    card: Card | null = null
 }

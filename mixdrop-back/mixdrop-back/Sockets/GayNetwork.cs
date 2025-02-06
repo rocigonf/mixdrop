@@ -21,9 +21,11 @@ public class GayNetwork // GameNetwork :3
             _handlers.Add(handler);
         }
 
+        UserBattleDto userBattleDto = await handler.AddParticipant(battle, user.Id, unitOfWork);
+
         _semaphore.Release();
 
-        return await handler.AddParticipant(battle, user.Id, unitOfWork);
+        return userBattleDto;
     }
 
     public static async Task PlayCard(Models.DTOs.Action action, int userId, UnitOfWork unitOfWork)

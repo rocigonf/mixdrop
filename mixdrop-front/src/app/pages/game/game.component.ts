@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { BattleService } from '../../services/battle.service';
 import { Subscription } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
 import { Action } from '../../models/action';
-import { CardToPlay } from '../../models/CardToPlay';
+import { CardToPlay } from '../../models/cardToPlay';
 import { Track } from '../../models/track';
 import { Part } from '../../models/part';
 import { Song } from '../../models/song';
@@ -15,6 +14,7 @@ import { UserBattleDto } from '../../models/user-battle-dto';
 import { Board } from '../../models/board';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { Slot } from '../../models/slot';
 
 @Component({
   selector: 'app-game',
@@ -39,11 +39,18 @@ export class GameComponent implements OnInit {
   serverResponse: string = '';
 
   userBattle: UserBattleDto | null = null
-  board: Board | null = null
   filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
   gameEnded: boolean = false
 
   audio = new Audio();
+
+  board: Board = {
+    playing : null,
+    slots : [
+      new Slot(), new Slot(), new Slot(), new Slot()
+    ]
+  }
+  cardToUse : Card | null = null
 
   ///TEST BORRAR ESTO DESPUES
   songTest: Song = {
@@ -131,6 +138,35 @@ export class GameComponent implements OnInit {
   {
     this.audio = new Audio(this.filePath);
     this.audio.play()
+  }
+
+  selectCard(card: Card)
+  {
+    this.cardToUse = card
+  }
+
+  useCard(desiredPosition: number)
+  {
+    if(this.cardToUse)
+    {
+      const cardToPlay : CardToPlay = {
+        position: desiredPosition,
+        card: this.cardToUse
+      }
+      const action : Action = {
+        cards : [cardToPlay],
+        type : []
+      }
+      this.sendAction(action)
+
+      this.cardToUse = null
+    }
+  }
+
+  checkType(posibleType: string[], actualType: string)
+  {
+    // Si no devuelve -1 significa que está en la lista
+    return posibleType.indexOf(actualType) != -1
   }
 
   askForInfo(messageType: MessageType) {

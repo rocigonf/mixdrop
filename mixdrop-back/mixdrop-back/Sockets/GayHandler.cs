@@ -10,6 +10,8 @@ namespace mixdrop_back.Sockets;
 // SLAY QUEEN 💅✨
 public class GayHandler // GameHandler :3
 {
+    private const int ACTIONS_REQUIRED = 1;
+
     public readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public Battle Battle { get; set; }
 
@@ -145,14 +147,14 @@ public class GayHandler // GameHandler :3
             filePath = PlayMusic(_board.Playing, existingCard);
 
             // Si ya ha hecho sus acciones, rompo el bucle
-            if (total == 2)
+            if (total == ACTIONS_REQUIRED)
             {
                 break;
             }
         }
 
         // Si aún debe seguir jugando (solo ha tirado una carta, chequeo sus acciones)
-        if (total < 2)
+        if (total < ACTIONS_REQUIRED)
         {
             // TODO: Implementar acciones
             for (int i = 0; i < action.ActionsType.Length; i++)
@@ -166,7 +168,7 @@ public class GayHandler // GameHandler :3
                 }
 
                 total++;
-                if (total == 2) { break; }
+                if (total == ACTIONS_REQUIRED) { break; }
             }
 
         }

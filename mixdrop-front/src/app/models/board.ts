@@ -3,5 +3,5 @@ import { Track } from "./track";
 
 export interface Board {
     slots: Slot[]
-    playing: Track
+    playing: Track | null
 }
