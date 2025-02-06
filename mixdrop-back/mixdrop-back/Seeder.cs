@@ -275,23 +275,23 @@ public class Seeder
     {
         Part[] parts = {
             new Part {
-                Name = "Voz"
+                Name = "Vocal"
             },
             new Part {
-                Name = "Principal"
+                Name = "Main"
             },
             new Part {
-                Name = "Bajo"
+                Name = "Bass"
             },
             new Part {
-                Name = "Batería"
+                Name = "Drums"
             }
         };
         await _context.Parts.AddRangeAsync(parts);
     }
 
     private async Task SeedCardTypeAsync() // No se q es esto pero pongo el color xD
-    {
+    { // CAMBIAR ESTO AL TIPO DE CARTA ( NORMAL, COMODÍN, EFECTOS)
         CardType[] cardType = {
             new CardType {
                 Name = "Amarillo"

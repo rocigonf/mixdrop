@@ -78,6 +78,8 @@ public class WebSocketHandler
         var battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
 
         ICollection<Battle> battles = await unitOfWork.BattleRepository.GetCurrentBattleByUser(disconnectedHandler.User.Id);
+        bool sendNotif = false;
+        
         if(battles.Count > 1)
         {
             throw new Exception("El usuario está en más de una batalla al mismo tiempo :(");
@@ -87,7 +89,7 @@ public class WebSocketHandler
             // Borro al usuario de la batalla
             if(battles.Count == 1)
             {
-                await battleService.DeleteBattleByObject(battles.First(), disconnectedHandler.User.Id, true);
+                sendNotif = true;
             }
         }
 
@@ -98,22 +100,20 @@ public class WebSocketHandler
 
         //await SendStatsMessage();
 
-        scope.Dispose();
-
-        //await SendStatsMessage();
-
-        // Liberamos el semáforo
-        _semaphore.Release();
-
-        // Lista donde guardar las tareas de envío de mensajes
-        List<Task> tasks = new List<Task>();
         // Guardamos una copia de los WebSocketHandler para evitar problemas de concurrencia
         UserSocket[] handlers = USER_SOCKETS.ToArray();
 
-        tasks.Add(SendStatsMessage());
+        if (sendNotif)
+        {
+            await battleService.DeleteBattleByObject(battles.First(), disconnectedHandler.User.Id, true);
+        }
 
-        // Esperamos a que todas las tareas de envío de mensajes se completen
-        await Task.WhenAll(tasks);
+        await SendStatsMessage();
+        
+        scope.Dispose();
+
+        // Liberamos el semáforo
+        _semaphore.Release();
     }
 
     public static async Task NotifyOneUser(string jsonToSend, int userId)
