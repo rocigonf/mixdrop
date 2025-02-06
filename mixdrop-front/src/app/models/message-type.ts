@@ -8,7 +8,6 @@ export enum MessageType {
     DisconnectedFromBattle,
     StartBattle,
     ShuffleDeckStart,
-    TurnPlayed
     PlayCard,
     TurnResult,
     EndGame
