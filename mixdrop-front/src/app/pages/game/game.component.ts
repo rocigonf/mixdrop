@@ -140,6 +140,9 @@ export class GameComponent implements OnInit, OnDestroy {
   // Puede ser que falle
   reproduceAudio()
   {
+    this.audio.pause()
+    this.audio.currentTime = 0
+
     this.audio = new Audio(this.filePath);
     this.audio.loop = true
     this.audio.play()

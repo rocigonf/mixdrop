@@ -256,10 +256,17 @@ public class GayHandler // GameHandler :3
             // Cálculo de los nuevos BPM
             float currentBpm = playing.Song.Bpm;
             float cardBpm = card.Track.Song.Bpm;
-            float average = (currentBpm + cardBpm) / 2;
 
-            float changeForCurrent = (currentBpm - average) / currentBpm;
-            float changeForCard = (cardBpm - average) / cardBpm;
+            bool changeSecond = true;
+
+            // Si es voz
+            if(card.Track.PartId == 1)
+            {
+                changeSecond = false;
+            }
+            
+            float changeForCurrent = (currentBpm - cardBpm) / currentBpm;
+            float changeForCard = (cardBpm - currentBpm) / cardBpm;
 
             float newBpmForCurrent = CalculateNewBpm(changeForCurrent);
             float newBpmForCard = CalculateNewBpm(changeForCard);
@@ -267,32 +274,37 @@ public class GayHandler // GameHandler :3
             // Cálculo del nuevo pitch
             int semitoneCurrent = MusicNotes.NOTE_MAP[playing.Song.Pitch];
             int semitoneCard = MusicNotes.NOTE_MAP[card.Track.Song.Pitch];
-            double newSemitoneCurrent = 1; // Aparentemente el nuevo semitono se aplica siempre a la que ya se esta reproduciendo (según Gepetronco)
+            
+            int difference = Math.Abs(semitoneCard - semitoneCurrent);
+            float pitchFactor = (float)Math.Pow(2, difference / 12.0);
 
-            int difference = semitoneCard - semitoneCurrent;
-            if (difference > 6)
-            {
-                difference -= 12;
-            }
-            else if (difference < -6)
-            {
-                difference += 12;
-            }
+            float newBpm = playing.Song.Bpm;
 
-            if (difference > 0)
+            if(!changeSecond)
             {
-                newSemitoneCurrent = MusicNotes.SEMITONE / -difference;
+                HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent);
+                HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, 1.0f, pitchFactor);
+                newBpm = card.Track.Song.Bpm;
             }
-            else if(difference > 0)
+            else
             {
-                newSemitoneCurrent = MusicNotes.SEMITONE * difference;
+                HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard, pitchFactor);
+                relativePathCurrent = "wwwroot/" + playing.TrackPath;
             }
 
-            HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent, (float) newSemitoneCurrent);
-            HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard);
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
-            return output;
+            _board.Playing = new Track()
+            {
+                TrackPath = output.Replace("wwwroot/", ""),
+                Song = new Song()
+                {
+                    Bpm = newBpm,
+                    Pitch = MusicNotes.NOTE_MAP_REVERSE[difference],
+                }
+            };
+
+            return output.Replace("wwwroot/", "");
         }
     }
 
