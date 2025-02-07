@@ -5,6 +5,7 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>mixdrop_back</RootNamespace>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,14 +32,14 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Folder Include="wwwroot\Songs\Output\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\Songs\Input\rickroll_full_loop.mp3" />
     <None Include="wwwroot\Songs\INSTRUCCIONES.txt" />
-  </ItemGroup>
+  </ItemGroup>-->
 	
 	<ItemGroup>
 		<Content Include="wwwroot\Songs\**">

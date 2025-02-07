@@ -249,9 +249,9 @@ public class GayHandler // GameHandler :3
         else
         {
             // Ficheros de guardado
-            string relativePathCurrent = $"{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-            string relativePathNew = $"{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-            string output = $"{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
+            string relativePathCurrent = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
+            string relativePathNew = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
+            string output = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
 
             // Cálculo de los nuevos BPM
             float currentBpm = playing.Song.Bpm;
@@ -288,8 +288,8 @@ public class GayHandler // GameHandler :3
                 newSemitoneCurrent = MusicNotes.SEMITONE * difference;
             }
 
-            HellIsForever.ChangeBPM(playing.TrackPath, relativePathCurrent, newBpmForCurrent, (float) newSemitoneCurrent);
-            HellIsForever.ChangeBPM(card.Track.TrackPath, relativePathNew, newBpmForCard);
+            HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent, (float) newSemitoneCurrent);
+            HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard);
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
             return output;
