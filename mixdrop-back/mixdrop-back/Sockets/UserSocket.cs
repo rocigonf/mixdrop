@@ -1,4 +1,5 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
 using System.Net.WebSockets;
@@ -112,8 +113,9 @@ public class UserSocket
                     scope.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine($"Error: {e}");
             }
             // Leemos el mensaje
 
@@ -135,13 +137,23 @@ public class UserSocket
 
         try
         {
+            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
             JsonDocument dxoc = JsonDocument.Parse(message);
             JsonElement elem = dxoc.RootElement;
 
             MessageType messageType = (MessageType)elem.GetProperty("messageType").GetInt32();
             dict["messageType"] = messageType;
 
-            Models.DTOs.Action action = elem.GetProperty("action").Deserialize<Models.DTOs.Action>();
+            JsonElement actionElement = elem.GetProperty("action");
+
+            ICollection<CardToPlay> cardsToPlay = actionElement.GetProperty("cards").Deserialize<ICollection<CardToPlay>>();
+            ICollection<ActionType> actionsType = actionElement.GetProperty("actionsType").Deserialize<ICollection<ActionType>>();
+            Models.DTOs.Action action = actionElement.Deserialize<Models.DTOs.Action>();
+
+            action.Cards = cardsToPlay;
+            action.ActionsType = actionsType;
+
             dict.Add("action", action);
         }
         catch

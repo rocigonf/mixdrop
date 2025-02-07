@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { Subscription } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
@@ -23,7 +23,7 @@ import { Slot } from '../../models/slot';
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   // 1) Me conecto al websocket (automáticamente, aquí no hay que hacer nada)
   // 2) El server le manda la información de la batalla (cartas y demás) y le dice si es su turno o no
   // 3) Si es su turno, realiza cualquier acción (poner alguna carta, por ejemplo)
@@ -76,12 +76,12 @@ export class GameComponent implements OnInit {
   }
 
   cartToPlayTest1: CardToPlay = {
-    card: this.cartaTest,
+    cardId: this.cartaTest.id,
     position: 1
   }
 
   cartToPlayTest2: CardToPlay = {
-    card: this.cartaTest,
+    cardId: this.cartaTest.id,
     position: 2
   }
 
@@ -95,7 +95,7 @@ export class GameComponent implements OnInit {
 
   actionTest: Action = {
     cards : [this.cartToPlayTest1, this.cartToPlayTest2],
-    type : [this.actionTypeTest1, this.actionTypeTest2]
+    actionsType : [this.actionTypeTest1, this.actionTypeTest2]
   }
 
   ///TEST BORRAR ESTO DESPUES
@@ -106,6 +106,10 @@ export class GameComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
     this.askForInfo(MessageType.ShuffleDeckStart)
+  }
+
+  ngOnDestroy(): void {
+    this.audio.pause()
   }
 
   processMessage(message: any) {
@@ -119,7 +123,7 @@ export class GameComponent implements OnInit {
       case MessageType.TurnResult:
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
-        this.filePath = jsonResponse.filepath
+        this.filePath = this.IMG_URL + jsonResponse.filepath
         this.reproduceAudio()
         break
       case MessageType.EndGame:
@@ -137,6 +141,7 @@ export class GameComponent implements OnInit {
   reproduceAudio()
   {
     this.audio = new Audio(this.filePath);
+    this.audio.loop = true
     this.audio.play()
   }
 
@@ -150,12 +155,12 @@ export class GameComponent implements OnInit {
     if(this.cardToUse)
     {
       const cardToPlay : CardToPlay = {
+        cardId: this.cardToUse.id,
         position: desiredPosition,
-        card: this.cardToUse
       }
       const action : Action = {
         cards : [cardToPlay],
-        type : []
+        actionsType : []
       }
       this.sendAction(action)
 

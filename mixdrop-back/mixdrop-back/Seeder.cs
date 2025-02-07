@@ -129,7 +129,7 @@ public class Seeder
     private async Task SeedCardsAsync()
     {
         Card[] cards = {
-            new Card {
+            /*new Card {
                 ImagePath = "cards/minero.jpg",
                 Level = 1,
                 Track = new Track
@@ -220,7 +220,7 @@ public class Seeder
                 {
                     Name = "Violeta Voltereta y su hermana Majareta"
                 }
-            },
+            },*/
             new Card {
                 ImagePath = "cards/warden.gif",
                 Level = 1,

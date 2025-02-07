@@ -1,9 +1,12 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using System.Text.Json.Serialization;
 
 namespace mixdrop_back.Models.DTOs;
 
 public class CardToPlay
 {
-    public Card Card { get; set; }
+    [JsonPropertyName("cardId")]
+    public int CardId { get; set; }
+
+    [JsonPropertyName("position")]
     public int Position { get; set; }
 }

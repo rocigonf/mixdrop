@@ -80,12 +80,12 @@ public class GayHandler // GameHandler :3
         string filePath = "";
 
         // Juega las cartas que quiera
-        for (int i = 0; i < action.Cards.Length; i++)
+        for (int i = 0; i < action.Cards.Count; i++)
         {
-            CardToPlay card = action.Cards[i];
+            CardToPlay card = action.Cards.ElementAt(i);
 
             // Se comprueba que el jugador tuviese esta carta
-            Card existingCard = playerInTurn.Cards.FirstOrDefault(c => c.Id == card.Card.Id);
+            Card existingCard = playerInTurn.Cards.FirstOrDefault(c => c.Id == card.CardId);
             if (existingCard == null)
             {
                 Console.WriteLine("La carta no existe");
@@ -95,7 +95,7 @@ public class GayHandler // GameHandler :3
 
             // Chequeo para ver si hay puntos extra
             Slot slut = _board.Slots.ElementAt(card.Position);
-            if (slut == null)
+            if (slut.Card == null)
             {
                 wasEmpty = true;
             }
@@ -157,9 +157,9 @@ public class GayHandler // GameHandler :3
         if (total < ACTIONS_REQUIRED)
         {
             // TODO: Implementar acciones
-            for (int i = 0; i < action.ActionsType.Length; i++)
+            for (int i = 0; i < action.ActionsType.Count; i++)
             {
-                ActionType actionType = action.ActionsType[i];
+                ActionType actionType = action.ActionsType.ElementAt(i);
                 switch (actionType.Name)
                 {
                     default:
@@ -183,6 +183,11 @@ public class GayHandler // GameHandler :3
 
         playerInTurn.Punctuation += 1;
 
+        // Cambio el turno
+        UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
+        playerInTurn.IsTheirTurn = false;
+        otherUser.IsTheirTurn = true;
+
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.TurnResult },
@@ -190,11 +195,6 @@ public class GayHandler // GameHandler :3
             { "player", _mapper.ToDto(playerInTurn) },
             { "filepath", filePath }
         };
-
-        // Cambio el turno
-        UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
-        playerInTurn.IsTheirTurn = false;
-        otherUser.IsTheirTurn = true;
 
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -232,7 +232,6 @@ public class GayHandler // GameHandler :3
 
         dict["player"] = _mapper.ToDto(otherUser);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
-
     }
 
     private static bool CheckCardType(List<string> possibleTypes, string actualType)
