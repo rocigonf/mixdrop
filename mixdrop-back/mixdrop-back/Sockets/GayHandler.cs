@@ -10,6 +10,8 @@ namespace mixdrop_back.Sockets;
 // SLAY QUEEN 💅✨
 public class GayHandler // GameHandler :3
 {
+    private const int ACTIONS_REQUIRED = 1;
+
     public readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public Battle Battle { get; set; }
 
@@ -78,12 +80,12 @@ public class GayHandler // GameHandler :3
         string filePath = "";
 
         // Juega las cartas que quiera
-        for (int i = 0; i < action.Cards.Length; i++)
+        for (int i = 0; i < action.Cards.Count; i++)
         {
-            CardToPlay card = action.Cards[i];
+            CardToPlay card = action.Cards.ElementAt(i);
 
             // Se comprueba que el jugador tuviese esta carta
-            Card existingCard = playerInTurn.Cards.FirstOrDefault(c => c.Id == card.Card.Id);
+            Card existingCard = playerInTurn.Cards.FirstOrDefault(c => c.Id == card.CardId);
             if (existingCard == null)
             {
                 Console.WriteLine("La carta no existe");
@@ -93,7 +95,7 @@ public class GayHandler // GameHandler :3
 
             // Chequeo para ver si hay puntos extra
             Slot slut = _board.Slots.ElementAt(card.Position);
-            if (slut == null)
+            if (slut.Card == null)
             {
                 wasEmpty = true;
             }
@@ -145,19 +147,19 @@ public class GayHandler // GameHandler :3
             filePath = PlayMusic(_board.Playing, existingCard);
 
             // Si ya ha hecho sus acciones, rompo el bucle
-            if (total == 2)
+            if (total == ACTIONS_REQUIRED)
             {
                 break;
             }
         }
 
         // Si aún debe seguir jugando (solo ha tirado una carta, chequeo sus acciones)
-        if (total < 2)
+        if (total < ACTIONS_REQUIRED)
         {
             // TODO: Implementar acciones
-            for (int i = 0; i < action.ActionsType.Length; i++)
+            for (int i = 0; i < action.ActionsType.Count; i++)
             {
-                ActionType actionType = action.ActionsType[i];
+                ActionType actionType = action.ActionsType.ElementAt(i);
                 switch (actionType.Name)
                 {
                     default:
@@ -166,7 +168,7 @@ public class GayHandler // GameHandler :3
                 }
 
                 total++;
-                if (total == 2) { break; }
+                if (total == ACTIONS_REQUIRED) { break; }
             }
 
         }
@@ -181,6 +183,11 @@ public class GayHandler // GameHandler :3
 
         playerInTurn.Punctuation += 1;
 
+        // Cambio el turno
+        UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
+        playerInTurn.IsTheirTurn = false;
+        otherUser.IsTheirTurn = true;
+
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.TurnResult },
@@ -188,11 +195,6 @@ public class GayHandler // GameHandler :3
             { "player", _mapper.ToDto(playerInTurn) },
             { "filepath", filePath }
         };
-
-        // Cambio el turno
-        UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
-        playerInTurn.IsTheirTurn = false;
-        otherUser.IsTheirTurn = true;
 
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -230,7 +232,6 @@ public class GayHandler // GameHandler :3
 
         dict["player"] = _mapper.ToDto(otherUser);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
-
     }
 
     private static bool CheckCardType(List<string> possibleTypes, string actualType)
@@ -248,17 +249,24 @@ public class GayHandler // GameHandler :3
         else
         {
             // Ficheros de guardado
-            string relativePathCurrent = $"{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-            string relativePathNew = $"{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-            string output = $"{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
+            string relativePathCurrent = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
+            string relativePathNew = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
+            string output = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
 
             // Cálculo de los nuevos BPM
             float currentBpm = playing.Song.Bpm;
             float cardBpm = card.Track.Song.Bpm;
-            float average = (currentBpm + cardBpm) / 2;
 
-            float changeForCurrent = (currentBpm - average) / currentBpm;
-            float changeForCard = (cardBpm - average) / cardBpm;
+            bool changeSecond = true;
+
+            // Si es voz
+            if(card.Track.PartId == 1)
+            {
+                changeSecond = false;
+            }
+            
+            float changeForCurrent = (currentBpm - cardBpm) / currentBpm;
+            float changeForCard = (cardBpm - currentBpm) / cardBpm;
 
             float newBpmForCurrent = CalculateNewBpm(changeForCurrent);
             float newBpmForCard = CalculateNewBpm(changeForCard);
@@ -266,32 +274,37 @@ public class GayHandler // GameHandler :3
             // Cálculo del nuevo pitch
             int semitoneCurrent = MusicNotes.NOTE_MAP[playing.Song.Pitch];
             int semitoneCard = MusicNotes.NOTE_MAP[card.Track.Song.Pitch];
-            double newSemitoneCurrent = 1; // Aparentemente el nuevo semitono se aplica siempre a la que ya se esta reproduciendo (según Gepetronco)
+            
+            int difference = Math.Abs(semitoneCard - semitoneCurrent);
+            float pitchFactor = (float)Math.Pow(2, difference / 12.0);
 
-            int difference = semitoneCard - semitoneCurrent;
-            if (difference > 6)
-            {
-                difference -= 12;
-            }
-            else if (difference < -6)
-            {
-                difference += 12;
-            }
+            float newBpm = playing.Song.Bpm;
 
-            if (difference > 0)
+            if(!changeSecond)
             {
-                newSemitoneCurrent = MusicNotes.SEMITONE / -difference;
+                HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent);
+                HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, 1.0f, pitchFactor);
+                newBpm = card.Track.Song.Bpm;
             }
-            else if(difference > 0)
+            else
             {
-                newSemitoneCurrent = MusicNotes.SEMITONE * difference;
+                HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard, pitchFactor);
+                relativePathCurrent = "wwwroot/" + playing.TrackPath;
             }
 
-            HellIsForever.ChangeBPM(playing.TrackPath, relativePathCurrent, newBpmForCurrent, (float) newSemitoneCurrent);
-            HellIsForever.ChangeBPM(card.Track.TrackPath, relativePathNew, newBpmForCard);
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
-            return output;
+            _board.Playing = new Track()
+            {
+                TrackPath = output.Replace("wwwroot/", ""),
+                Song = new Song()
+                {
+                    Bpm = newBpm,
+                    Pitch = MusicNotes.NOTE_MAP_REVERSE[difference],
+                }
+            };
+
+            return output.Replace("wwwroot/", "");
         }
     }
 

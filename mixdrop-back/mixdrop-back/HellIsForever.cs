@@ -67,7 +67,8 @@ public class HellIsForever
         reader1.Volume = 0.75f;
         reader2.Volume = 0.75f;*/
 
-        // var mixer = new MixingSampleProvider(new[] { reader1, reader2 });
-        // WaveFileWriter.CreateWaveFile16(outputFile, mixer);
+        var mixer = new MixingSampleProvider(new[] { reader1, reader2 });
+        WaveFileWriter.CreateWaveFile16(outputFile, mixer);
+        //WaveFileWriter.CreateWaveFile16(outputFile.Replace("wwwroot/", ""), mixer);
     }
 }

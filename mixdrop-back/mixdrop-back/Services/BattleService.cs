@@ -216,8 +216,9 @@ public class BattleService
         }
 
         // Notifico a ambos usuarios a que vuelvan a solicitar las peticiones de batallas
-        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
-        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userId);
+        await Task.WhenAll( 
+            WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId),
+            WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userId));
     }
 
 
