@@ -123,29 +123,15 @@ namespace mixdrop_back.Services
 
             foreach (Friendship friendship in friendships)
             {
-                UserSocket userSocket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == userId);
-
                 if (friendship.SenderUserId == userId)
                 {
                     friendship.SenderUser = null;
                     friendship.ReceiverUser.Password = null;
-
-                    // Si está en la lista de WebSocketHander, está conectado
-                    if (userSocket != null)
-                    {
-                        friendship.ReceiverUser.StateId = 2;
-                        friendship.ReceiverUser.State = new State() { Name = "Conectado" };
-                    }
                 }
                 else
                 {
                     friendship.ReceiverUser = null;
                     friendship.SenderUser.Password = null;
-                    if (userSocket != null)
-                    {
-                        friendship.SenderUser.StateId = 2;
-                        friendship.SenderUser.State = new State() { Name = "Conectado" };
-                    }
                 }
             }
 
