@@ -270,11 +270,11 @@ public class GayHandler // GameHandler :3
 
             float newBpmForCurrent = CalculateNewBpm(changeForCurrent);
             float newBpmForCard = CalculateNewBpm(changeForCard);
-            
+
             // Cálculo del nuevo pitch
-            int semitoneCurrent = MusicNotes.NOTE_MAP[playing.Song.Pitch];
-            int semitoneCard = MusicNotes.NOTE_MAP[card.Track.Song.Pitch];
-            
+            int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
+            int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
+
             int difference = Math.Abs(semitoneCard - semitoneCurrent);
             float pitchFactor = (float)Math.Pow(2, difference / 12.0);
 
@@ -318,5 +318,19 @@ public class GayHandler // GameHandler :3
         {
             return 1 - difference;
         }
+    }
+
+    private static int GetFromDictionary(string value)
+    {
+        int semitone = 0;
+
+        bool couldGet = MusicNotes.NOTE_MAP.TryGetValue(value, out semitone);
+
+        // Si no lo puede conseguir significa que está en la escala menor
+        if (!couldGet)
+        {
+            semitone = MusicNotes.NOTE_MAP[MusicNotes.FIFTH_CIRCLE[value]];
+        }
+        return semitone;
     }
 }
