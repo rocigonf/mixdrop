@@ -29,7 +29,9 @@ namespace mixdrop_back.Repositories
         {
             return await GetQueryable()
                 .Include(friendship => friendship.SenderUser)
+                    .ThenInclude(u => u.State)
                 .Include(f => f.ReceiverUser)
+                    .ThenInclude(u => u.State)
                 .Where(f => f.SenderUserId == userId || f.ReceiverUserId == userId)
                 .ToListAsync();
         }
