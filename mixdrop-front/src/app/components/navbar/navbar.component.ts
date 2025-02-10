@@ -29,6 +29,7 @@ export class NavbarComponent implements OnInit{
   ngOnInit() {
     // usuario logueado
     this.user = this.authService.getUser();
+    console.log("ruta: ", this.router.url)
   }
 
   authClick() {

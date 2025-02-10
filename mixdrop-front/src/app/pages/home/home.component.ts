@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [NavbarComponent, MatIconModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -134,5 +135,9 @@ export class HomeComponent implements OnInit {
     return {
       cancel: cancel
     }
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

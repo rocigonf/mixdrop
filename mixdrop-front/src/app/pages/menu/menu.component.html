@@ -1,7 +1,5 @@
 <app-navbar></app-navbar>
 
-<button (click)="emparejar()">Jugar</button>
-
 <div class="cabecera">
     @if (user?.avatarPath) {
         <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
@@ -9,6 +7,8 @@
         <img src="images/user.png" alt="avatar de usuario">
     }
     <span>{{user?.nickname}}</span>
+    
+    <button class="rainbow-button" (click)="emparejar()">Jugar</button>
 </div>
 
 <!-- contenido -->
