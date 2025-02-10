@@ -403,6 +403,7 @@ public class GayHandler // GameHandler :3
             int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
+            // calcular cuanto habria que subir o bajar con el diccionario
             int difference = Math.Abs(semitoneCard - semitoneCurrent);
             float pitchFactor = (float)Math.Pow(2, difference / 12.0);
 
