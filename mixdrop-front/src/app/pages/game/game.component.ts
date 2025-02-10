@@ -146,13 +146,13 @@ export class GameComponent implements OnInit, OnDestroy {
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
 
-        // estaba en develop 
-        // this.filePath = this.IMG_URL + jsonResponse.filepath
-        this.filePath = jsonResponse.filepath
+        
+        this.filePath = this.IMG_URL + jsonResponse.filepath
+
         this.mix = jsonResponse.mix
         // this.playAudio(this.mix); 
         this.reproduceAudio()
-      
+
         break
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
@@ -175,6 +175,14 @@ export class GameComponent implements OnInit, OnDestroy {
     this.audio.play()
   }
 
+  // reproduce el mix en byte que le envia al jugar una carta
+  async playAudio(encodedAudio: string) {
+    return await new Promise<void>((resolve) => {
+      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
+      audio.onended = () => resolve();
+      audio.play();
+    })
+  }
 
   selectCard(card: Card) {
     this.cardToUse = card
@@ -209,6 +217,7 @@ export class GameComponent implements OnInit, OnDestroy {
       audio.play();
     })
   }
+
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
