@@ -23,8 +23,7 @@ public class GayHandler // GameHandler :3
     private int TotalActions { get; set; } = 0;
     private int TotalTurns { get; set; } = 0;
 
-    private UserBattleMapper _mapper = new UserBattleMapper();
-
+    private readonly UserBattleMapper _mapper = new UserBattleMapper();
 
     private const string OUTPUT_SONGS_FOLDER = "songs/output/";
 
@@ -46,13 +45,17 @@ public class GayHandler // GameHandler :3
             _cards = await unitOfWork.CardRepository.GetAllCardsAsync();
         }
 
-        Random rand = new Random(); // Obtiene 5 cartas aleatorias
+        Random rand = new Random();
 
-        for (int i = 0; i < 5; i++)
+        // Creo el bot y le reparto las cartas
+        if (battle.IsAgainstBot)
         {
-            Card card = _cards.ElementAt(rand.Next(0, _cards.Count));
-            player.Cards.Add(card);
+            UserBattle bot = new UserBattle() { IsBot = true };
+            DistributeCards(bot, rand);
+            _participants.Add(bot);
         }
+
+        DistributeCards(player, rand);
 
         if (_participants.Count + 1 == 2)
         {
@@ -64,11 +67,18 @@ public class GayHandler // GameHandler :3
         return _mapper.ToDto(player);
     }
 
+    private static void DistributeCards(UserBattle userBattle, Random rand)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            Card card = _cards.ElementAt(rand.Next(0, _cards.Count));
+            userBattle.Cards.Add(card);
+        }
+    }
+
     public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork)
     {
         int total = 0;
-        bool wasEmpty = false;
-
         UserBattle playerInTurn = _participants.FirstOrDefault(u => u.UserId == userId && u.IsTheirTurn);
 
         if (playerInTurn == null)
@@ -82,6 +92,8 @@ public class GayHandler // GameHandler :3
         // Juega las cartas que quiera
         for (int i = 0; i < action.Cards.Count; i++)
         {
+            bool wasEmpty = false;
+
             CardToPlay card = action.Cards.ElementAt(i);
 
             // Se comprueba que el jugador tuviese esta carta
@@ -91,7 +103,6 @@ public class GayHandler // GameHandler :3
                 Console.WriteLine("La carta no existe");
                 return;
             }
-
 
             // Chequeo para ver si hay puntos extra
             Slot slut = _board.Slots.ElementAt(card.Position);
@@ -145,6 +156,12 @@ public class GayHandler // GameHandler :3
 
             // Establezco la nueva mezcla
             filePath = PlayMusic(_board.Playing, existingCard);
+            playerInTurn.Punctuation += 1;
+
+            if (TotalTurns >= 1)
+            {
+                if (wasEmpty) { playerInTurn.Punctuation++; } // Puntos extra
+            }
 
             // Si ya ha hecho sus acciones, rompo el bucle
             if (total == ACTIONS_REQUIRED)
@@ -178,15 +195,10 @@ public class GayHandler // GameHandler :3
         if (TotalActions % 2 == 0)
         {
             TotalTurns++;
-            if (wasEmpty) { playerInTurn.Punctuation++; } // Puntos extra
         }
-
-        playerInTurn.Punctuation += 1;
 
         // Cambio el turno
         UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
-        playerInTurn.IsTheirTurn = false;
-        otherUser.IsTheirTurn = true;
 
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
@@ -202,36 +214,148 @@ public class GayHandler // GameHandler :3
         // Doy por terminada la batalla
         if (playerInTurn.Punctuation == 21)
         {
-            BattleState battleState = await unitOfWork.BattleStateRepository.GetByIdAsync(4);
-            ICollection<BattleResult> results = await unitOfWork.BattleResultRepository.GetAllAsync();
-
-            Battle.BattleState = battleState;
-            Battle.BattleStateId = battleState.Id;
-
-            BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
-            BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
-
-            playerInTurn.BattleResult = victory;
-            playerInTurn.BattleResultId = victory.Id;
-
-            otherUser.BattleResult = defeat;
-            otherUser.BattleResultId = defeat.Id;
-
-            unitOfWork.BattleRepository.Update(Battle);
-            unitOfWork.UserBattleRepository.Update(playerInTurn);
-            unitOfWork.UserBattleRepository.Update(otherUser);
-
-            await unitOfWork.SaveAsync();
-
+            await EndBattle(playerInTurn, otherUser, unitOfWork);
             dict["messageType"] = MessageType.EndGame;
-            GayNetwork._handlers.Remove(this);
+        }
+        else
+        {
+            if (otherUser.IsBot)
+            {
+                await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
+                dict["board"] = _board; // Actualizo de vuelta el tablero
+            }
+            else
+            {
+                playerInTurn.IsTheirTurn = false;
+                otherUser.IsTheirTurn = true;
+            }
         }
 
         // Notifico a los usuarios
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), playerInTurn.UserId);
 
+        if (otherUser.IsBot)
+        {
+            return;
+        }
+
         dict["player"] = _mapper.ToDto(otherUser);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
+    }
+
+    private async Task<string> DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
+    {
+        string filePath = "";
+        int totalActions = 0;
+
+        foreach (Slot currentSlot in _board.Slots)
+        {
+            Card card = GetValidCardForSlot(currentSlot, bot);
+            bool canPlay = false;
+            bool wasEmpty = false;
+
+            if (currentSlot.Card == null)
+            {
+                canPlay = true;
+                wasEmpty = true;
+            }
+            else
+            {
+                // El Max está para comprobar si puede poner la carta ahí
+                if (currentSlot.Card.Level < card.Level)
+                {
+                    canPlay = true;
+                }
+            }
+
+            if (canPlay && card != null)
+            {
+                currentSlot.Card = card;
+                bot.Cards.Remove(card);
+                totalActions++;
+                bot.Punctuation++;
+                filePath = PlayMusic(_board.Playing, card);
+
+                if (TotalTurns >= 1)
+                {
+                    if (wasEmpty) { bot.Punctuation++; }
+                }
+            }
+
+            if (totalActions == ACTIONS_REQUIRED)
+            {
+                break;
+            }
+        }
+
+        if(totalActions < ACTIONS_REQUIRED)
+        {
+            // TODO: Hacer acciones aleatorias
+        }
+
+        TotalActions++;
+        if (TotalActions % 2 == 0)
+        {
+            TotalTurns++;
+        }
+
+        if (bot.Punctuation == 21)
+        {
+            await EndBattle(bot, notBot, unitOfWork);
+            dict["messageType"] = MessageType.EndGame;
+        }
+
+        return filePath;
+    }
+
+
+    private Card GetValidCardForSlot(Slot slot, UserBattle bot)
+    {
+        // Busca el índice del slot
+        switch (Array.IndexOf(_board.Slots, slot))
+        {
+            case 0:
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Voz") || c.Track.Part.Name.Equals("Piano")));
+            case 1:
+                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Piano"));
+            case 2:
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Guitarra") || c.Track.Part.Name.Equals("Batería")));
+            case 3:
+                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Batería"));
+            default:
+                return null;
+        }
+    }
+
+    private async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
+    {
+        BattleState battleState = await unitOfWork.BattleStateRepository.GetByIdAsync(4);
+        ICollection<BattleResult> results = await unitOfWork.BattleResultRepository.GetAllAsync();
+
+        Battle.BattleState = battleState;
+        Battle.BattleStateId = battleState.Id;
+
+        BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
+        BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
+
+        unitOfWork.BattleRepository.Update(Battle);
+
+        if (!winner.IsBot)
+        {
+            winner.BattleResult = victory;
+            winner.BattleResultId = victory.Id;
+            unitOfWork.UserBattleRepository.Update(winner);
+        }
+
+        if (!loser.IsBot)
+        {
+            loser.BattleResult = defeat;
+            loser.BattleResultId = defeat.Id;
+            unitOfWork.UserBattleRepository.Update(loser);
+        }
+
+        await unitOfWork.SaveAsync();
+        GayNetwork._handlers.Remove(this);
     }
 
     private static bool CheckCardType(List<string> possibleTypes, string actualType)
@@ -260,11 +384,11 @@ public class GayHandler // GameHandler :3
             bool changeSecond = true;
 
             // Si es voz
-            if(card.Track.PartId == 1)
+            if (card.Track.PartId == 1)
             {
                 changeSecond = false;
             }
-            
+
             float changeForCurrent = (currentBpm - cardBpm) / currentBpm;
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
 
@@ -280,7 +404,7 @@ public class GayHandler // GameHandler :3
 
             float newBpm = playing.Song.Bpm;
 
-            if(!changeSecond)
+            if (!changeSecond)
             {
                 HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent);
                 HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, 1.0f, pitchFactor);
