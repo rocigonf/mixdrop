@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../models/user';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { environment } from '../../../environments/environment';
@@ -55,6 +55,7 @@ export class ProfileComponent implements OnInit {
     private passwordValidator: PasswordValidatorService,
     private formBuild: FormBuilder,
     private authService: AuthService,
+    private router: Router,
     private webSocketService: WebsocketService,
     private friendshipService: FriendshipService
   ) {
@@ -71,17 +72,22 @@ export class ProfileComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.routeParamMap$ = this.activatedRoute.paramMap.subscribe(async paramMap => {
-      this.id = paramMap.get('id') as unknown as number;
-      await this.getUser()
-      this.userForm.reset(this.user)
-    })
 
-    this.myUser = this.authService.getUser();
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigateByUrl("login");
+    } else {
+
+      this.routeParamMap$ = this.activatedRoute.paramMap.subscribe(async paramMap => {
+        this.id = paramMap.get('id') as unknown as number;
+        await this.getUser()
+        this.userForm.reset(this.user)
+      })
+
+      this.myUser = this.authService.getUser();
 
 
-    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
-
+      this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+    }
   }
 
   async getUser() {

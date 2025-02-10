@@ -58,13 +58,17 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   // TODO: Redirigir al login si no ha iniciado sesión
   ngOnInit(): void {
-    // Procesa la respuesta
+
+    if(!this.authService.isAuthenticated()){
+      this.navigateToUrl("login");
+    } else {
+      // Procesa la respuesta
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
 
     this.user = this.authService.getUser();
 
     this.askForInfo(MessageType.Stats)
-
+    }
   }
 
   processMessage(message: any) {

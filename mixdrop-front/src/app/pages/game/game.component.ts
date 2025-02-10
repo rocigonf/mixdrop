@@ -16,6 +16,8 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Slot } from '../../models/slot';
 import { J } from '@angular/cdk/keycodes';
+import { AuthService } from '../../services/auth.service';
+import { BattleService } from '../../services/battle.service';
 
 @Component({
   selector: 'app-game',
@@ -104,16 +106,32 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ///TEST BORRAR ESTO DESPUES
 
-  constructor(private webSocketService: WebsocketService, private route: Router) {
+  constructor(private webSocketService: WebsocketService,
+    private route: Router,
+    public battleService : BattleService,
+    public authService: AuthService,
+    private router: Router) {
   }
 
   async ngOnInit(): Promise<void> {
-    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
-    this.askForInfo(MessageType.ShuffleDeckStart)
+
+    console.log(this.authService.isAuthenticated())
+    if (!this.authService.isAuthenticated()) {
+      console.log("no esta autenticfado")
+      this.navigateToUrl("login");
+    } else {
+      this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+      this.askForInfo(MessageType.ShuffleDeckStart)
+    }
+
   }
 
   ngOnDestroy(): void {
     this.audio.pause()
+  }
+
+  navigateToUrl(url: string) {
+    this.router.navigateByUrl(url);
   }
 
   processMessage(message: any) {
@@ -128,13 +146,13 @@ export class GameComponent implements OnInit, OnDestroy {
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
 
-        // estaba en develop 
+        
         this.filePath = this.IMG_URL + jsonResponse.filepath
 
         this.mix = jsonResponse.mix
-
+        // this.playAudio(this.mix); 
         this.reproduceAudio()
-        // this.playAudio(this.mix)
+
         break
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
@@ -191,6 +209,14 @@ export class GameComponent implements OnInit, OnDestroy {
     return posibleType.indexOf(actualType) != -1
   }
 
+  // reproduce el mix que le envia al jugar una carta
+  async playAudio(encodedAudio: string) {
+    return await new Promise<void>((resolve) => {
+      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
+      audio.onended = () => resolve();
+      audio.play();
+    })
+  }
 
 
   askForInfo(messageType: MessageType) {

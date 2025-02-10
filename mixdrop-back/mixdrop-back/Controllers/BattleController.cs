@@ -102,7 +102,6 @@ public class BattleController : ControllerBase
         await WebSocketHandler.SendStatsMessage();
     }
 
-    // Emparejamiento aleatorio
     [Authorize]
     [HttpDelete("Matchmaking/delete")]
     public async Task DeleteRandomBattle()
