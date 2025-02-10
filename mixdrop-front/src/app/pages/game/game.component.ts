@@ -15,6 +15,7 @@ import { Board } from '../../models/board';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Slot } from '../../models/slot';
+import { J } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-game',
@@ -34,7 +35,7 @@ export class GameComponent implements OnInit, OnDestroy {
   // 8) Se muestran los resultados y se procede
 
   public readonly IMG_URL = environment.apiImg;
-  
+
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
@@ -51,6 +52,9 @@ export class GameComponent implements OnInit, OnDestroy {
     ]
   }
   cardToUse : Card | null = null
+  
+  mix: string = ""
+
 
   ///TEST BORRAR ESTO DESPUES
   songTest: Song = {
@@ -59,7 +63,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   partTest: Part = {
     id: 0,
-    name:"si"
+    name: "si"
   }
 
   trackTest: Track = {
@@ -69,9 +73,9 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   cartaTest: Card = {
-    id : 1,
-    imagePath : "mondongo",
-    level : 3,
+    id: 1,
+    imagePath: "mondongo",
+    level: 3,
     track: this.trackTest
   }
 
@@ -86,11 +90,11 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   actionTypeTest1: ActionType = {
-    name : "playCard",
+    name: "playCard",
   }
 
   actionTypeTest2: ActionType = {
-    name : "playCard",
+    name: "playCard",
   }
 
   actionTest: Action = {
@@ -123,8 +127,15 @@ export class GameComponent implements OnInit, OnDestroy {
       case MessageType.TurnResult:
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
-        this.filePath = this.IMG_URL + jsonResponse.filepath
+        
+        // estaba en develop 
+        // this.filePath = this.IMG_URL + jsonResponse.filepath
+
+        this.filePath = jsonResponse.filepath
+        this.mix = jsonResponse.mix
+
         this.reproduceAudio()
+        this.playAudio(this.mix)
         break
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
@@ -147,6 +158,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.audio.loop = true
     this.audio.play()
   }
+
 
   selectCard(card: Card)
   {
@@ -177,18 +189,27 @@ export class GameComponent implements OnInit, OnDestroy {
     return posibleType.indexOf(actualType) != -1
   }
 
+  // reproduce el mix que le envia al jugar una carta
+  async playAudio(encodedAudio: string) {
+    return await new Promise<void>((resolve) => {
+      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
+      audio.onended = () => resolve();
+      audio.play();
+    })
+  }
+  
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendRxjs(messageType.toString())
   }
 
   // Envía la acción del usuario al servidor
-  sendAction(action: Action){
+  sendAction(action: Action) {
     const data = {
-      "action" : action, 
-      "messageType" : MessageType.PlayCard
+      "action": action,
+      "messageType": MessageType.PlayCard
     }
     const message = JSON.stringify(data)
     this.webSocketService.sendRxjs(message)
-  }  
+  }
 }

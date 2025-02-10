@@ -88,6 +88,7 @@ public class GayHandler // GameHandler :3
         }
 
         string filePath = "";
+        string mix = "";
 
         // Juega las cartas que quiera
         for (int i = 0; i < action.Cards.Count; i++)
@@ -162,6 +163,8 @@ public class GayHandler // GameHandler :3
             {
                 if (wasEmpty) { playerInTurn.Punctuation++; } // Puntos extra
             }
+            // filePath = PlayMusic(_board.Playing, existingCard);
+            // mix = PlayMusic(_board.Playing, existingCard);
 
             // Si ya ha hecho sus acciones, rompo el bucle
             if (total == ACTIONS_REQUIRED)
@@ -205,7 +208,8 @@ public class GayHandler // GameHandler :3
             { "messageType", MessageType.TurnResult },
             { "board", _board },
             { "player", _mapper.ToDto(playerInTurn) },
-            { "filepath", filePath }
+            // { "filepath", filePath }
+            { "mix" , mix }
         };
 
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
@@ -429,6 +433,7 @@ public class GayHandler // GameHandler :3
             };
 
             return output.Replace("wwwroot/", "");
+
         }
     }
 

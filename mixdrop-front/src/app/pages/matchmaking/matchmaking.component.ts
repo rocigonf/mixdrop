@@ -38,6 +38,7 @@ export class MatchmakingComponent implements OnInit {
   myFriends: Friend[] = []
   conenctedFriends: User[] = []
 
+
   pendingBattles: Battle[] = []
 
   readyForBattle = false
@@ -133,11 +134,37 @@ export class MatchmakingComponent implements OnInit {
 
   // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro
   hasBattle(user: User | null): boolean {
-    const has: boolean = this.pendingBattles.some(battle =>
+    const has : boolean =  this.pendingBattles.some(battle =>
       (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
-      || (battle.battleUsers[0].id === this.user?.id)  || (battle.battleUsers[1].id === this.user?.id) 
+      || (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
     );
     return has;
+  }
+  
+  async acceptBattle(friendId : number) {
+
+    const pendingBattle : Battle | undefined = this.pendingBattles.find(battle => 
+      (battle.user.id === friendId) &&
+      (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+    )
+
+    if(pendingBattle != undefined){
+      const response = await this.battleService.acceptBattleById(pendingBattle.id)
+      console.log("Respuesta de aceptar la batalla: ", response)
+    } else console.log("no se encuentra la batalla")
+  }
+
+  async deleteBattle(friendId : number)
+  {
+    const pendingBattle : Battle | undefined = this.pendingBattles.find(battle => 
+      (battle.user.id === friendId) &&
+      (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+    )
+
+    if(pendingBattle != undefined){
+      const response = await this.battleService.removeBattleById(pendingBattle.id)
+      console.log("Respuesta de aceptar la batalla: ", response)
+    } else console.log("no se encuentra la batalla")
   }
 
 

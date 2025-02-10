@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Services;
+using mixdrop_back.Sockets;
 
 namespace mixdrop_back.Controllers;
 
@@ -66,6 +67,11 @@ public class BattleController : ControllerBase
     {
         int userId = GetAuthorizedId();
         await _battleService.StartBattle(id, userId);
+
+        // modo muy cutre 
+        WebSocketHandler.TotalBattles++;
+        WebSocketHandler.TotalPlayers += 2;
+        await WebSocketHandler.SendStatsMessage();
     }
 
     // Rechazar solicitud de batalla
@@ -75,6 +81,11 @@ public class BattleController : ControllerBase
     {
         int userId = GetAuthorizedId();
         await _battleService.DeleteBattleById(id, userId);
+
+        // modo muy cutre 
+        WebSocketHandler.TotalBattles--;
+        WebSocketHandler.TotalPlayers -= 2;
+        await WebSocketHandler.SendStatsMessage();
     }
 
     // Emparejamiento aleatorio
@@ -84,6 +95,11 @@ public class BattleController : ControllerBase
     {
         User user = await GetAuthorizedUser();
         await _battleService.RandomBattle(user);
+
+        // modo muy cutre 
+        WebSocketHandler.TotalBattles++;
+        WebSocketHandler.TotalPlayers += 2;
+        await WebSocketHandler.SendStatsMessage();
     }
 
     // Emparejamiento aleatorio
@@ -94,6 +110,7 @@ public class BattleController : ControllerBase
         User user = await GetAuthorizedUser();
         await _battleService.DeleteFromQueue(user);
     }
+
 
 
     private async Task<User> GetAuthorizedUser()
