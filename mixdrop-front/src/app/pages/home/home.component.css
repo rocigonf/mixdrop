@@ -7,31 +7,6 @@
   gap: 1em;
 }
 
-.rainbow-button{
-  border: 4px white;
-  border-style: solid;
-  border-radius: 50px;
-  background: linear-gradient(
-        90deg,  
-        rgba(47, 201, 226, 1),
-        rgba(114,175,68,1),
-        rgba(255,252,60,1),
-        rgba(236,126,80,1),
-        rgba(219,5,99,1)
-    );
-  font-size: 2rem;
-  width: 120px;
-  transition: 0.3s;
-}
-
-.rainbow-button:hover{
-  font-size: 2.4rem;
-  width: 130px;
-  cursor: pointer;
-  text-align: center;
-  vertical-align: middle;
-}
-
 .text-section{
   padding: 1em;
   gap: 1em;
@@ -94,6 +69,25 @@ hr{
 
 .footer-text{
   margin-top: -1em;
+}
+
+.go-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: transparent;
+  border: none;
+  opacity: 0.7;
+  transition: opacity 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.material-symbols-outlined{
+  color: white;
+}
+
+.go-to-top:hover {
+  opacity: 1;
 }
 
 /*  RESPONSIVE  */

@@ -13,47 +13,17 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        // Estas variables (y el diccionario) habría que ponerlas en otro lado
-        var semitone = Math.Pow(2, 1.0 / 12);
-        var upOneTone = semitone * semitone;
-        var downOneTone = 1.0 / upOneTone;
-
-        // Mapa de notas y su correspondencia en semitonos (0 = C, 1 = C#, 2 = D, ..., 11 = B)
-        // Gracias ChatGPT xD
-        var noteMap = new Dictionary<string, int>
-        {
-            { "C", 0 }, { "C#", 1 }, { "D", 2 }, { "D#", 3 }, { "E", 4 },
-            { "F", 5 }, { "F#", 6 }, { "G", 7 }, { "G#", 8 }, { "A", 9 },
-            { "A#", 10 }, { "B", 11 }
-        };
-
         /* EL PROCESO SERÍA EL SIGUIENTE:
          * 1) Se obtiene el BPM de las canciones de la BBDD
          * 2) Se calcula cuánto tiene que subir y bajar (usando los cálculos de Rocío)
          * 3) Se obtiene la tonalidad de las canciones de la BBDD (que tienen que ser un valor del diccionario de arriba)
          * 4) Se calcula cuántos semitonos tiene que bajar
          * 5) Se pasan los nuevos valores de BPM y semitonos arriba o abajo
-         * 6) Se mixea
-        */
-
-        // EJEMPLO: 
-
-        int semitone1 = noteMap["C"];
-        int semitone2 = noteMap["D"];
-
-        // Esta diferencia (más el cálculo de abajo) es la cantidad de semitonos que tengo que subir o bajar (SI ES POSITIVA, SE SUBE, Y SI ES NEGATIVA, SE BAJA)
-        int difference = semitone2 - semitone1;
-
-        // Bombardeen a Gepeto (le pedí las notas para lo que quería y me dio esto también :sob:)
-        // Ya que estoy lo robo xD
-        if (difference > 6)
-            difference -= 12;
-        else if (difference < -6)
-            difference += 12;
-
+         * 6) Se mixea */
+         
         Console.WriteLine("Procesando...");
 
-        //HellIsForever.ChangeBPM("songs/music.wav", "output.wav", 1, (float) downOneTone);
+        HellIsForever.ChangeBPM("wwwroot/songs/input/vocal/vocal.wav", "output.wav", 1, 1.28f);
 
         // HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
         // HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);
