@@ -129,7 +129,7 @@ public class Seeder
     private async Task SeedCardsAsync()
     {
         Card[] cards = {
-            new Card {
+            /*new Card {
                 ImagePath = "cards/minero.jpg",
                 Level = 1,
                 Track = new Track
@@ -220,13 +220,13 @@ public class Seeder
                 {
                     Name = "Violeta Voltereta y su hermana Majareta"
                 }
-            },
+            },*/
             new Card {
                 ImagePath = "cards/warden.gif",
                 Level = 1,
                 Track = new Track
                 {
-                    TrackPath = "Songs/Input/Drums/NeverGonnaGiveYouUp-RickAstley[drums].ogg",
+                    TrackPath = "Songs/Input/Drums/bateria.wav",
                     Song = new Song
                     {
                         Name = "Never Gonna Give You Up",
@@ -249,9 +249,9 @@ public class Seeder
                 Level = 2,
                 Track = new Track
                 {
-                    TrackPath = "Songs/Input/Vocal/3D-Jungkook[vocals].ogg",
+                    TrackPath = "Songs/Input/Vocal/vocal.wav",
                     Song = new Song
-                    {
+                    { 
                         Name = "3D",
                         Bpm = 108,
                         Pitch = "C",

@@ -1,0 +1,11 @@
+.board
+{
+    display: flex;
+}
+
+.card 
+{
+    display: flex;
+    border-radius: 10px;
+    border-color: aqua;
+}
