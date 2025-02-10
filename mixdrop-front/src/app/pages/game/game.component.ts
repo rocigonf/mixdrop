@@ -209,15 +209,6 @@ export class GameComponent implements OnInit, OnDestroy {
     return posibleType.indexOf(actualType) != -1
   }
 
-  // reproduce el mix que le envia al jugar una carta
-  async playAudio(encodedAudio: string) {
-    return await new Promise<void>((resolve) => {
-      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
-      audio.onended = () => resolve();
-      audio.play();
-    })
-  }
-
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
