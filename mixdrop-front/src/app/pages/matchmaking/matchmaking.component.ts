@@ -38,25 +38,30 @@ export class MatchmakingComponent implements OnInit {
   myFriends: Friend[] = []
   conenctedFriends: User[] = []
 
+
   pendingBattles: Battle[] = []
 
   readyForBattle = false
-  battle : Battle | null = null
+  battle: Battle | null = null
 
-  loading : boolean = false
+  loading: boolean = false
 
   ngOnInit(): void {
-    this.user = this.authService.getUser();
 
-    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigateByUrl("login");
+    } else {
 
-    const battle = sessionStorage.getItem("battle")
-    if(battle)
-    {
-      this.readyForBattle = true
-      if(battle != "null")
-      {
-        this.battle = JSON.parse(battle)
+      this.user = this.authService.getUser();
+
+      this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+
+      const battle = sessionStorage.getItem("battle")
+      if (battle) {
+        this.readyForBattle = true
+        if (battle != "null") {
+          this.battle = JSON.parse(battle)
+        }
       }
     }
 
@@ -74,8 +79,7 @@ export class MatchmakingComponent implements OnInit {
       case MessageType.Play:
         alert("Partida encontrada :3")
         this.readyForBattle = true
-        if(jsonResponse.battle)
-        {
+        if (jsonResponse.battle) {
           this.battle = jsonResponse.battle
         }
         break
@@ -103,9 +107,8 @@ export class MatchmakingComponent implements OnInit {
     this.webSocketService.sendRxjs(messageType.toString())
   }
 
-  async startBattle()
-  {
-    if(!this.battle) return 
+  async startBattle() {
+    if (!this.battle) return
     await this.battleService.startBattle(this.battle.id)
   }
 
@@ -125,8 +128,7 @@ export class MatchmakingComponent implements OnInit {
     this.loading = true
   }
 
-  async deleteRandomBattle()
-  {
+  async deleteRandomBattle() {
     await this.battleService.deleteFromQueue()
     this.loading = false
   }
@@ -135,9 +137,34 @@ export class MatchmakingComponent implements OnInit {
   hasBattle(user: User | null): boolean {
     const has: boolean = this.pendingBattles.some(battle =>
       (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
-      || (battle.battleUsers[0].id === this.user?.id)  || (battle.battleUsers[1].id === this.user?.id) 
+      || (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
     );
     return has;
+  }
+
+  async acceptBattle(friendId: number) {
+
+    const pendingBattle: Battle | undefined = this.pendingBattles.find(battle =>
+      (battle.user.id === friendId) &&
+      (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+    )
+
+    if (pendingBattle != undefined) {
+      const response = await this.battleService.acceptBattleById(pendingBattle.id)
+      console.log("Respuesta de aceptar la batalla: ", response)
+    } else console.log("no se encuentra la batalla")
+  }
+
+  async deleteBattle(friendId: number) {
+    const pendingBattle: Battle | undefined = this.pendingBattles.find(battle =>
+      (battle.user.id === friendId) &&
+      (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+    )
+
+    if (pendingBattle != undefined) {
+      const response = await this.battleService.removeBattleById(pendingBattle.id)
+      console.log("Respuesta de aceptar la batalla: ", response)
+    } else console.log("no se encuentra la batalla")
   }
 
 

@@ -15,6 +15,9 @@ import { Board } from '../../models/board';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Slot } from '../../models/slot';
+import { J } from '@angular/cdk/keycodes';
+import { AuthService } from '../../services/auth.service';
+import { BattleService } from '../../services/battle.service';
 
 @Component({
   selector: 'app-game',
@@ -34,7 +37,7 @@ export class GameComponent implements OnInit, OnDestroy {
   // 8) Se muestran los resultados y se procede
 
   public readonly IMG_URL = environment.apiImg;
-  
+
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
@@ -45,12 +48,15 @@ export class GameComponent implements OnInit, OnDestroy {
   audio = new Audio();
 
   board: Board = {
-    playing : null,
-    slots : [
+    playing: null,
+    slots: [
       new Slot(), new Slot(), new Slot(), new Slot()
     ]
   }
-  cardToUse : Card | null = null
+  cardToUse: Card | null = null
+
+  mix: string = ""
+
 
   ///TEST BORRAR ESTO DESPUES
   songTest: Song = {
@@ -59,7 +65,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   partTest: Part = {
     id: 0,
-    name:"si"
+    name: "si"
   }
 
   trackTest: Track = {
@@ -69,9 +75,9 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   cartaTest: Card = {
-    id : 1,
-    imagePath : "mondongo",
-    level : 3,
+    id: 1,
+    imagePath: "mondongo",
+    level: 3,
     track: this.trackTest
   }
 
@@ -86,30 +92,46 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   actionTypeTest1: ActionType = {
-    name : "playCard",
+    name: "playCard",
   }
 
   actionTypeTest2: ActionType = {
-    name : "playCard",
+    name: "playCard",
   }
 
   actionTest: Action = {
-    cards : [this.cartToPlayTest1, this.cartToPlayTest2],
-    actionsType : [this.actionTypeTest1, this.actionTypeTest2]
+    cards: [this.cartToPlayTest1, this.cartToPlayTest2],
+    actionsType: [this.actionTypeTest1, this.actionTypeTest2]
   }
 
   ///TEST BORRAR ESTO DESPUES
 
-  constructor(private webSocketService: WebsocketService, private route: Router) {
+  constructor(private webSocketService: WebsocketService,
+    private route: Router,
+    public battleService : BattleService,
+    public authService: AuthService,
+    private router: Router) {
   }
 
   async ngOnInit(): Promise<void> {
-    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
-    this.askForInfo(MessageType.ShuffleDeckStart)
+
+    console.log(this.authService.isAuthenticated())
+    if (!this.authService.isAuthenticated()) {
+      console.log("no esta autenticfado")
+      this.navigateToUrl("login");
+    } else {
+      this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+      this.askForInfo(MessageType.ShuffleDeckStart)
+    }
+
   }
 
   ngOnDestroy(): void {
     this.audio.pause()
+  }
+
+  navigateToUrl(url: string) {
+    this.router.navigateByUrl(url);
   }
 
   processMessage(message: any) {
@@ -123,8 +145,14 @@ export class GameComponent implements OnInit, OnDestroy {
       case MessageType.TurnResult:
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
+
+        
         this.filePath = this.IMG_URL + jsonResponse.filepath
+
+        this.mix = jsonResponse.mix
+        // this.playAudio(this.mix); 
         this.reproduceAudio()
+
         break
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
@@ -138,8 +166,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   // Puede ser que falle
-  reproduceAudio()
-  {
+  reproduceAudio() {
     this.audio.pause()
     this.audio.currentTime = 0
 
@@ -148,22 +175,28 @@ export class GameComponent implements OnInit, OnDestroy {
     this.audio.play()
   }
 
-  selectCard(card: Card)
-  {
+  // reproduce el mix en byte que le envia al jugar una carta
+  async playAudio(encodedAudio: string) {
+    return await new Promise<void>((resolve) => {
+      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
+      audio.onended = () => resolve();
+      audio.play();
+    })
+  }
+
+  selectCard(card: Card) {
     this.cardToUse = card
   }
 
-  useCard(desiredPosition: number)
-  {
-    if(this.cardToUse)
-    {
-      const cardToPlay : CardToPlay = {
+  useCard(desiredPosition: number) {
+    if (this.cardToUse) {
+      const cardToPlay: CardToPlay = {
         cardId: this.cardToUse.id,
         position: desiredPosition,
       }
-      const action : Action = {
-        cards : [cardToPlay],
-        actionsType : []
+      const action: Action = {
+        cards: [cardToPlay],
+        actionsType: []
       }
       this.sendAction(action)
 
@@ -171,11 +204,11 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkType(posibleType: string[], actualType: string)
-  {
+  checkType(posibleType: string[], actualType: string) {
     // Si no devuelve -1 significa que está en la lista
     return posibleType.indexOf(actualType) != -1
   }
+
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
@@ -183,12 +216,12 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   // Envía la acción del usuario al servidor
-  sendAction(action: Action){
+  sendAction(action: Action) {
     const data = {
-      "action" : action, 
-      "messageType" : MessageType.PlayCard
+      "action": action,
+      "messageType": MessageType.PlayCard
     }
     const message = JSON.stringify(data)
     this.webSocketService.sendRxjs(message)
-  }  
+  }
 }

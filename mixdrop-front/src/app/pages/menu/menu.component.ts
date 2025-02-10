@@ -29,7 +29,9 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   user: User | null = null;
 
+  totalUsers = 0;
   totalPlayers = 0;
+  totalBattles = 0;
 
   friendsRaw: Friend[] = []
   acceptedFriends: Friend[] = []
@@ -56,13 +58,17 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   // TODO: Redirigir al login si no ha iniciado sesión
   ngOnInit(): void {
-    // Procesa la respuesta
+
+    if(!this.authService.isAuthenticated()){
+      this.navigateToUrl("login");
+    } else {
+      // Procesa la respuesta
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
 
     this.user = this.authService.getUser();
 
     this.askForInfo(MessageType.Stats)
-
+    }
   }
 
   processMessage(message: any) {
@@ -79,11 +85,14 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.processFriends()
         break
       case MessageType.Stats:
-        this.totalPlayers = jsonResponse.total
+        this.totalUsers = jsonResponse.total
+        this.totalPlayers = jsonResponse.totalPlayers
+        this.totalBattles = jsonResponse.totalBattles
         
         // Después de recibir las estadísticas, pido todo lo demás
         this.askForInfo(MessageType.Friend)
         this.askForInfo(MessageType.PendingBattle)
+    
         break
       case MessageType.AskForFriend:
         this.askForInfo(MessageType.Friend)
