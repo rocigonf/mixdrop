@@ -31,6 +31,11 @@ export class BattleService {
     return result
   }
 
+  async deleteFromQueue()
+  {
+    await this.api.delete("Battle/Matchmaking/delete")
+  }
+
   async acceptBattleById(id: number): Promise<any> {
     const result = await this.api.put(`Battle/${id}`)
     return result

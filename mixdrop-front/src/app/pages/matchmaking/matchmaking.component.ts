@@ -44,6 +44,8 @@ export class MatchmakingComponent implements OnInit {
   readyForBattle = false
   battle : Battle | null = null
 
+  loading : boolean = false
+
   ngOnInit(): void {
     this.user = this.authService.getUser();
 
@@ -90,6 +92,7 @@ export class MatchmakingComponent implements OnInit {
         //window.location.reload()
         break
       case MessageType.StartBattle:
+        this.loading = false
         this.router.navigateByUrl("game")
         break
     }
@@ -108,18 +111,25 @@ export class MatchmakingComponent implements OnInit {
   }
 
 
-  gameWithBot() {
+  async gameWithBot() {
     // el user 2 es nulo y el false de que no es random
-    this.battleService.createBattle(null, false)
+    await this.battleService.createBattle(null, false)
   }
 
-  gameWithFriend(friend: User) {
-    this.battleService.createBattle(friend, false)
+  async gameWithFriend(friend: User) {
+    await this.battleService.createBattle(friend, false)
   }
 
-  gameRandom() {
-    this.battleService.randomBattle()
+  async gameRandom() {
+    await this.battleService.randomBattle()
     console.log("mortadela");
+    this.loading = true
+  }
+
+  async deleteRandomBattle()
+  {
+    await this.battleService.deleteFromQueue()
+    this.loading = false
   }
 
   // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro

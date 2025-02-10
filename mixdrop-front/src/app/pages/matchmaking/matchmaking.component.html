@@ -5,6 +5,11 @@
     <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
 </div>
 
+@if(loading)
+{
+    <button (click)="deleteRandomBattle()">Cancelar matchmaking</button>
+}
+
 @if(readyForBattle)
 {
 @if(battle)

@@ -1,6 +1,4 @@
-import { Card } from "./card";
-
 export interface CardToPlay {
-    card: Card,
+    cardId: number,
     position: number
 }

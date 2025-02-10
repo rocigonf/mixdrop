@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { BattleService } from '../../services/battle.service';
 import { Subscription } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
 import { Action } from '../../models/action';
-import { CardToPlay } from '../../models/CardToPlay';
+import { CardToPlay } from '../../models/cardToPlay';
 import { Track } from '../../models/track';
 import { Part } from '../../models/part';
 import { Song } from '../../models/song';
@@ -15,6 +14,7 @@ import { UserBattleDto } from '../../models/user-battle-dto';
 import { Board } from '../../models/board';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { Slot } from '../../models/slot';
 import { J } from '@angular/cdk/keycodes';
 
 @Component({
@@ -24,7 +24,7 @@ import { J } from '@angular/cdk/keycodes';
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   // 1) Me conecto al websocket (automáticamente, aquí no hay que hacer nada)
   // 2) El server le manda la información de la batalla (cartas y demás) y le dice si es su turno o no
   // 3) Si es su turno, realiza cualquier acción (poner alguna carta, por ejemplo)
@@ -40,13 +40,21 @@ export class GameComponent implements OnInit {
   serverResponse: string = '';
 
   userBattle: UserBattleDto | null = null
-  board: Board | null = null
   filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
   gameEnded: boolean = false
 
   audio = new Audio();
 
+  board: Board = {
+    playing : null,
+    slots : [
+      new Slot(), new Slot(), new Slot(), new Slot()
+    ]
+  }
+  cardToUse : Card | null = null
+  
   mix: string = ""
+
 
   ///TEST BORRAR ESTO DESPUES
   songTest: Song = {
@@ -72,12 +80,12 @@ export class GameComponent implements OnInit {
   }
 
   cartToPlayTest1: CardToPlay = {
-    card: this.cartaTest,
+    cardId: this.cartaTest.id,
     position: 1
   }
 
   cartToPlayTest2: CardToPlay = {
-    card: this.cartaTest,
+    cardId: this.cartaTest.id,
     position: 2
   }
 
@@ -90,8 +98,8 @@ export class GameComponent implements OnInit {
   }
 
   actionTest: Action = {
-    cards: [this.cartToPlayTest1, this.cartToPlayTest2],
-    type: [this.actionTypeTest1, this.actionTypeTest2]
+    cards : [this.cartToPlayTest1, this.cartToPlayTest2],
+    actionsType : [this.actionTypeTest1, this.actionTypeTest2]
   }
 
   ///TEST BORRAR ESTO DESPUES
@@ -102,6 +110,10 @@ export class GameComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
     this.askForInfo(MessageType.ShuffleDeckStart)
+  }
+
+  ngOnDestroy(): void {
+    this.audio.pause()
   }
 
   processMessage(message: any) {
@@ -115,8 +127,13 @@ export class GameComponent implements OnInit {
       case MessageType.TurnResult:
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
+        
+        // estaba en develop 
+        // this.filePath = this.IMG_URL + jsonResponse.filepath
+
         this.filePath = jsonResponse.filepath
         this.mix = jsonResponse.mix
+
         this.reproduceAudio()
         this.playAudio(this.mix)
         break
@@ -132,9 +149,44 @@ export class GameComponent implements OnInit {
   }
 
   // Puede ser que falle
-  reproduceAudio() {
+  reproduceAudio()
+  {
+    this.audio.pause()
+    this.audio.currentTime = 0
+
     this.audio = new Audio(this.filePath);
+    this.audio.loop = true
     this.audio.play()
+  }
+
+
+  selectCard(card: Card)
+  {
+    this.cardToUse = card
+  }
+
+  useCard(desiredPosition: number)
+  {
+    if(this.cardToUse)
+    {
+      const cardToPlay : CardToPlay = {
+        cardId: this.cardToUse.id,
+        position: desiredPosition,
+      }
+      const action : Action = {
+        cards : [cardToPlay],
+        actionsType : []
+      }
+      this.sendAction(action)
+
+      this.cardToUse = null
+    }
+  }
+
+  checkType(posibleType: string[], actualType: string)
+  {
+    // Si no devuelve -1 significa que está en la lista
+    return posibleType.indexOf(actualType) != -1
   }
 
   // reproduce el mix que le envia al jugar una carta
@@ -145,8 +197,7 @@ export class GameComponent implements OnInit {
       audio.play();
     })
   }
-
-
+  
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendRxjs(messageType.toString())

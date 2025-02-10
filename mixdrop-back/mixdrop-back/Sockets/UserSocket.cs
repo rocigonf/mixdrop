@@ -1,7 +1,7 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
-using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -49,7 +49,20 @@ public class UserSocket
                     BattleMapper battleMapper = new BattleMapper();
                     UnitOfWork unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
 
-                    dictInput.TryGetValue("messageType", out object messageType);
+                    dictInput.TryGetValue("messageType", out object messageTypeRaw);
+
+                    MessageType messageType;
+
+                    bool couldParse = int.TryParse(messageTypeRaw.ToString(), out int messageTypeInt);
+                    if (couldParse)
+                    {
+                        messageType = (MessageType)messageTypeInt;
+                    }
+                    else
+                    {
+                        messageType = (MessageType)messageTypeRaw;
+                    }
+
 
                     Dictionary<object, object> dict = new Dictionary<object, object>
                     {
@@ -102,8 +115,9 @@ public class UserSocket
                     scope.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine($"Error: {e}");
             }
             // Leemos el mensaje
 
@@ -118,23 +132,40 @@ public class UserSocket
 
     public Dictionary<object, object> GetActionMessage(string message)
     {
+        Dictionary<object, object> dict = new Dictionary<object, object>
+        {
+            { "messageType", -1 }
+        };
+
         try
         {
-            Dictionary<object, object> deserializedMessage = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
-            return deserializedMessage;
+            JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+            JsonDocument dxoc = JsonDocument.Parse(message);
+            JsonElement elem = dxoc.RootElement;
+
+            MessageType messageType = (MessageType)elem.GetProperty("messageType").GetInt32();
+            dict["messageType"] = messageType;
+
+            JsonElement actionElement = elem.GetProperty("action");
+
+            ICollection<CardToPlay> cardsToPlay = actionElement.GetProperty("cards").Deserialize<ICollection<CardToPlay>>();
+            ICollection<ActionType> actionsType = actionElement.GetProperty("actionsType").Deserialize<ICollection<ActionType>>();
+            Models.DTOs.Action action = actionElement.Deserialize<Models.DTOs.Action>();
+
+            action.Cards = cardsToPlay;
+            action.ActionsType = actionsType;
+
+            dict.Add("action", action);
         }
         catch
         {
             int messageTypeInt = int.Parse(message);
             MessageType messageType = (MessageType)messageTypeInt;
-
-            Dictionary<object, object> dict = new Dictionary<object, object>
-                    {
-                        { "messageType", messageType }
-                    };
-
-            return dict;
+            dict["messageType"] = messageType;
         }
+
+        return dict;
 
     }
 

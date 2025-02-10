@@ -47,6 +47,7 @@ public class BattleService
             // Si es contra un bot, se acepta y se pone como jugando
             dict["messageType"] = MessageType.StartBattle;
             battle.BattleStateId = 3;
+            battle.IsAgainstBot = true;
             battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(3);
         }
 
@@ -101,9 +102,9 @@ public class BattleService
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
         // Si el usuario 2 no existe, significa que va a pelear contra un bot, por lo que simplemente se le dirigiría desde el front a la batalla
+        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user1.Id);
         if (user2 != null)
         {
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user1.Id);
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2.Id);
         }
     }
@@ -209,15 +210,20 @@ public class BattleService
 
         UserBattle otherUser = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId != userId);
 
-        // Si ya estaba en la sala, le digo al otro jugador que se ha desconectado
-        if (wasAlreadyInRoom)
+        // Por si es un bot
+        if (otherUser != null)
         {
-            dict["messageType"] = MessageType.DisconnectedFromBattle;
-        }
+            // Si ya estaba en la sala, le digo al otro jugador que se ha desconectado
+            if (wasAlreadyInRoom)
+            {
+                dict["messageType"] = MessageType.DisconnectedFromBattle;
+            }
 
-        // Notifico a ambos usuarios a que vuelvan a solicitar las peticiones de batallas
-        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
-        await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userId);
+            // Notifico a ambos usuarios a que vuelvan a solicitar las peticiones de batallas
+            await Task.WhenAll(
+                WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId),
+                WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), userId));
+        }
     }
 
 
@@ -247,6 +253,13 @@ public class BattleService
             Console.WriteLine("Partida encontrada B)");
 
         }
+    }
+
+    public async Task DeleteFromQueue(User user)
+    {
+        user.IsInQueue = false;
+        _unitOfWork.UserRepository.Update(user);
+        await _unitOfWork.SaveAsync();
     }
     public async Task<Battle> GetCurrentBattleByUserAsync(int userId)
     {
