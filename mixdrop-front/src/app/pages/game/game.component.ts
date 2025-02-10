@@ -15,7 +15,6 @@ import { Board } from '../../models/board';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Slot } from '../../models/slot';
-import { J } from '@angular/cdk/keycodes';
 import { AuthService } from '../../services/auth.service';
 import { BattleService } from '../../services/battle.service';
 
@@ -45,7 +44,7 @@ export class GameComponent implements OnInit, OnDestroy {
   filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
   gameEnded: boolean = false
 
-  audio = new Audio();
+  audio: HTMLAudioElement | null = null;
 
   board: Board = {
     playing: null,
@@ -127,7 +126,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.audio.pause()
+    this.audio?.pause()
   }
 
   navigateToUrl(url: string) {
@@ -166,9 +165,13 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   // Puede ser que falle
-  reproduceAudio() {
-    this.audio.pause()
-    this.audio.currentTime = 0
+  reproduceAudio()
+  {
+    if(this.audio)
+    {
+      this.audio.pause()
+      this.audio.currentTime = 0
+    }
 
     this.audio = new Audio(this.filePath);
     this.audio.loop = true

@@ -420,6 +420,7 @@ public class GayHandler // GameHandler :3
                 relativePathCurrent = "wwwroot/" + playing.TrackPath;
             }
 
+            // TODO: El servidor no mezcla los archivos, sino que pasa la pista modificada (el stream) y se junta en el cliente con SoundTouchJS
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
             _board.Playing = new Track()
