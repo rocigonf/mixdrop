@@ -9,8 +9,10 @@ public class WebSocketHandler
 {
     private static IServiceProvider _serviceProvider;
     public static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
-    
+
     public static int Total { get; set; } = 0;
+    public static int TotalBattles { get; set; } = 0; // las batallas q se estan jugando
+    public static int TotalPlayers { get; set; } = 0; // personas jugando
 
     // Semáforo para controlar el acceso a la lista de WebSocketHandler
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -29,6 +31,8 @@ public class WebSocketHandler
         {
             { "messageType", MessageType.Stats },
             { "total", Total },
+            { "totalBattles" , TotalBattles },
+            { "totalPlayers" , TotalPlayers}
         };
 
         await SendStatsMessage();
@@ -72,12 +76,15 @@ public class WebSocketHandler
         USER_SOCKETS.Remove(disconnectedHandler);
         Total--;
 
+
         using IServiceScope scope = _serviceProvider.CreateScope();
 
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
         var battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
 
         ICollection<Battle> battles = await unitOfWork.BattleRepository.GetCurrentBattleByUser(disconnectedHandler.User.Id);
+        bool sendNotif = false;
+        
         if(battles.Count > 1)
         {
             throw new Exception("El usuario está en más de una batalla al mismo tiempo :(");
@@ -85,9 +92,9 @@ public class WebSocketHandler
         else
         {
             // Borro al usuario de la batalla
-            if(battles.Count == 1)
+            if (battles.Count == 1)
             {
-                await battleService.DeleteBattleByObject(battles.First(), disconnectedHandler.User.Id, true);
+                sendNotif = true;
             }
         }
 
@@ -98,22 +105,20 @@ public class WebSocketHandler
 
         //await SendStatsMessage();
 
-        scope.Dispose();
-
-        //await SendStatsMessage();
-
-        // Liberamos el semáforo
-        _semaphore.Release();
-
-        // Lista donde guardar las tareas de envío de mensajes
-        List<Task> tasks = new List<Task>();
         // Guardamos una copia de los WebSocketHandler para evitar problemas de concurrencia
         UserSocket[] handlers = USER_SOCKETS.ToArray();
 
-        tasks.Add(SendStatsMessage());
+        if (sendNotif)
+        {
+            await battleService.DeleteBattleByObject(battles.First(), disconnectedHandler.User.Id, true);
+        }
 
-        // Esperamos a que todas las tareas de envío de mensajes se completen
-        await Task.WhenAll(tasks);
+        await SendStatsMessage();
+        
+        scope.Dispose();
+
+        // Liberamos el semáforo
+        _semaphore.Release();
     }
 
     public static async Task NotifyOneUser(string jsonToSend, int userId)
@@ -140,6 +145,8 @@ public class WebSocketHandler
         {
             { "messageType", MessageType.Stats },
             { "total", Total },
+            { "totalBattles" , TotalBattles },
+            { "totalPlayers" , TotalPlayers}
         };
 
         await NotifyUsers(JsonSerializer.Serialize(dict));

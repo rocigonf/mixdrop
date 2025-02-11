@@ -1,7 +1,5 @@
 <app-navbar></app-navbar>
 
-<button (click)="emparejar()">Jugar</button>
-
 <div class="cabecera">
     @if (user?.avatarPath) {
         <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
@@ -9,6 +7,8 @@
         <img src="images/user.png" alt="avatar de usuario">
     }
     <span>{{user?.nickname}}</span>
+    
+    <button class="rainbow-button" (click)="emparejar()">Jugar</button>
 </div>
 
 <!-- contenido -->
@@ -352,19 +352,17 @@
 </div>
 
 <div class="container">
-    <p>Total de jugadores conectados: {{ totalPlayers }}</p>
+    <p>Total de jugadores conectados: {{ this.totalUsers }}</p>
 </div>
 
 <div class="container">
-    <p>Total de partidas en juego: </p>
+    <p>Total de partidas en juego: {{ this.totalBattles }} </p>
 </div>
 
 <div class="container">
-    <p>Total de usuarios jugando: </p>
+    <p>Total de usuarios jugando: {{ this.totalPlayers }} </p>
 </div>
 
-
-<p>Faltan jugadores en partidas y partidas en juego</p>
 
 <!--
 

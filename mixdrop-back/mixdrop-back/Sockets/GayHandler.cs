@@ -88,6 +88,7 @@ public class GayHandler // GameHandler :3
         }
 
         string filePath = "";
+        string mix = "";
 
         // Juega las cartas que quiera
         for (int i = 0; i < action.Cards.Count; i++)
@@ -163,6 +164,8 @@ public class GayHandler // GameHandler :3
                 if (wasEmpty) { playerInTurn.Punctuation++; } // Puntos extra
             }
 
+            mix = PlayMusic(_board.Playing, existingCard);
+
             // Si ya ha hecho sus acciones, rompo el bucle
             if (total == ACTIONS_REQUIRED)
             {
@@ -205,7 +208,8 @@ public class GayHandler // GameHandler :3
             { "messageType", MessageType.TurnResult },
             { "board", _board },
             { "player", _mapper.ToDto(playerInTurn) },
-            { "filepath", filePath }
+            { "filepath", filePath },
+            { "mix" , mix }
         };
 
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
@@ -399,6 +403,7 @@ public class GayHandler // GameHandler :3
             int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
+            // calcular cuanto habria que subir o bajar con el diccionario
             int difference = Math.Abs(semitoneCard - semitoneCurrent);
             float pitchFactor = (float)Math.Pow(2, difference / 12.0);
 
@@ -416,6 +421,7 @@ public class GayHandler // GameHandler :3
                 relativePathCurrent = "wwwroot/" + playing.TrackPath;
             }
 
+            // TODO: El servidor no mezcla los archivos, sino que pasa la pista modificada (el stream) y se junta en el cliente con SoundTouchJS
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
             _board.Playing = new Track()
@@ -429,6 +435,7 @@ public class GayHandler // GameHandler :3
             };
 
             return output.Replace("wwwroot/", "");
+
         }
     }
 

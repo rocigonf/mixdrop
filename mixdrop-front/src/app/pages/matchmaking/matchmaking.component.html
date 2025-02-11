@@ -12,19 +12,19 @@
 
 @if(readyForBattle)
 {
-    @if(battle)
-    {
-        <button (click)="startBattle()">Comenzar partida</button>
-    }
-    @else 
-    {
-        <p>Esperando a que el anfitrión comience la partida...</p>
-    }
+@if(battle)
+{
+<button (click)="startBattle()">Comenzar partida</button>
 }
+@else
+{
+<p>Esperando a que el anfitrión comience la partida...</p>
+}
+} @else {
+
 
 <!--mostrar tamb avatar de invitado / anfitrion-->
 
-<p>si es anitrion</p>
 <button (click)="gameWithBot()">Jugar contra un bot</button>
 <button (click)="gameRandom()">Jugar con oponente aleatorio</button>
 
@@ -44,18 +44,27 @@
                 {{ friend.nickname }}
             </span>
 
+
+            @if (!hasBattle(friend)) {
             <div class="contenedorIcono">
                 <img class="icono" (click)="gameWithFriend(friend)" src="/images/battle.webp"
                     alt="invitar a jugar a amigo">
             </div>
-
+            } @else if (hasBattle(friend)) {
+            <div class="contenedorIcono">
+                <img class="icono" (click)="acceptBattle(friend.id)" src="/images/battle.webp" alt="aceptar batalla">
+            </div>
+            <div class="contenedorIcono">
+                <img class="icono" (click)="deleteBattle(friend.id)" src="/images/delete.webp" alt="rechazar batalla">
+            </div>
+            }
         </div>
+
+
         }
         }
-   
+
 </div>
 <br>
-<hr>
 
-
-<p>si es invitado esta esperando a q empiece el juego</p>
+}

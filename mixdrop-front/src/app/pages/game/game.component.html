@@ -1,83 +1,96 @@
 <app-navbar></app-navbar>
-@if(userBattle != null)
-{
-    <button (click)="reproduceAudio()">Reproducir audio</button>
 
-    <button (click)="sendAction(this.actionTest)">AAAAAAAAAAAA</button>
-    <div class="chat">
-        
-    </div>
 
-    <p>Puntuación: {{ userBattle.punctuation }}</p>
+@if(userBattle != null){
 
-    <h1>TUS CARTAS</h1>
-    @for (card of userBattle.cards; track card.id)
-    {
-        <div class="card">
-            <p>Nombre: {{ card.track.song.name }}</p>
-            <p>Parte: {{ card.track.part.name }}</p>
-            <img [src]="IMG_URL + card.imagePath" alt="imagen">
-            @if(userBattle.isTheirTurn)
-            {
-                <button (click)="selectCard(card)">Usar</button>
-            }
-        </div>
+
+<p>
+    @if (this.userBattle.isTheirTurn) {
+    Es tu turno
+    } @else {
+    No es tu turno, el contrincante está jugando
     }
+</p>
 
-    <h1>CARTAS DEL TABLERO</h1>
-    <div class="board">
-        @for (slot of board.slots; track $index)
+<button (click)="reproduceAudio()">Reproducir audio</button>
+
+<button (click)="sendAction(this.actionTest)">AAAAAAAAAAAA</button>
+<div class="chat">
+
+</div>
+
+<p>Puntuación: {{ userBattle.punctuation }}</p>
+
+<h1>TUS CARTAS</h1>
+<div class="myCarts">
+    @for (card of userBattle.cards; track $index)
+    {
+    <div class="card">
+        <span>Nombre: {{ card.track.song.name }}</span>
+        <span>Parte: {{ card.track.part.name }}</span>
+        <img [src]="IMG_URL + card.imagePath" alt="imagen">
+        @if(userBattle.isTheirTurn)
         {
-            @if(slot.card)
-            {
-                <div class="card">
-                    <p>Nombre: {{ slot.card.track.song.name }}</p>
-                    <p>Parte: {{ slot.card.track.part.name }}</p>
-                    <img [src]="IMG_URL + slot.card.imagePath" alt="imagen">
-                </div>
-            }
-            @else {
-                <p>No hay carta</p>
-            }
-
-            <!-- Esto lo mismo está un poco tinky winky xD -->
-            @if(cardToUse)
-            {
-                @switch ($index) 
-                {
-                    @case (0)
-                    {
-                        @if (checkType(["Voz", "Piano"], cardToUse.track.part.name))
-                        {
-                            <button (click)="useCard($index)">Colocar carta</button>
-                        }
-                    }
-                    @case (1)
-                    {
-                        @if (checkType(["Piano"], cardToUse.track.part.name))
-                        {
-                            <button (click)="useCard($index)">Colocar carta</button>
-                        }
-                    }
-                    @case (2)
-                    {
-                        @if (checkType(["Guitarra", "Batería"], cardToUse.track.part.name))
-                        {
-                            <button (click)="useCard($index)">Colocar carta</button>
-                        }
-                    }
-                    @case (3)
-                    {
-                        @if (checkType(["Batería"], cardToUse.track.part.name))
-                        {
-                            <button (click)="useCard($index)">Colocar carta</button>
-                        }
-                    }
-                }
-            }
+        <button (click)="selectCard(card)">Usar</button>
         }
     </div>
+    }
+</div>
+
+<h1>CARTAS DEL TABLERO</h1>
+<div class="board">
+    @for (slot of board.slots; track $index)
+    {
+    @if(slot.card)
+    {
+    <div class="card">
+        <p>Nombre: {{ slot.card.track.song.name }}</p>
+        <p>Parte: {{ slot.card.track.part.name }}</p>
+        <p>Nivel: {{ slot.card.level }}</p>
+        <img [src]="IMG_URL + slot.card.imagePath" alt="imagen">
+    </div>
+    }
+    @else {
+    <p>No hay carta</p>
+    }
+
+    <!-- Esto lo mismo está un poco tinky winky xD -->
+    @if(cardToUse)
+    {
+        @switch ($index)
+        {
+            @case (0)
+            {
+            @if (checkType(["Voz", "Piano"], cardToUse.track.part.name))
+            {
+            <button (click)="useCard($index)">Colocar carta</button>
+            }
+            }
+            @case (1)
+            {
+            @if (checkType(["Piano"], cardToUse.track.part.name))
+            {
+            <button (click)="useCard($index)">Colocar carta</button>
+            }
+            }
+            @case (2)
+            {
+            @if (checkType(["Guitarra", "Batería"], cardToUse.track.part.name))
+            {
+                <button (click)="useCard($index)">Colocar carta</button>
+            }
+            }
+            @case (3)
+            {
+            @if (checkType(["Batería"], cardToUse.track.part.name))  {
+                <button (click)="useCard($index)">Colocar carta</button>
+            }
+            }
+        }
+    }
+    }
+</div>
 }
 @else {
-    <p>Cargando...</p>
+<p>Cargando...</p>
 }

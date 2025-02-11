@@ -1,3 +1,7 @@
+*{
+    font-size: 1.5rem;
+}
+
 .board
 {
     display: flex;
@@ -6,6 +10,19 @@
 .card 
 {
     display: flex;
+    flex-direction: column;
     border-radius: 10px;
-    border-color: aqua;
+    border: 2px solid white;
+    width: 200px;
+}
+
+.card img{
+    width: 95%;
+    height: 100px;
+}
+
+
+.myCarts{
+    display: flex;
+    gap: 10px;
 }
