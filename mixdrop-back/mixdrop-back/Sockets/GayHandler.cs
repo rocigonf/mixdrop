@@ -182,6 +182,8 @@ public class GayHandler // GameHandler :3
                 ActionType actionType = action.ActionsType.ElementAt(i);
                 switch (actionType.Name)
                 {
+                    case "button":
+                        break;
                     default:
                         Console.WriteLine("La acción no existe");
                         break;
@@ -191,6 +193,12 @@ public class GayHandler // GameHandler :3
                 if (total == ACTIONS_REQUIRED) { break; }
             }
 
+        }
+
+        if(TotalActions < ACTIONS_REQUIRED)
+        {
+            Console.WriteLine("Faltan acciones");
+            return;
         }
 
         // Si el total de acciones en la partida es par, significa que se ha completado un turno entero
@@ -288,13 +296,14 @@ public class GayHandler // GameHandler :3
 
             if (totalActions == ACTIONS_REQUIRED)
             {
-                break;
+                SpinTheWheel();
             }
         }
 
-        if(totalActions < ACTIONS_REQUIRED)
+        while(totalActions < ACTIONS_REQUIRED)
         {
-            // TODO: Hacer acciones aleatorias
+            SpinTheWheel();
+            totalActions++;
         }
 
         TotalActions++;
@@ -310,6 +319,11 @@ public class GayHandler // GameHandler :3
         }
 
         return filePath;
+    }
+
+    private void SpinTheWheel()
+    {
+
     }
 
 
