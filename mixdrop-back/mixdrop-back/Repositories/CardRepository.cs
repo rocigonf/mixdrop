@@ -18,7 +18,6 @@ namespace mixdrop_back.Repositories
                 .Include(card => card.Track)
                     .ThenInclude(track => track.Part)
                 .Include(card => card.CardType)
-                .Include(card => card.Collection)
                 .ToListAsync();
         }
     }
