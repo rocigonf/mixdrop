@@ -60,6 +60,7 @@ public class GayHandler // GameHandler :3
         if (_participants.Count + 1 == 2)
         {
             player.IsTheirTurn = true;
+            player.TimePlayed = 120;  // 2 minutos para jugar (esta en proceso esto)
         }
 
         _participants.Add(player);
@@ -75,6 +76,37 @@ public class GayHandler // GameHandler :3
             userBattle.Cards.Add(card);
         }
     }
+
+    // TEMPORIZADOR (nose bien como hacerlo :_(  )
+    /*
+    private void Timer(UserBattle userBattle, UnitOfWork unitOfWork)
+    {
+        if (!userBattle.IsTheirTurn)
+        {
+            Console.WriteLine("No le toca a este jugador");
+            return;
+        }
+        if (userBattle.TimePlayed <= 0)
+        {
+            Console.WriteLine("Al jugador no le queda tiempo");
+            return;
+        }
+
+
+        while (userBattle.TimePlayed > 0)
+        {
+            userBattle.TimePlayed--;
+        }
+       
+        if (userBattle.TimePlayed == 0)
+        {   
+            var userEnemy = _participants.FirstOrDefault(u => u.UserId != userBattle.UserId);
+                        
+            EndBattle(userEnemy, userBattle, unitOfWork);
+        }
+
+    }*/
+
 
     public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork)
     {
@@ -169,6 +201,7 @@ public class GayHandler // GameHandler :3
             // Si ya ha hecho sus acciones, rompo el bucle
             if (total == ACTIONS_REQUIRED)
             {
+                playerInTurn.TimePlayed = 120;  // reestablezco su tiempo 
                 break;
             }
         }
@@ -232,6 +265,7 @@ public class GayHandler // GameHandler :3
             {
                 playerInTurn.IsTheirTurn = false;
                 otherUser.IsTheirTurn = true;
+                otherUser.TimePlayed = 120;
             }
         }
 
@@ -292,7 +326,7 @@ public class GayHandler // GameHandler :3
             }
         }
 
-        if(totalActions < ACTIONS_REQUIRED)
+        if (totalActions < ACTIONS_REQUIRED)
         {
             // TODO: Hacer acciones aleatorias
         }

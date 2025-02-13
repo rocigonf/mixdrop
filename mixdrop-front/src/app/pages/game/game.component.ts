@@ -47,10 +47,12 @@ export class GameComponent implements OnInit, OnDestroy {
 
   audio = new Audio();
 
+  time: number = 120;
+
   board: Board = {
     playing: null,
     slots: [
-      new Slot(), new Slot(), new Slot(), new Slot()
+      new Slot(), new Slot(), new Slot(), new Slot(), new Slot()
     ]
   }
   cardToUse: Card | null = null
@@ -108,7 +110,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   constructor(private webSocketService: WebsocketService,
     private route: Router,
-    public battleService : BattleService,
+    public battleService: BattleService,
     public authService: AuthService,
     private router: Router) {
   }
@@ -141,26 +143,28 @@ export class GameComponent implements OnInit, OnDestroy {
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
         this.userBattle = jsonResponse.userBattleDto
-        break
+        
+        break;
       case MessageType.TurnResult:
+
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
 
-        
         this.filePath = this.IMG_URL + jsonResponse.filepath
 
         this.mix = jsonResponse.mix
         // this.playAudio(this.mix); 
         this.reproduceAudio()
 
-        break
+        break;
+
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
         alert("Se acabó el juego :D")
         this.gameEnded = true
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
-        break
+        break;
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
@@ -188,6 +192,8 @@ export class GameComponent implements OnInit, OnDestroy {
     this.cardToUse = card
   }
 
+
+
   useCard(desiredPosition: number) {
     if (this.cardToUse) {
       const cardToPlay: CardToPlay = {
@@ -203,6 +209,7 @@ export class GameComponent implements OnInit, OnDestroy {
       this.cardToUse = null
     }
   }
+
 
   checkType(posibleType: string[], actualType: string) {
     // Si no devuelve -1 significa que está en la lista
