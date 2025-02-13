@@ -188,9 +188,10 @@ public class GayHandler // GameHandler :3
             slut.Card = existingCard;
             slut.UserId = playerInTurn.UserId;
             playerInTurn.Cards.Remove(existingCard);
+            playerInTurn.Cards.Add(_cards.ElementAt(_random.Next(0, _cards.Count)));
 
             // Bonificaciones random
-            switch(Bonus)
+            switch (Bonus)
             {
                 case "Amarillo":
                     playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
@@ -359,7 +360,8 @@ public class GayHandler // GameHandler :3
                     currentSlot.Card = card;
                     currentSlot.UserId = 0;
 
-                    bot.Cards.Remove(card); 
+                    bot.Cards.Remove(card);
+                    bot.Cards.Add(_cards.ElementAt(_random.Next(0, _cards.Count)));
                     bot.Punctuation++;
 
                     output = PlayMusic(_board.Playing, card);
