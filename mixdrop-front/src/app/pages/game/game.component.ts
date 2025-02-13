@@ -38,7 +38,6 @@ export class GameComponent implements OnInit, OnDestroy {
   serverResponse: string = '';
 
   userBattle: UserBattleDto | null = null
-  filePath: string = this.IMG_URL + "/songs/input/rickroll_full_loop.mp3"
   gameEnded: boolean = false
 
   audio: HTMLAudioElement | null = null;
@@ -52,10 +51,11 @@ export class GameComponent implements OnInit, OnDestroy {
   cardToUse: Card | null = null
 
   mix: string = ""
-
   bonus: string = ""
 
-  ///TEST BORRAR ESTO DESPUES
+  private audioContext: AudioContext = new AudioContext();
+  private tracks: Map<number, AudioBuffer> = new Map;
+  private activeSources: Map<number, AudioBufferSourceNode> = new Map;
 
   constructor(private webSocketService: WebsocketService,
     public battleService : BattleService,
@@ -73,6 +73,9 @@ export class GameComponent implements OnInit, OnDestroy {
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
       this.askForInfo(MessageType.ShuffleDeckStart)
     }
+
+    this.audioContext.audioWorklet
+      .addModule("./js/soundtouch-worklet.js")
 
   }
 
@@ -99,10 +102,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
         if(jsonResponse.filepath != "" ||jsonResponse.mix != "")
         {
-          this.filePath = this.IMG_URL + jsonResponse.filepath
-          this.mix = jsonResponse.mix
-          // this.playAudio(this.mix); 
-          this.reproduceAudio()
+          this.mix = jsonResponse.filepath
+          this.playAudio(this.mix); 
         }
         break
       case MessageType.EndGame:
@@ -116,25 +117,14 @@ export class GameComponent implements OnInit, OnDestroy {
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
-  // Puede ser que falle
-  reproduceAudio()
-  {
-    if(this.audio)
-    {
-      this.audio.pause()
-      this.audio.currentTime = 0
-    }
-
-    this.audio = new Audio(this.filePath);
-    this.audio.loop = true
-    this.audio.play()
-  }
-
   // reproduce el mix en byte que le envia al jugar una carta
   async playAudio(encodedAudio: string) {
     return await new Promise<void>((resolve) => {
+      /*const source = this.audioContext.createBufferSource()
+      source.buffer = encodedAudio*/
       const audio = new Audio("data:audio/wav;base64," + encodedAudio);
       audio.onended = () => resolve();
+      audio.loop = true
       audio.play();
     })
   }
