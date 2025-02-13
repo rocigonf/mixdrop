@@ -168,10 +168,13 @@ public class GayHandler // GameHandler :3
                     isCorrectType = CheckCardType(["Main"], partName);
                     break;
                 case 2:
-                    isCorrectType = CheckCardType(["Bass", "Drums"], partName);
+                    isCorrectType = CheckCardType(["Main", "Drums"], partName);
                     break;
                 case 3:
                     isCorrectType = CheckCardType(["Drums"], partName);
+                    break;
+                case 4:
+                    isCorrectType = CheckCardType(["Drums", "Bass"], partName);
                     break;
                 default:
                     Console.WriteLine("La posición no es correcta");
@@ -456,9 +459,11 @@ public class GayHandler // GameHandler :3
             case 1:
                 return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main"));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Bass") || c.Track.Part.Name.Equals("Drums")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")));
             case 3:
                 return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums"));
+            case 4:
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")));
             default:
                 return null;
         }
