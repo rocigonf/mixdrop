@@ -23,7 +23,7 @@ public class Program
          
         Console.WriteLine("Procesando...");
 
-        HellIsForever.ChangeBPM("wwwroot/songs/input/vocal/vocal.wav", "output.wav", 1, 1.28f);
+        //HellIsForever.ChangeBPM("wwwroot/songs/input/vocal/vocal.wav", "output.wav", 1, 1.28f);
 
         // HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
         // HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);

@@ -252,8 +252,9 @@ public class GayHandler // GameHandler :3
         {
             if (otherUser.IsBot)
             {
-                await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
+                filePath = await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
                 dict["board"] = _board; // Actualizo de vuelta el tablero
+                dict["filepath"] = filePath;
                 playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
             }
             else
@@ -465,7 +466,7 @@ public class GayHandler // GameHandler :3
         if (playing == null)
         {
             _board.Playing = card.Track;
-            return card.Track.TrackPath;
+            return card.Track.TrackPath.Replace("wwwroot", "");
         }
         else
         {
@@ -477,32 +478,46 @@ public class GayHandler // GameHandler :3
             // Cálculo de los nuevos BPM
             float currentBpm = playing.Song.Bpm;
             float cardBpm = card.Track.Song.Bpm;
+            float averageBpm = (currentBpm + cardBpm) / 2;
 
-            bool changeSecond = true;
+            //bool changeSecond = true;
 
             // Si es voz
-            if (card.Track.PartId == 1)
+            /*if (card.Track.PartId == 1)
             {
                 changeSecond = false;
-            }
+            }*/
 
-            float changeForCurrent = (currentBpm - cardBpm) / currentBpm;
+            //float changeForCurrent = (currentBpm - averageBpm) / currentBpm;
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
 
-            float newBpmForCurrent = CalculateNewBpm(changeForCurrent);
+            //float newBpmForCurrent = CalculateNewBpm(changeForCurrent);
             float newBpmForCard = CalculateNewBpm(changeForCard);
 
-            // Cálculo del nuevo pitch
+            // Cálculo del nuevo pitch (CALCULAR COMO EN EL BPM PORQUE SI EN LA NOTA "Do" LA CANTIDAD SE SEMITONOS A DIVIDIR SERÍA 0)            
             int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
+            int difference = semitoneCard - semitoneCurrent;
+            float pitchFactor = 1.0f;
+
+            // Sólo aplico si es mayor que 1
+            if (Math.Abs(difference) > 1)
+            {
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            }
+
             // calcular cuanto habria que subir o bajar con el diccionario
-            int difference = Math.Abs(semitoneCard - semitoneCurrent);
-            float pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            /*int difference = Math.Abs(semitoneCard - semitoneCurrent);
+            float pitchFactor = (float)Math.Pow(2, difference / 12.0);*/
 
-            float newBpm = playing.Song.Bpm;
+            //float newBpm = playing.Song.Bpm;
 
-            if (!changeSecond)
+            //HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent);
+            HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard, pitchFactor);
+            relativePathCurrent = "wwwroot/" + playing.TrackPath;
+
+            /*if (!changeSecond)
             {
                 HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent);
                 HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, 1.0f, pitchFactor);
@@ -512,18 +527,18 @@ public class GayHandler // GameHandler :3
             {
                 HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard, pitchFactor);
                 relativePathCurrent = "wwwroot/" + playing.TrackPath;
-            }
+            }*/
 
             // TODO: El servidor no mezcla los archivos, sino que pasa la pista modificada (el stream) y se junta en el cliente con SoundTouchJS
             HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
 
             _board.Playing = new Track()
             {
-                TrackPath = output.Replace("wwwroot/", ""),
+                TrackPath = output.Replace("wwwroot", ""),
                 Song = new Song()
                 {
-                    Bpm = newBpm,
-                    Pitch = MusicNotes.NOTE_MAP_REVERSE[difference],
+                    Bpm = playing.Song.Bpm,
+                    Pitch = playing.Song.Pitch,
                 }
             };
 

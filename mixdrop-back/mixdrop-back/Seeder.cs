@@ -226,12 +226,12 @@ public class Seeder
                 Level = 1,
                 Track = new Track
                 {
-                    TrackPath = "Songs/Input/Drums/bateria.wav",
+                    TrackPath = "Songs/Input/Bass/bass.mp3",
                     Song = new Song
                     {
                         Name = "Never Gonna Give You Up",
-                        Bpm = 114,
-                        Pitch = "A#",
+                        Bpm = 137,
+                        Pitch = "B",
                         Artist = new Artist {
                             Name = "Rick Astley"
                         }
@@ -249,12 +249,12 @@ public class Seeder
                 Level = 2,
                 Track = new Track
                 {
-                    TrackPath = "Songs/Input/Vocal/vocal.wav",
+                    TrackPath = "Songs/Input/Vocal/vocal.mp3",
                     Song = new Song
                     { 
                         Name = "3D",
-                        Bpm = 108,
-                        Pitch = "C",
+                        Bpm = 124,
+                        Pitch = "G",
                         Artist = new Artist {
                             Name = "Jungkook"
                         }
