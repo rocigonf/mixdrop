@@ -23,7 +23,7 @@
 <h1>CARTAS DEL TABLERO</h1>
 <div class="board">
 
-    <!--primera casilla VOZ Y PIANO-->
+    <!--primera casilla VOZ Y PRINCIPAL-->
     <div class="slot0">
         @if(board.slots[0].card )
         {
@@ -43,7 +43,7 @@
         }
     </div>
 
-    <!--segunda casilla PIANO -->
+    <!--segunda casilla PRINCIPAL -->
 
     <div class="slot1">
         @if(board.slots[1].card)
@@ -64,7 +64,7 @@
         }
     </div>
 
-    <!--segunda casilla PIANO y GUITARRA -->
+    <!--segunda casilla PRINCIPAL y BATERIA -->
 
     <div class="slot2">
         @if(board.slots[2].card)
@@ -78,7 +78,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Main", "Bass"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name)) {
             <button (click)="useCard(2)">Colocar carta</button>
             }
         </div>
@@ -86,7 +86,7 @@
     </div>
 
 
-    <!--tercera casilla GUITARRA-->
+    <!--tercera casilla BATERIA-->
     <div class="slot3">
         @if(board.slots[3].card)
         {
@@ -99,14 +99,14 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Bass"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Drums"], cardToUse.track.part.name)) {
             <button (click)="useCard(3)">Colocar carta</button>
             }
         </div>
         }
     </div>
 
-    <!-- cuarta casilla BATERIA Y GUITARRA-->
+    <!-- cuarta casilla BATERIA Y BAJO-->
     <div class="slot4">
         @if(board.slots[4].card)
         {
@@ -208,9 +208,10 @@
             }
         }
     }
-    <button (click)="useButton()">MIXDROP</button>
+    
 </div>
 -->
+<button (click)="useButton()">MIXDROP</button>
 }
 @else {
 <p>Cargando...</p>
