@@ -2,6 +2,6 @@ import { ActionType } from "./actionType";
 import { CardToPlay } from "./cardToPlay";
 
 export interface Action {
-    cards : CardToPlay[],
-    actionsType : ActionType[]
+    card : CardToPlay | null,
+    actionType : ActionType | null
 }

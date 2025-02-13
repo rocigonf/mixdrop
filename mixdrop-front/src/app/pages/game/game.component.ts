@@ -6,9 +6,6 @@ import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
 import { Action } from '../../models/action';
 import { CardToPlay } from '../../models/cardToPlay';
-import { Track } from '../../models/track';
-import { Part } from '../../models/part';
-import { Song } from '../../models/song';
 import { ActionType } from '../../models/actionType';
 import { UserBattleDto } from '../../models/user-battle-dto';
 import { Board } from '../../models/board';
@@ -56,57 +53,11 @@ export class GameComponent implements OnInit, OnDestroy {
 
   mix: string = ""
 
-
-  ///TEST BORRAR ESTO DESPUES
-  songTest: Song = {
-    name: "socorro"
-  }
-
-  partTest: Part = {
-    id: 0,
-    name: "si"
-  }
-
-  trackTest: Track = {
-    id: 1,
-    part: this.partTest,
-    song: this.songTest
-  }
-
-  cartaTest: Card = {
-    id: 1,
-    imagePath: "mondongo",
-    level: 3,
-    track: this.trackTest
-  }
-
-  cartToPlayTest1: CardToPlay = {
-    cardId: this.cartaTest.id,
-    position: 1
-  }
-
-  cartToPlayTest2: CardToPlay = {
-    cardId: this.cartaTest.id,
-    position: 2
-  }
-
-  actionTypeTest1: ActionType = {
-    name: "playCard",
-  }
-
-  actionTypeTest2: ActionType = {
-    name: "playCard",
-  }
-
-  actionTest: Action = {
-    cards: [this.cartToPlayTest1, this.cartToPlayTest2],
-    actionsType: [this.actionTypeTest1, this.actionTypeTest2]
-  }
+  bonus: string = ""
 
   ///TEST BORRAR ESTO DESPUES
 
   constructor(private webSocketService: WebsocketService,
-    private route: Router,
     public battleService : BattleService,
     public authService: AuthService,
     private router: Router) {
@@ -144,14 +95,15 @@ export class GameComponent implements OnInit, OnDestroy {
       case MessageType.TurnResult:
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
+        this.bonus = jsonResponse.bonus
 
-        
-        this.filePath = this.IMG_URL + jsonResponse.filepath
-
-        this.mix = jsonResponse.mix
-        // this.playAudio(this.mix); 
-        this.reproduceAudio()
-
+        if(jsonResponse.filepath != "" ||jsonResponse.mix != "")
+        {
+          this.filePath = this.IMG_URL + jsonResponse.filepath
+          this.mix = jsonResponse.mix
+          // this.playAudio(this.mix); 
+          this.reproduceAudio()
+        }
         break
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
@@ -198,13 +150,25 @@ export class GameComponent implements OnInit, OnDestroy {
         position: desiredPosition,
       }
       const action: Action = {
-        cards: [cardToPlay],
-        actionsType: []
+        card: cardToPlay,
+        actionType: null
       }
       this.sendAction(action)
 
       this.cardToUse = null
     }
+  }
+
+  useButton()
+  {
+    const actionType: ActionType = {
+      name: "button"
+    }
+    const action: Action = {
+      card: null,
+      actionType: actionType
+    }
+    this.sendAction(action)
   }
 
   checkType(posibleType: string[], actualType: string) {

@@ -24,8 +24,11 @@ public class GayHandler // GameHandler :3
     private int TotalTurns { get; set; } = 0;
 
     private readonly UserBattleMapper _mapper = new UserBattleMapper();
+    private readonly Random _random = new Random();
 
     private const string OUTPUT_SONGS_FOLDER = "songs/output/";
+
+    private string Bonus { get; set; } = "";
 
 
     /// <summary>
@@ -51,15 +54,16 @@ public class GayHandler // GameHandler :3
         if (battle.IsAgainstBot)
         {
             UserBattle bot = new UserBattle() { IsBot = true };
-            DistributeCards(bot, rand);
+            DistributeCards(bot);
             _participants.Add(bot);
         }
 
-        DistributeCards(player, rand);
+        DistributeCards(player);
 
         if (_participants.Count + 1 == 2)
         {
             player.IsTheirTurn = true;
+            player.ActionsLeft = ACTIONS_REQUIRED;
         }
 
         _participants.Add(player);
@@ -67,19 +71,19 @@ public class GayHandler // GameHandler :3
         return _mapper.ToDto(player);
     }
 
-    private static void DistributeCards(UserBattle userBattle, Random rand)
+    private void DistributeCards(UserBattle userBattle)
     {
         for (int i = 0; i < 5; i++)
         {
-            Card card = _cards.ElementAt(rand.Next(0, _cards.Count));
+            Card card = _cards.ElementAt(_random.Next(0, _cards.Count));
             userBattle.Cards.Add(card);
         }
     }
 
     public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork)
     {
-        int total = 0;
         UserBattle playerInTurn = _participants.FirstOrDefault(u => u.UserId == userId && u.IsTheirTurn);
+        UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
 
         if (playerInTurn == null)
         {
@@ -91,11 +95,11 @@ public class GayHandler // GameHandler :3
         string mix = "";
 
         // Juega las cartas que quiera
-        for (int i = 0; i < action.Cards.Count; i++)
+        if (action.Card != null)
         {
             bool wasEmpty = false;
 
-            CardToPlay card = action.Cards.ElementAt(i);
+            CardToPlay card = action.Card;
 
             // Se comprueba que el jugador tuviese esta carta
             Card existingCard = playerInTurn.Cards.FirstOrDefault(c => c.Id == card.CardId);
@@ -128,16 +132,16 @@ public class GayHandler // GameHandler :3
             switch (card.Position)
             {
                 case 0:
-                    isCorrectType = CheckCardType(["Voz", "Piano"], partName);
+                    isCorrectType = CheckCardType(["Vocal", "Main"], partName);
                     break;
                 case 1:
-                    isCorrectType = CheckCardType(["Piano"], partName);
+                    isCorrectType = CheckCardType(["Main"], partName);
                     break;
                 case 2:
-                    isCorrectType = CheckCardType(["Guitarra", "Batería"], partName);
+                    isCorrectType = CheckCardType(["Bass", "Drums"], partName);
                     break;
                 case 3:
-                    isCorrectType = CheckCardType(["Batería"], partName);
+                    isCorrectType = CheckCardType(["Drums"], partName);
                     break;
                 default:
                     Console.WriteLine("La posición no es correcta");
@@ -152,8 +156,25 @@ public class GayHandler // GameHandler :3
 
             // Si todo está correcto, establezco la nueva carta y la borro del mazo
             slut.Card = existingCard;
+            slut.UserId = playerInTurn.UserId;
             playerInTurn.Cards.Remove(existingCard);
-            total++;
+
+            // Bonificaciones random
+            switch(Bonus)
+            {
+                case "Amarillo":
+                    playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
+                    break;
+                case "Rojo":
+                    playerInTurn.Punctuation += CheckForCardType(2, existingCard.CardType.Id);
+                    break;
+                case "Verde":
+                    playerInTurn.Punctuation += CheckForCardType(3, existingCard.CardType.Id);
+                    break;
+                case "Azul":
+                    playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
+                    break;
+            }
 
             // Establezco la nueva mezcla
             filePath = PlayMusic(_board.Playing, existingCard);
@@ -164,33 +185,28 @@ public class GayHandler // GameHandler :3
                 if (wasEmpty) { playerInTurn.Punctuation++; } // Puntos extra
             }
 
-            mix = PlayMusic(_board.Playing, existingCard);
-
-            // Si ya ha hecho sus acciones, rompo el bucle
-            if (total == ACTIONS_REQUIRED)
+            //mix = PlayMusic(_board.Playing, existingCard);
+            playerInTurn.ActionsLeft--;
+        }
+        else if (action.ActionType != null)
+        {
+            ActionType actionType = action.ActionType;
+            switch (actionType.Name)
             {
-                break;
+                case "button":
+                    SpinTheWheel(otherUser);
+                    playerInTurn.ActionsLeft--;
+                    break;
+                default:
+                    Console.WriteLine("La acción no existe");
+                    break;
             }
         }
 
-        // Si aún debe seguir jugando (solo ha tirado una carta, chequeo sus acciones)
-        if (total < ACTIONS_REQUIRED)
+        // Si aún puede seguir jugando
+        if (playerInTurn.ActionsLeft > 0)
         {
-            // TODO: Implementar acciones
-            for (int i = 0; i < action.ActionsType.Count; i++)
-            {
-                ActionType actionType = action.ActionsType.ElementAt(i);
-                switch (actionType.Name)
-                {
-                    default:
-                        Console.WriteLine("La acción no existe");
-                        break;
-                }
-
-                total++;
-                if (total == ACTIONS_REQUIRED) { break; }
-            }
-
+            return;
         }
 
         // Si el total de acciones en la partida es par, significa que se ha completado un turno entero
@@ -198,18 +214,29 @@ public class GayHandler // GameHandler :3
         if (TotalActions % 2 == 0)
         {
             TotalTurns++;
+
+            // CUANDO TERMINO EL TURNO, GENERO UN BONUS ALEATORIO (25% de que ocurra, idk cuanto es en Dropmix realmente, y lo mismo habría que poner por nivel también)
+            int random = _random.Next(0, 100);
+            string[] colors = ["Amarillo", "Rojo", "Verde", "Azul"];
+            if(random < 25)
+            {
+                Bonus = colors[_random.Next(0, colors.Length)];
+            }
+            else
+            {
+                Bonus = "";
+            }
         }
 
         // Cambio el turno
-        UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
-
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.TurnResult },
             { "board", _board },
             { "player", _mapper.ToDto(playerInTurn) },
             { "filepath", filePath },
-            { "mix" , mix }
+            { "mix" , mix },
+            { "bonus", Bonus }
         };
 
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
@@ -227,11 +254,14 @@ public class GayHandler // GameHandler :3
             {
                 await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
                 dict["board"] = _board; // Actualizo de vuelta el tablero
+                playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
             }
             else
             {
                 playerInTurn.IsTheirTurn = false;
+
                 otherUser.IsTheirTurn = true;
+                otherUser.ActionsLeft = ACTIONS_REQUIRED;
             }
         }
 
@@ -247,54 +277,76 @@ public class GayHandler // GameHandler :3
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
     }
 
+    private static int CheckForCardType(int desiredType, int actualType)
+    {
+        return desiredType == actualType ? 1 : 0;
+    }
+
     private async Task<string> DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
     {
         string filePath = "";
         int totalActions = 0;
 
-        foreach (Slot currentSlot in _board.Slots)
+        while (totalActions < ACTIONS_REQUIRED)
         {
-            Card card = GetValidCardForSlot(currentSlot, bot);
-            bool canPlay = false;
-            bool wasEmpty = false;
+            bool couldPlay = false;
 
-            if (currentSlot.Card == null)
+            foreach (Slot currentSlot in _board.Slots)
             {
-                canPlay = true;
-                wasEmpty = true;
-            }
-            else
-            {
-                // El Max está para comprobar si puede poner la carta ahí
-                if (currentSlot.Card.Level < card.Level)
+                Card card = GetValidCardForSlot(currentSlot, bot);
+                if(card == null)
+                {
+                    continue;
+                }
+
+                bool canPlay = false;
+                bool wasEmpty = false;
+
+                if (currentSlot.Card == null)
                 {
                     canPlay = true;
+                    wasEmpty = true;
                 }
-            }
-
-            if (canPlay && card != null)
-            {
-                currentSlot.Card = card;
-                bot.Cards.Remove(card);
-                totalActions++;
-                bot.Punctuation++;
-                filePath = PlayMusic(_board.Playing, card);
-
-                if (TotalTurns >= 1)
+                else
                 {
-                    if (wasEmpty) { bot.Punctuation++; }
+                    // El Max está para comprobar si puede poner la carta ahí
+                    if (currentSlot.Card.Level <= card.Level)
+                    {
+                        canPlay = true;
+                    }
+                }
+
+                if (canPlay && card != null)
+                {
+                    currentSlot.Card = card;
+                    currentSlot.UserId = 0;
+
+                    bot.Cards.Remove(card); 
+                    bot.Punctuation++;
+
+                    filePath = PlayMusic(_board.Playing, card);
+
+                    if (TotalTurns >= 1)
+                    {
+                        if (wasEmpty) { bot.Punctuation++; }
+                    }
+
+                    couldPlay = true;
+
+                    totalActions++;
+                    if (totalActions == ACTIONS_REQUIRED)
+                    {
+                        break;
+                    }
                 }
             }
 
-            if (totalActions == ACTIONS_REQUIRED)
+            // Si no pudo jugar ninguna carta, tira la ruleta
+            if (!couldPlay)
             {
-                break;
+                SpinTheWheel(notBot);
+                totalActions++;
             }
-        }
-
-        if(totalActions < ACTIONS_REQUIRED)
-        {
-            // TODO: Hacer acciones aleatorias
         }
 
         TotalActions++;
@@ -312,6 +364,47 @@ public class GayHandler // GameHandler :3
         return filePath;
     }
 
+    private void SpinTheWheel(UserBattle opponent)
+    {
+        int result = _random.Next(0, 100);
+        if (result < 50)
+        {
+            RemoveCardsOfLevel(3, opponent);
+        }
+        else if (result >= 50 && result < 75)
+        {
+            RemoveCardsOfLevel(2, opponent);
+        }
+        else if(result >= 75 && result < 90)
+        {
+            RemoveCardsOfLevel(1, opponent);
+        }
+        else
+        {
+            RemoveCardsOfLevel(0, opponent);
+        }
+    }
+
+    private void RemoveCardsOfLevel(int level, UserBattle player)
+    {
+        for (int i = 0; i < _board.Slots.Length; i++)
+        {
+            Slot slot = _board.Slots[i];
+            if(slot.Card == null || slot.UserId != player.UserId)
+            {
+                continue;
+            }
+
+            if(level == 0)
+            {
+                slot.Card = null;
+            }
+            else if(slot.Card.Level == level)
+            {
+                slot.Card = null;
+            }
+        }
+    }
 
     private Card GetValidCardForSlot(Slot slot, UserBattle bot)
     {
@@ -319,13 +412,13 @@ public class GayHandler // GameHandler :3
         switch (Array.IndexOf(_board.Slots, slot))
         {
             case 0:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Voz") || c.Track.Part.Name.Equals("Piano")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")));
             case 1:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Piano"));
+                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main"));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Guitarra") || c.Track.Part.Name.Equals("Batería")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Bass") || c.Track.Part.Name.Equals("Drums")));
             case 3:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Batería"));
+                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums"));
             default:
                 return null;
         }
