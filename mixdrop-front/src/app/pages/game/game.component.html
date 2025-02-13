@@ -4,6 +4,7 @@
 
 @if(userBattle != null){
 
+
 <p>
     @if (this.userBattle.isTheirTurn) {
     Es tu turno
@@ -12,9 +13,6 @@
     }
 </p>
 
-<button (click)="reproduceAudio()">Reproducir audio</button>
-
-<button (click)="sendAction(this.actionTest)">AAAAAAAAAAAA</button>
 <div class="chat">
 
 </div>
@@ -150,6 +148,67 @@
 </div>
 
 
+<!-- Esto obviamente si tradujésemos el juego no se podría hacer xD -->
+@if(bonus != "")
+{
+    <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
+}
+
+
+<h1>CARTAS DEL TABLERO</h1>
+<div class="board">
+    @for (slot of board.slots; track $index)
+    {
+        @if(slot.card)
+        {
+        <div class="card">
+            <p>Nombre: {{ slot.card.track.song.name }}</p>
+            <p>Parte: {{ slot.card.track.part.name }}</p>
+            <p>Nivel: {{ slot.card.level }}</p>
+            <img [src]="IMG_URL + slot.card.imagePath" alt="imagen">
+        </div>
+        }
+        @else {
+        <p>No hay carta</p>
+        }
+
+        <!-- Esto lo mismo está un poco tinky winky xD -->
+        @if(cardToUse)
+        {
+            @switch ($index)
+            {
+                @case (0)
+                {
+                    @if (checkType(["Vocal", "Main"], cardToUse.track.part.name))
+                    {
+                    <button (click)="useCard($index)">Colocar carta</button>
+                    }
+                }
+                @case (1)
+                {
+                    @if (checkType(["Main"], cardToUse.track.part.name))
+                    {
+                    <button (click)="useCard($index)">Colocar carta</button>
+                    }
+                }
+                @case (2)
+                {
+                    @if (checkType(["Bass", "Drums"], cardToUse.track.part.name))
+                    {
+                        <button (click)="useCard($index)">Colocar carta</button>
+                    }
+                }
+                @case (3)
+                {
+                    @if (checkType(["Drums"], cardToUse.track.part.name))  {
+                        <button (click)="useCard($index)">Colocar carta</button>
+                    }
+                }
+            }
+        }
+    }
+    <button (click)="useButton()">MIXDROP</button>
+</div>
 }
 @else {
 <p>Cargando...</p>

@@ -7,15 +7,38 @@
     font-style: normal;
 }
 
-*{
-    font-family:'monogram';
+* {
+    font-family: 'monogram';
 }
 
-html{
-    scroll-behavior: smooth !important; 
+html {
+    scroll-behavior: smooth !important;
 }
 
-body{
+body {
     background-color: black;
     color: white;
+}
+
+.rainbow-button {
+    border: 4px white;
+    border-style: solid;
+    border-radius: 50px;
+    background: linear-gradient(90deg,
+            rgba(47, 201, 226, 1),
+            rgba(114, 175, 68, 1),
+            rgba(255, 252, 60, 1),
+            rgba(236, 126, 80, 1),
+            rgba(219, 5, 99, 1));
+    font-size: 2rem;
+    width: 120px;
+    transition: 0.2s;
+}
+
+.rainbow-button:hover {
+    font-size: 2.1rem;
+    width: 125px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
 }

@@ -16,4 +16,5 @@ public class UserBattle
 
     public ICollection<Card> Cards { get; set; } = new List<Card>();
     public bool IsTheirTurn { get; set; } = false;
+    public int ActionsLeft { get; set; } = 0;
 }

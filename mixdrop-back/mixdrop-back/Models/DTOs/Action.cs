@@ -2,6 +2,6 @@
 
 public class Action
 {
-    public ICollection<CardToPlay> Cards { get; set; } = new List<CardToPlay>();
-    public ICollection<ActionType> ActionsType { get; set; } = new List<ActionType>();
+    public CardToPlay Card{ get; set; }
+    public ActionType ActionType { get; set; }
 }

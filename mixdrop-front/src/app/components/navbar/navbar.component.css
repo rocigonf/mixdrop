@@ -31,17 +31,8 @@ span {
     vertical-align: middle;
     height: 40px;
     width: 40px;
-    padding-left: 10px;
-    padding-top: 5px;
-}
-
-.marco {
-    z-index: 2;
-    position: absolute;
-    height: 50px;
-    width: 60px;
-    margin: 0;
-    cursor: pointer;
+    border: 2px solid white;
+    border-radius: 5px;
 }
 
 .nav-right {
@@ -79,6 +70,7 @@ a :hover{
 
     .avatar {
         height: 30px;
+        width: 30px;
     }
 
     span {
