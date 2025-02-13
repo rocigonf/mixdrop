@@ -23,7 +23,7 @@ public class Program
          
         Console.WriteLine("Procesando...");
 
-        HellIsForever.ChangeBPM("wwwroot/songs/input/vocal/vocal.wav", "output.wav", 1, 1.28f);
+        //HellIsForever.ChangeBPM("wwwroot/songs/input/vocal/vocal.wav", "output.wav", 1, 1.28f);
 
         // HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
         // HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);
@@ -50,7 +50,7 @@ public class Program
         builder.Services.AddScoped<FriendshipService>();
         builder.Services.AddScoped<BattleService>();
 
-        builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
+        builder.Services.AddScoped<AudioModifier>(); // Habrá que cambiarle el nombre xD
 
         // Inyección del servicio de WebSocket como Singleton
         builder.Services.AddSingleton<WebSocketHandler>();
