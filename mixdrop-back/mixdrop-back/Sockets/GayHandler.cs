@@ -1,4 +1,4 @@
-﻿using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Sockets.Game;
