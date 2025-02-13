@@ -36,7 +36,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Voz", "Piano"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)) {
             <button (click)="useCard(0)">Colocar carta</button>
             }
         </div>
@@ -57,7 +57,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Piano"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Main"], cardToUse.track.part.name)) {
             <button (click)="useCard(1)">Colocar carta</button>
             }
         </div>
@@ -78,7 +78,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Piano", "Guitarra"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Main", "Bass"], cardToUse.track.part.name)) {
             <button (click)="useCard(2)">Colocar carta</button>
             }
         </div>
@@ -99,7 +99,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Guitarra"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Bass"], cardToUse.track.part.name)) {
             <button (click)="useCard(3)">Colocar carta</button>
             }
         </div>
@@ -119,7 +119,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Batería", "Guitarra"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name)) {
             <button (click)="useCard(4)">Colocar carta</button>
             }
         </div>
@@ -149,6 +149,7 @@
 
 
 <!-- Esto obviamente si tradujésemos el juego no se podría hacer xD -->
+ <!--
 @if(bonus != "")
 {
     <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
@@ -172,7 +173,7 @@
         <p>No hay carta</p>
         }
 
-        <!-- Esto lo mismo está un poco tinky winky xD -->
+        
         @if(cardToUse)
         {
             @switch ($index)
@@ -209,6 +210,7 @@
     }
     <button (click)="useButton()">MIXDROP</button>
 </div>
+-->
 }
 @else {
 <p>Cargando...</p>
