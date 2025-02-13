@@ -8,4 +8,5 @@ public class UserBattleDto
     public bool IsTheirTurn { get; set; } = false;
     public int Punctuation { get; set; }
     public int BattleResultId { get; set; }
+    public int ActionsLeft { get; set; } = 0;
 }

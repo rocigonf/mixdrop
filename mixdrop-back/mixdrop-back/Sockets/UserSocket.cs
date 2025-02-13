@@ -35,9 +35,16 @@ public class UserSocket
                 string message = await ReadAsync();
                 Dictionary<object, object> dictInput = GetActionMessage(message);
 
+
                 // Si ha recibido algo
                 if (!string.IsNullOrWhiteSpace(message))
                 {
+                    if (dictInput == null)
+                    {
+                        Console.WriteLine("El diccionario no es válido");
+                        continue;
+                    }
+
                     // AQUÍ TRASLADO EL MENSAJE AL ENUM Y HAGO SWITCH (POR AHORA) (ahora el messageType está en el catch de GetActionMessage()
                     JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                     options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -117,6 +124,10 @@ public class UserSocket
             }
             catch (Exception e)
             {
+                if(e is System.FormatException)
+                {
+                    continue;
+                }
                 Console.WriteLine($"Error: {e}");
             }
             // Leemos el mensaje
@@ -149,12 +160,12 @@ public class UserSocket
 
             JsonElement actionElement = elem.GetProperty("action");
 
-            ICollection<CardToPlay> cardsToPlay = actionElement.GetProperty("cards").Deserialize<ICollection<CardToPlay>>();
-            ICollection<ActionType> actionsType = actionElement.GetProperty("actionsType").Deserialize<ICollection<ActionType>>();
-            Models.DTOs.Action action = actionElement.Deserialize<Models.DTOs.Action>();
+            CardToPlay cardToPlay = actionElement.GetProperty("card").Deserialize<CardToPlay>();
+            ActionType actionType = actionElement.GetProperty("actionType").Deserialize<ActionType>();
 
-            action.Cards = cardsToPlay;
-            action.ActionsType = actionsType;
+            Models.DTOs.Action action = actionElement.Deserialize<Models.DTOs.Action>();
+            action.Card = cardToPlay;
+            action.ActionType = actionType;
 
             dict.Add("action", action);
         }
