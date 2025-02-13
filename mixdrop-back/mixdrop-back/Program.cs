@@ -50,7 +50,7 @@ public class Program
         builder.Services.AddScoped<FriendshipService>();
         builder.Services.AddScoped<BattleService>();
 
-        builder.Services.AddScoped<HellIsForever>(); // Habrá que cambiarle el nombre xD
+        builder.Services.AddScoped<AudioModifier>(); // Habrá que cambiarle el nombre xD
 
         // Inyección del servicio de WebSocket como Singleton
         builder.Services.AddSingleton<WebSocketHandler>();

@@ -7,9 +7,9 @@ namespace mixdrop_back;
 // https://stackoverflow.com/questions/52795472/how-to-use-naudio-soundtouch-to-stream-mp3-in-asp-net-mvc-5
 // MIXEAR: https://github.com/naudio/NAudio/blob/master/Docs/MixTwoAudioFilesToWav.md
 
-public class HellIsForever
+public class AudioModifier
 {
-    public static void ChangeBPM(string inputFile, string outputFile, float newTempo = 1.0f, float newPitch = 1.0f)
+    public byte[] Modify(string inputFile, float newTempo = 1.0f, float newPitch = 1.0f)
     {
         AudioFileReader reader = new AudioFileReader(inputFile);
 
@@ -19,7 +19,10 @@ public class HellIsForever
             Tempo = newTempo
         };
 
-        WaveFileWriter.CreateWaveFile(outputFile, pitchChanger); // Tambien tiene un método para guardarlo en un Stream (instanciando antes un MemoryStream)
+        using MemoryStream memoryStream = new MemoryStream();
+        WaveFileWriter.WriteWavFileToStream(memoryStream, pitchChanger);
+
+        return memoryStream.ToArray();
     }
 
     public static void MixFiles(string file1, string file2, string outputFile)
