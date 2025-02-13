@@ -19,14 +19,13 @@ public class GayHandler // GameHandler :3
     private static ICollection<Card> _cards = new List<Card>();
 
     private readonly Board _board = new Board();
+    private readonly AudioModifier _audioModifier = new AudioModifier();
 
     private int TotalActions { get; set; } = 0;
     private int TotalTurns { get; set; } = 0;
 
     private readonly UserBattleMapper _mapper = new UserBattleMapper();
     private readonly Random _random = new Random();
-
-    private const string OUTPUT_SONGS_FOLDER = "songs/output/";
 
     private string Bonus { get; set; } = "";
 
@@ -123,8 +122,7 @@ public class GayHandler // GameHandler :3
             return;
         }
 
-        string filePath = "";
-        string mix = "";
+        byte[] output = [];
 
         // Juega las cartas que quiera
         if (action.Card != null)
@@ -209,7 +207,7 @@ public class GayHandler // GameHandler :3
             }
 
             // Establezco la nueva mezcla
-            filePath = PlayMusic(_board.Playing, existingCard);
+            output = PlayMusic(_board.Playing, existingCard);
             playerInTurn.Punctuation += 1;
 
             if (TotalTurns >= 1)
@@ -235,10 +233,47 @@ public class GayHandler // GameHandler :3
             }
         }
 
+        Dictionary<object, object> dict = new Dictionary<object, object>
+        {
+            { "messageType", MessageType.TurnResult },
+            { "board", _board },
+            { "player", _mapper.ToDto(playerInTurn) },
+            { "filepath", Convert.ToBase64String(output) },
+            { "bonus", Bonus },
+            { "position", action.Card?.Position },
+        };
+
+        await NotifyUsers(dict, playerInTurn, otherUser);
+
         // Si aún puede seguir jugando
         if (playerInTurn.ActionsLeft > 0)
         {
             return;
+        }
+
+        // Doy por terminada la batalla
+        if (playerInTurn.Punctuation == 21)
+        {
+            await EndBattle(playerInTurn, otherUser, unitOfWork);
+            dict["messageType"] = MessageType.EndGame;
+        }
+        else
+        {
+            if (otherUser.IsBot)
+            {
+                output = await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
+                dict["board"] = _board; // Actualizo de vuelta el tablero
+                dict["filepath"] = output;
+                playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
+            }
+            else
+            {
+                playerInTurn.IsTheirTurn = false;
+
+                otherUser.IsTheirTurn = true;
+                otherUser.TimePlayed = 120;
+                otherUser.ActionsLeft = ACTIONS_REQUIRED;
+            }
         }
 
         // Si el total de acciones en la partida es par, significa que se ha completado un turno entero
@@ -260,43 +295,13 @@ public class GayHandler // GameHandler :3
             }
         }
 
-        // Cambio el turno
-        Dictionary<object, object> dict = new Dictionary<object, object>
-        {
-            { "messageType", MessageType.TurnResult },
-            { "board", _board },
-            { "player", _mapper.ToDto(playerInTurn) },
-            { "filepath", filePath },
-            { "mix" , mix },
-            { "bonus", Bonus }
-        };
+        await NotifyUsers(dict, playerInTurn, otherUser);
+    }
 
+    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser)
+    {
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-
-        // Doy por terminada la batalla
-        if (playerInTurn.Punctuation == 21)
-        {
-            await EndBattle(playerInTurn, otherUser, unitOfWork);
-            dict["messageType"] = MessageType.EndGame;
-        }
-        else
-        {
-            if (otherUser.IsBot)
-            {
-                await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
-                dict["board"] = _board; // Actualizo de vuelta el tablero
-                playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
-            }
-            else
-            {
-                playerInTurn.IsTheirTurn = false;
-
-                otherUser.IsTheirTurn = true;
-                otherUser.TimePlayed = 120;
-                otherUser.ActionsLeft = ACTIONS_REQUIRED;
-            }
-        }
 
         // Notifico a los usuarios
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), playerInTurn.UserId);
@@ -315,9 +320,9 @@ public class GayHandler // GameHandler :3
         return desiredType == actualType ? 1 : 0;
     }
 
-    private async Task<string> DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
+    private async Task<byte[]> DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
     {
-        string filePath = "";
+        byte[] output = [];
         int totalActions = 0;
 
         while (totalActions < ACTIONS_REQUIRED)
@@ -357,7 +362,7 @@ public class GayHandler // GameHandler :3
                     bot.Cards.Remove(card); 
                     bot.Punctuation++;
 
-                    filePath = PlayMusic(_board.Playing, card);
+                    output = PlayMusic(_board.Playing, card);
 
                     if (TotalTurns >= 1)
                     {
@@ -394,7 +399,7 @@ public class GayHandler // GameHandler :3
             dict["messageType"] = MessageType.EndGame;
         }
 
-        return filePath;
+        return output;
     }
 
     private void SpinTheWheel(UserBattle opponent)
@@ -493,74 +498,49 @@ public class GayHandler // GameHandler :3
         return possibleTypes.Contains(actualType);
     }
 
-    private string PlayMusic(Track playing, Card card)
+    private byte[] PlayMusic(Track playing, Card card)
     {
         if (playing == null)
         {
             _board.Playing = card.Track;
-            return card.Track.TrackPath;
+            return File.ReadAllBytes("wwwroot/" + card.Track.TrackPath);
         }
         else
         {
-            // Ficheros de guardado
-            string relativePathCurrent = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-            string relativePathNew = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-            string output = $"wwwroot/{OUTPUT_SONGS_FOLDER}{Guid.NewGuid()}.wav";
-
             // Cálculo de los nuevos BPM
             float currentBpm = playing.Song.Bpm;
             float cardBpm = card.Track.Song.Bpm;
 
-            bool changeSecond = true;
-
-            // Si es voz
-            if (card.Track.PartId == 1)
-            {
-                changeSecond = false;
-            }
-
-            float changeForCurrent = (currentBpm - cardBpm) / currentBpm;
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
-
-            float newBpmForCurrent = CalculateNewBpm(changeForCurrent);
             float newBpmForCard = CalculateNewBpm(changeForCard);
 
-            // Cálculo del nuevo pitch
+            // Cálculo del nuevo pitch (CALCULAR COMO EN EL BPM PORQUE SI EN LA NOTA "Do" LA CANTIDAD SE SEMITONOS A DIVIDIR SERÍA 0)            
             int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
-            // calcular cuanto habria que subir o bajar con el diccionario
-            int difference = Math.Abs(semitoneCard - semitoneCurrent);
-            float pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            int difference = semitoneCard - semitoneCurrent;
+            float pitchFactor = 1.0f;
 
-            float newBpm = playing.Song.Bpm;
-
-            if (!changeSecond)
+            // Sólo aplico si es mayor que 1
+            if (Math.Abs(difference) > 1)
             {
-                HellIsForever.ChangeBPM("wwwroot/" + playing.TrackPath, relativePathCurrent, newBpmForCurrent);
-                HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, 1.0f, pitchFactor);
-                newBpm = card.Track.Song.Bpm;
-            }
-            else
-            {
-                HellIsForever.ChangeBPM("wwwroot/" + card.Track.TrackPath, relativePathNew, newBpmForCard, pitchFactor);
-                relativePathCurrent = "wwwroot/" + playing.TrackPath;
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
             }
 
-            // TODO: El servidor no mezcla los archivos, sino que pasa la pista modificada (el stream) y se junta en el cliente con SoundTouchJS
-            HellIsForever.MixFiles(relativePathCurrent, relativePathNew, output);
+            byte[] newAudio = _audioModifier.Modify("wwwroot/" + card.Track.TrackPath, newBpmForCard, pitchFactor);
+            //byte[] message = [..BitConverter.GetBytes(card.Id), .. newAudio];
+            byte[] message = [..newAudio];
 
             _board.Playing = new Track()
             {
-                TrackPath = output.Replace("wwwroot/", ""),
                 Song = new Song()
                 {
-                    Bpm = newBpm,
-                    Pitch = MusicNotes.NOTE_MAP_REVERSE[difference],
+                    Bpm = playing.Song.Bpm,
+                    Pitch = playing.Song.Pitch,
                 }
             };
 
-            return output.Replace("wwwroot/", "");
+            return message;
 
         }
     }
