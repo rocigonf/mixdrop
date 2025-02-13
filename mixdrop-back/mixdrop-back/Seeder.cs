@@ -130,25 +130,25 @@ public class Seeder
     {
         Card[] cards = {
             /* VOCALES */
-            new Card {
-                ImagePath = "cards/kingoftheworld_lead.jpg",
-                Level = 1,
-                Track = new Track
-                {
-                    TrackPath = "Songs/Input/Vocal/KingOfTheWorld_LEAD_KingOfTheWorld_VOX_Gb_80(120).mp3",
-                    Song = new Song // TODO: Poner cada canción y artista en sus métodos respectivos 😭
-                    {
-                        Name = "King Of The World",
-                        Bpm = 80,
-                        Pitch = "Gb",
-                        Artist = new Artist {
-                            Name = "Weezer"
-                        }
-                    },
-                    PartId = 1
-                },
-                CardTypeId = 1
-            },
+            //new Card {
+            //    ImagePath = "cards/kingoftheworld_lead.jpg",
+            //    Level = 1,
+            //    Track = new Track
+            //    {
+            //        TrackPath = "Songs/Input/Vocal/KingOfTheWorld_LEAD_KingOfTheWorld_VOX_Gb_80(120).mp3",
+            //        Song = new Song // TODO: Poner cada canción y artista en sus métodos respectivos 😭
+            //        {
+            //            Name = "King Of The World",
+            //            Bpm = 80,
+            //            Pitch = "Gb",
+            //            Artist = new Artist {
+            //                Name = "Weezer"
+            //            }
+            //        },
+            //        PartId = 1
+            //    },
+            //    CardTypeId = 1
+            //},
             new Card {
                 ImagePath = "cards/bringmetolife_lead.jpg",
                 Level = 2,
@@ -265,25 +265,25 @@ public class Seeder
                 },
                 CardTypeId = 2
             },
-            new Card {
-                ImagePath = "cards/closer_loop.jpg",
-                Level = 1,
-                Track = new Track
-                {
-                    TrackPath = "Songs/Input/Main/Closer_LOOP_Closer_LOOP_min.mp3",
-                    Song = new Song
-                    {
-                        Name = "Closer",
-                        Bpm = 95,
-                        Pitch = "Fm",
-                        Artist = new Artist {
-                            Name = "The Chainsmokers ft.Halsey"
-                        }
-                    },
-                    PartId = 2
-                },
-                CardTypeId = 2
-            },
+            //new Card {
+            //    ImagePath = "cards/closer_loop.jpg",
+            //    Level = 1,
+            //    Track = new Track
+            //    {
+            //        TrackPath = "Songs/Input/Main/Closer_LOOP_Closer_LOOP_min.mp3",
+            //        Song = new Song
+            //        {
+            //            Name = "Closer",
+            //            Bpm = 95,
+            //            Pitch = "Fm",
+            //            Artist = new Artist {
+            //                Name = "The Chainsmokers ft.Halsey"
+            //            }
+            //        },
+            //        PartId = 2
+            //    },
+            //    CardTypeId = 2
+            //},
             new Card {
                 ImagePath = "cards/animals3_loop.jpg",
                 Level = 2,
@@ -322,25 +322,25 @@ public class Seeder
                 },
                 CardTypeId = 2
             },
-            new Card {
-                ImagePath = "cards/animals0_loop.jpg",
-                Level = 3,
-                Track = new Track
-                {
-                    TrackPath = "Songs/Input/Main/AnimalsGarrix_SYN_AnimalsGarrix_SYN_Fm_128.mp3",
-                    Song = new Song
-                    {
-                        Name = "Animals",
-                        Bpm = 128,
-                        Pitch = "Fm",
-                        Artist = new Artist {
-                            Name = "Martin Garrix"
-                        }
-                    },
-                    PartId = 2
-                },
-                CardTypeId = 2
-            },
+            //new Card {
+            //    ImagePath = "cards/animals0_loop.jpg",
+            //    Level = 3,
+            //    Track = new Track
+            //    {
+            //        TrackPath = "Songs/Input/Main/AnimalsGarrix_SYN_AnimalsGarrix_SYN_Fm_128.mp3",
+            //        Song = new Song
+            //        {
+            //            Name = "Animals",
+            //            Bpm = 128,
+            //            Pitch = "Fm",
+            //            Artist = new Artist {
+            //                Name = "Martin Garrix"
+            //            }
+            //        },
+            //        PartId = 2
+            //    },
+            //    CardTypeId = 2
+            //},
 
             /* BAJO */
 
@@ -401,25 +401,25 @@ public class Seeder
                 },
                 CardTypeId = 3
             },
-            new Card {
-                ImagePath = "cards/shutupanddance_bass.jpg",
-                Level = 2,
-                Track = new Track
-                {
-                    TrackPath = "Songs/Input/Bass/ShutUpAndDance_BASS_ShutUpAndDance_BASS_maj.mp3",
-                    Song = new Song
-                    {
-                        Name = "Shut Up And Dance",
-                        Bpm = 128,
-                        Pitch = "Db",
-                        Artist = new Artist {
-                            Name = "Walk The Moon"
-                        }
-                    },
-                    PartId = 3
-                },
-                CardTypeId = 3
-            },
+            //new Card {
+            //    ImagePath = "cards/shutupanddance_bass.jpg",
+            //    Level = 2,
+            //    Track = new Track
+            //    {
+            //        TrackPath = "Songs/Input/Bass/ShutUpAndDance_BASS_ShutUpAndDance_BASS_maj.mp3",
+            //        Song = new Song
+            //        {
+            //            Name = "Shut Up And Dance",
+            //            Bpm = 128,
+            //            Pitch = "Db",
+            //            Artist = new Artist {
+            //                Name = "Walk The Moon"
+            //            }
+            //        },
+            //        PartId = 3
+            //    },
+            //    CardTypeId = 3
+            //},
             new Card {
                 ImagePath = "cards/mvp2_bass.jpg",
                 Level = 3,
@@ -495,9 +495,9 @@ public class Seeder
                             Name = "Bullwheel"
                         }
                     },
-                    PartId = 3
+                    PartId = 4
                 },
-                CardTypeId = 3
+                CardTypeId = 4
             },
         };
         await _context.Cards.AddRangeAsync(cards);
