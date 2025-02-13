@@ -5,24 +5,85 @@
 .board
 {
     display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
 }
-
-.card 
-{
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    border: 2px solid white;
-    width: 200px;
-}
-
-.card img{
-    width: 95%;
-    height: 100px;
-}
-
 
 .myCarts{
     display: flex;
     gap: 10px;
+    
 }
+
+.card 
+{
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 2px solid white;
+    height: 200px;
+    width: 160px;
+    background-color: black;
+}
+
+.card img{
+    width: 95%;
+    height: 80%;
+}
+
+
+
+.countDown{
+    color: red;
+    font-size: 2rem;
+}
+
+.slot0{
+    border-radius: 10px;
+    background: linear-gradient(to right, rgb(238, 255, 0), rgb(255, 46, 81));
+}
+
+.slot1{
+    border-radius: 10px;
+    background-color:  rgb(255, 46, 81);
+}
+
+.slot2{
+    border-radius: 10px;
+    background: linear-gradient(to right, rgb(255, 46, 81), rgb(0, 225, 255));
+}
+
+.slot3{
+    border-radius: 10px;
+    background-color: rgb(0, 225, 255);
+}
+
+.slot4{
+    border-radius: 10px;
+    background: linear-gradient(to right, rgb(0, 255, 255), rgb(43, 228, 89));
+}
+
+.card:after {
+    content:"";
+    position:relative;
+    left:0px;
+    top: 0;
+    width: 0; 
+    height: 0; 
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-top: 30px solid #f00;
+    z-index:2;
+  }
+  
+.triangulo{
+      width: 0;
+  height: 0;
+  border-top: 100px solid #000; 
+  border-right: 100px solid transparent;  
+}
+
+
+

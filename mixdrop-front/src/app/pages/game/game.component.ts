@@ -42,10 +42,12 @@ export class GameComponent implements OnInit, OnDestroy {
 
   audio: HTMLAudioElement | null = null;
 
+  time: number = 120;
+
   board: Board = {
     playing: null,
     slots: [
-      new Slot(), new Slot(), new Slot(), new Slot()
+      new Slot(), new Slot(), new Slot(), new Slot(), new Slot()
     ]
   }
   cardToUse: Card | null = null
@@ -58,7 +60,8 @@ export class GameComponent implements OnInit, OnDestroy {
   private activeSources: Map<number, AudioBufferSourceNode> = new Map;
 
   constructor(private webSocketService: WebsocketService,
-    public battleService : BattleService,
+    private route: Router,
+    public battleService: BattleService,
     public authService: AuthService,
     private router: Router) {
   }
@@ -94,8 +97,10 @@ export class GameComponent implements OnInit, OnDestroy {
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
         this.userBattle = jsonResponse.userBattleDto
-        break
+        
+        break;
       case MessageType.TurnResult:
+
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
         this.bonus = jsonResponse.bonus
@@ -106,13 +111,14 @@ export class GameComponent implements OnInit, OnDestroy {
           this.playAudio(this.mix); 
         }
         break
+
       case MessageType.EndGame:
         // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
         alert("Se acabó el juego :D")
         this.gameEnded = true
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
-        break
+        break;
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
@@ -132,6 +138,8 @@ export class GameComponent implements OnInit, OnDestroy {
   selectCard(card: Card) {
     this.cardToUse = card
   }
+
+
 
   useCard(desiredPosition: number) {
     if (this.cardToUse) {
