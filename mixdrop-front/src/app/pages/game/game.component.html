@@ -43,7 +43,7 @@
             <span>Parte: {{ board.slots[0].card.track.part.name }}</span>
             <p>Nivel: {{ board.slots[0].card.level }}</p>
             <img [src]="IMG_URL + board.slots[0].card.imagePath" alt="imagen">
-            @if (cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) && board.slots[0].card.level <= cardToUse.level) {
                 <button (click)="useCard(0)">Colocar carta</button>
                 }
         </div>
@@ -51,7 +51,7 @@
         }
         @else {
         <div class="card">
-            @if (cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) ) {
             <button (click)="useCard(0)">Colocar carta</button>
             }
         </div>
@@ -68,7 +68,7 @@
             <span>Parte: {{ board.slots[1].card.track.part.name }}</span>
             <p>Nivel: {{ board.slots[1].card.level }}</p>
             <img [src]="IMG_URL + board.slots[1].card.imagePath" alt="imagen">
-            @if (cardToUse && checkType(["Main"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Main"], cardToUse.track.part.name) && board.slots[1].card.level <= cardToUse.level ) {
                 <button (click)="useCard(1)">Colocar carta</button>
                 }
         </div>
@@ -92,7 +92,7 @@
             <span>Parte: {{ board.slots[2].card.track.part.name }}</span>
             <p>Nivel: {{ board.slots[2].card.level }}</p>
             <img [src]="IMG_URL + board.slots[2].card.imagePath" alt="imagen">
-            @if (cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name) && board.slots[2].card.level <= cardToUse.level) {
                 <button (click)="useCard(2)">Colocar carta</button>
                 }
         </div>
@@ -116,7 +116,7 @@
             <span>Parte: {{ board.slots[3].card.track.part.name }}</span>
             <p>Nivel: {{ board.slots[3].card.level }}</p>
             <img [src]="IMG_URL + board.slots[3].card.imagePath" alt="imagen">
-            @if (cardToUse && checkType(["Drums"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Drums"], cardToUse.track.part.name) && board.slots[3].card.level <= cardToUse.level) {
                 <button (click)="useCard(3)">Colocar carta</button>
                 }
         </div>
@@ -139,7 +139,7 @@
             <span>Parte: {{ board.slots[4].card.track.part.name }}</span>
             <span>Nivel: {{ board.slots[4].card.level }}</span>
             <img [src]="IMG_URL + board.slots[4].card.imagePath" alt="imagen">
-            @if (cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name)) {
+            @if (cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name) && board.slots[4].card.level <= cardToUse.level) {
                 <button (click)="useCard(4)">Colocar carta</button>
                 }
         </div>
@@ -154,7 +154,7 @@
     </div>
     
 </div>
-
+<br><br>
 
 <h1>TUS CARTAS</h1>
 <div class="myCarts">
