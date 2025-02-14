@@ -110,7 +110,9 @@ public class WebSocketHandler
 
         if (sendNotif)
         {
-            await battleService.DeleteBattleByObject(battles.First(), disconnectedHandler.User.Id, true);
+            UserBattle user = battles.First().BattleUsers.FirstOrDefault(u => u.UserId == disconnectedHandler.User.Id);
+            UserBattle otherUser = battles.First().BattleUsers.FirstOrDefault(u => u.UserId != disconnectedHandler.User.Id);
+            await battleService.EndBattle(battles.First(), otherUser, user, true);
         }
 
         await SendStatsMessage();
