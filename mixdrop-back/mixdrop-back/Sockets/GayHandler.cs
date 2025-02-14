@@ -11,6 +11,7 @@ namespace mixdrop_back.Sockets;
 public class GayHandler // GameHandler :3
 {
     private const int ACTIONS_REQUIRED = 1;
+    private const int POINTS_REQUIRED = 21;
 
     public readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public Battle Battle { get; set; }
@@ -116,13 +117,15 @@ public class GayHandler // GameHandler :3
         UserBattle playerInTurn = _participants.FirstOrDefault(u => u.UserId == userId && u.IsTheirTurn);
         UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
 
+        byte[] output = [];
+        List<int> positions = new List<int>();
+        bool spinTheWheel = false;
+
         if (playerInTurn == null)
         {
             Console.WriteLine("No le toca a este jugador");
             return;
         }
-
-        byte[] output = [];
 
         // Juega las cartas que quiera
         if (action.Card != null)
@@ -136,6 +139,13 @@ public class GayHandler // GameHandler :3
             if (existingCard == null)
             {
                 Console.WriteLine("La carta no existe");
+                return;
+            }
+
+            Slot alreadyPlacedCard = _board.Slots.FirstOrDefault(s => s.Card?.Id == card.CardId);
+            if(alreadyPlacedCard != null)
+            {
+                Console.WriteLine("Esa carta ya está en juego :(");
                 return;
             }
 
@@ -193,6 +203,8 @@ public class GayHandler // GameHandler :3
             playerInTurn.Cards.Remove(existingCard);
             playerInTurn.Cards.Add(_cards.ElementAt(_random.Next(0, _cards.Count)));
 
+            positions.Add(card.Position);
+
             // Bonificaciones random
             switch (Bonus)
             {
@@ -228,55 +240,13 @@ public class GayHandler // GameHandler :3
             switch (actionType.Name)
             {
                 case "button":
-                    SpinTheWheel(otherUser);
+                    positions = SpinTheWheel(otherUser);
+                    spinTheWheel = true;
                     playerInTurn.ActionsLeft--;
                     break;
                 default:
                     Console.WriteLine("La acción no existe");
                     break;
-            }
-        }
-
-        Dictionary<object, object> dict = new Dictionary<object, object>
-        {
-            { "messageType", MessageType.TurnResult },
-            { "board", _board },
-            { "player", _mapper.ToDto(playerInTurn) },
-            { "filepath", Convert.ToBase64String(output) },
-            { "bonus", Bonus },
-            { "position", action.Card?.Position },
-        };
-
-        await NotifyUsers(dict, playerInTurn, otherUser);
-
-        // Si aún puede seguir jugando
-        if (playerInTurn.ActionsLeft > 0)
-        {
-            return;
-        }
-
-        // Doy por terminada la batalla
-        if (playerInTurn.Punctuation == 21)
-        {
-            await EndBattle(playerInTurn, otherUser, unitOfWork);
-            dict["messageType"] = MessageType.EndGame;
-        }
-        else
-        {
-            if (otherUser.IsBot)
-            {
-                output = await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
-                dict["board"] = _board; // Actualizo de vuelta el tablero
-                dict["filepath"] = output;
-                playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
-            }
-            else
-            {
-                playerInTurn.IsTheirTurn = false;
-
-                otherUser.IsTheirTurn = true;
-                otherUser.TimePlayed = 120;
-                otherUser.ActionsLeft = ACTIONS_REQUIRED;
             }
         }
 
@@ -289,7 +259,7 @@ public class GayHandler // GameHandler :3
             // CUANDO TERMINO EL TURNO, GENERO UN BONUS ALEATORIO (25% de que ocurra, idk cuanto es en Dropmix realmente, y lo mismo habría que poner por nivel también)
             int random = _random.Next(0, 100);
             string[] colors = ["Amarillo", "Rojo", "Verde", "Azul"];
-            if(random < 25)
+            if (random < 25)
             {
                 Bonus = colors[_random.Next(0, colors.Length)];
             }
@@ -299,15 +269,64 @@ public class GayHandler // GameHandler :3
             }
         }
 
+        Dictionary<object, object> dict = new Dictionary<object, object>
+        {
+            { "messageType", MessageType.TurnResult },
+            { "board", _board },
+            { "player", null },
+            { "filepath", Convert.ToBase64String(output) },
+            { "bonus", Bonus },
+            { "position", positions },
+            { "otherplayer", otherUser.Punctuation },
+            { "wheel", spinTheWheel },
+        };
+
         await NotifyUsers(dict, playerInTurn, otherUser);
+
+        // Si aún puede seguir jugando
+        if (playerInTurn.ActionsLeft > 0)
+        {
+            return;
+        }
+
+        // Doy por terminada la batalla
+        if (playerInTurn.Punctuation == POINTS_REQUIRED)
+        {
+            await EndBattle(playerInTurn, otherUser, unitOfWork);
+
+            dict["player"] = _mapper.ToDto(playerInTurn);
+            await NotifyUsers(dict, playerInTurn, otherUser, true);
+        }
+        else
+        {
+            if (otherUser.IsBot)
+            {
+                await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
+                playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
+            }
+            else
+            {
+                playerInTurn.IsTheirTurn = false;
+
+                otherUser.IsTheirTurn = true;
+                otherUser.TimePlayed = 120;
+                otherUser.ActionsLeft = ACTIONS_REQUIRED;
+            }
+        }
     }
 
-    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser)
+    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser, bool end = false)
     {
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
+        if(end)
+        {
+            dict["messageType"] = MessageType.EndGame;
+        }
+
         // Notifico a los usuarios
+        dict["player"] = _mapper.ToDto(playerInTurn);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), playerInTurn.UserId);
 
         if (otherUser.IsBot)
@@ -324,17 +343,20 @@ public class GayHandler // GameHandler :3
         return desiredType == actualType ? 1 : 0;
     }
 
-    private async Task<byte[]> DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
+    private async Task DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
     {
-        byte[] output = [];
+        byte[] output;
         int totalActions = 0;
+        bool spinTheWheel = false;
+        bool end = false;
 
         while (totalActions < ACTIONS_REQUIRED)
         {
             bool couldPlay = false;
 
-            foreach (Slot currentSlot in _board.Slots)
+            for(int i = 0; i < _board.Slots.Length; i++)
             {
+                Slot currentSlot = _board.Slots.ElementAt(i);
                 Card card = GetValidCardForSlot(currentSlot, bot);
                 if(card == null)
                 {
@@ -368,6 +390,10 @@ public class GayHandler // GameHandler :3
                     bot.Punctuation++;
 
                     output = PlayMusic(_board.Playing, card);
+                    dict["filepath"] = Convert.ToBase64String(output);
+                    dict["position"] = new List<int>() { i };
+                    dict["board"] = _board;
+                    dict["otherplayer"] = bot.Punctuation;
 
                     if (TotalTurns >= 1)
                     {
@@ -387,9 +413,20 @@ public class GayHandler // GameHandler :3
             // Si no pudo jugar ninguna carta, tira la ruleta
             if (!couldPlay)
             {
-                SpinTheWheel(notBot);
+                dict["position"] = SpinTheWheel(notBot);
+                spinTheWheel = true;
                 totalActions++;
             }
+
+            if (bot.Punctuation == POINTS_REQUIRED)
+            {
+                await EndBattle(bot, notBot, unitOfWork);
+                totalActions = ACTIONS_REQUIRED;
+                end = true;
+            }
+
+            dict["wheel"] = spinTheWheel;
+            await NotifyUsers(dict, notBot, bot, end);
         }
 
         TotalActions++;
@@ -397,39 +434,37 @@ public class GayHandler // GameHandler :3
         {
             TotalTurns++;
         }
-
-        if (bot.Punctuation == 21)
-        {
-            await EndBattle(bot, notBot, unitOfWork);
-            dict["messageType"] = MessageType.EndGame;
-        }
-
-        return output;
     }
 
-    private void SpinTheWheel(UserBattle opponent)
+    private List<int> SpinTheWheel(UserBattle opponent)
     {
         int result = _random.Next(0, 100);
+        List<int> positions;
+
         if (result < 50)
         {
-            RemoveCardsOfLevel(3, opponent);
+            positions = RemoveCardsOfLevel(3, opponent);
         }
         else if (result >= 50 && result < 75)
         {
-            RemoveCardsOfLevel(2, opponent);
+            positions = RemoveCardsOfLevel(2, opponent);
         }
         else if(result >= 75 && result < 90)
         {
-            RemoveCardsOfLevel(1, opponent);
+            positions = RemoveCardsOfLevel(1, opponent);
         }
         else
         {
-            RemoveCardsOfLevel(0, opponent);
+            positions = RemoveCardsOfLevel(0, opponent);
         }
+
+        return positions;
     }
 
-    private void RemoveCardsOfLevel(int level, UserBattle player)
+    private List<int> RemoveCardsOfLevel(int level, UserBattle player)
     {
+        List<int> positions = new List<int>();
+
         for (int i = 0; i < _board.Slots.Length; i++)
         {
             Slot slot = _board.Slots[i];
@@ -441,12 +476,16 @@ public class GayHandler // GameHandler :3
             if(level == 0)
             {
                 slot.Card = null;
+                positions.Add(i);
             }
             else if(slot.Card.Level == level)
             {
                 slot.Card = null;
+                positions.Add(i);
             }
         }
+
+        return positions;
     }
 
     private Card GetValidCardForSlot(Slot slot, UserBattle bot)
@@ -455,15 +494,15 @@ public class GayHandler // GameHandler :3
         switch (Array.IndexOf(_board.Slots, slot))
         {
             case 0:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && c.Id != slot.Card?.Id);
             case 1:
                 return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main"));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && c.Id != slot.Card?.Id);
             case 3:
                 return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums"));
             case 4:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && c.Id != slot.Card?.Id);
             default:
                 return null;
         }

@@ -4,5 +4,5 @@ export interface UserBattleDto {
     cards: Card[],
     isTheirTurn: boolean,
     punctuation: number,
-    battleResult: number
+    battleResultId: number
 }
