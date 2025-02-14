@@ -7,5 +7,4 @@ public class Battle
     public BattleState BattleState { get; set; }
     public int BattleStateId { get; set; }
     public ICollection<UserBattle> BattleUsers { get; set; } = new List<UserBattle>();
-    public ICollection<BattleCard> BattleCarts { get; set; } = new List<BattleCard>();
 }

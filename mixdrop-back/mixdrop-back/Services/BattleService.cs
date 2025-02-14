@@ -143,7 +143,7 @@ public class BattleService
 
         dict.Add("battle", existingBattle);
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), sender.UserId);
-        
+
     }
 
     public async Task StartBattle(int battleId, int userId)
@@ -179,7 +179,7 @@ public class BattleService
     }
 
     // Método borrar batalla o rechazar solicitud de batalla
-    public async Task DeleteBattleById(int battleId, int userId, bool wasAlreadyInRoom = false)
+    public async Task DeleteBattleById(int battleId, int userId)
     {
         // Comprobamos que la batalla existe
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
@@ -189,10 +189,10 @@ public class BattleService
             return;
         }
 
-        await DeleteBattleByObject(existingBattle, userId, wasAlreadyInRoom);
+        await DeleteBattleByObject(existingBattle, userId);
     }
 
-    public async Task DeleteBattleByObject(Battle existingBattle, int userId, bool wasAlreadyInRoom)
+    public async Task DeleteBattleByObject(Battle existingBattle, int userId)
     {
         // Comprobamos que el usuario es parte de la batalla
         UserBattle userBattle = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
@@ -213,11 +213,6 @@ public class BattleService
         // Por si es un bot
         if (otherUser != null)
         {
-            // Si ya estaba en la sala, le digo al otro jugador que se ha desconectado
-            if (wasAlreadyInRoom)
-            {
-                dict["messageType"] = MessageType.DisconnectedFromBattle;
-            }
 
             // Notifico a ambos usuarios a que vuelvan a solicitar las peticiones de batallas
             await Task.WhenAll(
@@ -226,6 +221,52 @@ public class BattleService
         }
     }
 
+    // Esto se podría reutilizar en el timer y en el GayHandler
+    public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser, bool notify = false)
+    {
+        if (battle.BattleStateId == 3)
+        {
+            //BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(4);
+            //ICollection<BattleResult> results = await _unitOfWork.BattleResultRepository.GetAllAsync();
+
+            //battle.BattleState = battleState;
+            battle.BattleStateId = 4;
+
+            //BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
+            //BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
+
+            _unitOfWork.BattleRepository.Update(battle);
+
+            if (!winner.IsBot)
+            {
+                //winner.BattleResult = victory;
+                winner.BattleResultId = 1;
+                _unitOfWork.UserBattleRepository.Update(winner);
+            }
+
+            if (!loser.IsBot)
+            {
+                //loser.BattleResult = defeat;
+                loser.BattleResultId = 2;
+                _unitOfWork.UserBattleRepository.Update(loser);
+            }
+
+            if (notify)
+            {
+                Dictionary<object, object> dict = new Dictionary<object, object>
+                {
+                    { "messageType", MessageType.DisconnectedFromBattle },
+                };
+
+                JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+                await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), winner.UserId);
+            }
+
+            await _unitOfWork.SaveAsync();
+        }
+    }
 
     // Emparejamiento aleatorio
     public async Task RandomBattle(User user)

@@ -6,10 +6,16 @@
 
 
 <p>
-    @if (this.userBattle.isTheirTurn) {
-    Es tu turno
-    } @else {
-    No es tu turno, el contrincante está jugando
+    @if(gameEnded)
+    {
+        <button (click)="router.navigateByUrl('menu')">Volver al menú</button>
+    }
+    @else {
+        @if (this.userBattle.isTheirTurn) {
+            Es tu turno
+        } @else {
+            No es tu turno, el contrincante está jugando
+        }
     }
 </p>
 
@@ -18,7 +24,12 @@
 </div>
 
 <p>Puntuación: {{ userBattle.punctuation }}</p>
+<p>Puntuación del rival: {{ otherPlayerPunct }}</p>
 
+@if(bonus != "")
+{
+    <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
+}
 
 <h1>CARTAS DEL TABLERO</h1>
 <div class="board">
@@ -155,7 +166,7 @@
         <span>Nivel: {{ card.level }}</span>
 
         <img [src]="IMG_URL + card.imagePath" alt="imagen">
-        @if(userBattle.isTheirTurn)
+        @if(userBattle.isTheirTurn && !gameEnded)
         {
         <button (click)="selectCard(card)">Usar</button>
         }
@@ -227,7 +238,9 @@
     
 </div>
 -->
-<button (click)="useButton()">MIXDROP</button>
+@if (!gameEnded) {
+    <button (click)="useButton()">MIXDROP</button>
+}
 }
 @else {
 <p>Cargando...</p>
