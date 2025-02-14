@@ -40,8 +40,6 @@ export class GameComponent implements OnInit, OnDestroy {
   userBattle: UserBattleDto | null = null
   gameEnded: boolean = false
 
-  audio: HTMLAudioElement | null = null;
-
   time: number = 120;
 
   board: Board = {
@@ -55,15 +53,15 @@ export class GameComponent implements OnInit, OnDestroy {
   mix: string = ""
   bonus: string = ""
 
+  otherPlayerPunct : number = 0
+
   private audioContext: AudioContext = new AudioContext();
-  private tracks: Map<number, AudioBuffer> = new Map;
-  private activeSources: Map<number, AudioBufferSourceNode> = new Map;
+  private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
 
   constructor(private webSocketService: WebsocketService,
-    private route: Router,
     public battleService: BattleService,
     public authService: AuthService,
-    private router: Router) {
+    public router: Router) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -76,14 +74,13 @@ export class GameComponent implements OnInit, OnDestroy {
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
       this.askForInfo(MessageType.ShuffleDeckStart)
     }
-
-    this.audioContext.audioWorklet
-      .addModule("./js/soundtouch-worklet.js")
-
   }
 
   ngOnDestroy(): void {
-    this.audio?.pause()
+    for(let i = 0; i < this.activeSources.size; i++)
+    {
+      this.stopTrack(i)
+    }
   }
 
   navigateToUrl(url: string) {
@@ -104,42 +101,94 @@ export class GameComponent implements OnInit, OnDestroy {
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
         this.bonus = jsonResponse.bonus
+        this.otherPlayerPunct = jsonResponse.otherplayer
 
-        if(jsonResponse.filepath != "" ||jsonResponse.mix != "")
+        if(jsonResponse.mix != "")
         {
           this.mix = jsonResponse.filepath
-          this.playAudio(this.mix); 
+          const positions: number[] = jsonResponse.position
+          this.playAudio(this.mix, positions, jsonResponse.wheel); 
         }
         break
 
       case MessageType.EndGame:
-        // TODO: Mostrar si ha ganado o perdido en función del userBattle.battleResultId y poner un botón para volver al inicio
-        alert("Se acabó el juego :D")
         this.gameEnded = true
+
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
+        this.mix = jsonResponse.filepath
+        const positions: number[] = jsonResponse.position
+        this.playAudio(this.mix, positions, jsonResponse.wheel); 
+
+        if(this.userBattle?.battleResultId == 1)
+        {
+          alert("Ganaste :D")
+        }
+        else
+        {
+          alert("Perdiste :(")
+        }
         break;
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
-  async playAudio(encodedAudio: string) {
-    return await new Promise<void>((resolve) => {
-      /*const source = this.audioContext.createBufferSource()
-      source.buffer = encodedAudio*/
-      const audio = new Audio("data:audio/wav;base64," + encodedAudio);
-      audio.onended = () => resolve();
-      audio.loop = true
-      audio.play();
-    })
+  async playAudio(encodedAudio: string, positions: number[], spinTheWheel : boolean) 
+  {
+    if(spinTheWheel)
+    {
+      for(let i = 0; i < positions.length; i++)
+      {
+        this.stopTrack(positions[i])
+      }
+      return;
+    }
+
+    const position = positions[0]
+
+    const slut = this.board.slots[position]
+    if(slut?.card != null)
+    {
+      console.log("Borrando posición indicada: ", position)
+      this.stopTrack(position)
+    }
+
+    const audioBuffer = await this.audioContext.decodeAudioData(this.base64ToArrayBuffer(encodedAudio));
+    const source = this.audioContext.createBufferSource()
+
+    source.buffer = audioBuffer
+    source.loop = true
+
+    source.start(undefined, this.audioContext.currentTime)
+    source.connect(this.audioContext.destination)
+
+    this.activeSources.set(position, source)
+  }
+
+  private stopTrack(position: number)
+  {
+    const source = this.activeSources.get(position)
+    if(source)
+    {
+      source.stop()
+      this.activeSources.delete(position)
+    }
+  }
+
+  // Larga vida a StackOverflow xD (https://stackoverflow.com/questions/21797299/how-can-i-convert-a-base64-string-to-arraybuffer)
+  private base64ToArrayBuffer(base64: string) {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 
   selectCard(card: Card) {
     this.cardToUse = card
   }
-
-
 
   useCard(desiredPosition: number) {
     if (this.cardToUse) {

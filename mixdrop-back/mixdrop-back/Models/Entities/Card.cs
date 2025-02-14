@@ -10,5 +10,4 @@ public class Card
     public int CollectionId { get; set; }
     public Track Track { get; set; }
     public CardType CardType { get; set; } // Comodín, color, etc
-    public ICollection<BattleCard> BattleCards { get; set; } = new List<BattleCard>();
 }
