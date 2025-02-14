@@ -62,6 +62,7 @@ public class GayHandler // GameHandler :3
         if (_participants.Count + 1 == 2)
         {
             player.IsTheirTurn = true;
+            player.TimePlayed = 120;  // 2 minutos para jugar (esta en proceso esto)
             player.ActionsLeft = ACTIONS_REQUIRED;
         }
 
@@ -78,6 +79,37 @@ public class GayHandler // GameHandler :3
             userBattle.Cards.Add(card);
         }
     }
+
+    // TEMPORIZADOR (nose bien como hacerlo :_(  )
+    /*
+    private void Timer(UserBattle userBattle, UnitOfWork unitOfWork)
+    {
+        if (!userBattle.IsTheirTurn)
+        {
+            Console.WriteLine("No le toca a este jugador");
+            return;
+        }
+        if (userBattle.TimePlayed <= 0)
+        {
+            Console.WriteLine("Al jugador no le queda tiempo");
+            return;
+        }
+
+
+        while (userBattle.TimePlayed > 0)
+        {
+            userBattle.TimePlayed--;
+        }
+       
+        if (userBattle.TimePlayed == 0)
+        {   
+            var userEnemy = _participants.FirstOrDefault(u => u.UserId != userBattle.UserId);
+                        
+            EndBattle(userEnemy, userBattle, unitOfWork);
+        }
+
+    }*/
+
 
     public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork)
     {
@@ -136,10 +168,13 @@ public class GayHandler // GameHandler :3
                     isCorrectType = CheckCardType(["Main"], partName);
                     break;
                 case 2:
-                    isCorrectType = CheckCardType(["Bass", "Drums"], partName);
+                    isCorrectType = CheckCardType(["Main", "Drums"], partName);
                     break;
                 case 3:
                     isCorrectType = CheckCardType(["Drums"], partName);
+                    break;
+                case 4:
+                    isCorrectType = CheckCardType(["Drums", "Bass"], partName);
                     break;
                 default:
                     Console.WriteLine("La posición no es correcta");
@@ -156,9 +191,10 @@ public class GayHandler // GameHandler :3
             slut.Card = existingCard;
             slut.UserId = playerInTurn.UserId;
             playerInTurn.Cards.Remove(existingCard);
+            playerInTurn.Cards.Add(_cards.ElementAt(_random.Next(0, _cards.Count)));
 
             // Bonificaciones random
-            switch(Bonus)
+            switch (Bonus)
             {
                 case "Amarillo":
                     playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
@@ -239,6 +275,7 @@ public class GayHandler // GameHandler :3
                 playerInTurn.IsTheirTurn = false;
 
                 otherUser.IsTheirTurn = true;
+                otherUser.TimePlayed = 120;
                 otherUser.ActionsLeft = ACTIONS_REQUIRED;
             }
         }
@@ -326,7 +363,8 @@ public class GayHandler // GameHandler :3
                     currentSlot.Card = card;
                     currentSlot.UserId = 0;
 
-                    bot.Cards.Remove(card); 
+                    bot.Cards.Remove(card);
+                    bot.Cards.Add(_cards.ElementAt(_random.Next(0, _cards.Count)));
                     bot.Punctuation++;
 
                     output = PlayMusic(_board.Playing, card);
@@ -421,9 +459,11 @@ public class GayHandler // GameHandler :3
             case 1:
                 return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main"));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Bass") || c.Track.Part.Name.Equals("Drums")));
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")));
             case 3:
                 return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums"));
+            case 4:
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")));
             default:
                 return null;
         }

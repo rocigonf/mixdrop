@@ -21,7 +21,6 @@ public class MixDropContext : DbContext
     public DbSet<BattleResult> BattleResults { get; set; }
     public DbSet<Card> Cards { get; set; }
     public DbSet<CardType> CardTypes { get; set; }
-    public DbSet<Collection> Collections { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
     public DbSet<Part> Parts { get; set; }
     public DbSet<Song> Songs { get; set; }
