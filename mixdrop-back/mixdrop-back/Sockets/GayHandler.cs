@@ -276,7 +276,7 @@ public class GayHandler // GameHandler :3
         }
 
 
-        if (playerInTurn.ActionsLeft <= 0)
+        if (playerInTurn.ActionsLeft <= 0 && !otherUser.IsBot)
         {
             playerInTurn.IsTheirTurn = false;
             otherUser.IsTheirTurn = true;
