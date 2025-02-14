@@ -27,6 +27,7 @@ public class GayHandler // GameHandler :3
 
     private readonly UserBattleMapper _mapper = new UserBattleMapper();
     private readonly Random _random = new Random();
+    private RemoveAFKPlayers _service;
 
     private string Bonus { get; set; } = "";
 
@@ -35,7 +36,7 @@ public class GayHandler // GameHandler :3
     /// Método que agrega participantes a la batalla
     /// </summary>
     /// <returns>Nada (por ahora)</returns>
-    public async Task<UserBattleDto> AddParticipant(Battle battle, int userId, UnitOfWork unitOfWork) //💀💀💀💀
+    public async Task<UserBattleDto> AddParticipant(Battle battle, int userId, UnitOfWork unitOfWork, IServiceProvider serviceProvider) //💀💀💀💀
     {
         UserBattle player = battle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
         if (_participants.Contains(player) || _participants.Count == 2)
@@ -65,6 +66,11 @@ public class GayHandler // GameHandler :3
             player.IsTheirTurn = true;
             player.TimePlayed = 120;  // 2 minutos para jugar (esta en proceso esto)
             player.ActionsLeft = ACTIONS_REQUIRED;
+
+            UserBattle otherUser = _participants.FirstOrDefault(p => p.UserId != userId);
+
+            _service = new RemoveAFKPlayers(player, otherUser, battle, this, serviceProvider);
+            await _service.StartAsync(CancellationToken.None);
         }
 
         _participants.Add(player);
@@ -112,7 +118,7 @@ public class GayHandler // GameHandler :3
     }*/
 
 
-    public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork)
+    public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork, IServiceProvider serviceProvider)
     {
         UserBattle playerInTurn = _participants.FirstOrDefault(u => u.UserId == userId && u.IsTheirTurn);
         UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
@@ -206,7 +212,7 @@ public class GayHandler // GameHandler :3
             positions.Add(card.Position);
 
             // Bonificaciones random
-            switch (Bonus)
+            /*switch (Bonus)
             {
                 case "Amarillo":
                     playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
@@ -220,7 +226,7 @@ public class GayHandler // GameHandler :3
                 case "Azul":
                     playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
                     break;
-            }
+            }*/
 
             // Establezco la nueva mezcla
             output = PlayMusic(_board.Playing, existingCard);
@@ -269,6 +275,13 @@ public class GayHandler // GameHandler :3
             }
         }
 
+
+        if (playerInTurn.ActionsLeft <= 0)
+        {
+            playerInTurn.IsTheirTurn = false;
+            otherUser.IsTheirTurn = true;
+        }
+
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.TurnResult },
@@ -290,9 +303,10 @@ public class GayHandler // GameHandler :3
         }
 
         // Doy por terminada la batalla
-        if (playerInTurn.Punctuation == POINTS_REQUIRED)
+        if (playerInTurn.Punctuation >= POINTS_REQUIRED)
         {
             await EndBattle(playerInTurn, otherUser, unitOfWork);
+            GayNetwork._handlers.Remove(this);
 
             dict["player"] = _mapper.ToDto(playerInTurn);
             await NotifyUsers(dict, playerInTurn, otherUser, true);
@@ -301,18 +315,52 @@ public class GayHandler // GameHandler :3
         {
             if (otherUser.IsBot)
             {
-                await DoBotActions(otherUser, playerInTurn, unitOfWork, dict);
+                await DoBotActions(otherUser, playerInTurn, dict, unitOfWork);
                 playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
             }
             else
             {
-                playerInTurn.IsTheirTurn = false;
+                // Para el servicio en segundo plano
+                await _service.StopAsync(CancellationToken.None);
 
-                otherUser.IsTheirTurn = true;
-                otherUser.TimePlayed = 120;
+                //otherUser.TimePlayed = 120;
                 otherUser.ActionsLeft = ACTIONS_REQUIRED;
+
+                _service = new RemoveAFKPlayers(otherUser, playerInTurn, Battle, this, serviceProvider);
+                await _service.StartAsync(CancellationToken.None);
             }
         }
+    }
+
+    public async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
+    {
+        BattleState battleState = await unitOfWork.BattleStateRepository.GetByIdAsync(4);
+        ICollection<BattleResult> results = await unitOfWork.BattleResultRepository.GetAllAsync();
+
+        Battle.BattleState = battleState;
+        Battle.BattleStateId = battleState.Id;
+
+        BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
+        BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
+
+        unitOfWork.BattleRepository.Update(Battle);
+
+        if (!winner.IsBot)
+        {
+            winner.BattleResult = victory;
+            winner.BattleResultId = victory.Id;
+            unitOfWork.UserBattleRepository.Update(winner);
+        }
+
+        if (!loser.IsBot)
+        {
+            loser.BattleResult = defeat;
+            loser.BattleResultId = defeat.Id;
+            unitOfWork.UserBattleRepository.Update(loser);
+        }
+
+        await unitOfWork.SaveAsync();
+        GayNetwork._handlers.Remove(this);
     }
 
     private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser, bool end = false)
@@ -343,7 +391,7 @@ public class GayHandler // GameHandler :3
         return desiredType == actualType ? 1 : 0;
     }
 
-    private async Task DoBotActions(UserBattle bot, UserBattle notBot, UnitOfWork unitOfWork, Dictionary<object, object> dict)
+    private async Task DoBotActions(UserBattle bot, UserBattle notBot, Dictionary<object, object> dict, UnitOfWork unitOfWork)
     {
         byte[] output;
         int totalActions = 0;
@@ -418,9 +466,10 @@ public class GayHandler // GameHandler :3
                 totalActions++;
             }
 
-            if (bot.Punctuation == POINTS_REQUIRED)
+            if (bot.Punctuation >= POINTS_REQUIRED)
             {
                 await EndBattle(bot, notBot, unitOfWork);
+                GayNetwork._handlers.Remove(this);
                 totalActions = ACTIONS_REQUIRED;
                 end = true;
             }
@@ -506,37 +555,6 @@ public class GayHandler // GameHandler :3
             default:
                 return null;
         }
-    }
-
-    private async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
-    {
-        BattleState battleState = await unitOfWork.BattleStateRepository.GetByIdAsync(4);
-        ICollection<BattleResult> results = await unitOfWork.BattleResultRepository.GetAllAsync();
-
-        Battle.BattleState = battleState;
-        Battle.BattleStateId = battleState.Id;
-
-        BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
-        BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
-
-        unitOfWork.BattleRepository.Update(Battle);
-
-        if (!winner.IsBot)
-        {
-            winner.BattleResult = victory;
-            winner.BattleResultId = victory.Id;
-            unitOfWork.UserBattleRepository.Update(winner);
-        }
-
-        if (!loser.IsBot)
-        {
-            loser.BattleResult = defeat;
-            loser.BattleResultId = defeat.Id;
-            unitOfWork.UserBattleRepository.Update(loser);
-        }
-
-        await unitOfWork.SaveAsync();
-        GayNetwork._handlers.Remove(this);
     }
 
     private static bool CheckCardType(List<string> possibleTypes, string actualType)

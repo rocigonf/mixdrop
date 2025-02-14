@@ -1,5 +1,6 @@
 ﻿using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
+using mixdrop_back.Services;
 
 namespace mixdrop_back.Sockets;
 
@@ -9,7 +10,7 @@ public class GayNetwork // GameNetwork :3
     private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
 
-    public static async Task<UserBattleDto> StartGame(Battle battle, User user, UnitOfWork unitOfWork) // 🦙📲🦙🔥
+    public static async Task<UserBattleDto> StartGame(Battle battle, User user, UnitOfWork unitOfWork, IServiceProvider serviceProvider) // 🦙📲🦙🔥
     {
         await _semaphore.WaitAsync();
 
@@ -21,14 +22,14 @@ public class GayNetwork // GameNetwork :3
             _handlers.Add(handler);
         }
 
-        UserBattleDto userBattleDto = await handler.AddParticipant(battle, user.Id, unitOfWork);
+        UserBattleDto userBattleDto = await handler.AddParticipant(battle, user.Id, unitOfWork, serviceProvider);
 
         _semaphore.Release();
 
         return userBattleDto;
     }
 
-    public static async Task PlayCard(Models.DTOs.Action action, int userId, UnitOfWork unitOfWork)
+    public static async Task PlayCard(Models.DTOs.Action action, int userId, UnitOfWork unitOfWork, IServiceProvider serviceProvider)
     {
         await _semaphore.WaitAsync();
 
@@ -44,7 +45,7 @@ public class GayNetwork // GameNetwork :3
         }
         else
         {
-            await handler.PlayCard(action, userId, unitOfWork);
+            await handler.PlayCard(action, userId, unitOfWork, serviceProvider);
         }
 
         _semaphore.Release();

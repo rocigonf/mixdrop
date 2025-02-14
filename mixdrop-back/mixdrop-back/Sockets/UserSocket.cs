@@ -1,4 +1,5 @@
-﻿using mixdrop_back.Models.DTOs;
+﻿using Microsoft.Extensions.DependencyInjection;
+using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
@@ -102,13 +103,13 @@ public class UserSocket
                                 continue;
                             }
 
-                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork);
+                            var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork, _serviceProvider);
                             Console.WriteLine("¿Qué es VALORANT? 😨");
                             dict.Add("userBattleDto", valorant);
                             break;
                         case MessageType.PlayCard:
                             Models.DTOs.Action action = dictInput["action"] as Models.DTOs.Action;
-                            await GayNetwork.PlayCard(action, User.Id, unitOfWork);
+                            await GayNetwork.PlayCard(action, User.Id, unitOfWork, _serviceProvider);
                             break;
                     }
 
