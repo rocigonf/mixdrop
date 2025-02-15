@@ -1,5 +1,6 @@
 <app-navbar></app-navbar>
-@if (currentBattle && userBattle) {
+<!-- falta ponerle q si es un bot no lo muestre-->
+@if (currentBattle && userBattle ) {
     <app-chat 
           [currentBattle]="currentBattle" 
           [userBattle]="userBattle">
