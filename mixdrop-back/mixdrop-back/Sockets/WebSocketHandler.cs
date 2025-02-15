@@ -103,8 +103,6 @@ public class WebSocketHandler
         unitOfWork.UserRepository.Update(disconnectedHandler.User);
         await unitOfWork.SaveAsync();
 
-        //await SendStatsMessage();
-
         // Guardamos una copia de los WebSocketHandler para evitar problemas de concurrencia
         UserSocket[] handlers = USER_SOCKETS.ToArray();
 

@@ -10,5 +10,6 @@ export enum MessageType {
     ShuffleDeckStart,
     PlayCard,
     TurnResult,
-    EndGame
+    EndGame,
+    Chat
 }

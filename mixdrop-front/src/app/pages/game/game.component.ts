@@ -14,11 +14,13 @@ import { environment } from '../../../environments/environment';
 import { Slot } from '../../models/slot';
 import { AuthService } from '../../services/auth.service';
 import { BattleService } from '../../services/battle.service';
+import { ChatComponent } from "../../components/chat/chat.component";
+import { Battle } from '../../models/battle';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [NavbarComponent, ChatComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -53,9 +55,11 @@ export class GameComponent implements OnInit, OnDestroy {
   mix: string = ""
   bonus: string = ""
 
-  otherPlayerPunct : number = 0
+  otherPlayerPunct: number = 0
 
   private isProcessingAudio: boolean = false;
+
+  currentBattle: Battle | null = null;
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
@@ -94,7 +98,8 @@ export class GameComponent implements OnInit, OnDestroy {
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
         this.userBattle = jsonResponse.userBattleDto
-        
+        this.currentBattle = jsonResponse.currentBattle
+
         break;
       case MessageType.TurnResult:
         console.error("Entrando al semáforo...")
@@ -122,12 +127,10 @@ export class GameComponent implements OnInit, OnDestroy {
         positions = jsonResponse.position
         this.playAudio(this.mix, positions, jsonResponse.wheel); 
 
-        if(this.userBattle?.battleResultId == 1)
-        {
+        if (this.userBattle?.battleResultId == 1) {
           alert("Ganaste :D")
         }
-        else
-        {
+        else {
           alert("Perdiste :(")
         }
         break;
@@ -154,8 +157,7 @@ export class GameComponent implements OnInit, OnDestroy {
     const position = positions[0]
 
     const slut = this.board.slots[position]
-    if(slut?.card != null)
-    {
+    if (slut?.card != null) {
       console.log("Borrando posición indicada: ", position)
       this.stopTrack(position)
     }
@@ -210,7 +212,7 @@ export class GameComponent implements OnInit, OnDestroy {
     const binaryString = atob(base64);
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
   }
@@ -235,8 +237,7 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  useButton()
-  {
+  useButton() {
     const actionType: ActionType = {
       name: "button"
     }

@@ -44,6 +44,7 @@ public class BattleRepository : Repository<Battle, int>
             .Where(battle => battle.BattleStateId == 3)
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
             .Include(battle => battle.BattleUsers)
+            .ThenInclude(userBattle => userBattle.User)
             .ToListAsync();
     }
 }

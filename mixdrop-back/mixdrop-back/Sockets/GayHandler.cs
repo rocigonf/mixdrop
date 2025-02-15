@@ -90,36 +90,6 @@ public class GayHandler // GameHandler :3
         }
     }
 
-    // TEMPORIZADOR (nose bien como hacerlo :_(  )
-    /*
-    private void Timer(UserBattle userBattle, UnitOfWork unitOfWork)
-    {
-        if (!userBattle.IsTheirTurn)
-        {
-            Console.WriteLine("No le toca a este jugador");
-            return;
-        }
-        if (userBattle.TimePlayed <= 0)
-        {
-            Console.WriteLine("Al jugador no le queda tiempo");
-            return;
-        }
-
-
-        while (userBattle.TimePlayed > 0)
-        {
-            userBattle.TimePlayed--;
-        }
-       
-        if (userBattle.TimePlayed == 0)
-        {   
-            var userEnemy = _participants.FirstOrDefault(u => u.UserId != userBattle.UserId);
-                        
-            EndBattle(userEnemy, userBattle, unitOfWork);
-        }
-
-    }*/
-
 
     public async Task PlayCard(Action action, int userId, UnitOfWork unitOfWork, IServiceProvider serviceProvider)
     {

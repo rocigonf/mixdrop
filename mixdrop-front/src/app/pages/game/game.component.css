@@ -64,7 +64,7 @@
     border-radius: 10px;
     background: linear-gradient(to right, rgb(0, 255, 255), rgb(43, 228, 89));
 }
-
+/*
 .card:after {
     content:"";
     position:relative;
@@ -78,12 +78,13 @@
     z-index:2;
   }
   
+
 .triangulo{
       width: 0;
   height: 0;
   border-top: 100px solid #000; 
   border-right: 100px solid transparent;  
-}
+}*/
 
 
 
