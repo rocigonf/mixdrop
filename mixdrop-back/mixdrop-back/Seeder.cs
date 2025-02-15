@@ -158,7 +158,7 @@ public class Seeder
                     Song = new Song
                     {
                         Name = "Bring Me To Life",
-                        Bpm = 95,
+                        Bpm = 120,
                         Pitch = "Em",
                         Artist = new Artist {
                             Name = "Evanescence"
@@ -177,7 +177,7 @@ public class Seeder
                     Song = new Song
                     {
                         Name = "Attention",
-                        Bpm = 100,
+                        Bpm = 120,
                         Pitch = "Ebm",
                         Artist = new Artist {
                             Name = "Charlie Puth"
@@ -215,7 +215,7 @@ public class Seeder
                     Song = new Song
                     {
                         Name = "Centuries",
-                        Bpm = 88,
+                        Bpm = 120,
                         Pitch = "Em",
                         Artist = new Artist {
                             Name = "Fall Out Boy"
@@ -234,7 +234,7 @@ public class Seeder
                     Song = new Song
                     {
                         Name = "Animals",
-                        Bpm = 95,
+                        Bpm = 120,
                         Pitch = "Em",
                         Artist = new Artist {
                             Name = "Maroon 5"
@@ -293,7 +293,7 @@ public class Seeder
                     Song = new Song
                     { 
                         Name = "Gimme Chocolate!!",
-                        Bpm = 110,
+                        Bpm = 120,
                         Pitch = "Em",
                         Artist = new Artist {
                             Name = "BABYMETAL"
@@ -467,7 +467,7 @@ public class Seeder
                     Song = new Song
                     {
                         Name = "Cheap Thrills",
-                        Bpm = 90,
+                        Bpm = 120,
                         Pitch = "Gbm",
                         Artist = new Artist {
                             Name = "Sia ft.Sean Paul"
