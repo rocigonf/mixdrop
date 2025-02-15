@@ -225,51 +225,58 @@ public class BattleService
     // Esto se podría reutilizar en el timer y en el GayHandler
     public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser, bool notify = false)
     {
-        if (battle.BattleStateId == 3)
+        try
         {
-            //BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(4);
-            //ICollection<BattleResult> results = await _unitOfWork.BattleResultRepository.GetAllAsync();
-
-            //battle.BattleState = battleState;
-            battle.BattleStateId = 4;
-
-            //BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
-            //BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
-
-            battle.BattleUsers = [];
-
-            if (!winner.IsBot)
+            if (battle.BattleStateId == 3)
             {
-                //winner.BattleResult = victory;
-                winner.BattleResultId = 1;
-                winner.Cards = new List<Card>();
-                battle.BattleUsers.Add(winner);
-            }
+                //BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(4);
+                //ICollection<BattleResult> results = await _unitOfWork.BattleResultRepository.GetAllAsync();
 
-            if (!loser.IsBot)
-            {
-                //loser.BattleResult = defeat;
-                loser.BattleResultId = 2;
-                loser.Cards = new List<Card>();
-                battle.BattleUsers.Add(loser);
-            }
+                //battle.BattleState = battleState;
+                battle.BattleStateId = 4;
 
-            _unitOfWork.BattleRepository.Update(battle);
+                //BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
+                //BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
 
-            if (notify)
-            {
-                Dictionary<object, object> dict = new Dictionary<object, object>
+                battle.BattleUsers = [];
+
+                if (!winner.IsBot)
+                {
+                    //winner.BattleResult = victory;
+                    winner.BattleResultId = 1;
+                    winner.Cards = new List<Card>();
+                    battle.BattleUsers.Add(winner);
+                }
+
+                if (!loser.IsBot)
+                {
+                    //loser.BattleResult = defeat;
+                    loser.BattleResultId = 2;
+                    loser.Cards = new List<Card>();
+                    battle.BattleUsers.Add(loser);
+                }
+
+                _unitOfWork.BattleRepository.Update(battle);
+
+                if (notify)
+                {
+                    Dictionary<object, object> dict = new Dictionary<object, object>
                 {
                     { "messageType", MessageType.DisconnectedFromBattle },
                 };
 
-                JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+                    options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-                await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), winner.UserId);
+                    await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), winner.UserId);
+                }
+
+                await _unitOfWork.SaveAsync();
             }
-
-            await _unitOfWork.SaveAsync();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
 
