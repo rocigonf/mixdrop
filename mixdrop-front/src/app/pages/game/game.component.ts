@@ -57,6 +57,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   otherPlayerPunct: number = 0
 
+  private isProcessingAudio: boolean = false;
+
   currentBattle: Battle | null = null;
 
   private audioContext: AudioContext = new AudioContext();
@@ -81,20 +83,17 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    for (let i = 0; i < this.activeSources.size; i++) {
-      this.stopTrack(i)
-    }
-    // elimina del sessionStorage una vez se salga
-    sessionStorage.removeItem("battle");
+    this.audioContext.close()
   }
 
   navigateToUrl(url: string) {
     this.router.navigateByUrl(url);
   }
 
-  processMessage(message: any) {
+  async processMessage(message: any) {
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
+    let positions: number[] = []
 
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
@@ -103,17 +102,20 @@ export class GameComponent implements OnInit, OnDestroy {
 
         break;
       case MessageType.TurnResult:
+        console.error("Entrando al semáforo...")
+        await this.waitForAudioProcessing()
+        console.error("Saliendo...")
+
 
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
         this.bonus = jsonResponse.bonus
         this.otherPlayerPunct = jsonResponse.otherplayer
 
-        if (jsonResponse.mix != "") {
-          this.mix = jsonResponse.filepath
-          const positions: number[] = jsonResponse.position
-          this.playAudio(this.mix, positions, jsonResponse.wheel);
-        }
+        this.mix = jsonResponse.filepath
+        positions = jsonResponse.position
+        this.playAudio(this.mix, positions, jsonResponse.wheel); 
+      
         break
 
       case MessageType.EndGame:
@@ -122,8 +124,8 @@ export class GameComponent implements OnInit, OnDestroy {
         this.board = jsonResponse.board
         this.userBattle = jsonResponse.player
         this.mix = jsonResponse.filepath
-        const positions: number[] = jsonResponse.position
-        this.playAudio(this.mix, positions, jsonResponse.wheel);
+        positions = jsonResponse.position
+        this.playAudio(this.mix, positions, jsonResponse.wheel); 
 
         if (this.userBattle?.battleResultId == 1) {
           alert("Ganaste :D")
@@ -137,11 +139,18 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
-  async playAudio(encodedAudio: string, positions: number[], spinTheWheel: boolean) {
-    if (spinTheWheel) {
-      for (let i = 0; i < positions.length; i++) {
+  async playAudio(encodedAudio: string, positions: number[], spinTheWheel : boolean) 
+  {
+  
+    this.isProcessingAudio = true
+    if(spinTheWheel)
+    {
+      console.log("Se ha girado la ruleta. El resultado ha sido: ", positions)
+      for(let i = 0; i < positions.length; i++)
+      {
         this.stopTrack(positions[i])
       }
+      this.isProcessingAudio = false
       return;
     }
 
@@ -163,14 +172,39 @@ export class GameComponent implements OnInit, OnDestroy {
     source.connect(this.audioContext.destination)
 
     this.activeSources.set(position, source)
+
+    this.isProcessingAudio = false
   }
 
-  private stopTrack(position: number) {
-    const source = this.activeSources.get(position)
-    if (source) {
-      source.stop()
-      this.activeSources.delete(position)
-    }
+  private stopTrack(position: number)
+  {
+    console.log("Posición a borrar: ", position)
+    //const source = this.activeSources.get(position)
+    this.activeSources.get(position)?.stop()
+    this.activeSources.delete(position)
+    /*if(source)
+      {
+        console.error("Borrando...")
+        source.stop()
+        this.activeSources.delete(position)
+      }
+      else
+      {console.error("NO EXISTE LA POSICIÓN")}*/    
+  }
+
+  // Semaforeame esta mister
+  // Igual al antiguo método que teníamos pero de forma recursiva
+  private async waitForAudioProcessing() {
+    return new Promise<void>((resolve) => {
+      const checkProcessing = () => {
+        if (!this.isProcessingAudio) {
+          resolve(); // S
+        } else {
+          setTimeout(checkProcessing, 50); // Se llama a la verificación cada 50 milisegundos
+        }
+      };
+      checkProcessing();
+    });
   }
 
   // Larga vida a StackOverflow xD (https://stackoverflow.com/questions/21797299/how-can-i-convert-a-base64-string-to-arraybuffer)

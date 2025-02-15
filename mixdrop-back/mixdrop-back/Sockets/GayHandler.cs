@@ -185,7 +185,7 @@ public class GayHandler // GameHandler :3
             positions.Add(card.Position);
 
             // Bonificaciones random
-            /*switch (Bonus)
+            switch (Bonus)
             {
                 case "Amarillo":
                     playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
@@ -199,7 +199,7 @@ public class GayHandler // GameHandler :3
                 case "Azul":
                     playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
                     break;
-            }*/
+            }
 
             // Establezco la nueva mezcla
             output = PlayMusic(_board.Playing, existingCard);
@@ -510,23 +510,25 @@ public class GayHandler // GameHandler :3
 
     private Card GetValidCardForSlot(Slot slot, UserBattle bot)
     {
-        // Busca el índice del slot
+        // Obtengo los id de las cartas que ya están en juego
+        List<int> occupiedCards = _board.Slots.Where(s => s.Card != null).Select(s => s.Card.Id).ToList();
         switch (Array.IndexOf(_board.Slots, slot))
         {
             case 0:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && c.Id != slot.Card?.Id);
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id));
             case 1:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main"));
+                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && c.Id != slot.Card?.Id);
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id));
             case 3:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums"));
+                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
             case 4:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && c.Id != slot.Card?.Id);
+                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id));
             default:
                 return null;
         }
     }
+
 
     private static bool CheckCardType(List<string> possibleTypes, string actualType)
     {
