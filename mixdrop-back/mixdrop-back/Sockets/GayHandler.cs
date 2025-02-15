@@ -69,8 +69,11 @@ public class GayHandler // GameHandler :3
 
             UserBattle otherUser = _participants.FirstOrDefault(p => p.UserId != userId);
 
-            _service = new RemoveAFKPlayers(player, otherUser, battle, this, serviceProvider);
-            await _service.StartAsync(CancellationToken.None);
+            if (!battle.IsAgainstBot)
+            {
+                _service = new RemoveAFKPlayers(player, otherUser, battle, this, serviceProvider);
+                await _service.StartAsync(CancellationToken.None);
+            }
         }
 
         _participants.Add(player);
@@ -276,7 +279,7 @@ public class GayHandler // GameHandler :3
         }
 
 
-        if (playerInTurn.ActionsLeft <= 0)
+        if (playerInTurn.ActionsLeft <= 0 && !otherUser.IsBot)
         {
             playerInTurn.IsTheirTurn = false;
             otherUser.IsTheirTurn = true;
@@ -321,43 +324,41 @@ public class GayHandler // GameHandler :3
             else
             {
                 // Para el servicio en segundo plano
-                await _service.StopAsync(CancellationToken.None);
+                if (_service != null)
+                {
+                    await _service.StopAsync(CancellationToken.None);
+                    _service = new RemoveAFKPlayers(otherUser, playerInTurn, Battle, this, serviceProvider);
+                    await _service.StartAsync(CancellationToken.None);
+                }
 
                 //otherUser.TimePlayed = 120;
                 otherUser.ActionsLeft = ACTIONS_REQUIRED;
 
-                _service = new RemoveAFKPlayers(otherUser, playerInTurn, Battle, this, serviceProvider);
-                await _service.StartAsync(CancellationToken.None);
+                
             }
         }
     }
 
     public async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
     {
-        BattleState battleState = await unitOfWork.BattleStateRepository.GetByIdAsync(4);
-        ICollection<BattleResult> results = await unitOfWork.BattleResultRepository.GetAllAsync();
-
-        Battle.BattleState = battleState;
-        Battle.BattleStateId = battleState.Id;
-
-        BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
-        BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
-
-        unitOfWork.BattleRepository.Update(Battle);
+        Battle.BattleStateId = 4;
+        Battle.BattleUsers = [];
 
         if (!winner.IsBot)
         {
-            winner.BattleResult = victory;
-            winner.BattleResultId = victory.Id;
-            unitOfWork.UserBattleRepository.Update(winner);
+            winner.BattleResultId = 1;
+            winner.Cards = new List<Card>();
+            Battle.BattleUsers.Add(winner);
         }
 
         if (!loser.IsBot)
         {
-            loser.BattleResult = defeat;
-            loser.BattleResultId = defeat.Id;
-            unitOfWork.UserBattleRepository.Update(loser);
+            loser.BattleResultId = 2;
+            loser.Cards = new List<Card>();
+            Battle.BattleUsers.Add(loser);
         }
+
+        unitOfWork.BattleRepository.Update(Battle);
 
         await unitOfWork.SaveAsync();
         GayNetwork._handlers.Remove(this);
