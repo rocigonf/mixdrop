@@ -33,9 +33,7 @@ export class ChatComponent {
 
   mensaje: string = "";
   // lista 
-  mensajes: string[][] = [
-    ["Hola, soy Alan, tu asistente virtual.", "Enemy"]
-  ]
+  mensajes: string[][] = []
 
   async ngOnInit(): Promise<void> {
     console.log("currentBattle en padre:", this.currentBattle);
@@ -43,7 +41,7 @@ export class ChatComponent {
 
     this.user = this.authService.getUser();
 
-    const enemyUser = this.currentBattle?.battleUsers.find(u => u.id != this.user?.id)
+    const enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.user?.id)
     this.enemyNickname = enemyUser?.user.nickname;
 
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))

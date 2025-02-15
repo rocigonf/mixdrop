@@ -116,10 +116,11 @@ public class UserSocket
                             Battle currentChatBattle = await battleService.GetCurrentBattleByUserAsync(User.Id);
                             if (!currentChatBattle.IsAgainstBot)
                             {
-                                UserBattle enemyUser = currentChatBattle.BattleUsers.First(u => User.Id != u.Id);
+                                UserBattle enemyUser = currentChatBattle.BattleUsers.First(u => User.Id != u.UserId);
+                                UserBattle chatSender = currentChatBattle.BattleUsers.First(u => User.Id == u.UserId);
                                 dict.Add("messageChat", messageReceived);
-                                dict.Add("who", enemyUser.User.Nickname);
-                                await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), enemyUser.UserId);
+                                dict.Add("who", chatSender.User.Nickname);
+                                    await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), enemyUser.UserId);
                                 Console.WriteLine($"Enviando mensaje a {enemyUser.User.Nickname}: {messageReceived}");
                             }
                             break;
