@@ -1,4 +1,5 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using mixdrop_back.Models.Entities;
 using mixdrop_back.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -235,21 +236,25 @@ public class BattleService
             //BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
             //BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
 
-            _unitOfWork.BattleRepository.Update(battle);
+            battle.BattleUsers = [];
 
             if (!winner.IsBot)
             {
                 //winner.BattleResult = victory;
                 winner.BattleResultId = 1;
-                _unitOfWork.UserBattleRepository.Update(winner);
+                winner.Cards = new List<Card>();
+                battle.BattleUsers.Add(winner);
             }
 
             if (!loser.IsBot)
             {
                 //loser.BattleResult = defeat;
                 loser.BattleResultId = 2;
-                _unitOfWork.UserBattleRepository.Update(loser);
+                loser.Cards = new List<Card>();
+                battle.BattleUsers.Add(loser);
             }
+
+            _unitOfWork.BattleRepository.Update(battle);
 
             if (notify)
             {
