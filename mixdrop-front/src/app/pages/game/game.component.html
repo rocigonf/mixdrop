@@ -9,7 +9,6 @@
 }
 
 
-
 <p class="countDown">{{this.time}}</p>
 
 @if(userBattle != null){
@@ -48,15 +47,11 @@
     <div class="slot0">
         @if(board.slots[0].card )
         {
-        <div class="card">
-            <span>Nombre: {{ board.slots[0].card.track.song.name }}</span>
-            <span>Parte: {{ board.slots[0].card.track.part.name }}</span>
-            <p>Nivel: {{ board.slots[0].card.level }}</p>
-            <img [src]="IMG_URL + board.slots[0].card.imagePath" alt="imagen">
+        <app-card [currentCard]="board.slots[0].card" ></app-card>
+
             @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) && board.slots[0].card.level <=
                 cardToUse.level) { <button (click)="useCard(0)">Colocar carta</button>
                 }
-        </div>
 
         }
         @else {
@@ -73,15 +68,11 @@
     <div class="slot1">
         @if(board.slots[1].card)
         {
-        <div class="card">
-            <span>Nombre: {{ board.slots[1].card.track.song.name }}</span>
-            <span>Parte: {{ board.slots[1].card.track.part.name }}</span>
-            <p>Nivel: {{ board.slots[1].card.level }}</p>
-            <img [src]="IMG_URL + board.slots[1].card.imagePath" alt="imagen">
+            <app-card [currentCard]="board.slots[1].card" ></app-card>
             @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) && board.slots[1].card.level <=
                 cardToUse.level ) { <button (click)="useCard(1)">Colocar carta</button>
                 }
-        </div>
+
         }
         @else {
         <div class="card">
@@ -97,15 +88,10 @@
     <div class="slot2">
         @if(board.slots[2].card)
         {
-        <div class="card">
-            <span>Nombre: {{ board.slots[2].card.track.song.name }}</span>
-            <span>Parte: {{ board.slots[2].card.track.part.name }}</span>
-            <p>Nivel: {{ board.slots[2].card.level }}</p>
-            <img [src]="IMG_URL + board.slots[2].card.imagePath" alt="imagen">
+            <app-card [currentCard]="board.slots[2].card" ></app-card>
             @if ( this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name) && board.slots[2].card.level <=
                 cardToUse.level) { <button (click)="useCard(2)">Colocar carta</button>
                 }
-        </div>
         }
         @else {
         <div class="card">
@@ -121,15 +107,10 @@
     <div class="slot3">
         @if(board.slots[3].card)
         {
-        <div class="card">
-            <span>Nombre: {{ board.slots[3].card.track.song.name }}</span>
-            <span>Parte: {{ board.slots[3].card.track.part.name }}</span>
-            <p>Nivel: {{ board.slots[3].card.level }}</p>
-            <img [src]="IMG_URL + board.slots[3].card.imagePath" alt="imagen">
+            <app-card [currentCard]="board.slots[3].card" ></app-card>
             @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) && board.slots[3].card.level <=
                 cardToUse.level) { <button (click)="useCard(3)">Colocar carta</button>
                 }
-        </div>
         }
         @else {
         <div class="card">
@@ -144,15 +125,10 @@
     <div class="slot4">
         @if(board.slots[4].card)
         {
-        <div class="card">
-            <span>Nombre: {{ board.slots[4].card.track.song.name }}</span>
-            <span>Parte: {{ board.slots[4].card.track.part.name }}</span>
-            <span>Nivel: {{ board.slots[4].card.level }}</span>
-            <img [src]="IMG_URL + board.slots[4].card.imagePath" alt="imagen">
+            <app-card [currentCard]="board.slots[4].card" ></app-card>
             @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name) && board.slots[4].card.level <=
                 cardToUse.level) { <button (click)="useCard(4)">Colocar carta</button>
                 }
-        </div>
         }
         @else {
         <div class="card">
@@ -170,17 +146,12 @@
 <div class="myCarts">
     @for (card of userBattle.cards; track $index)
     {
-    <div class="card" draggable="true" (dragstart)="selectCard(card)">
-        <span>Nombre: {{ card.track.song.name }}</span>
-        <span>Parte: {{ card.track.part.name }}</span>
-        <span>Nivel: {{ card.level }}</span>
-
-        <img [src]="IMG_URL + card.imagePath" alt="imagen">
+        <app-card  draggable="true" [currentCard]="card" (dragstart)="selectCard(card)"></app-card>
+    
         @if(userBattle.isTheirTurn && !gameEnded)
         {
         <button (click)="selectCard(card)">Usar</button>
         }
-    </div>
     }
 </div>
 

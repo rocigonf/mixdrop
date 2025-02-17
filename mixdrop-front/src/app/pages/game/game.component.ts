@@ -16,11 +16,12 @@ import { AuthService } from '../../services/auth.service';
 import { BattleService } from '../../services/battle.service';
 import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
+import { CardComponent } from "../../components/card/card.component";
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent],
+  imports: [NavbarComponent, ChatComponent, CardComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
