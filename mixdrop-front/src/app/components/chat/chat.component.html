@@ -1,28 +1,27 @@
+@if (chatVisible) {
 <div class="box">
-    @if (chatVisible) {
     <div class="chat">
         <button class="close" (click)="chatVisible= false">✖️</button>
 
         <p>chatea con {{enemyNickname}}</p>
-        
+
         <div class="content" #scrollMe>
 
             @for (mensaje of mensajes; track $index) {
-                <div [className]="mensaje[1]" class="mensaje mensajeIn">{{mensaje[0]}}</div>
+            <div [className]="mensaje[1]" class="mensaje mensajeIn">{{mensaje[0]}}</div>
             }
-
-            
         </div>
-
+        
         <form class="envio" (submit)="envia()">
             <input type="text" name="mensaje" [(ngModel)]="mensaje">
             <button type="submit" class="p-button font-bold ml-3">Enviar</button>
         </form>
 
-
     </div>
+</div>
 }
 @else {
-    <div id="chat-btn" (click)="chatVisible= true" ></div>
-}
+<div class="icon">
+    <div id="chat-btn" (click)="chatVisible= true"></div>
 </div>
+}
