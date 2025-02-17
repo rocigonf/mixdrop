@@ -313,6 +313,7 @@ public class GayHandler // GameHandler :3
     {
         Battle.BattleStateId = 4;
         Battle.BattleUsers = [];
+        Battle.FinishedAt = DateTime.UtcNow;
 
         if (!winner.IsBot)
         {
@@ -346,6 +347,7 @@ public class GayHandler // GameHandler :3
 
         // Notifico a los usuarios
         dict["player"] = _mapper.ToDto(playerInTurn);
+        dict["otherplayer"] = otherUser.Punctuation;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), playerInTurn.UserId);
 
         if (otherUser.IsBot)
@@ -354,6 +356,7 @@ public class GayHandler // GameHandler :3
         }
 
         dict["player"] = _mapper.ToDto(otherUser);
+        dict["otherplayer"] = playerInTurn.Punctuation;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
     }
 

@@ -82,7 +82,7 @@ public class WebSocketHandler
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
         var battleService = scope.ServiceProvider.GetRequiredService<BattleService>();
 
-        ICollection<Battle> battles = await unitOfWork.BattleRepository.GetCurrentBattleByUser(disconnectedHandler.User.Id);
+        ICollection<Battle> battles = await unitOfWork.BattleRepository.GetCurrentBattleByUserWithoutThem(disconnectedHandler.User.Id);
         bool sendNotif = false;
         
         if(battles.Count > 1)
@@ -109,8 +109,16 @@ public class WebSocketHandler
         if (sendNotif)
         {
             UserBattle user = battles.First().BattleUsers.FirstOrDefault(u => u.UserId == disconnectedHandler.User.Id);
-            UserBattle otherUser = battles.First().BattleUsers.FirstOrDefault(u => u.UserId != disconnectedHandler.User.Id);
-            await battleService.EndBattle(battles.First(), otherUser, user, true);
+            if (!battles.First().IsAgainstBot)
+            {
+                UserBattle otherUser = battles.First().BattleUsers.FirstOrDefault(u => u.UserId != disconnectedHandler.User.Id);
+                await battleService.EndBattle(battles.First(), otherUser, user, true);
+            }
+            else
+            {
+                await battleService.DeleteBattleByObject(battles.First(), user.UserId);
+            }
+            GayNetwork.DeleteHandler(disconnectedHandler.User.Id);
         }
 
         await SendStatsMessage();

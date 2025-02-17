@@ -55,6 +55,7 @@ public class RemoveAFKPlayers : BackgroundService
                 {
                     var _unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
                     _battle.BattleStateId = 4;
+                    _battle.FinishedAt = DateTime.UtcNow;
 
                     _otherPlayer.BattleResultId = 1;
                     _playerInTurn.BattleResultId = 2;

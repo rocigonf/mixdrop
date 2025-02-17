@@ -1,6 +1,5 @@
 ﻿using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
-using mixdrop_back.Services;
 
 namespace mixdrop_back.Sockets;
 
@@ -49,5 +48,14 @@ public class GayNetwork // GameNetwork :3
         }
 
         _semaphore.Release();
+    }
+
+    public static void DeleteHandler(int userId)
+    {
+        GayHandler handler = _handlers.FirstOrDefault(h => h._participants.Any(p => p.UserId == userId));
+        if (handler != null)
+        {
+            _handlers.Remove(handler);
+        }
     }
 }

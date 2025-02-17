@@ -19,7 +19,7 @@ public class UserMapper
             Banned = user.Banned,
             StateId = user.StateId,
             Friendships = user.Friendships,
-            BattleUsers = user.BattleUsers
+            //BattleUsers = user.BattleUsers
         };
     }
 

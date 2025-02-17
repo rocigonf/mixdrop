@@ -12,7 +12,7 @@ public class BattleMapper
         {
             var user = battle.BattleUsers.FirstOrDefault();
             user.User.Password = null;
-            user.User.BattleUsers = null;
+            //user.User.BattleUsers = null;
 
             BattleDto battleDto = new BattleDto();
             battleDto.Id = battle.Id;
