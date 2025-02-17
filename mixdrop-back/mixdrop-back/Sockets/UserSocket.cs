@@ -264,9 +264,9 @@ public class UserSocket
         return Socket.SendAsync(bytes, WebSocketMessageType.Text, true, cancellation);
     }
 
-    public void Dispose()
+    public Task SendBlobAsync(byte[] message, CancellationToken cancellation = default)
     {
-        // Cerramos el websocket
-        Socket.Dispose();
+        // Enviamos los bytes al cliente marcando que el mensaje es un texto
+        return Socket.SendAsync(message, WebSocketMessageType.Binary, true, cancellation);
     }
 }

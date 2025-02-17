@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit{
     if (this.authService.isAuthenticated()) {
 
       this.authService.logout()
-      this.webSocketService.disconnectRxjs()
+      this.webSocketService.disconnectNative()
       this.navigateToUrl("/")
       alert("Sesion cerrada corectamente.")
       

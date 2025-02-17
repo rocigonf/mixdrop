@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using NAudio.Lame;
+using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using SoundTouch.Net.NAudioSupport;
 
@@ -20,9 +21,23 @@ public class AudioModifier
         };
 
         using MemoryStream memoryStream = new MemoryStream();
+        reader.Position = 0;
         WaveFileWriter.WriteWavFileToStream(memoryStream, pitchChanger);
 
-        return memoryStream.ToArray();
+        reader.Position = 0;
+        WaveFileWriter.CreateWaveFile("aa.wav", pitchChanger);
+
+        memoryStream.Position = 0;
+        using WaveFileReader wavRdr = new WaveFileReader(memoryStream);
+
+        using MemoryStream finalMemoryStream = new MemoryStream();
+
+        using (var mp3Writer = new LameMP3FileWriter(finalMemoryStream, wavRdr.WaveFormat, 128))
+        {
+            memoryStream.CopyTo(mp3Writer);
+        }
+      
+        return finalMemoryStream.ToArray();
     }
 
     public static void MixFiles(string file1, string file2, string outputFile)

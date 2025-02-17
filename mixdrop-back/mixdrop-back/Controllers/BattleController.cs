@@ -112,6 +112,14 @@ public class BattleController : ControllerBase
         await WebSocketHandler.SendStatsMessage();
     }
 
+    [Authorize]
+    [HttpDelete("bot")]
+    public async Task DeleteBattleAgainstBot()
+    {
+        int userId = GetAuthorizedId();
+        await _battleService.DeleteBattleAgainstBot(userId);
+    }
+
     // Emparejamiento aleatorio
     [Authorize]
     [HttpPost("Matchmaking")]

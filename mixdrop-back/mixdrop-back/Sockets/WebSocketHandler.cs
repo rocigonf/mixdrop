@@ -138,6 +138,15 @@ public class WebSocketHandler
         }
     }
 
+    public static async Task NotifyOneUserBlob(byte[] message, int userId)
+    {
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.User.Id == userId);
+        if (userSocket != null && userSocket.Socket.State == WebSocketState.Open)
+        {
+            await userSocket.SendBlobAsync(message);
+        }
+    }
+
     public static async Task NotifyUsers(string jsonToSend)
     {
         foreach (var userSocket in USER_SOCKETS)

@@ -9,5 +9,6 @@ export interface Battle {
     battleUsers : UserBattle[],
     user : User,
     createdAt: Date,
-    finishedAt: Date
+    finishedAt: Date,
+    isAgainstBot: Boolean
 }

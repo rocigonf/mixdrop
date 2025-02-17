@@ -222,6 +222,20 @@ public class BattleService
         }
     }
 
+    public async Task DeleteBattleAgainstBot(int userId)
+    {
+        // Comprobamos que la batalla existe
+        Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleWithBotByUserAsync(userId);
+        if (existingBattle == null)
+        {
+            Console.WriteLine("Esta batalla no existe :(");
+            return;
+        }
+
+        _unitOfWork.BattleRepository.Delete(existingBattle);
+        await _unitOfWork.SaveAsync();
+    }
+
     // Esto se podría reutilizar en el timer y en el GayHandler
     public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser, bool notify = false)
     {

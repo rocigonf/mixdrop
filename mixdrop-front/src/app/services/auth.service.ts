@@ -76,7 +76,7 @@ export class AuthService implements OnDestroy {
   async disconnectUser()
   {
     //const headers = this.api.getHeader();
-    this.webSocket.disconnectRxjs()
+    this.webSocket.disconnectNative()
     //return this.api.put(`Auth/disconnect`, { headers, responseType: 'text' })
   }
 
@@ -84,9 +84,9 @@ export class AuthService implements OnDestroy {
   getUser(): User | null { // Obtener datos del usuario
     const user = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
     if (user) {
-      if (!this.webSocket.isConnectedRxjs()) {
+      if (!this.webSocket.isConnectedNative()) {
         console.log("CONECTANDO...")
-        this.webSocket.connectRxjs()
+        this.webSocket.connectNative()
       }
       return JSON.parse(user)
     }
