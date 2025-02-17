@@ -21,11 +21,11 @@
     background-color: rgb(233, 233, 233);
 }
 
-.box {
+.icon {
     right: 0;
     z-index: 1;
     position: fixed;
-    bottom: 0;
+    top: 94%;
     display: flex;
     align-items: end;
 }
@@ -88,6 +88,15 @@
 .envio input {
     height: 2rem;
     flex: 1 1 auto;
+}
+
+.box {
+    right: 0;
+    z-index: 1;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    align-items: end;
 }
 
 
