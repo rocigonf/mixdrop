@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { ChatComponent } from "../chat/chat.component";
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [],
+  imports: [ChatComponent],
   templateUrl: './card.component.html',
   styleUrl: './card.component.css'
 })
