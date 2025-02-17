@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { environment } from '../../../environments/environment';
 import { WebsocketService } from '../../services/websocket.service';
@@ -19,7 +19,7 @@ import { Battle } from '../../models/battle';
   templateUrl: './matchmaking.component.html',
   styleUrl: './matchmaking.component.css'
 })
-export class MatchmakingComponent implements OnInit {
+export class MatchmakingComponent implements OnInit, OnDestroy {
 
   user: User | null = null;
   public readonly IMG_URL = environment.apiImg;
@@ -71,6 +71,10 @@ export class MatchmakingComponent implements OnInit {
     this.processFriends()
   }
 
+  ngOnDestroy(): void {
+      this.messageReceived$?.unsubscribe()
+  }
+
   processMessage(message: any) {
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
@@ -104,7 +108,7 @@ export class MatchmakingComponent implements OnInit {
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
+    this.webSocketService.sendNative(messageType.toString())
   }
 
   async startBattle() {

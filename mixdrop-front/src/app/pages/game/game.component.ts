@@ -51,8 +51,6 @@ export class GameComponent implements OnInit, OnDestroy {
     ]
   }
   cardToUse: Card | null = null
-
-  mix: string = ""
   bonus: string = ""
 
   otherPlayerPunct: number = 0
@@ -60,6 +58,8 @@ export class GameComponent implements OnInit, OnDestroy {
   private isProcessingAudio: boolean = false;
 
   currentBattle: Battle | null = null;
+
+  position: number = 0;
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
@@ -82,8 +82,12 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy(): Promise<void> {
     this.audioContext.close()
+    if(this.currentBattle?.isAgainstBot && this.gameEnded)
+    {
+      await this.battleService.deleteBotBattle()
+    }
   }
 
   navigateToUrl(url: string) {
@@ -91,57 +95,66 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   async processMessage(message: any) {
-    this.serverResponse = message
-    const jsonResponse = JSON.parse(this.serverResponse)
-    let positions: number[] = []
+    try
+    {
+      console.warn("Entrando al semáforo...")
+      await this.waitForAudioProcessing()
+      console.warn("Saliendo...")
 
-    switch (jsonResponse.messageType) {
-      case MessageType.ShuffleDeckStart:
-        this.userBattle = jsonResponse.userBattleDto
-        this.currentBattle = jsonResponse.currentBattle
+      if(message instanceof Blob)
+      {
+        const data = await message.arrayBuffer()
+        await this.processAudio(data)
+        return
+      }
 
-        break;
-      case MessageType.TurnResult:
-        console.warn("Entrando al semáforo...")
-        await this.waitForAudioProcessing()
-        console.warn("Saliendo...")
+      this.serverResponse = message
+      const jsonResponse = JSON.parse(this.serverResponse)
+      let positions: number[] = []
 
+      switch (jsonResponse.messageType) {
+        case MessageType.ShuffleDeckStart:
+          this.userBattle = jsonResponse.userBattleDto
+          this.currentBattle = jsonResponse.currentBattle
 
-        this.board = jsonResponse.board
-        this.userBattle = jsonResponse.player
-        this.bonus = jsonResponse.bonus
-        this.otherPlayerPunct = jsonResponse.otherplayer
+          break;
+        case MessageType.TurnResult:
+          this.board = jsonResponse.board
+          this.userBattle = jsonResponse.player
+          this.bonus = jsonResponse.bonus
+          this.otherPlayerPunct = jsonResponse.otherplayer
 
-        this.mix = jsonResponse.filepath
-        positions = jsonResponse.position
-        this.playAudio(this.mix, positions, jsonResponse.wheel); 
-      
-        break
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
+        
+          break
 
-      case MessageType.EndGame:
-        this.gameEnded = true
+        case MessageType.EndGame:
+          this.gameEnded = true
 
-        this.board = jsonResponse.board
-        this.userBattle = jsonResponse.player
-        this.mix = jsonResponse.filepath
-        positions = jsonResponse.position
-        this.playAudio(this.mix, positions, jsonResponse.wheel); 
+          this.board = jsonResponse.board
+          this.userBattle = jsonResponse.player
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
 
-        if (this.userBattle?.battleResultId == 1) {
-          alert("Ganaste :D")
-        }
-        else {
-          alert("Perdiste :(")
-        }
-        break;
+          if (this.userBattle?.battleResultId == 1) {
+            alert("Ganaste :D")
+          }
+          else {
+            alert("Perdiste :(")
+          }
+          break;
+      }
+      console.log("Respuesta del socket en JSON: ", jsonResponse)
+    } catch
+    {
+
     }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
-  async playAudio(encodedAudio: string, positions: number[], spinTheWheel : boolean) 
+  async playAudio(positions: number[], spinTheWheel : boolean) 
   {
-  
     this.isProcessingAudio = true
     if(spinTheWheel)
     {
@@ -154,15 +167,22 @@ export class GameComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const position = positions[0]
+    this.position = positions[0]
 
-    const slut = this.board.slots[position]
+    const slut = this.board.slots[this.position]
     if (slut?.card != null) {
-      console.log("Borrando posición indicada: ", position)
-      this.stopTrack(position)
+      console.log("Borrando posición indicada: ", this.position)
+      this.stopTrack(this.position)
     }
 
-    const audioBuffer = await this.audioContext.decodeAudioData(this.base64ToArrayBuffer(encodedAudio));
+    this.isProcessingAudio = false
+  }
+  
+  private async processAudio(audio: ArrayBuffer)
+  {
+    this.isProcessingAudio = true
+
+    const audioBuffer = await this.audioContext.decodeAudioData(audio);
     const source = this.audioContext.createBufferSource()
 
     source.buffer = audioBuffer
@@ -171,7 +191,7 @@ export class GameComponent implements OnInit, OnDestroy {
     source.start(undefined, this.audioContext.currentTime)
     source.connect(this.audioContext.destination)
 
-    this.activeSources.set(position, source)
+    this.activeSources.set(this.position, source)
 
     this.isProcessingAudio = false
   }
@@ -205,16 +225,6 @@ export class GameComponent implements OnInit, OnDestroy {
       };
       checkProcessing();
     });
-  }
-
-  // Larga vida a StackOverflow xD (https://stackoverflow.com/questions/21797299/how-can-i-convert-a-base64-string-to-arraybuffer)
-  private base64ToArrayBuffer(base64: string) {
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
   }
 
   selectCard(card: Card) {
@@ -256,7 +266,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
+    this.webSocketService.sendNative(messageType.toString())
   }
 
   // Envía la acción del usuario al servidor
@@ -266,6 +276,6 @@ export class GameComponent implements OnInit, OnDestroy {
       "messageType": MessageType.PlayCard
     }
     const message = JSON.stringify(data)
-    this.webSocketService.sendRxjs(message)
+    this.webSocketService.sendNative(message)
   }
 }

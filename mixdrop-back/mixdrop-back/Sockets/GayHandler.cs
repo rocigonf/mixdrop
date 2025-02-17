@@ -260,14 +260,13 @@ public class GayHandler // GameHandler :3
             { "messageType", MessageType.TurnResult },
             { "board", _board },
             { "player", null },
-            { "filepath", Convert.ToBase64String(output) },
             { "bonus", Bonus },
             { "position", positions },
             { "otherplayer", otherUser.Punctuation },
             { "wheel", spinTheWheel },
         };
 
-        await NotifyUsers(dict, playerInTurn, otherUser);
+        await NotifyUsers(dict, playerInTurn, otherUser, output);
 
         // Si aún puede seguir jugando
         if (playerInTurn.ActionsLeft > 0)
@@ -282,7 +281,7 @@ public class GayHandler // GameHandler :3
             GayNetwork._handlers.Remove(this);
 
             dict["player"] = _mapper.ToDto(playerInTurn);
-            await NotifyUsers(dict, playerInTurn, otherUser, true);
+            await NotifyUsers(dict, playerInTurn, otherUser, output, true);
         }
         else
         {
@@ -303,8 +302,6 @@ public class GayHandler // GameHandler :3
 
                 //otherUser.TimePlayed = 120;
                 otherUser.ActionsLeft = ACTIONS_REQUIRED;
-
-                
             }
         }
     }
@@ -335,12 +332,12 @@ public class GayHandler // GameHandler :3
         GayNetwork._handlers.Remove(this);
     }
 
-    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser, bool end = false)
+    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser, byte[] blob, bool end = false)
     {
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-        if(end)
+        if (end)
         {
             dict["messageType"] = MessageType.EndGame;
         }
@@ -350,6 +347,11 @@ public class GayHandler // GameHandler :3
         dict["otherplayer"] = otherUser.Punctuation;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), playerInTurn.UserId);
 
+        if (blob.Length > 0)
+        {
+            await WebSocketHandler.NotifyOneUserBlob(blob, playerInTurn.UserId);
+        }
+
         if (otherUser.IsBot)
         {
             return;
@@ -358,6 +360,11 @@ public class GayHandler // GameHandler :3
         dict["player"] = _mapper.ToDto(otherUser);
         dict["otherplayer"] = playerInTurn.Punctuation;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
+
+        if (blob.Length > 0)
+        {
+            await WebSocketHandler.NotifyOneUserBlob(blob, otherUser.UserId);
+        }
     }
 
     private static int CheckForCardType(int desiredType, int actualType)
@@ -367,7 +374,7 @@ public class GayHandler // GameHandler :3
 
     private async Task DoBotActions(UserBattle bot, UserBattle notBot, Dictionary<object, object> dict, UnitOfWork unitOfWork)
     {
-        byte[] output;
+        byte[] output = [];
         int totalActions = 0;
         bool spinTheWheel = false;
         bool end = false;
@@ -412,7 +419,6 @@ public class GayHandler // GameHandler :3
                     bot.Punctuation++;
 
                     output = PlayMusic(_board.Playing, card);
-                    dict["filepath"] = Convert.ToBase64String(output);
                     dict["position"] = new List<int>() { i };
                     dict["board"] = _board;
                     dict["otherplayer"] = bot.Punctuation;
@@ -449,7 +455,7 @@ public class GayHandler // GameHandler :3
             }
 
             dict["wheel"] = spinTheWheel;
-            await NotifyUsers(dict, notBot, bot, end);
+            await NotifyUsers(dict, notBot, bot, output, end);
         }
 
         TotalActions++;

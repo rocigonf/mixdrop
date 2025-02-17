@@ -38,6 +38,13 @@ public class BattleRepository : Repository<Battle, int>
                 .ToListAsync();
     }
 
+    public async Task<Battle> GetBattleWithBotByUserAsync(int userId)
+    {
+        return await GetQueryable()
+            .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
+            .FirstOrDefaultAsync(b => b.IsAgainstBot && b.BattleStateId == 3);
+    }
+
     public async Task<ICollection<Battle>> GetCurrentBattleByUser(int userId)
     {
         return await GetQueryable()

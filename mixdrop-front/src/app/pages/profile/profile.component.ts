@@ -147,7 +147,7 @@ export class ProfileComponent implements OnInit {
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
+    this.webSocketService.sendNative(messageType.toString())
   }
 
 

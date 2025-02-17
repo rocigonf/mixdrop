@@ -75,7 +75,7 @@ export class LoginComponent {
 
       this.router.navigateByUrl("menu"); // redirige a inicio
 
-      this.webSocketService.connectRxjs()
+      this.webSocketService.connectNative()
     } else {
       alert("error al iniciar sesion")
       this.pressedEnter = false
@@ -113,7 +113,7 @@ export class LoginComponent {
           alert("Te has registrado con éxito.")
           this.router.navigateByUrl("menu"); // redirige a inicio
 
-          this.webSocketService.connectRxjs()
+          this.webSocketService.connectNative()
 
         } else {
           alert("Error en el inicio de sesión");

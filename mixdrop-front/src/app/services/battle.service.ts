@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
-import { Battle } from '../models/battle';
 import { User } from '../models/user';
 
 @Injectable({
@@ -21,7 +20,13 @@ export class BattleService {
     const result = await this.api.post("Battle/Matchmaking")
     return result
   }
+
+  async deleteBotBattle()
+  {
+    return await this.api.delete("Battle/bot")
+  }
   
+
   async createBattle(user: User | null, isRandom : boolean ) : Promise<any> {
     const body = {
       "User2" : user,
