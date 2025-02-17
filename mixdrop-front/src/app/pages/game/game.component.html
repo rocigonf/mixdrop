@@ -1,4 +1,12 @@
 <app-navbar></app-navbar>
+<!-- falta ponerle q si es un bot no lo muestre-->
+@if (currentBattle && userBattle ) {
+    <app-chat 
+          [currentBattle]="currentBattle" 
+          [userBattle]="userBattle">
+</app-chat>
+}
+
 
 <p class="countDown">{{this.time}}</p>
 

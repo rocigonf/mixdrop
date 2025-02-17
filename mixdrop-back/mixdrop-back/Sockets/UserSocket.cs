@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using mixdrop_back.Models.DTOs;
+﻿using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
@@ -106,10 +105,24 @@ public class UserSocket
                             var valorant = await GayNetwork.StartGame(currentBattle, User, unitOfWork, _serviceProvider);
                             Console.WriteLine("¿Qué es VALORANT? 😨");
                             dict.Add("userBattleDto", valorant);
+                            dict.Add("currentBattle", currentBattle);
                             break;
                         case MessageType.PlayCard:
                             Models.DTOs.Action action = dictInput["action"] as Models.DTOs.Action;
                             await GayNetwork.PlayCard(action, User.Id, unitOfWork, _serviceProvider);
+                            break;
+                        case MessageType.Chat:
+                            var messageReceived = dictInput["messageChat"] as string;
+                            Battle currentChatBattle = await battleService.GetCurrentBattleByUserAsync(User.Id);
+                            if (!currentChatBattle.IsAgainstBot)
+                            {
+                                UserBattle enemyUser = currentChatBattle.BattleUsers.First(u => User.Id != u.UserId);
+                                UserBattle chatSender = currentChatBattle.BattleUsers.First(u => User.Id == u.UserId);
+                                dict.Add("messageChat", messageReceived);
+                                dict.Add("who", chatSender.User.Nickname);
+                                    await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), enemyUser.UserId);
+                                Console.WriteLine($"Enviando mensaje a {enemyUser.User.Nickname}: {messageReceived}");
+                            }
                             break;
                     }
 
@@ -125,7 +138,7 @@ public class UserSocket
             }
             catch (Exception e)
             {
-                if(e is System.FormatException)
+                if (e is System.FormatException)
                 {
                     continue;
                 }
@@ -159,16 +172,27 @@ public class UserSocket
             MessageType messageType = (MessageType)elem.GetProperty("messageType").GetInt32();
             dict["messageType"] = messageType;
 
-            JsonElement actionElement = elem.GetProperty("action");
+            if (elem.TryGetProperty("action", out JsonElement actionElement))
+            {
+                actionElement = elem.GetProperty("action");
 
-            CardToPlay cardToPlay = actionElement.GetProperty("card").Deserialize<CardToPlay>();
-            ActionType actionType = actionElement.GetProperty("actionType").Deserialize<ActionType>();
+                CardToPlay cardToPlay = actionElement.GetProperty("card").Deserialize<CardToPlay>();
+                ActionType actionType = actionElement.GetProperty("actionType").Deserialize<ActionType>();
 
-            Models.DTOs.Action action = actionElement.Deserialize<Models.DTOs.Action>();
-            action.Card = cardToPlay;
-            action.ActionType = actionType;
+                Models.DTOs.Action action = actionElement.Deserialize<Models.DTOs.Action>();
+                action.Card = cardToPlay;
+                action.ActionType = actionType;
 
-            dict.Add("action", action);
+                dict.Add("action", action);
+            }
+            else
+            {
+                JsonElement chatElement = elem.GetProperty("messageChat");
+
+                string messageChat = chatElement.GetString();
+                dict.Add("messageChat", messageChat);
+            }
+
         }
         catch
         {

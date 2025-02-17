@@ -13,5 +13,6 @@ public enum MessageType
     ShuffleDeckStart,
     PlayCard, // Cuando se juega una carta,
     TurnResult,
-    EndGame
+    EndGame,
+    Chat
 }

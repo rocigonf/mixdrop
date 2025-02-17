@@ -14,12 +14,13 @@ import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { ChatComponent } from "../../components/chat/chat.component";
 
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [NavbarComponent, FormsModule, MatTooltipModule],
+  imports: [NavbarComponent, FormsModule, MatTooltipModule, ChatComponent],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
