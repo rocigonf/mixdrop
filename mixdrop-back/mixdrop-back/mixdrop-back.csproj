@@ -37,11 +37,15 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <None Remove="wwwroot\songs\output\test.txt" />
+		<Content Include="wwwroot\cards\**">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Folder Include="wwwroot\Songs\Output\" />
+		<Content Include="wwwroot\avatar\**">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>

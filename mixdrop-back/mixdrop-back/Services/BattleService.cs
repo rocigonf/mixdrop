@@ -23,7 +23,7 @@ public class BattleService
     {
         BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(1);
 
-        Battle battle = new Battle();
+        Battle battle = new Battle() { CreatedAt = DateTime.UtcNow };
         if (user2 != null)
         {
             // Si es random significa que deben pelear directamente
@@ -234,6 +234,7 @@ public class BattleService
 
                 //battle.BattleState = battleState;
                 battle.BattleStateId = 4;
+                battle.FinishedAt = DateTime.UtcNow;
 
                 //BattleResult victory = results.FirstOrDefault(b => b.Name == "Victoria");
                 //BattleResult defeat = results.FirstOrDefault(b => b.Name == "Derrota");
