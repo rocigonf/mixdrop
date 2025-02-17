@@ -47,4 +47,13 @@ public class BattleRepository : Repository<Battle, int>
             .ThenInclude(userBattle => userBattle.User)
             .ToListAsync();
     }
+
+    public async Task<ICollection<Battle>> GetCurrentBattleByUserWithoutThem(int userId)
+    {
+        return await GetQueryable()
+            .Where(battle => battle.BattleStateId == 3)
+            .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
+            .Include(battle => battle.BattleUsers)
+            .ToListAsync();
+    }
 }

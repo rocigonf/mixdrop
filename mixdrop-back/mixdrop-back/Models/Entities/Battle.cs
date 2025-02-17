@@ -7,4 +7,6 @@ public class Battle
     public BattleState BattleState { get; set; }
     public int BattleStateId { get; set; }
     public ICollection<UserBattle> BattleUsers { get; set; } = new List<UserBattle>();
+    public DateTime CreatedAt { get; set; }
+    public DateTime FinishedAt { get; set; } = DateTime.UtcNow.AddMonths(1); // Valor por defecto
 }

@@ -102,9 +102,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
         break;
       case MessageType.TurnResult:
-        console.error("Entrando al semáforo...")
+        console.warn("Entrando al semáforo...")
         await this.waitForAudioProcessing()
-        console.error("Saliendo...")
+        console.warn("Saliendo...")
 
 
         this.board = jsonResponse.board

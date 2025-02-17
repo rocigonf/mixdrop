@@ -6,5 +6,7 @@ export interface Battle {
     accepted : boolean,
     isPlaying : boolean,
     battleUsers : UserBattle[],
-    user : User
+    user : User,
+    createdAt: Date,
+    finishedAt: Date
 }
