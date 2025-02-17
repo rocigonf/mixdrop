@@ -42,6 +42,12 @@ namespace mixdrop_back.Controllers
         public async Task AddFriend([FromBody] User user2)
         {
             User user1 = await GetAuthorizedUser();
+
+            if (user1 == null)
+            {
+                return;
+            }
+
             await _friendshipService.AddFriend(user1, user2);
         }
 
@@ -50,8 +56,14 @@ namespace mixdrop_back.Controllers
         [HttpPut("{id}")]
         public async Task AcceptFriend(int id)
         {
-            int userId = GetAuthorizedId();
-            await _friendshipService.AcceptFriend(id, userId);
+            User user = await GetAuthorizedUser();
+
+            if (user == null)
+            {
+                return;
+            }
+
+            await _friendshipService.AcceptFriend(id, user.Id);
         }
 
         // Borrar amigo o rechazar solicitud de amistad
@@ -59,8 +71,14 @@ namespace mixdrop_back.Controllers
         [HttpDelete("{id}")]
         public async Task DeleteFriend(int id)
         {
-            int userId = GetAuthorizedId();
-            await _friendshipService.DeleteFriend(id, userId);
+            User user = await GetAuthorizedUser();
+
+            if (user == null)
+            {
+                return;
+            }
+
+            await _friendshipService.DeleteFriend(id, user.Id);
         }
 
         private async Task<User> GetAuthorizedUser()
@@ -70,17 +88,15 @@ namespace mixdrop_back.Controllers
             string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
 
             // Pilla el usuario de la base de datos
-            return await _userService.GetFullUserByIdAsync(int.Parse(idString));
-        }
+            User user = await _userService.GetFullUserByIdAsync(int.Parse(idString));
 
-        private int GetAuthorizedId()
-        {
-            System.Security.Claims.ClaimsPrincipal currentUser = this.User;
-            string firstClaim = currentUser.Claims.First().ToString();
-            string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
+            if (user.Banned)
+            {
+                Console.WriteLine("Usuario baneado");
+                return null;
+            }
 
-            // Pilla el usuario de la base de datos
-            return int.Parse(idString);
+            return user;
         }
     }
 }

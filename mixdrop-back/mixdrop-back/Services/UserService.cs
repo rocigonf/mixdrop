@@ -33,9 +33,9 @@ public class UserService
         return _userMapper.ToDto(users).ToList();
     }
 
-    public async Task<List<UserDto>> GetAllUsersAsync()
+    public async Task<List<UserDto>> GetAllUsersAsync(User currentUser)
     {
-        var users = await _unitOfWork.UserRepository.GetAllAsync();
+        var users = await _unitOfWork.UserRepository.GetAllUsersAsync(currentUser.Id);
         return _userMapper.ToDto(users).ToList();
     }
 
@@ -232,6 +232,46 @@ public class UserService
             Console.WriteLine($"Error al guardar el usuario: {ex.InnerException?.Message}");
             throw new Exception("Error al registrar el usuario. Verifica los datos ingresados.");
         }
+    }
+
+    // Modificar el rol del usuario
+    public async Task ModifyUserRoleAsync(int userId, string newRole)
+    {
+        var existingUser = await _unitOfWork.UserRepository.GetUserById(userId);
+
+
+        if (existingUser == null)
+        {
+            throw new InvalidOperationException("Usuario con ID:" + userId + "no encontrado.");
+        }
+
+        // Console.WriteLine("ID del usuario: " + existingUser.Id);
+
+        if (!string.IsNullOrEmpty(newRole))
+        {
+            existingUser.Role = newRole;
+        }
+
+        _unitOfWork.UserRepository.Update(existingUser);
+        await _unitOfWork.SaveAsync();
+    }
+
+    // Banear usuario
+    public async Task BanUserAsync(int userId)
+    {
+        var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+
+        if (user == null)
+        {
+            throw new InvalidOperationException("El usuario no existe.");
+        }
+
+        user.Banned = !user.Banned;
+        Console.WriteLine("Estado de baneo: ", user.Banned);
+
+        _unitOfWork.UserRepository.Update(user);
+
+        await _unitOfWork.SaveAsync();
     }
 
     public UserDto ToDto(User user)

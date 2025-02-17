@@ -32,6 +32,12 @@ public class WebSocketController : ControllerBase
             WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
 
             User user = await GetAuthorizedUser();
+
+            if (user == null)
+            {
+                return;
+            }
+
             user.StateId = 2;
             await _userService.ConnectUser(user);
 
@@ -54,7 +60,14 @@ public class WebSocketController : ControllerBase
         string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
 
         // Pilla el usuario de la base de datos
-        return await _userService.GetBasicUserByIdAsync(int.Parse(idString));
-    }
+        User user = await _userService.GetFullUserByIdAsync(int.Parse(idString));
 
+        if (user.Banned)
+        {
+            Console.WriteLine("Usuario baneado");
+            return null;
+        }
+
+        return user;
+    }
 }

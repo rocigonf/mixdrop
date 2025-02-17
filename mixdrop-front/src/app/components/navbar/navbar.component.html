@@ -5,16 +5,30 @@
 
     <div class="nav-right">
 
-        @if (authService.isAuthenticated()) {
+        <div class="dropdown">
+            @if (authService.isAuthenticated()) {
 
-            <a class="play" (click)="navigateToUrl('matchmaking')">
-                <span>JUGAR</span>
-            </a>
-        }
+                @if(user?.avatarPath != ""){
+                    <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+                }@else {
+                    <img class="avatar" src="/images/user.png" alt="avatar">
+                }
+                <div class="dropdown-content">
+                    <a (click)="navigateToUrl('profile/' + user?.id)">Perfil</a>
+                    @if (authService.isAdmin()) {
+                        <a (click)="navigateToUrl('admin/' + user?.id)">Administración</a>
+                    }
+                    <a class="menu" (click)="navigateToUrl('menu')">Menú</a>
+                </div>
+                
+            } @else {
+                
+                <a (click)="navigateToUrl('login')">
+                    <img class="avatar" src="/images/user.png" alt="avatar">
+                </a>
 
-        <a class="menu" (click)="navigateToUrl('menu')">
-            <span>MENÚ</span>
-        </a>
+            }
+        </div>
 
         @if (this.router.url == '/' || this.router.url == '/#rules') {
 
@@ -29,32 +43,16 @@
             </a>
             
         }
-        
-        <a (click)="navigateToUrl('/')">
-            <img id="trophy" src="/images/trophy.png" alt="ranking">
-        </a>
 
         @if (authService.isAuthenticated()) {
-                
-            <a (click)="navigateToUrl('profile/' + user?.id)">
-                @if(user?.avatarPath != ""){
-                    <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
-                }@else {
-                    <img class="avatar" src="/images/user.png" alt="avatar">
-                }
+
+            <a class="play" (click)="navigateToUrl('matchmaking')">
+                <span>JUGAR</span>
             </a>
 
             <a class="logout" (click)="authClick()">
-                <img src="/images/acceso.webp" alt="cerrar sesion">
+                <img src="/images/acceso.webp" alt="Cerrar sesión">
             </a>
-            
-        } @else {
-            
-            <a (click)="navigateToUrl('login')">
-                <img class="avatar" src="/images/user.png" alt="avatar">
-            </a>
-
         }
-
     </div>
 </nav>

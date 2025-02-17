@@ -14,25 +14,17 @@ span {
     cursor: pointer;
 }
 
-#trophy {
-    height: 45px;
-}
-
-.play {
-    cursor: pointer;
-}
-
-.play:hover
+.play:hover, .home:hover
 {
     text-decoration: underline;
 }
 
 .avatar {
-    vertical-align: middle;
     height: 40px;
     width: 40px;
     border: 2px solid white;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .nav-right {
@@ -56,6 +48,36 @@ a :hover{
 
 .logout img {
     height: 45px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 135px;
+    border-radius: 2px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px 12px;
+    text-decoration: none;
+    display: block;
+    font-size: 1.5rem;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #dddddd;
+    cursor: pointer;
 }
 
 @media (max-width: 450px) {
