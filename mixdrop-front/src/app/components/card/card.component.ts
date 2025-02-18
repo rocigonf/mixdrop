@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, Signal, SimpleChanges, ViewChild } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Card } from '../../models/card';
 import { canHaveDecorators } from 'typescript';
@@ -35,10 +35,19 @@ export class CardComponent {
     this.level = card.level;
     this.img = this.IMG_URL + card.imagePath;
     this.name = card.track.song.name;
+    this.artist = card.track.song.artist.name
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentCard'] && changes['currentCard'].currentValue) {
+      if (this.currentCard) {
+        this.setCart(this.currentCard);
+        this.setColor(this.currentCard.track.part.name);
+      }
+    }
   }
 
   ngOnInit() {
-    console.log("carta en padre:", this.currentCard);
     if (this.currentCard) {
       this.setCart(this.currentCard);
       this.setColor(this.currentCard.track.part.name);

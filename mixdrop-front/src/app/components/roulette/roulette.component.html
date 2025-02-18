@@ -1,0 +1,20 @@
+<h1>Roulette</h1>
+
+<div class="roulette">
+  <div class="wheel" #wheel>
+    <div class="wheel-segment">
+      <div class="wheel-text">Red</div>
+    </div>
+    <div class="wheel-segment">
+      <div class="wheel-text">Green</div>
+    </div>
+    <div class="wheel-segment">
+      <div class="wheel-text">Blue</div>
+    </div>
+    <div class="wheel-segment">
+      <div class="wheel-text">Yellow</div>
+    </div>
+  </div>
+  <!-- Agregar el click para que dispare el método -->
+  <button #spinButton (click)="spinRoulette()">Spin</button>
+</div>
