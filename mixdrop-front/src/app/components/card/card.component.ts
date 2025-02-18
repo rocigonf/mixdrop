@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Signal, viewChild } from '@angular/core';
+import { Component, ElementRef, Input, Signal, ViewChild } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Card } from '../../models/card';
 import { canHaveDecorators } from 'typescript';
@@ -16,7 +16,7 @@ export class CardComponent {
 
   public readonly IMG_URL = environment.apiImg;
 
-  // @viewChild() carta: ElementRef<HTMLDivElement>
+  @ViewChild("card", { static: false }) carta!: ElementRef<HTMLDivElement> 
 
   @Input() currentCard: Card | null = null
 
@@ -27,6 +27,7 @@ export class CardComponent {
   name: string = "Green li asd ad asd asght";
   img: string = this.IMG_URL + ""
   color: string = "";
+  gris : string = "#3a3a3a"
 
 
   setCart(card: Card) {
@@ -36,26 +37,21 @@ export class CardComponent {
     this.name = card.track.song.name;
   }
 
-
-
   ngOnInit() {
     console.log("carta en padre:", this.currentCard);
-
     if (this.currentCard) {
       this.setCart(this.currentCard);
       this.setColor(this.currentCard.track.part.name);
-      this.setLevel(this.currentCard.level);
-      console.log("la parte", this.part)
-      console.log("el nivel", this.level)
     }
-
-    //this.carta.nativeElement.style = "--color-level: red"
-
   }
 
+  ngAfterViewInit() {
+    if (this.carta) {
+      this.carta.nativeElement.style.setProperty('--color-level', this.color);
+    }
+  }
 
   setColor(part: string) {
-
     switch (part) {
       case "Vocal": this.color = "#fee710"
         break;
@@ -66,23 +62,5 @@ export class CardComponent {
       case "Drums": this.color = "#02a7e9"
         break;
     }
-    document.documentElement.style.setProperty('--color-trapecio', this.color);
   }
-
-  setLevel(level: number) {
-    var color: string = "#3a3a3a";
-    switch (level) {
-      case 1: document.documentElement.style.setProperty('--level2-color', color);
-        document.documentElement.style.setProperty('--level3-color', color);
-        break;
-      case 2: document.documentElement.style.setProperty('--level2-color', this.color);
-        document.documentElement.style.setProperty('--level3-color', color);
-        break;
-      case 3: document.documentElement.style.setProperty('--level2-color', this.color);
-        document.documentElement.style.setProperty('--level3-color', this.color);
-        break;
-    }
-  }
-
-
 }

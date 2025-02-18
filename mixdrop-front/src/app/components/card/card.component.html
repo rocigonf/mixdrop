@@ -1,23 +1,20 @@
 
 <div [style]="" #card class="card">
- @for (_ of MAX_LEVELS; track $index) {
 
+ @for (_ of MAX_LEVELS; track $index) {
     @if( $index < level ){
-        <!--lo rellena de color--> 
+        <div #card class="trapecio" [style]="{ '--color-level': color}"></div>
     } @else {
-        <div class="trapecio"></div>
+        <div #card class="trapecio" [style]="{ '--color-level': gris}"></div>
     }  
     
  }
-    <div class="trapecio" ></div>
-    <div class="trapecio2"></div>
-    <div class="level" ></div>
-    
+
     <img id="card-img" [src]="img" alt="imagen">
     <div class="content">
         <span id="artist">{{ artist }}</span>
         <span>{{ name }}</span>
-
+        
         @switch (this.part) {
             @case ("Vocal") {
                 <img id="part-icon" src="http://dropmixin.com/w/images/3/34/Instrument_vocal_lead_32.png" alt="">

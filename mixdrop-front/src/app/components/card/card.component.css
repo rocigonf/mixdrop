@@ -47,32 +47,8 @@
     clip-path: polygon(29% 0, 100% 0, 100% 100%, 0 100%, 0 43%);
 }
 
-.trapecio:nth-child(1)
 
-.trapecio:nth-child(2)
-
-.trapecio:nth-child(3)
-
-.hueco
-
-.trapecio {
-    position: absolute;
-    z-index: 3;
-    width: 28.5px;
-    border-right: 12.5px solid transparent;
-    border-top: 18px solid var(--color-level);
-}
-
-.trapecio2 {
-    margin-top: 22px;
-    position: absolute;
-    z-index: 4;
-    width: 15.5px;
-    border-right: 10.5px solid transparent;
-    border-top: 15px solid var(--level2-color);
-}
-
-.level {
+.trapecio:nth-child(1){
     position: absolute;
     margin-top: 42px;
     z-index: 2;
@@ -80,5 +56,23 @@
     height: 0;
     border-style: solid;
     border-width: 18px 12px 0 0;
-    border-color: var(--color-trapecio) transparent transparent transparent;
+    border-color: var(--color-level) transparent transparent transparent;
 }
+
+.trapecio:nth-child(2){
+    margin-top: 22px;
+    position: absolute;
+    z-index: 4;
+    width: 15.5px;
+    border-right: 10.5px solid transparent;
+    border-top: 15px solid var(--color-level);
+}
+
+.trapecio:nth-child(3){
+    position: absolute;
+    z-index: 3;
+    width: 28.5px;
+    border-right: 12.5px solid transparent;
+    border-top: 18px solid var(--color-level);
+}
+
