@@ -27,7 +27,7 @@ export class BattleService {
   }
   
 
-  async createBattle(user: number | null, isRandom : boolean ) : Promise<any> {
+  async createBattle(user: number = 0, isRandom : boolean ) : Promise<any> {
     const body = {
       "User2Id" : user,
       "IsRandom" : isRandom

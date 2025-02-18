@@ -131,7 +131,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   async gameWithBot() {
     // el user 2 es nulo y el false de que no es random
-    await this.battleService.createBattle(null, false)
+    await this.battleService.createBattle(0, false)
   }
 
   async gameWithFriend(friend: User) {
