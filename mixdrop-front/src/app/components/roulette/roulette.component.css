@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 600;
+    margin: 0 1rem 2rem;
+}
+
+body {
+    background: linear-gradient(to right, #141e30, #243b55);
+}
+
+.wheel {
+    margin: auto;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    transition: transform 3s ease-out; /* Asegúrate de que la transición esté aquí */
+}
+
+.wheel-segment {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    clip-path: polygon(50% 50%, 0 0, 0 100%);
+}
+
+.wheel-segment:nth-child(1) {
+    background: red;
+    transform: rotate(0deg);
+}
+
+.wheel-segment:nth-child(2) {
+    background: green;
+    transform: rotate(90deg);
+}
+
+.wheel-segment:nth-child(3) {
+    background: blue;
+    transform: rotate(180deg);
+}
+
+.wheel-segment:nth-child(4) {
+    background: yellow;
+    transform: rotate(270deg);
+}
+
+.wheel-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    width: 80%;
+    height: 80%;
+}
+
+.roulette {
+    position: relative;
+    margin: auto;
+    text-align: center;
+}
+
+.roulette::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 24px;
+    height: 24px;
+    background-color: darkorange;
+    border-radius: 50% 50% 0 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.roulette button {
+    border: none;
+    cursor: pointer;
+    background: dodgerblue;
+    color: white;
+    padding: 10px 30px;
+    margin: 20px 0;
+    font-size: 1.5rem;
+}
