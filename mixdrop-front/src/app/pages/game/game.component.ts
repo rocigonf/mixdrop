@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription, takeWhile, timer } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
@@ -16,12 +16,13 @@ import { AuthService } from '../../services/auth.service';
 import { BattleService } from '../../services/battle.service';
 import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { CardComponent } from "../../components/card/card.component";
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent, CardComponent],
+  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -40,10 +41,12 @@ export class GameComponent implements OnInit, OnDestroy {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
+  seconds = 120
+
+  timeRemaining$: Observable<number> | null = null
+
   userBattle: UserBattleDto | null = null
   gameEnded: boolean = false
-
-  time: number = 120;
 
   board: Board = {
     playing: null,
@@ -52,15 +55,18 @@ export class GameComponent implements OnInit, OnDestroy {
     ]
   }
   cardToUse: Card | null = null
-
-  mix: string = ""
   bonus: string = ""
 
   otherPlayerPunct: number = 0
+  otherUserId: number = 0
 
   private isProcessingAudio: boolean = false;
 
   currentBattle: Battle | null = null;
+
+  position: number = 0;
+  
+  private canReceive = true
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
@@ -83,8 +89,12 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy(): Promise<void> {
     this.audioContext.close()
+    if(this.currentBattle?.isAgainstBot && this.gameEnded)
+    {
+      await this.battleService.deleteBotBattle()
+    }
   }
 
   navigateToUrl(url: string) {
@@ -92,57 +102,96 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   async processMessage(message: any) {
-    this.serverResponse = message
-    const jsonResponse = JSON.parse(this.serverResponse)
-    let positions: number[] = []
+    // Esto es porque parece que recibe los mensajes dos veces
+    if(!this.canReceive)
+      {
+        this.canReceive = true
+        return
+      }
 
-    switch (jsonResponse.messageType) {
-      case MessageType.ShuffleDeckStart:
-        this.userBattle = jsonResponse.userBattleDto
-        this.currentBattle = jsonResponse.currentBattle
+      console.warn("Entrando al semáforo...")
+      await this.waitForAudioProcessing()
+      console.warn("Saliendo...")
 
-        break;
-      case MessageType.TurnResult:
-        console.warn("Entrando al semáforo...")
-        await this.waitForAudioProcessing()
-        console.warn("Saliendo...")
+      if(message instanceof Blob)
+      {
+        const data = await message.arrayBuffer()
+        await this.processAudio(data)
+        return
+      }
 
+      this.serverResponse = message
+      const jsonResponse = JSON.parse(this.serverResponse)
+      let positions: number[] = []
 
-        this.board = jsonResponse.board
-        this.userBattle = jsonResponse.player
-        this.bonus = jsonResponse.bonus
-        this.otherPlayerPunct = jsonResponse.otherplayer
+      switch (jsonResponse.messageType) {
+        case MessageType.ShuffleDeckStart:
+          this.userBattle = jsonResponse.userBattleDto
+          this.currentBattle = jsonResponse.currentBattle
 
-        this.mix = jsonResponse.filepath
-        positions = jsonResponse.position
-        this.playAudio(this.mix, positions, jsonResponse.wheel); 
+          break;
+        case MessageType.TurnResult:
+          this.board = jsonResponse.board
+
+          const newPlayer: UserBattleDto = jsonResponse.player
+          const cards = this.userBattle!!.cards
+
+          this.userBattle = newPlayer
+          const newCard = jsonResponse.card
+          this.userBattle.cards = cards
+
+          if(newCard)
+          {
+            this.userBattle.cards.push(newCard)
+          }
       
-        break
+          this.bonus = jsonResponse.bonus
+          this.otherPlayerPunct = jsonResponse.otherplayer
 
-      case MessageType.EndGame:
-        this.gameEnded = true
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
 
-        this.board = jsonResponse.board
-        this.userBattle = jsonResponse.player
-        this.mix = jsonResponse.filepath
-        positions = jsonResponse.position
-        this.playAudio(this.mix, positions, jsonResponse.wheel); 
+          if(this.currentBattle?.isAgainstBot == false && this.userBattle.isTheirTurn)
+          {
+            this.timeRemaining$ = timer(0, 1000).pipe(
+              map(n => (this.seconds - n) * 1000),
+              takeWhile(n => n >= 0),
+            );
+          }
+        
+          break
 
-        if (this.userBattle?.battleResultId == 1) {
-          alert("Ganaste :D")
-        }
-        else {
-          alert("Perdiste :(")
-        }
-        break;
-    }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
+        case MessageType.EndGame:
+          this.gameEnded = true
+          this.otherUserId = jsonResponse.otherUserId
+
+          this.otherPlayerPunct = jsonResponse.otherplayer
+
+          this.board = jsonResponse.board
+          this.userBattle = jsonResponse.player
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
+
+          if (this.userBattle?.battleResultId == 1) {
+            alert("Ganaste :D")
+          }
+          else {
+            alert("Perdiste :(")
+          }
+
+          break;
+        case MessageType.DisconnectedFromBattle:
+          alert("El otro usuario se ha desconectado, por lo que has ganado")
+          this.router.navigateByUrl("game")
+          break
+      }
+      console.log("Respuesta del socket en JSON: ", jsonResponse)
+    
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
-  async playAudio(encodedAudio: string, positions: number[], spinTheWheel : boolean) 
+  async playAudio(positions: number[], spinTheWheel : boolean) 
   {
-  
     this.isProcessingAudio = true
     if(spinTheWheel)
     {
@@ -155,15 +204,22 @@ export class GameComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const position = positions[0]
+    this.position = positions[0]
 
-    const slut = this.board.slots[position]
+    const slut = this.board.slots[this.position]
     if (slut?.card != null) {
-      console.log("Borrando posición indicada: ", position)
-      this.stopTrack(position)
+      console.log("Borrando posición indicada: ", this.position)
+      this.stopTrack(this.position)
     }
 
-    const audioBuffer = await this.audioContext.decodeAudioData(this.base64ToArrayBuffer(encodedAudio));
+    this.isProcessingAudio = false
+  }
+  
+  private async processAudio(audio: ArrayBuffer)
+  {
+    this.isProcessingAudio = true
+
+    const audioBuffer = await this.audioContext.decodeAudioData(audio);
     const source = this.audioContext.createBufferSource()
 
     source.buffer = audioBuffer
@@ -172,7 +228,7 @@ export class GameComponent implements OnInit, OnDestroy {
     source.start(undefined, this.audioContext.currentTime)
     source.connect(this.audioContext.destination)
 
-    this.activeSources.set(position, source)
+    this.activeSources.set(this.position, source)
 
     this.isProcessingAudio = false
   }
@@ -199,7 +255,7 @@ export class GameComponent implements OnInit, OnDestroy {
     return new Promise<void>((resolve) => {
       const checkProcessing = () => {
         if (!this.isProcessingAudio) {
-          resolve(); // S
+          resolve();
         } else {
           setTimeout(checkProcessing, 50); // Se llama a la verificación cada 50 milisegundos
         }
@@ -208,22 +264,12 @@ export class GameComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Larga vida a StackOverflow xD (https://stackoverflow.com/questions/21797299/how-can-i-convert-a-base64-string-to-arraybuffer)
-  private base64ToArrayBuffer(base64: string) {
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
-  }
-
   selectCard(card: Card) {
     this.cardToUse = card
   }
 
   useCard(desiredPosition: number) {
-    if (this.cardToUse) {
+    if (this.cardToUse && this.userBattle) {
       const cardToPlay: CardToPlay = {
         cardId: this.cardToUse.id,
         position: desiredPosition,
@@ -232,9 +278,24 @@ export class GameComponent implements OnInit, OnDestroy {
         card: cardToPlay,
         actionType: null
       }
+
+      console.error("CARTAS ANTES DE BORRAR: ", this.userBattle?.cards)
+
+      for(let i = 0; i < this.userBattle?.cards.length; i++)
+      {
+        if(this.userBattle.cards[i].id == this.cardToUse.id)
+        {
+          this.userBattle.cards.splice(i, 1)
+          break
+        }
+      }
+
+      console.error("CARTAS DESPUÉS DE BORRAR: ", this.userBattle?.cards)
+
       this.sendAction(action)
 
       this.cardToUse = null
+
     }
   }
 
@@ -254,10 +315,17 @@ export class GameComponent implements OnInit, OnDestroy {
     return posibleType.indexOf(actualType) != -1
   }
 
+  revenge()
+  {
+    sessionStorage.setItem("revenge", "true")
+    sessionStorage.setItem("otherUserId", this.otherUserId.toString())
+    this.navigateToUrl("matchmaking")
+  }
+
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
+    this.webSocketService.sendNative(messageType.toString())
   }
 
   // Envía la acción del usuario al servidor
@@ -267,6 +335,6 @@ export class GameComponent implements OnInit, OnDestroy {
       "messageType": MessageType.PlayCard
     }
     const message = JSON.stringify(data)
-    this.webSocketService.sendRxjs(message)
+    this.webSocketService.sendNative(message)
   }
 }

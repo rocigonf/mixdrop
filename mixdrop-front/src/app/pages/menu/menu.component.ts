@@ -183,14 +183,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   async createBattle(user : User | null)
   {
     if(user == null) { return }
-    const response = await this.battleService.createBattle(user, false) // En esta vista siempre será no random
+    const response = await this.battleService.createBattle(user.id, false) // En esta vista siempre será no random
     console.log("Respuesta de borrar la batalla: ", response)
     this.askForInfo(MessageType.PendingBattle)
   }
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
+    this.webSocketService.sendNative(messageType.toString())
   }
 
   ngOnDestroy(): void {

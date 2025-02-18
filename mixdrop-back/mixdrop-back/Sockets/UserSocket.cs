@@ -85,9 +85,7 @@ public class UserSocket
                             dict.Add("friends", friendlist);
                             break;
                         case MessageType.Stats:
-                            dict.Add("total", WebSocketHandler.Total);
-                            dict.Add("totalBattles", WebSocketHandler.TotalBattles);
-                            dict.Add("totalPlayers", WebSocketHandler.TotalPlayers);
+                            await WebSocketHandler.SendStatsMessage();
                             break;
                         case MessageType.PendingBattle:
                             var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);
@@ -264,9 +262,9 @@ public class UserSocket
         return Socket.SendAsync(bytes, WebSocketMessageType.Text, true, cancellation);
     }
 
-    public void Dispose()
+    public Task SendBlobAsync(byte[] message, CancellationToken cancellation = default)
     {
-        // Cerramos el websocket
-        Socket.Dispose();
+        // Enviamos los bytes al cliente marcando que el mensaje es un texto
+        return Socket.SendAsync(message, WebSocketMessageType.Binary, true, cancellation);
     }
 }

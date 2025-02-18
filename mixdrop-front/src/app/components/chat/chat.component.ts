@@ -72,7 +72,7 @@ export class ChatComponent {
     }
     console.log("data", data)
     const message = JSON.stringify(data)
-    this.webSocketService.sendRxjs(message)
+    this.webSocketService.sendNative(message)
   }
 
   private scrollToBottom() {
@@ -84,6 +84,11 @@ export class ChatComponent {
   }
 
   processMessage(message: any) {
+    if(message instanceof Blob)
+    {
+      return
+    }
+    
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
 

@@ -8,8 +8,11 @@
 }
 }
 
+@if(this.userBattle?.isTheirTurn)
+{
+    <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+}
 
-<p class="countDown">{{this.time}}</p>
 
 @if(userBattle != null){
 
@@ -18,6 +21,7 @@
     @if(gameEnded)
     {
     <button (click)="router.navigateByUrl('menu')">Volver al menú</button>
+    <button (click)="revenge()">Revancha >:D</button>
     }
     @else {
     @if (this.userBattle.isTheirTurn) {

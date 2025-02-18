@@ -98,6 +98,7 @@ public class GayHandler // GameHandler :3
 
         byte[] output = [];
         List<int> positions = new List<int>();
+        Card randomCard = null;
         bool spinTheWheel = false;
 
         if (playerInTurn == null)
@@ -180,7 +181,9 @@ public class GayHandler // GameHandler :3
             slut.Card = existingCard;
             slut.UserId = playerInTurn.UserId;
             playerInTurn.Cards.Remove(existingCard);
-            playerInTurn.Cards.Add(_cards.ElementAt(_random.Next(0, _cards.Count)));
+
+            randomCard = _cards.ElementAt(_random.Next(0, _cards.Count));
+            playerInTurn.Cards.Add(randomCard);
 
             positions.Add(card.Position);
 
@@ -260,14 +263,16 @@ public class GayHandler // GameHandler :3
             { "messageType", MessageType.TurnResult },
             { "board", _board },
             { "player", null },
-            { "filepath", Convert.ToBase64String(output) },
             { "bonus", Bonus },
             { "position", positions },
             { "otherplayer", otherUser.Punctuation },
             { "wheel", spinTheWheel },
+            { "card", randomCard }
         };
 
-        await NotifyUsers(dict, playerInTurn, otherUser);
+        await NotifyUsers(dict, playerInTurn, otherUser, output);
+
+        dict["card"] = null;
 
         // Si aún puede seguir jugando
         if (playerInTurn.ActionsLeft > 0)
@@ -279,10 +284,11 @@ public class GayHandler // GameHandler :3
         if (playerInTurn.Punctuation >= POINTS_REQUIRED)
         {
             await EndBattle(playerInTurn, otherUser, unitOfWork);
-            GayNetwork._handlers.Remove(this);
+            //GayNetwork._handlers.Remove(this);
 
-            dict["player"] = _mapper.ToDto(playerInTurn);
-            await NotifyUsers(dict, playerInTurn, otherUser, true);
+            //dict["player"] = _mapper.ToDto(playerInTurn);
+            dict["messageType"] = MessageType.EndGame;
+            await NotifyUsers(dict, playerInTurn, otherUser, output, true);
         }
         else
         {
@@ -303,10 +309,15 @@ public class GayHandler // GameHandler :3
 
                 //otherUser.TimePlayed = 120;
                 otherUser.ActionsLeft = ACTIONS_REQUIRED;
-
-                
             }
         }
+    }
+
+    private UserBattleDto MapUserBattle(UserBattle userBattle)
+    {
+        UserBattleDto userBattleDto = _mapper.ToDto(userBattle);
+        userBattleDto.Cards = null;
+        return userBattleDto;
     }
 
     public async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
@@ -332,32 +343,50 @@ public class GayHandler // GameHandler :3
         unitOfWork.BattleRepository.Update(Battle);
 
         await unitOfWork.SaveAsync();
+
+        await WebSocketHandler.SendStatsMessage();
         GayNetwork._handlers.Remove(this);
     }
 
-    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser, bool end = false)
+    private async Task NotifyUsers(Dictionary<object, object> dict, UserBattle playerInTurn, UserBattle otherUser, byte[] blob, bool end = false)
     {
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; // Ignora nulos :>
 
-        if(end)
+        if (end)
         {
-            dict["messageType"] = MessageType.EndGame;
+            dict.Add("otherUserId", otherUser.UserId);
         }
 
         // Notifico a los usuarios
-        dict["player"] = _mapper.ToDto(playerInTurn);
+        dict["player"] = MapUserBattle(playerInTurn);
         dict["otherplayer"] = otherUser.Punctuation;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), playerInTurn.UserId);
+
+        if (blob.Length > 0)
+        {
+            await WebSocketHandler.NotifyOneUserBlob(blob, playerInTurn.UserId);
+        }
 
         if (otherUser.IsBot)
         {
             return;
         }
 
-        dict["player"] = _mapper.ToDto(otherUser);
+        if(end)
+        {
+            dict["otherUserId"] = playerInTurn.UserId;
+        }
+
+        dict["player"] = MapUserBattle(otherUser);
         dict["otherplayer"] = playerInTurn.Punctuation;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
+
+        if (blob.Length > 0)
+        {
+            await WebSocketHandler.NotifyOneUserBlob(blob, otherUser.UserId);
+        }
     }
 
     private static int CheckForCardType(int desiredType, int actualType)
@@ -367,7 +396,7 @@ public class GayHandler // GameHandler :3
 
     private async Task DoBotActions(UserBattle bot, UserBattle notBot, Dictionary<object, object> dict, UnitOfWork unitOfWork)
     {
-        byte[] output;
+        byte[] output = [];
         int totalActions = 0;
         bool spinTheWheel = false;
         bool end = false;
@@ -412,7 +441,6 @@ public class GayHandler // GameHandler :3
                     bot.Punctuation++;
 
                     output = PlayMusic(_board.Playing, card);
-                    dict["filepath"] = Convert.ToBase64String(output);
                     dict["position"] = new List<int>() { i };
                     dict["board"] = _board;
                     dict["otherplayer"] = bot.Punctuation;
@@ -442,6 +470,7 @@ public class GayHandler // GameHandler :3
 
             if (bot.Punctuation >= POINTS_REQUIRED)
             {
+                dict["messageType"] = MessageType.EndGame;
                 await EndBattle(bot, notBot, unitOfWork);
                 GayNetwork._handlers.Remove(this);
                 totalActions = ACTIONS_REQUIRED;
@@ -449,7 +478,7 @@ public class GayHandler // GameHandler :3
             }
 
             dict["wheel"] = spinTheWheel;
-            await NotifyUsers(dict, notBot, bot, end);
+            await NotifyUsers(dict, notBot, bot, output, end);
         }
 
         TotalActions++;

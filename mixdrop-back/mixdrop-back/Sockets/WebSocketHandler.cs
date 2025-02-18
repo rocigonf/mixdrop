@@ -11,8 +11,8 @@ public class WebSocketHandler
     public static readonly List<UserSocket> USER_SOCKETS = new List<UserSocket>();
 
     public static int Total { get; set; } = 0;
-    public static int TotalBattles { get; set; } = 0; // las batallas q se estan jugando
-    public static int TotalPlayers { get; set; } = 0; // personas jugando
+    //public static int TotalBattles { get; set; } = 0; // las batallas q se estan jugando
+    //public static int TotalPlayers { get; set; } = 0; // personas jugando
 
     // Semáforo para controlar el acceso a la lista de WebSocketHandler
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -26,14 +26,6 @@ public class WebSocketHandler
     {
         // Creamos un nuevo WebSocketHandler a partir del WebSocket recibido y lo añadimos a la lista
         UserSocket handler = await AddWebsocketAsync(webSocket, user);
-
-        Dictionary<object, object> dict = new Dictionary<object, object>
-        {
-            { "messageType", MessageType.Stats },
-            { "total", Total },
-            { "totalBattles" , TotalBattles },
-            { "totalPlayers" , TotalPlayers}
-        };
 
         await SendStatsMessage();
 
@@ -119,6 +111,7 @@ public class WebSocketHandler
                 await battleService.DeleteBattleByObject(battles.First(), user.UserId);
             }
             GayNetwork.DeleteHandler(disconnectedHandler.User.Id);
+            await SendStatsMessage();
         }
 
         await SendStatsMessage();
@@ -138,6 +131,15 @@ public class WebSocketHandler
         }
     }
 
+    public static async Task NotifyOneUserBlob(byte[] message, int userId)
+    {
+        var userSocket = USER_SOCKETS.FirstOrDefault(userSocket => userSocket.User.Id == userId);
+        if (userSocket != null && userSocket.Socket.State == WebSocketState.Open)
+        {
+            await userSocket.SendBlobAsync(message);
+        }
+    }
+
     public static async Task NotifyUsers(string jsonToSend)
     {
         foreach (var userSocket in USER_SOCKETS)
@@ -149,12 +151,19 @@ public class WebSocketHandler
     // Esto habrá que ponerlo en otro archivo
     public static async Task SendStatsMessage()
     {
+        int totalBattles = GayNetwork._handlers.Count;
+        int totalBattlesAgainstBots = GayNetwork._handlers.Where(h => h.Battle.IsAgainstBot).Count();
+        int totalBattlesWithoutBots = GayNetwork._handlers.Where(h => h.Battle.IsAgainstBot == false).Count();
+
+        int totalPlayers = totalBattlesWithoutBots * 2;
+        totalPlayers += totalBattlesAgainstBots;
+
         Dictionary<object, object> dict = new Dictionary<object, object>
         {
             { "messageType", MessageType.Stats },
             { "total", Total },
-            { "totalBattles" , TotalBattles },
-            { "totalPlayers" , TotalPlayers}
+            { "totalBattles" , totalBattles },
+            { "totalPlayers" , totalPlayers}
         };
 
         await NotifyUsers(JsonSerializer.Serialize(dict));

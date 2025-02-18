@@ -23,6 +23,8 @@ public class GayNetwork // GameNetwork :3
 
         UserBattleDto userBattleDto = await handler.AddParticipant(battle, user.Id, unitOfWork, serviceProvider);
 
+        await WebSocketHandler.SendStatsMessage();
+
         _semaphore.Release();
 
         return userBattleDto;

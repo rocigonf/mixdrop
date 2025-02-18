@@ -19,12 +19,12 @@ public class BattleService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateBattle(User user1, User user2 = null, bool isRandom = false)
+    public async Task CreateBattle(User user1, int user2Id = 0, bool isRandom = false)
     {
         BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(1);
 
         Battle battle = new Battle() { CreatedAt = DateTime.UtcNow };
-        if (user2 != null)
+        if (user2Id != 0)
         {
             // Si es random significa que deben pelear directamente
             if (isRandom)
@@ -35,7 +35,7 @@ public class BattleService
             }
 
             // q pueda ser nulo el user 2 porque puede ser el bot
-            User existingUser = await _unitOfWork.UserRepository.GetByNicknameAsync(user2.Nickname);
+            User existingUser = await _unitOfWork.UserRepository.GetByIdAsync(user2Id);
 
             if (existingUser == null)
             {
@@ -52,10 +52,10 @@ public class BattleService
             battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(3);
         }
 
-        if (user2 != null)
+        if (user2Id != 0)
         {
             // q si estan en batalla los jugadores, no pueda estar en otra
-            Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2.Id);
+            Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleByUsersAsync(user1.Id, user2Id);
             if (existingBattle != null)
             {
                 Console.WriteLine("Ya hay una batalla entre ambos usuarios");
@@ -81,12 +81,12 @@ public class BattleService
         };
 
 
-        if (user2 != null)
+        if (user2Id != 0)
         {
             UserBattle newUserBattle2 = new UserBattle
             {
                 BattleId = newBattle.Id,
-                UserId = user2.Id,
+                UserId = user2Id,
                 Receiver = true,
                 BattleResultId = 1,
                 Battle = newBattle,
@@ -104,9 +104,9 @@ public class BattleService
 
         // Si el usuario 2 no existe, significa que va a pelear contra un bot, por lo que simplemente se le dirigiría desde el front a la batalla
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user1.Id);
-        if (user2 != null)
+        if (user2Id != 0)
         {
-            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2.Id);
+            await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2Id);
         }
     }
 
@@ -222,6 +222,20 @@ public class BattleService
         }
     }
 
+    public async Task DeleteBattleAgainstBot(int userId)
+    {
+        // Comprobamos que la batalla existe
+        Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleWithBotByUserAsync(userId);
+        if (existingBattle == null)
+        {
+            Console.WriteLine("Esta batalla no existe :(");
+            return;
+        }
+
+        _unitOfWork.BattleRepository.Delete(existingBattle);
+        await _unitOfWork.SaveAsync();
+    }
+
     // Esto se podría reutilizar en el timer y en el GayHandler
     public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser, bool notify = false)
     {
@@ -295,11 +309,11 @@ public class BattleService
         {
             userInQueue.IsInQueue = false;
             _unitOfWork.UserRepository.Update(userInQueue);
-            await CreateBattle(user, userInQueue, true);
+            await CreateBattle(user, userInQueue.Id, true);
             JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-            WebSocketHandler.TotalPlayers++;
+            //WebSocketHandler.TotalPlayers++;
 
             /*dict["messageType"] = MessageType.Play;
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user.Id);

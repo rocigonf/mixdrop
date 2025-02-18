@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
+import { User } from '../models/user';
 
 
 @Injectable({
@@ -27,5 +28,44 @@ export class UserService {
 
   async updateUser(formData: FormData, id: number): Promise<any> {
     return this.api.putWithImage<any>(`User/${id}`, formData);
+  }
+
+  // devuelve todos los usuarios
+  async allUser(): Promise<User[]> {
+    const request = await this.api.get(`User/allUsers`)
+    const dataRaw: any = request.data
+
+    const users: User[] = []
+
+    for (const u of dataRaw) {
+      const user: User = {
+        id: u.id,
+        nickname: u.nickname,
+        email: u.email,
+        avatarPath: u.avatarPath,
+        role: u.role,
+        isInQueue: u.isInQueue,
+        stateId: u.stateId,
+        friend: u.friend,
+        banned: u.banned,
+        battles: []
+      }
+      users.push(user);
+    }
+    return users;
+  }
+
+  // Modificar rol del usuario
+  modifyRole(id: number, newRole: string): Promise<any> {
+    const body = {
+        userId: id,
+        newRole: newRole
+    }
+    return this.api.put(`User/modifyUserRole`, body)
+  }
+
+  // Banear usuario
+  banUserAsync(userId: number){
+    return this.api.put(`User/banUser/${userId}`)
   }
 }

@@ -23,6 +23,49 @@
         <button (click)="addFriend(this.user)">Añadir amigo</button>
     }
 
+    <!-- Historial de batallas -->
+    <h2>Batallas</h2>
+    <div>
+        @for(battle of user.battles; track $index){
+            @if(battle.battleStateId == 4)
+            {
+                <p>Tiempo total {{ getDiffDays(battle.createdAt, battle.finishedAt) }}</p>
+                    @if(battle.usersBattles[0].userId == user.id)
+                    {
+                        <p>Puntuación: {{ battle.usersBattles[0].punctuation }}</p>
+                        @switch (battle.usersBattles[0].battleResultId) {
+                            @case (1) {
+                                <p>Victoria</p>
+                            }
+                            @case (2) {
+                                <p>Derrota</p>
+                            }
+                        }
+                        @if(battle.isAgainstBot == false)
+                        {
+                            <p>Fue contra: {{ battle.usersBattles[1].userName }}</p>
+                        }
+                    }
+                    @else {
+                        <p>Puntuación: {{ battle.usersBattles[1].punctuation }}</p>
+                        @switch (battle.usersBattles[1].battleResultId) {
+                            @case (1) {
+                                <p>Victoria</p>
+                            }
+                            @case (2) {
+                                <p>Derrota</p>
+                            }
+                        }
+                        @if(battle.isAgainstBot == false)
+                        {
+                            <p>Fue contra: {{ battle.usersBattles[0].userName }}</p>
+                        }
+                    }
+                }
+            }
+        
+    </div>
+
     @if(isItself)
     {
         @if (this.image) {

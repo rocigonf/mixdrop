@@ -37,6 +37,7 @@ public class RemoveAFKPlayers : BackgroundService
             {
                 await EndBattle();
                 GayNetwork._handlers.Remove(_handler);
+                await WebSocketHandler.SendStatsMessage();
                 await StopAsync(stoppingToken);
             }
 

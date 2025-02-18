@@ -96,6 +96,7 @@ export class ProfileComponent implements OnInit {
 
     if (result != null) {
       this.user = result
+      console.error(this.user)
 
       // Pillo el id del JWT como en el ECommerce y si coincide con el usuario que he pedido, intenta acceder a sí mismo
       const jwt = this.userService.api.jwt
@@ -147,7 +148,7 @@ export class ProfileComponent implements OnInit {
 
   askForInfo(messageType: MessageType) {
     console.log("Mensaje pedido: ", messageType)
-    this.webSocketService.sendRxjs(messageType.toString())
+    this.webSocketService.sendNative(messageType.toString())
   }
 
 
@@ -295,5 +296,12 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  getDiffDays(begin: any, end: any) {
+    const startDate = new Date(begin);
+    const endDate = new Date(end);
+    const time = endDate.getTime() - startDate.getTime();
+
+    return time / (1000 * 3600);
+  }
 
 }

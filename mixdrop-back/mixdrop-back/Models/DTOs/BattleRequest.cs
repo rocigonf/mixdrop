@@ -4,7 +4,7 @@ namespace mixdrop_back.Models.DTOs;
 
 public class BattleRequest
 {
-    public User User2 { get; set; }
+    public int User2Id { get; set; } = 0;
 
     public bool IsRandom = false;
 }
