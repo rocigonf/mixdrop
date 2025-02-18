@@ -17,11 +17,12 @@ import { BattleService } from '../../services/battle.service';
 import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
 import { AsyncPipe, DatePipe } from '@angular/common';
+import { CardComponent } from "../../components/card/card.component";
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe],
+  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
