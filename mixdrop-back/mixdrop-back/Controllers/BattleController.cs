@@ -47,6 +47,12 @@ public class BattleController : ControllerBase
         bool isRandom = request.IsRandom;
 
         User user1 = await GetAuthorizedUser();
+
+        if (user1 == null)
+        {
+            return;
+        }
+
         await _battleService.CreateBattle(user1, user2, isRandom);
     }
 
@@ -56,8 +62,14 @@ public class BattleController : ControllerBase
     [HttpPut("{id}")]
     public async Task AcceptBattle(int id)
     {
-        int userId = GetAuthorizedId();
-        await _battleService.AcceptBattle(id, userId);
+        User user = await GetAuthorizedUser();
+
+        if (user == null)
+        {
+            return;
+        }
+
+        await _battleService.AcceptBattle(id, user.Id);
     }
 
     // Aceptar solicitud de batalla
@@ -65,8 +77,14 @@ public class BattleController : ControllerBase
     [HttpPut("start/{id}")]
     public async Task StartBattle(int id)
     {
-        int userId = GetAuthorizedId();
-        await _battleService.StartBattle(id, userId);
+        User user = await GetAuthorizedUser();
+
+        if (user == null)
+        {
+            return;
+        }
+
+        await _battleService.StartBattle(id, user.Id);
 
         // modo muy cutre 
         WebSocketHandler.TotalBattles++;
@@ -79,8 +97,14 @@ public class BattleController : ControllerBase
     [HttpDelete("{id}")]
     public async Task DeleteBattle(int id)
     {
-        int userId = GetAuthorizedId();
-        await _battleService.DeleteBattleById(id, userId);
+        User user = await GetAuthorizedUser();
+
+        if (user == null)
+        {
+            return;
+        }
+
+        await _battleService.DeleteBattleById(id, user.Id);
 
         // modo muy cutre 
         WebSocketHandler.TotalBattles--;
@@ -102,6 +126,12 @@ public class BattleController : ControllerBase
     public async Task RandomBattle()
     {
         User user = await GetAuthorizedUser();
+
+        if (user == null)
+        {
+            return;
+        }
+
         await _battleService.RandomBattle(user);
 
         // modo muy cutre 
@@ -115,10 +145,14 @@ public class BattleController : ControllerBase
     public async Task DeleteRandomBattle()
     {
         User user = await GetAuthorizedUser();
+
+        if (user == null)
+        {
+            return;
+        }
+
         await _battleService.DeleteFromQueue(user);
     }
-
-
 
     private async Task<User> GetAuthorizedUser()
     {
@@ -127,16 +161,14 @@ public class BattleController : ControllerBase
         string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
 
         // Pilla el usuario de la base de datos
-        return await _userService.GetFullUserByIdAsync(int.Parse(idString));
-    }
+        User user = await _userService.GetFullUserByIdAsync(int.Parse(idString));
+        
+        if (user.Banned)
+        {
+            Console.WriteLine("Usuario baneado");
+            return null;
+        }
 
-    private int GetAuthorizedId()
-    {
-        System.Security.Claims.ClaimsPrincipal currentUser = this.User;
-        string firstClaim = currentUser.Claims.First().ToString();
-        string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
-
-        // Pilla el usuario de la base de datos
-        return int.Parse(idString);
+        return user;
     }
 }

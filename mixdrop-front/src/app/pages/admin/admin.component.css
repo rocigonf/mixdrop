@@ -1,0 +1,41 @@
+.panel-top{
+    font-size: 3rem;
+    text-align: center;
+}
+
+hr{
+    width: 50%;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+}
+
+.container{
+    display: grid;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+table{
+    border-spacing: 1.5rem;
+    background-color: #302244;
+    border: 5px solid transparent;
+    border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+    border-image-slice: 1;
+    margin: 20px auto;
+}
+
+.avatar{
+    width: 50px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 5px;
+}
+
+select{
+    font-size: 1.5rem;
+    height: 40px;
+}
+.edit-btn{
+    font-size: 1.5rem;
+}

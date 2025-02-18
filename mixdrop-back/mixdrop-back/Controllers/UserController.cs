@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ecommerce.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
@@ -15,6 +16,24 @@ public class UserController : ControllerBase
     public UserController(UserService userService)
     {
         _userService = userService;
+    }
+
+    // Obtener todos los usuarios
+    [Authorize]
+    [HttpGet("allUsers")]
+    public async Task<IActionResult> GetAllUsersAsync()
+    {
+
+        User currentUser = await GetAuthorizedUser();
+
+        if (currentUser == null)
+        {
+            return null;
+        }
+
+        var users = await _userService.GetAllUsersAsync(currentUser);
+
+        return Ok(users);
     }
 
     [Authorize]
@@ -35,6 +54,11 @@ public class UserController : ControllerBase
             user.Id = id;
 
             User currentUser = await GetAuthorizedUser();
+
+            if (currentUser == null)
+            {
+                return null;
+            }
 
             // Si no es admin y está intentando modificar a otro usuario
             if (!currentUser.Role.Equals("Admin") && user.Id != currentUser.Id)
@@ -72,6 +96,11 @@ public class UserController : ControllerBase
 
         User currentUser = await GetAuthorizedUser();
 
+        if (currentUser == null)
+        {
+            return null;
+        }
+
         if (query == null)
         {
             return BadRequest("Busqueda fallida.");
@@ -91,6 +120,56 @@ public class UserController : ControllerBase
 
     }
 
+    // Solo pueden usar este método los usuarios cuyo rol sea admin
+    [Authorize(Roles = "Admin")]
+    [HttpPut("modifyUserRole")]
+    public async Task<IActionResult> ModifyUserRole(ModifyRoleRequest request)
+    {
+
+        // Obtener datos del usuario
+        UserDto userData = await _userService.GetUserByIdAsync(request.UserId);
+
+        if (userData == null)
+        {
+            return BadRequest("El usuario es null");
+        }
+
+        try
+        {
+            if (request.NewRole == "User" || request.NewRole == "Admin")
+            {
+                await _userService.ModifyUserRoleAsync(request.UserId, request.NewRole);
+                return Ok("Rol de usuario actualizado correctamente.");
+            }
+            else
+            {
+                return BadRequest("El nuevo rol debe ser User o Admin");
+            }
+
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest("No pudo modificarse el rol del usuario.");
+        }
+    }
+
+    // Elimina un usuario
+    [Authorize(Roles = "Admin")]
+    [HttpPut("banUser/{userId}")]
+    public async Task<IActionResult> BanUser(int userId)
+    {
+        try
+        {
+            await _userService.BanUserAsync(userId);
+
+            return Ok("Usuario baneado correctamente.");
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest("No se pudo banear al usuario");
+        }
+    }
+
     private async Task<User> GetAuthorizedUser()
     {
         System.Security.Claims.ClaimsPrincipal currentUser = this.User;
@@ -98,7 +177,14 @@ public class UserController : ControllerBase
         string idString = firstClaim.Substring(firstClaim.IndexOf("nameidentifier:") + "nameIdentifier".Length + 2);
 
         // Pilla el usuario de la base de datos
-        return await _userService.GetBasicUserByIdAsync(int.Parse(idString));
-    }
+        User user = await _userService.GetFullUserByIdAsync(int.Parse(idString));
 
+        if (user.Banned)
+        {
+            Console.WriteLine("Usuario baneado");
+            return null;
+        }
+
+        return user;
+    }
 }

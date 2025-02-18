@@ -70,4 +70,11 @@ public class UserRepository : Repository<User, int>
         return await GetQueryable()
             .FirstOrDefaultAsync(user => user.IsInQueue == true);
     }
+
+    public async Task<List<User>> GetAllUsersAsync(int userId)
+    {
+        return await GetQueryable()
+            .Where(u => u.Id != userId)
+            .ToListAsync();
+    }
 }

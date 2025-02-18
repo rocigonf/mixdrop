@@ -1,0 +1,49 @@
+<app-navbar></app-navbar>
+
+<div class="panel-top">
+    - ADMINISTRACIÓN -
+</div>
+
+<hr>
+
+<div class="container">
+    <h3 style="text-align: center;">Lista de usuarios</h3>
+
+    <div class="table-list">
+        <table>
+            <tr>
+                <td>&nbsp;</td>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Rol</th>
+                <th>Acción</th>
+            </tr>
+            @for (user of users; track $index) {
+            <tr>
+                <td><img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar"></td>
+                <td>{{user.id}}</td>
+                <td>{{user.nickname}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                    @if (user.banned) {
+                        Baneado
+                    } @else {
+                        No baneado
+                    }
+                </td>
+                <td>
+                    <select name="Rol" [id]="user.id" [(ngModel)]="user.role">
+                        <option value="Admin">Admin</option>
+                        <option value="User">User</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="edit-btn" (click)="modifyUserRole(user.id, user.role)">✎ Actualizar</button> |
+                    <button class="edit-btn" (click)="banUser(user.id)">🛇 Banear/Desbanear</button>
+                </td>
+            </tr>
+            }
+        </table>
+    </div>
