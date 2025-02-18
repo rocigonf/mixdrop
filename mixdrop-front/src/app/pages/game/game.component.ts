@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { map, Observable, Subscription, takeWhile, timer } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
@@ -18,6 +18,7 @@ import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { CardComponent } from "../../components/card/card.component";
+
 
 @Component({
   selector: 'app-game',
@@ -76,6 +77,7 @@ export class GameComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     public router: Router) {
   }
+
 
   async ngOnInit(): Promise<void> {
 

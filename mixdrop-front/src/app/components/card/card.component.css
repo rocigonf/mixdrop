@@ -1,5 +1,5 @@
 * {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 :root {
@@ -15,7 +15,7 @@
     flex-direction: column;
     border-radius: 10px;
     border: 2px solid white;
-    height: 230px;
+    height: 240px;
     width: 160px;
     background-color: black;
     padding: 10px;
@@ -31,14 +31,13 @@
 }
 
 #artist {
-    font-weight: 600;
+    font-weight: bold;
 }
 
 #part-icon {
     width: 12%;
-    margin-top: 10px;
     position: absolute;
-    margin-top: 47px;
+    margin-top: 55px;
 }
 
 #card-img {
