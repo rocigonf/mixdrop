@@ -1,3 +1,4 @@
+import { BattleDto } from "./battle-dto";
 import { Friend } from "./friend";
 
 export interface User {
@@ -9,5 +10,6 @@ export interface User {
     isInQueue: boolean,
     stateId: number,
     friend: Friend[],
-    banned : boolean
+    banned : boolean,
+    battles: BattleDto[]
 }

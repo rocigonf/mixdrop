@@ -8,9 +8,10 @@
 }
 }
 
-
-
-<p class="countDown">{{this.time}}</p>
+@if(this.userBattle?.isTheirTurn)
+{
+    <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+}
 
 @if(userBattle != null){
 

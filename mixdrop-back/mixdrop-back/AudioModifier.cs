@@ -25,7 +25,7 @@ public class AudioModifier
         WaveFileWriter.WriteWavFileToStream(memoryStream, pitchChanger);
 
         reader.Position = 0;
-        WaveFileWriter.CreateWaveFile("aa.wav", pitchChanger);
+        //WaveFileWriter.CreateWaveFile("aa.wav", pitchChanger);
 
         memoryStream.Position = 0;
         using WaveFileReader wavRdr = new WaveFileReader(memoryStream);

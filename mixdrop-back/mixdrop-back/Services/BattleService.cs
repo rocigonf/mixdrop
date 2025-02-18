@@ -313,7 +313,7 @@ public class BattleService
             JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-            WebSocketHandler.TotalPlayers++;
+            //WebSocketHandler.TotalPlayers++;
 
             /*dict["messageType"] = MessageType.Play;
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user.Id);

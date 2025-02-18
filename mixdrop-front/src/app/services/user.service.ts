@@ -47,7 +47,8 @@ export class UserService {
         isInQueue: u.isInQueue,
         stateId: u.stateId,
         friend: u.friend,
-        banned: u.banned
+        banned: u.banned,
+        battles: []
       }
       users.push(user);
     }

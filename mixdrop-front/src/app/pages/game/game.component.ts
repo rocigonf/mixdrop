@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription, takeWhile, timer } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
@@ -16,11 +16,12 @@ import { AuthService } from '../../services/auth.service';
 import { BattleService } from '../../services/battle.service';
 import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
+import { AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent],
+  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -39,10 +40,12 @@ export class GameComponent implements OnInit, OnDestroy {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
+  seconds = 120
+
+  timeRemaining$: Observable<number> | null = null
+
   userBattle: UserBattleDto | null = null
   gameEnded: boolean = false
-
-  time: number = 120;
 
   board: Board = {
     playing: null,
@@ -95,8 +98,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   async processMessage(message: any) {
-    try
-    {
       console.warn("Entrando al semáforo...")
       await this.waitForAudioProcessing()
       console.warn("Saliendo...")
@@ -120,12 +121,28 @@ export class GameComponent implements OnInit, OnDestroy {
           break;
         case MessageType.TurnResult:
           this.board = jsonResponse.board
-          this.userBattle = jsonResponse.player
+
+          const newPlayer: UserBattleDto = jsonResponse.player
+          /*const newCard = newPlayer.cards[0]
+          const cards = this.userBattle!!.cards
+          cards?.push(newCard)*/
+          
+          this.userBattle = newPlayer
+          //this.userBattle.cards = cards
+          
           this.bonus = jsonResponse.bonus
           this.otherPlayerPunct = jsonResponse.otherplayer
 
           positions = jsonResponse.position
           this.playAudio(positions, jsonResponse.wheel); 
+
+          if(this.currentBattle?.isAgainstBot == false && this.userBattle.isTheirTurn)
+          {
+            this.timeRemaining$ = timer(0, 1000).pipe(
+              map(n => (this.seconds - n) * 1000),
+              takeWhile(n => n >= 0),
+            );
+          }
         
           break
 
@@ -143,13 +160,15 @@ export class GameComponent implements OnInit, OnDestroy {
           else {
             alert("Perdiste :(")
           }
+
           break;
+        case MessageType.DisconnectedFromBattle:
+          alert("El otro usuario se ha desconectado, por lo que has ganado")
+          this.router.navigateByUrl("game")
+          break
       }
       console.log("Respuesta del socket en JSON: ", jsonResponse)
-    } catch
-    {
-
-    }
+    
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
@@ -242,6 +261,16 @@ export class GameComponent implements OnInit, OnDestroy {
         actionType: null
       }
       this.sendAction(action)
+
+      const existingCardIndex = this.userBattle?.cards.indexOf(this.cardToUse)
+      if(existingCardIndex && existingCardIndex != 1)
+      {
+        this.userBattle?.cards.splice(existingCardIndex, 1)
+      }
+      else
+      {
+        console.error("LA CARTA NO EXISTE")
+      }
 
       this.cardToUse = null
     }
