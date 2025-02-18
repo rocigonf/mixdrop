@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 import { environment } from '../../environments/environment';
 import { ApiService } from './api.service';
 
@@ -21,7 +20,7 @@ export class WebsocketService {
   }
 
   private onMessageReceived(message: any) {
-    console.warn(message)
+    //console.warn(message)
     this.messageReceived.next(message);
   }
 

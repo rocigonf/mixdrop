@@ -57,12 +57,15 @@ export class GameComponent implements OnInit, OnDestroy {
   bonus: string = ""
 
   otherPlayerPunct: number = 0
+  otherUserId: number = 0
 
   private isProcessingAudio: boolean = false;
 
   currentBattle: Battle | null = null;
 
   position: number = 0;
+  
+  private canReceive = true
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
@@ -98,6 +101,13 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   async processMessage(message: any) {
+    // Esto es porque parece que recibe los mensajes dos veces
+    if(!this.canReceive)
+      {
+        this.canReceive = true
+        return
+      }
+
       console.warn("Entrando al semáforo...")
       await this.waitForAudioProcessing()
       console.warn("Saliendo...")
@@ -123,13 +133,17 @@ export class GameComponent implements OnInit, OnDestroy {
           this.board = jsonResponse.board
 
           const newPlayer: UserBattleDto = jsonResponse.player
-          /*const newCard = newPlayer.cards[0]
           const cards = this.userBattle!!.cards
-          cards?.push(newCard)*/
-          
+
           this.userBattle = newPlayer
-          //this.userBattle.cards = cards
-          
+          const newCard = jsonResponse.card
+          this.userBattle.cards = cards
+
+          if(newCard)
+          {
+            this.userBattle.cards.push(newCard)
+          }
+      
           this.bonus = jsonResponse.bonus
           this.otherPlayerPunct = jsonResponse.otherplayer
 
@@ -148,6 +162,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
         case MessageType.EndGame:
           this.gameEnded = true
+          this.otherUserId = jsonResponse.otherUserId
+
+          this.otherPlayerPunct = jsonResponse.otherplayer
 
           this.board = jsonResponse.board
           this.userBattle = jsonResponse.player
@@ -237,7 +254,7 @@ export class GameComponent implements OnInit, OnDestroy {
     return new Promise<void>((resolve) => {
       const checkProcessing = () => {
         if (!this.isProcessingAudio) {
-          resolve(); // S
+          resolve();
         } else {
           setTimeout(checkProcessing, 50); // Se llama a la verificación cada 50 milisegundos
         }
@@ -251,7 +268,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   useCard(desiredPosition: number) {
-    if (this.cardToUse) {
+    if (this.cardToUse && this.userBattle) {
       const cardToPlay: CardToPlay = {
         cardId: this.cardToUse.id,
         position: desiredPosition,
@@ -260,19 +277,24 @@ export class GameComponent implements OnInit, OnDestroy {
         card: cardToPlay,
         actionType: null
       }
+
+      console.error("CARTAS ANTES DE BORRAR: ", this.userBattle?.cards)
+
+      for(let i = 0; i < this.userBattle?.cards.length; i++)
+      {
+        if(this.userBattle.cards[i].id == this.cardToUse.id)
+        {
+          this.userBattle.cards.splice(i, 1)
+          break
+        }
+      }
+
+      console.error("CARTAS DESPUÉS DE BORRAR: ", this.userBattle?.cards)
+
       this.sendAction(action)
 
-      const existingCardIndex = this.userBattle?.cards.indexOf(this.cardToUse)
-      if(existingCardIndex && existingCardIndex != 1)
-      {
-        this.userBattle?.cards.splice(existingCardIndex, 1)
-      }
-      else
-      {
-        console.error("LA CARTA NO EXISTE")
-      }
-
       this.cardToUse = null
+
     }
   }
 
@@ -290,6 +312,13 @@ export class GameComponent implements OnInit, OnDestroy {
   checkType(posibleType: string[], actualType: string) {
     // Si no devuelve -1 significa que está en la lista
     return posibleType.indexOf(actualType) != -1
+  }
+
+  revenge()
+  {
+    sessionStorage.setItem("revenge", "true")
+    sessionStorage.setItem("otherUserId", this.otherUserId.toString())
+    this.navigateToUrl("matchmaking")
   }
 
 
