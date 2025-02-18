@@ -183,7 +183,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   async createBattle(user : User | null)
   {
     if(user == null) { return }
-    const response = await this.battleService.createBattle(user, false) // En esta vista siempre será no random
+    const response = await this.battleService.createBattle(user.id, false) // En esta vista siempre será no random
     console.log("Respuesta de borrar la batalla: ", response)
     this.askForInfo(MessageType.PendingBattle)
   }

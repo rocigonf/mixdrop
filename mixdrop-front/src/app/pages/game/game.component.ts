@@ -57,6 +57,7 @@ export class GameComponent implements OnInit, OnDestroy {
   bonus: string = ""
 
   otherPlayerPunct: number = 0
+  otherUserId: number = 0
 
   private isProcessingAudio: boolean = false;
 
@@ -148,6 +149,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
         case MessageType.EndGame:
           this.gameEnded = true
+          this.otherUserId = jsonResponse.otherUserId
+
+          this.otherPlayerPunct = jsonResponse.otherplayer
 
           this.board = jsonResponse.board
           this.userBattle = jsonResponse.player
@@ -290,6 +294,13 @@ export class GameComponent implements OnInit, OnDestroy {
   checkType(posibleType: string[], actualType: string) {
     // Si no devuelve -1 significa que está en la lista
     return posibleType.indexOf(actualType) != -1
+  }
+
+  revenge()
+  {
+    sessionStorage.setItem("revenge", "true")
+    sessionStorage.setItem("otherUserId", this.otherUserId.toString())
+    this.navigateToUrl("matchmaking")
   }
 
 

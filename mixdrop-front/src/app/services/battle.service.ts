@@ -27,9 +27,9 @@ export class BattleService {
   }
   
 
-  async createBattle(user: User | null, isRandom : boolean ) : Promise<any> {
+  async createBattle(user: number | null, isRandom : boolean ) : Promise<any> {
     const body = {
-      "User2" : user,
+      "User2Id" : user,
       "IsRandom" : isRandom
     }
     const result = await this.api.post("Battle", body)

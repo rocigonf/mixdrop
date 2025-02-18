@@ -46,10 +46,11 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   loading: boolean = false
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
     if (!this.authService.isAuthenticated()) {
       this.router.navigateByUrl("login");
+      return
     } else {
 
       this.user = this.authService.getUser();
@@ -62,6 +63,17 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         if (battle != "null") {
           this.battle = JSON.parse(battle)
         }
+      }
+    }
+
+    if(sessionStorage.getItem("revenge") == "true")
+    {
+      const idRaw = sessionStorage.getItem("otherUserId")
+      if(idRaw)
+      {
+        const id = parseInt(idRaw)
+        await this.battleService.createBattle(id, false)
+        sessionStorage.removeItem("revenge")
       }
     }
 
@@ -123,7 +135,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   async gameWithFriend(friend: User) {
-    await this.battleService.createBattle(friend, false)
+    await this.battleService.createBattle(friend.id, false)
   }
 
   async gameRandom() {

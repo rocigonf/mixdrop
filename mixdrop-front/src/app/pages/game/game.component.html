@@ -20,6 +20,7 @@
     @if(gameEnded)
     {
     <button (click)="router.navigateByUrl('menu')">Volver al menú</button>
+    <button (click)="revenge()">Revancha >:D</button>
     }
     @else {
     @if (this.userBattle.isTheirTurn) {

@@ -43,7 +43,6 @@ public class BattleController : ControllerBase
     [HttpPost]
     public async Task AddBattle([FromBody] BattleRequest request)
     {
-        User user2 = request.User2;
         bool isRandom = request.IsRandom;
 
         User user1 = await GetAuthorizedUser();
@@ -53,7 +52,7 @@ public class BattleController : ControllerBase
             return;
         }
 
-        await _battleService.CreateBattle(user1, user2, isRandom);
+        await _battleService.CreateBattle(user1, request.User2Id, isRandom);
     }
 
 

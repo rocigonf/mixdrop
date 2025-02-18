@@ -278,9 +278,10 @@ public class GayHandler // GameHandler :3
         if (playerInTurn.Punctuation >= POINTS_REQUIRED)
         {
             await EndBattle(playerInTurn, otherUser, unitOfWork);
-            GayNetwork._handlers.Remove(this);
+            //GayNetwork._handlers.Remove(this);
 
-            dict["player"] = _mapper.ToDto(playerInTurn);
+            //dict["player"] = _mapper.ToDto(playerInTurn);
+            dict["messageType"] = MessageType.EndGame;
             await NotifyUsers(dict, playerInTurn, otherUser, output, true);
         }
         else
@@ -342,7 +343,7 @@ public class GayHandler // GameHandler :3
 
         if (end)
         {
-            dict["messageType"] = MessageType.EndGame;
+            dict.Add("otherUserId", otherUser.UserId);
         }
 
         // Notifico a los usuarios
@@ -358,6 +359,11 @@ public class GayHandler // GameHandler :3
         if (otherUser.IsBot)
         {
             return;
+        }
+
+        if(end)
+        {
+            dict["otherUserId"] = playerInTurn.UserId;
         }
 
         dict["player"] = _mapper.ToDto(otherUser);
