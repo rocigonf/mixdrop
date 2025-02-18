@@ -87,8 +87,8 @@ public class BattleController : ControllerBase
         await _battleService.StartBattle(id, user.Id);
 
         // modo muy cutre 
-        WebSocketHandler.TotalBattles++;
-        WebSocketHandler.TotalPlayers += 2;
+        /*WebSocketHandler.TotalBattles++;
+        WebSocketHandler.TotalPlayers += 2;*/
         await WebSocketHandler.SendStatsMessage();
     }
 
@@ -107,8 +107,8 @@ public class BattleController : ControllerBase
         await _battleService.DeleteBattleById(id, user.Id);
 
         // modo muy cutre 
-        WebSocketHandler.TotalBattles--;
-        WebSocketHandler.TotalPlayers -= 2;
+        /*WebSocketHandler.TotalBattles--;
+        WebSocketHandler.TotalPlayers -= 2;*/
         await WebSocketHandler.SendStatsMessage();
     }
 
@@ -116,8 +116,14 @@ public class BattleController : ControllerBase
     [HttpDelete("bot")]
     public async Task DeleteBattleAgainstBot()
     {
-        int userId = GetAuthorizedId();
-        await _battleService.DeleteBattleAgainstBot(userId);
+        User user = await GetAuthorizedUser();
+
+        if (user == null)
+        {
+            return;
+        }
+
+        await _battleService.DeleteBattleAgainstBot(user.Id);
     }
 
     // Emparejamiento aleatorio
@@ -135,8 +141,8 @@ public class BattleController : ControllerBase
         await _battleService.RandomBattle(user);
 
         // modo muy cutre 
-        WebSocketHandler.TotalBattles++;
-        WebSocketHandler.TotalPlayers += 2;
+        /*WebSocketHandler.TotalBattles++;
+        WebSocketHandler.TotalPlayers += 2;*/
         await WebSocketHandler.SendStatsMessage();
     }
 

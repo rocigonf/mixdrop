@@ -85,9 +85,7 @@ public class UserSocket
                             dict.Add("friends", friendlist);
                             break;
                         case MessageType.Stats:
-                            dict.Add("total", WebSocketHandler.Total);
-                            dict.Add("totalBattles", WebSocketHandler.TotalBattles);
-                            dict.Add("totalPlayers", WebSocketHandler.TotalPlayers);
+                            await WebSocketHandler.SendStatsMessage();
                             break;
                         case MessageType.PendingBattle:
                             var battleList = await battleService.GetPendingBattlesByUserIdAsync(User.Id);

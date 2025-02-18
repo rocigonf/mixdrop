@@ -329,6 +329,8 @@ public class GayHandler // GameHandler :3
         unitOfWork.BattleRepository.Update(Battle);
 
         await unitOfWork.SaveAsync();
+
+        await WebSocketHandler.SendStatsMessage();
         GayNetwork._handlers.Remove(this);
     }
 
@@ -336,6 +338,7 @@ public class GayHandler // GameHandler :3
     {
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; // Ignora nulos :>
 
         if (end)
         {

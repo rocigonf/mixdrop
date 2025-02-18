@@ -78,7 +78,14 @@ public class UserService
             return null;
         }
 
-        return _userMapper.ToDto(user);
+        var battles = await _unitOfWork.BattleRepository.GetEndedBattlesByUserAsync(id);
+
+        BattleMapper battleMapper = new BattleMapper();
+
+        UserDto userDto = _userMapper.ToDto(user);
+        userDto.Battles = battleMapper.ToDtoWithAllInfo(battles);
+
+        return userDto;
     }
 
 

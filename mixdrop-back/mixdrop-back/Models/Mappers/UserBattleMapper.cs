@@ -14,6 +14,13 @@ public class UserBattleMapper
             Punctuation = user.Punctuation,
             IsTheirTurn = user.IsTheirTurn,
             BattleResultId = user.BattleResultId,
+            UserId = user.UserId,
+            UserName = user.User.Nickname
         };
+    }
+
+    public IEnumerable<UserBattleDto> ToDto(ICollection<UserBattle> userBattles)
+    {
+        return userBattles.Select(ToDto);
     }
 }

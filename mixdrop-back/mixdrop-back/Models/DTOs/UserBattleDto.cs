@@ -9,4 +9,6 @@ public class UserBattleDto
     public int Punctuation { get; set; }
     public int BattleResultId { get; set; }
     public int ActionsLeft { get; set; } = 0;
+    public int UserId { get; set; }
+    public string UserName { get; set; }
 }
