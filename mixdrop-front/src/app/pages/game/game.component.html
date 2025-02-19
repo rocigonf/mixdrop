@@ -10,7 +10,7 @@
 
 @if(this.userBattle?.isTheirTurn)
 {
-    <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+<p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
 }
 
 
@@ -48,181 +48,124 @@
 <div class="board">
 
     <!--primera casilla VOZ Y PRINCIPAL-->
-    <div class="slot0">
+    <div class="slot0" (dragover)="onDragOver($event,0)" (dragenter)="onDragEnter($event,0)" (drop)="onDrop($event, 0)">
         @if(board.slots[0].card )
         {
-        <app-card [currentCard]="board.slots[0].card" ></app-card>
-
-            @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) && board.slots[0].card.level <=
-                cardToUse.level) { <button (click)="useCard(0)">Colocar carta</button>
-                }
-
-        }
-        @else {
-        <div class="card">
-            @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) ) {
-            <button (click)="useCard(0)">Colocar carta</button>
+        <app-card [currentCard]="board.slots[0].card"></app-card>
+        @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) &&
+        board.slots[0].card.level <= cardToUse.level) { <button (click)="useCard(0)">Colocar carta</button>
             }
-        </div>
-        }
+            }
+            @else {
+            <div class="card">
+                @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)
+                ) {
+                <button (click)="useCard(0)">Colocar carta</button>
+                }
+            </div>
+            }
     </div>
 
     <!--segunda casilla PRINCIPAL -->
 
-    <div class="slot1">
+    <div class="slot1" (dragover)="onDragOver($event,1)" (dragenter)="onDragEnter($event,1)" (drop)="onDrop($event, 1)">
         @if(board.slots[1].card)
         {
-            <app-card [currentCard]="board.slots[1].card" ></app-card>
-            @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) && board.slots[1].card.level <=
-                cardToUse.level ) { <button (click)="useCard(1)">Colocar carta</button>
-                }
-
-        }
-        @else {
-        <div class="card">
-            @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name)) {
-            <button (click)="useCard(1)">Colocar carta</button>
+        <app-card [currentCard]="board.slots[1].card"></app-card>
+        @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) &&
+        board.slots[1].card.level <= cardToUse.level ) { <button (click)="useCard(1)">Colocar carta</button>
             }
-        </div>
-        }
+
+            }
+            @else {
+            <div class="card">
+                @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name)) {
+                <button (click)="useCard(1)">Colocar carta</button>
+                }
+            </div>
+            }
     </div>
 
     <!--segunda casilla PRINCIPAL y BATERIA -->
 
-    <div class="slot2">
+    <div class="slot2" (dragover)="onDragOver($event,2)" (dragenter)="onDragEnter($event,2)" (drop)="onDrop($event, 2)">
         @if(board.slots[2].card)
         {
-            <app-card [currentCard]="board.slots[2].card" ></app-card>
-            @if ( this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name) && board.slots[2].card.level <=
-                cardToUse.level) { <button (click)="useCard(2)">Colocar carta</button>
-                }
-        }
-        @else {
-        <div class="card">
-            @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name)) {
-            <button (click)="useCard(2)">Colocar carta</button>
+        <app-card [currentCard]="board.slots[2].card"></app-card>
+        @if ( this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name) &&
+        board.slots[2].card.level <= cardToUse.level) { <button (click)="useCard(2)">Colocar carta</button>
             }
-        </div>
-        }
+            }
+            @else {
+            <div class="card">
+                @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name))
+                {
+                <button (click)="useCard(2)">Colocar carta</button>
+                }
+            </div>
+            }
     </div>
 
 
     <!--tercera casilla BATERIA-->
-    <div class="slot3">
+    <div class="slot3" (dragover)="onDragOver($event, 3)" (dragenter)="onDragEnter($event, 3)"
+        (drop)="onDrop($event, 3)">
         @if(board.slots[3].card)
         {
-            <app-card [currentCard]="board.slots[3].card" ></app-card>
-            @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) && board.slots[3].card.level <=
-                cardToUse.level) { <button (click)="useCard(3)">Colocar carta</button>
-                }
-        }
-        @else {
-        <div class="card">
-            @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name)) {
-            <button (click)="useCard(3)">Colocar carta</button>
+        <app-card [currentCard]="board.slots[3].card"></app-card>
+        @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) &&
+        board.slots[3].card.level <= cardToUse.level) { <button (click)="useCard(3)">Colocar carta</button>
             }
-        </div>
-        }
+            }
+            @else {
+            <div class="card">
+                @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name)) {
+                <button (click)="useCard(3)">Colocar carta</button>
+                }
+            </div>
+            }
     </div>
 
     <!-- cuarta casilla BATERIA Y BAJO-->
-    <div class="slot4">
+    <div class="slot4" (dragover)="onDragOver($event, 4)" (dragenter)="onDragEnter($event, 4)"
+        (drop)="onDrop($event, 4)">
         @if(board.slots[4].card)
         {
-            <app-card [currentCard]="board.slots[4].card" ></app-card>
-            @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name) && board.slots[4].card.level <=
-                cardToUse.level) { <button (click)="useCard(4)">Colocar carta</button>
-                }
-        }
-        @else {
-        <div class="card">
-            @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name)) {
-            <button (click)="useCard(4)">Colocar carta</button>
+        <app-card [currentCard]="board.slots[4].card"></app-card>
+
+        @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name) &&
+        board.slots[4].card.level <= cardToUse.level) { <button (click)="useCard(4)">Colocar carta</button>
             }
-        </div>
-        }
+            }
+            @else {
+            <div class="card">
+                @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name))
+                {
+                <button (click)="useCard(4)">Colocar carta</button>
+                }
+            </div>
+            }
     </div>
 
 </div>
 <br><br>
 
+<!--------------------- CARTAS USUARIO ------------------->
+
 <h1>TUS CARTAS</h1>
 <div class="myCarts">
     @for (card of userBattle.cards; track $index)
     {
-        <app-card  draggable="true" [currentCard]="card" (dragstart)="selectCard(card)"></app-card>
-    
-        @if(userBattle.isTheirTurn && !gameEnded)
-        {
-        <button (click)="selectCard(card)">Usar</button>
-        }
+    @if (userBattle.isTheirTurn && !gameEnded) {
+    <app-card draggable="true" [currentCard]="card" (dragstart)="selectCard(card)"></app-card>
+    }
+    @else {
+    <app-card [currentCard]="card"></app-card>
+    }
     }
 </div>
 
 
-<!-- Esto obviamente si tradujésemos el juego no se podría hacer xD -->
-<!--
-@if(bonus != "")
-{
-    <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
-}
-
-
-<h1>CARTAS DEL TABLERO</h1>
-<div class="board">
-    @for (slot of board.slots; track $index)
-    {
-        @if(slot.card)
-        {
-        <div class="card">
-            <p>Nombre: {{ slot.card.track.song.name }}</p>
-            <p>Parte: {{ slot.card.track.part.name }}</p>
-            <p>Nivel: {{ slot.card.level }}</p>
-            <img [src]="IMG_URL + slot.card.imagePath" alt="imagen">
-        </div>
-        }
-        @else {
-        <p>No hay carta</p>
-        }
-
-        
-        @if(cardToUse)
-        {
-            @switch ($index)
-            {
-                @case (0)
-                {
-                    @if (checkType(["Vocal", "Main"], cardToUse.track.part.name))
-                    {
-                    <button (click)="useCard($index)">Colocar carta</button>
-                    }
-                }
-                @case (1)
-                {
-                    @if (checkType(["Main"], cardToUse.track.part.name))
-                    {
-                    <button (click)="useCard($index)">Colocar carta</button>
-                    }
-                }
-                @case (2)
-                {
-                    @if (checkType(["Bass", "Drums"], cardToUse.track.part.name))
-                    {
-                        <button (click)="useCard($index)">Colocar carta</button>
-                    }
-                }
-                @case (3)
-                {
-                    @if (checkType(["Drums"], cardToUse.track.part.name))  {
-                        <button (click)="useCard($index)">Colocar carta</button>
-                    }
-                }
-            }
-        }
-    }
-    
-</div>
--->
 @if (!gameEnded) {
 <button (click)="useButton()">MIXDROP</button>
 }

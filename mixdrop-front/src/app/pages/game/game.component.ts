@@ -66,7 +66,7 @@ export class GameComponent implements OnInit, OnDestroy {
   currentBattle: Battle | null = null;
 
   position: number = 0;
-  
+
   private canReceive = true
 
   private audioContext: AudioContext = new AudioContext();
@@ -93,8 +93,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
     this.audioContext.close()
-    if(this.currentBattle?.isAgainstBot && this.gameEnded)
-    {
+    if (this.currentBattle?.isAgainstBot && this.gameEnded) {
       await this.battleService.deleteBotBattle()
     }
   }
@@ -105,101 +104,94 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async processMessage(message: any) {
     // Esto es porque parece que recibe los mensajes dos veces
-    if(!this.canReceive)
-      {
-        this.canReceive = true
-        return
-      }
+    if (!this.canReceive) {
+      this.canReceive = true
+      return
+    }
 
-      console.warn("Entrando al semáforo...")
-      await this.waitForAudioProcessing()
-      console.warn("Saliendo...")
+    console.warn("Entrando al semáforo...")
+    await this.waitForAudioProcessing()
+    console.warn("Saliendo...")
 
-      if(message instanceof Blob)
-      {
-        const data = await message.arrayBuffer()
-        await this.processAudio(data)
-        return
-      }
+    if (message instanceof Blob) {
+      const data = await message.arrayBuffer()
+      await this.processAudio(data)
+      return
+    }
 
-      this.serverResponse = message
-      const jsonResponse = JSON.parse(this.serverResponse)
-      let positions: number[] = []
+    this.serverResponse = message
+    const jsonResponse = JSON.parse(this.serverResponse)
+    let positions: number[] = []
 
-      switch (jsonResponse.messageType) {
-        case MessageType.ShuffleDeckStart:
-          this.userBattle = jsonResponse.userBattleDto
-          this.currentBattle = jsonResponse.currentBattle
+    switch (jsonResponse.messageType) {
+      case MessageType.ShuffleDeckStart:
+        this.userBattle = jsonResponse.userBattleDto
+        this.currentBattle = jsonResponse.currentBattle
 
-          break;
-        case MessageType.TurnResult:
-          this.board = jsonResponse.board
+        break;
+      case MessageType.TurnResult:
+        this.board = jsonResponse.board
 
-          const newPlayer: UserBattleDto = jsonResponse.player
-          const cards = this.userBattle!!.cards
+        const newPlayer: UserBattleDto = jsonResponse.player
+        const cards = this.userBattle!!.cards
 
-          this.userBattle = newPlayer
-          const newCard = jsonResponse.card
-          this.userBattle.cards = cards
+        this.userBattle = newPlayer
+        const newCard = jsonResponse.card
+        this.userBattle.cards = cards
 
-          if(newCard)
-          {
-            this.userBattle.cards.push(newCard)
-          }
-      
-          this.bonus = jsonResponse.bonus
-          this.otherPlayerPunct = jsonResponse.otherplayer
+        if (newCard) {
+          this.userBattle.cards.push(newCard)
+        }
 
-          positions = jsonResponse.position
-          this.playAudio(positions, jsonResponse.wheel); 
+        this.bonus = jsonResponse.bonus
+        this.otherPlayerPunct = jsonResponse.otherplayer
 
-          if(this.currentBattle?.isAgainstBot == false && this.userBattle.isTheirTurn)
-          {
-            this.timeRemaining$ = timer(0, 1000).pipe(
-              map(n => (this.seconds - n) * 1000),
-              takeWhile(n => n >= 0),
-            );
-          }
-        
-          break
+        positions = jsonResponse.position
+        this.playAudio(positions, jsonResponse.wheel);
 
-        case MessageType.EndGame:
-          this.gameEnded = true
-          this.otherUserId = jsonResponse.otherUserId
+        if (this.currentBattle?.isAgainstBot == false && this.userBattle.isTheirTurn) {
+          this.timeRemaining$ = timer(0, 1000).pipe(
+            map(n => (this.seconds - n) * 1000),
+            takeWhile(n => n >= 0),
+          );
+        }
 
-          this.otherPlayerPunct = jsonResponse.otherplayer
+        break
 
-          this.board = jsonResponse.board
-          this.userBattle = jsonResponse.player
-          positions = jsonResponse.position
-          this.playAudio(positions, jsonResponse.wheel); 
+      case MessageType.EndGame:
+        this.gameEnded = true
+        this.otherUserId = jsonResponse.otherUserId
 
-          if (this.userBattle?.battleResultId == 1) {
-            alert("Ganaste :D")
-          }
-          else {
-            alert("Perdiste :(")
-          }
+        this.otherPlayerPunct = jsonResponse.otherplayer
 
-          break;
-        case MessageType.DisconnectedFromBattle:
-          alert("El otro usuario se ha desconectado, por lo que has ganado")
-          this.router.navigateByUrl("game")
-          break
-      }
-      console.log("Respuesta del socket en JSON: ", jsonResponse)
-    
+        this.board = jsonResponse.board
+        this.userBattle = jsonResponse.player
+        positions = jsonResponse.position
+        this.playAudio(positions, jsonResponse.wheel);
+
+        if (this.userBattle?.battleResultId == 1) {
+          alert("Ganaste :D")
+        }
+        else {
+          alert("Perdiste :(")
+        }
+
+        break;
+      case MessageType.DisconnectedFromBattle:
+        alert("El otro usuario se ha desconectado, por lo que has ganado")
+        this.router.navigateByUrl("game")
+        break
+    }
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
+
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
-  async playAudio(positions: number[], spinTheWheel : boolean) 
-  {
+  async playAudio(positions: number[], spinTheWheel: boolean) {
     this.isProcessingAudio = true
-    if(spinTheWheel)
-    {
+    if (spinTheWheel) {
       console.log("Se ha girado la ruleta. El resultado ha sido: ", positions)
-      for(let i = 0; i < positions.length; i++)
-      {
+      for (let i = 0; i < positions.length; i++) {
         this.stopTrack(positions[i])
       }
       this.isProcessingAudio = false
@@ -216,9 +208,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.isProcessingAudio = false
   }
-  
-  private async processAudio(audio: ArrayBuffer)
-  {
+
+  private async processAudio(audio: ArrayBuffer) {
     this.isProcessingAudio = true
 
     const audioBuffer = await this.audioContext.decodeAudioData(audio);
@@ -235,8 +226,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isProcessingAudio = false
   }
 
-  private stopTrack(position: number)
-  {
+  private stopTrack(position: number) {
     console.log("Posición a borrar: ", position)
     //const source = this.activeSources.get(position)
     this.activeSources.get(position)?.stop()
@@ -248,7 +238,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.activeSources.delete(position)
       }
       else
-      {console.error("NO EXISTE LA POSICIÓN")}*/    
+      {console.error("NO EXISTE LA POSICIÓN")}*/
   }
 
   // Semaforeame esta mister
@@ -283,10 +273,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
       console.error("CARTAS ANTES DE BORRAR: ", this.userBattle?.cards)
 
-      for(let i = 0; i < this.userBattle?.cards.length; i++)
-      {
-        if(this.userBattle.cards[i].id == this.cardToUse.id)
-        {
+      for (let i = 0; i < this.userBattle?.cards.length; i++) {
+        if (this.userBattle.cards[i].id == this.cardToUse.id) {
           this.userBattle.cards.splice(i, 1)
           break
         }
@@ -317,8 +305,7 @@ export class GameComponent implements OnInit, OnDestroy {
     return posibleType.indexOf(actualType) != -1
   }
 
-  revenge()
-  {
+  revenge() {
     sessionStorage.setItem("revenge", "true")
     sessionStorage.setItem("otherUserId", this.otherUserId.toString())
     this.navigateToUrl("matchmaking")
@@ -338,5 +325,40 @@ export class GameComponent implements OnInit, OnDestroy {
     }
     const message = JSON.stringify(data)
     this.webSocketService.sendNative(message)
+  }
+
+
+  // DRAG AND DROP --------------------------------
+
+
+  onDragStart(event: DragEvent, card: Card) {
+    event.dataTransfer?.setData('text/plain', JSON.stringify(card));
+  }
+
+  onDragOver(event: DragEvent, slotIndex: number) {
+    event.preventDefault();
+  }
+
+  onDragEnd() {
+    this.cardToUse = null;
+  }
+
+  onDragEnter(event: DragEvent, slotIndex: number) {
+    event.preventDefault();
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onDrop(event: DragEvent, slotIndex: number) {
+    event.preventDefault();
+    if (!this.cardToUse) return;
+
+    // Verificar si se puede colocar la carta en ese slot
+    if (this.userBattle?.isTheirTurn) {
+      this.useCard(slotIndex); // Función que coloca la carta en el tablero
+    }
+
   }
 }

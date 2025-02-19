@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-size: 1.5rem;
 }
 
 h1 {
@@ -97,4 +98,27 @@ body {
     padding: 10px 30px;
     margin: 20px 0;
     font-size: 1.5rem;
+}
+
+
+.zone{
+    width: 50%;
+    border: 2px dotted white;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carta {
+    width: 50%;
+    height: 100px;
+    background-color: #6495ED;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    padding:10px;
+    cursor: move;
 }
