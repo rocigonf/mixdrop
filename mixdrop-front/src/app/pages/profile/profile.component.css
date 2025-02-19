@@ -1,3 +1,36 @@
 *{
     font-size: 1.5rem;
 }
+
+.panel-top{
+    font-size: 3rem;
+    text-align: center;
+}
+
+.header{
+    display: flex;
+    justify-content: center;
+}
+
+.container{
+    display: grid;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.avatar{
+    width: 150px;
+    height: 150px;
+    border: 2px solid white;
+    border-radius: 5px;
+}
+
+fieldset{
+    border-spacing: 1.5rem;
+    background-color: #302244;
+    border: 5px solid transparent;
+    border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+    border-image-slice: 1;
+    margin: 20px auto;
+    width: 700px;
+}

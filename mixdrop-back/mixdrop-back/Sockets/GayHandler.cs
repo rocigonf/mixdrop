@@ -340,6 +340,7 @@ public class GayHandler // GameHandler :3
             Battle.BattleUsers.Add(loser);
         }
 
+        // Deberíamos hacer insert en lugar de update
         unitOfWork.BattleRepository.Update(Battle);
 
         await unitOfWork.SaveAsync();
