@@ -20,19 +20,7 @@ public class Program
          * 4) Se calcula cuántos semitonos tiene que bajar
          * 5) Se pasan los nuevos valores de BPM y semitonos arriba o abajo
          * 6) Se mixea */
-         
-        Console.WriteLine("Procesando...");
-
-        //HellIsForever.ChangeBPM("wwwroot/songs/input/vocal/vocal.wav", "output.wav", 1, 1.28f);
-
-        // HellIsForever.ChangeBPM("songs/input/insane_music_loop.wav", "songs/input/insane.wav", 1.0428f);
-        // HellIsForever.ChangeBPM("songs/input/rickroll_full_loop.mp3", "songs/input/rickroll.wav", 0.9606f);
-
-        // HellIsForever.MixFiles("songs/input/insane.wav", "songs/input/rickroll.wav", "songs/output/mixed.wav");
-
-        Console.WriteLine("Procesado");
-
-        // AQUÍ EMPIEZA EL SERVIDOR COMO TAL
+        
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));

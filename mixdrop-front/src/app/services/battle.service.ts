@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
-import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +38,11 @@ export class BattleService {
   async deleteFromQueue()
   {
     await this.api.delete("Battle/Matchmaking/delete")
+  }
+
+  async forfeitBattle()
+  {
+    await this.api.delete("Battle/ragequit")
   }
 
   async acceptBattleById(id: number): Promise<any> {

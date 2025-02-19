@@ -61,6 +61,8 @@ export class GameComponent implements OnInit, OnDestroy {
   otherPlayerPunct: number = 0
   otherUserId: number = 0
 
+  private indexToDelete = 0
+
   private isProcessingAudio: boolean = false;
 
   currentBattle: Battle | null = null;
@@ -93,9 +95,17 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
     this.audioContext.close()
-    if(this.currentBattle?.isAgainstBot && this.gameEnded)
+    this.messageReceived$?.unsubscribe()
+    if(this.gameEnded)
     {
-      await this.battleService.deleteBotBattle()
+      if(this.currentBattle?.isAgainstBot)
+      {
+        await this.battleService.deleteBotBattle()
+      }
+    }
+    else
+    {
+      await this.battleService.forfeitBattle()
     }
   }
 
@@ -142,9 +152,11 @@ export class GameComponent implements OnInit, OnDestroy {
           const newCard = jsonResponse.card
           this.userBattle.cards = cards
 
-          if(newCard)
+          if(newCard && this.indexToDelete != 0)
           {
+            this.userBattle.cards.splice(this.indexToDelete, 1)
             this.userBattle.cards.push(newCard)
+            this.indexToDelete = 0
           }
       
           this.bonus = jsonResponse.bonus
@@ -184,7 +196,7 @@ export class GameComponent implements OnInit, OnDestroy {
           break;
         case MessageType.DisconnectedFromBattle:
           alert("El otro usuario se ha desconectado, por lo que has ganado")
-          this.router.navigateByUrl("game")
+          this.router.navigateByUrl("menu")
           break
       }
       console.log("Respuesta del socket en JSON: ", jsonResponse)
@@ -287,7 +299,7 @@ export class GameComponent implements OnInit, OnDestroy {
       {
         if(this.userBattle.cards[i].id == this.cardToUse.id)
         {
-          this.userBattle.cards.splice(i, 1)
+          this.indexToDelete = i
           break
         }
       }

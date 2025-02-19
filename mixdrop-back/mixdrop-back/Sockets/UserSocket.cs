@@ -124,12 +124,16 @@ public class UserSocket
                             break;
                     }
 
-                    string outMessage = System.Text.Json.JsonSerializer.Serialize(dict, options);
-                    // Procesamos el mensaje
-                    //string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
+                    if (dict.Values.Count > 1)
+                    {
 
-                    // Enviamos respuesta al cliente
-                    await SendAsync(outMessage);
+                        string outMessage = System.Text.Json.JsonSerializer.Serialize(dict, options);
+                        // Procesamos el mensaje
+                        //string outMessage = $"[{string.Join(", ", message as IEnumerable<char>)}]";
+
+                        // Enviamos respuesta al cliente
+                        await SendAsync(outMessage);
+                    }
 
                     scope.Dispose();
                 }
