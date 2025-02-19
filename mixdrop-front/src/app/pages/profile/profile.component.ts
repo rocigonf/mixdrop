@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from '../../models/user';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -21,7 +21,7 @@ import { FriendshipService } from '../../services/friendship.service';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 
   id: number = 0;
   userForm: FormGroup;
@@ -88,6 +88,10 @@ export class ProfileComponent implements OnInit {
 
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
     }
+  }
+
+  ngOnDestroy(): void {
+      this.messageReceived$?.unsubscribe()
   }
 
   async getUser() {

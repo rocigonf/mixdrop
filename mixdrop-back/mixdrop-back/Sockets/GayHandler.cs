@@ -381,6 +381,7 @@ public class GayHandler // GameHandler :3
 
         dict["player"] = MapUserBattle(otherUser);
         dict["otherplayer"] = playerInTurn.Punctuation;
+        dict["card"] = null;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), otherUser.UserId);
 
         if (blob.Length > 0)

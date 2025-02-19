@@ -236,6 +236,17 @@ public class BattleService
         await _unitOfWork.SaveAsync();
     }
 
+    public async Task ForfeitBattle(int userId)
+    {
+        ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetCurrentBattleByUserWithoutThem(userId);
+        Battle battle = battles.First();
+
+        UserBattle winner = battle.BattleUsers.FirstOrDefault(u => u.UserId != userId);
+        UserBattle loser = battle.BattleUsers.FirstOrDefault(u => u.UserId == userId);
+
+        await EndBattle(battle, winner, loser, true);
+    }
+
     // Esto se podría reutilizar en el timer y en el GayHandler
     public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser, bool notify = false)
     {

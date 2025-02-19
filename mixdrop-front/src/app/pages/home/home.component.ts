@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import {MatIconModule} from '@angular/material/icon';
 
@@ -9,7 +9,7 @@ import {MatIconModule} from '@angular/material/icon';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   private bpm: number = 90;
   private intervalTime: number = 0;
   private isReproducing : boolean = false
@@ -64,6 +64,11 @@ export class HomeComponent implements OnInit {
       //this.reproduce()
     }
     catch {}
+  }
+
+  ngOnDestroy(): void {
+    this.interval?.cancel()
+    this.audio.pause()
   }
 
   // CRÉDITOS POR EL "bind": https://stackoverflow.com/questions/70634283/react-typescript-uncaught-typeerror-this-is-undefined

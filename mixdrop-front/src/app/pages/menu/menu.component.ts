@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { WebsocketService } from '../../services/websocket.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -14,13 +14,12 @@ import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import { ChatComponent } from "../../components/chat/chat.component";
 
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [NavbarComponent, FormsModule, MatTooltipModule, ChatComponent],
+  imports: [NavbarComponent, FormsModule, MatTooltipModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
@@ -86,10 +85,11 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.processFriends()
         break
       case MessageType.Stats:
-        this.totalUsers = jsonResponse.total
-        this.totalPlayers = jsonResponse.totalPlayers
-        this.totalBattles = jsonResponse.totalBattles
-        
+        console.log("recibidas estadísticas")
+        this.totalUsers = jsonResponse.total | 0
+        this.totalPlayers = jsonResponse.totalPlayers | 0
+        this.totalBattles = jsonResponse.totalBattles | 0
+
         // Después de recibir las estadísticas, pido todo lo demás
         this.askForInfo(MessageType.Friend)
         this.askForInfo(MessageType.PendingBattle)
