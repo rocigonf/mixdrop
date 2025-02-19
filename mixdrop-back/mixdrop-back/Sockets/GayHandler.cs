@@ -589,12 +589,24 @@ public class GayHandler // GameHandler :3
             int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
+            // TODO: LA DIFERENCIA SE CALCULA SI LA DISTANCIA ARMÓNICA ES MAYOR QUE 1, IGUAL QUE TODO LO DEMÁS
             int difference = semitoneCard - semitoneCurrent;
             float pitchFactor = 1.0f;
 
             // Sólo aplico si es mayor que 1
             if (Math.Abs(difference) > 1)
             {
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            }
+
+            if (pitchFactor < card.MinPitch)
+            {
+                difference += 12;
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            }
+            else if(pitchFactor > card.MaxPitch)
+            {
+                difference -= 12;
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
             }
 
