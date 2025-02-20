@@ -1,6 +1,5 @@
 <app-navbar></app-navbar>
 
-<!-- falta ponerle q si es un bot no lo muestre-->
 @if (!currentBattle?.isAgainstBot) {
 @if (currentBattle && userBattle ) {
 <app-chat [currentBattle]="currentBattle" [userBattle]="userBattle">
@@ -15,8 +14,6 @@
 
 
 @if(userBattle != null){
-
-
 <p>
     @if(gameEnded)
     {
@@ -48,19 +45,20 @@
 <div class="board">
 
     <!--primera casilla VOZ Y PRINCIPAL-->
-    <div class="slot0" (dragover)="onDragOver($event,0)" (dragenter)="onDragEnter($event,0)" (drop)="onDrop($event, 0)">
+    <div class="slot0" [ngClass]="{'highlight': shouldHighlightSlot(0, ['Vocal', 'Main'])}"
+    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 0)">
         @if(board.slots[0].card )
         {
         <app-card [currentCard]="board.slots[0].card"></app-card>
         @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name) &&
-        board.slots[0].card.level <= cardToUse.level) { <button (click)="useCard(0)">Colocar carta</button>
+        board.slots[0].card.level <= cardToUse.level) { <p>Colocar carta</p>
             }
             }
             @else {
             <div class="card">
                 @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)
                 ) {
-                <button (click)="useCard(0)">Colocar carta</button>
+                <p>Colocar carta</p>
                 }
             </div>
             }
@@ -68,19 +66,20 @@
 
     <!--segunda casilla PRINCIPAL -->
 
-    <div class="slot1" (dragover)="onDragOver($event,1)" (dragenter)="onDragEnter($event,1)" (drop)="onDrop($event, 1)">
+    <div class="slot1"  [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
+    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 1)">
         @if(board.slots[1].card)
         {
         <app-card [currentCard]="board.slots[1].card"></app-card>
         @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) &&
-        board.slots[1].card.level <= cardToUse.level ) { <button (click)="useCard(1)">Colocar carta</button>
+        board.slots[1].card.level <= cardToUse.level ) { <p>Colocar carta</p>
             }
 
             }
             @else {
             <div class="card">
                 @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name)) {
-                <button (click)="useCard(1)">Colocar carta</button>
+                    <p>Colocar carta</p>
                 }
             </div>
             }
@@ -88,19 +87,20 @@
 
     <!--segunda casilla PRINCIPAL y BATERIA -->
 
-    <div class="slot2" (dragover)="onDragOver($event,2)" (dragenter)="onDragEnter($event,2)" (drop)="onDrop($event, 2)">
+    <div class="slot2"  [ngClass]="{'highlight': shouldHighlightSlot(2 , ['Drums', 'Main'])}"
+    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 2)">
         @if(board.slots[2].card)
         {
         <app-card [currentCard]="board.slots[2].card"></app-card>
         @if ( this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name) &&
-        board.slots[2].card.level <= cardToUse.level) { <button (click)="useCard(2)">Colocar carta</button>
+        board.slots[2].card.level <= cardToUse.level) { <p>Colocar carta</p>
             }
             }
             @else {
             <div class="card">
                 @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name))
                 {
-                <button (click)="useCard(2)">Colocar carta</button>
+                    <p>Colocar carta</p>
                 }
             </div>
             }
@@ -108,40 +108,44 @@
 
 
     <!--tercera casilla BATERIA-->
-    <div class="slot3" (dragover)="onDragOver($event, 3)" (dragenter)="onDragEnter($event, 3)"
+    <div class="slot3"  [ngClass]="{'highlight': shouldHighlightSlot(3, ['Drums'])}"
+    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)"
         (drop)="onDrop($event, 3)">
         @if(board.slots[3].card)
         {
         <app-card [currentCard]="board.slots[3].card"></app-card>
         @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) &&
-        board.slots[3].card.level <= cardToUse.level) { <button (click)="useCard(3)">Colocar carta</button>
+        board.slots[3].card.level <= cardToUse.level) { <p>Colocar carta</p>
             }
             }
             @else {
             <div class="card">
                 @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name)) {
-                <button (click)="useCard(3)">Colocar carta</button>
+                    <p>Colocar carta</p>
                 }
             </div>
             }
     </div>
 
     <!-- cuarta casilla BATERIA Y BAJO-->
-    <div class="slot4" (dragover)="onDragOver($event, 4)" (dragenter)="onDragEnter($event, 4)"
+
+    <div class="slot4" [ngClass]="{'highlight': shouldHighlightSlot(4, ['Drums', 'Bass'])}"
+    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)"
         (drop)="onDrop($event, 4)">
+
         @if(board.slots[4].card)
         {
         <app-card [currentCard]="board.slots[4].card"></app-card>
 
         @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name) &&
-        board.slots[4].card.level <= cardToUse.level) { <button (click)="useCard(4)">Colocar carta</button>
+        board.slots[4].card.level <= cardToUse.level) { <p>Colocar carta</p>
             }
             }
             @else {
             <div class="card">
                 @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name))
                 {
-                <button (click)="useCard(4)">Colocar carta</button>
+                <p>Colocar carta</p>
                 }
             </div>
             }
