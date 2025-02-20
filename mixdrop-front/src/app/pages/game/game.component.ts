@@ -356,4 +356,39 @@ export class GameComponent implements OnInit, OnDestroy {
     const message = JSON.stringify(data)
     this.webSocketService.sendNative(message)
   }
+
+  
+  // DRAG AND DROP --------------------------------
+
+
+  onDragStart(event: DragEvent, card: Card) {
+    event.dataTransfer?.setData('text/plain', JSON.stringify(card));
+  }
+
+  onDragOver(event: DragEvent, slotIndex: number) {
+    event.preventDefault();
+  }
+
+  onDragEnd() {
+    this.cardToUse = null;
+  }
+
+  onDragEnter(event: DragEvent, slotIndex: number) {
+    event.preventDefault();
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onDrop(event: DragEvent, slotIndex: number) {
+    event.preventDefault();
+    if (!this.cardToUse) return;
+
+    // Verificar si se puede colocar la carta en ese slot
+    if (this.userBattle?.isTheirTurn) {
+      this.useCard(slotIndex); // Función que coloca la carta en el tablero
+    }
+
+  }
 }
