@@ -1,8 +1,12 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 
 @Component({
+  standalone: true,
   selector: 'app-roulette',
   templateUrl: './roulette.component.html',
+  imports: [DragDropModule],
   styleUrls: ['./roulette.component.css']
 })
 export class RouletteComponent {
@@ -31,4 +35,5 @@ export class RouletteComponent {
       this.spinButton.nativeElement.disabled = false;
     }, { once: true });
   }
+
 }

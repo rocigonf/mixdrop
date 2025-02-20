@@ -1,7 +1,6 @@
 import { Component, ElementRef, Input, Signal, SimpleChanges, ViewChild } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Card } from '../../models/card';
-import { canHaveDecorators } from 'typescript';
 
 @Component({
   selector: 'app-card',
@@ -12,7 +11,6 @@ import { canHaveDecorators } from 'typescript';
 })
 export class CardComponent {
   readonly MAX_LEVELS = new Array(3);
-
 
   public readonly IMG_URL = environment.apiImg;
 
