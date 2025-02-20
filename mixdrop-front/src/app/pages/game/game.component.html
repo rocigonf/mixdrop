@@ -165,8 +165,7 @@
     }
 </div>
 
-
-@if (!gameEnded) {
+@if (!gameEnded && this.userBattle.isTheirTurn) {
 <button (click)="useButton()">MIXDROP</button>
 }
 }

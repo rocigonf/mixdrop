@@ -27,6 +27,14 @@ public class BattleRepository : Repository<Battle, int>
 
     }
 
+    public async Task<ICollection<Battle>> GetBattlesInProgressAsync()
+    {
+        return await GetQueryable()
+            .Where(b => b.BattleStateId == 3)
+            .ToListAsync();
+
+    }
+
     public async Task<ICollection<Battle>> GetPendingBattlesByUserIdAsync(int userId)
     {
         // Con el Any obtengo todas las batallas que incluyan al id del usuario :'D

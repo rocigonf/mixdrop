@@ -45,6 +45,7 @@ public class BattleService
         }
         else
         {
+            await Task.Delay(1000);
             // Si es contra un bot, se acepta y se pone como jugando
             dict["messageType"] = MessageType.StartBattle;
             battle.BattleStateId = 3;
@@ -234,6 +235,22 @@ public class BattleService
 
         _unitOfWork.BattleRepository.Delete(existingBattle);
         await _unitOfWork.SaveAsync();
+    }
+
+    public async Task ForfeitBattle(int userId)
+    {
+        ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetCurrentBattleByUserWithoutThem(userId);
+        Battle battle = battles.FirstOrDefault();
+
+        if(battle == null || battle.IsAgainstBot)
+        {
+            return;
+        }
+
+        UserBattle winner = battle.BattleUsers.FirstOrDefault(u => u.UserId != userId);
+        UserBattle loser = battle.BattleUsers.FirstOrDefault(u => u.UserId == userId);
+
+        await EndBattle(battle, winner, loser, true);
     }
 
     // Esto se podría reutilizar en el timer y en el GayHandler

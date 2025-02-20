@@ -61,6 +61,8 @@ export class GameComponent implements OnInit, OnDestroy {
   otherPlayerPunct: number = 0
   otherUserId: number = 0
 
+  private indexToDelete = -1
+
   private isProcessingAudio: boolean = false;
 
   currentBattle: Battle | null = null;
@@ -92,9 +94,19 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
+    this.messageReceived$?.unsubscribe()
     this.audioContext.close()
-    if (this.currentBattle?.isAgainstBot && this.gameEnded) {
-      await this.battleService.deleteBotBattle()
+    if(this.gameEnded)
+    {
+      if(this.currentBattle?.isAgainstBot)
+      {
+        await this.battleService.deleteBotBattle()
+      }
+    }
+    else
+    {
+      await this.battleService.forfeitBattle()
+
     }
   }
 
@@ -119,9 +131,46 @@ export class GameComponent implements OnInit, OnDestroy {
       return
     }
 
-    this.serverResponse = message
-    const jsonResponse = JSON.parse(this.serverResponse)
-    let positions: number[] = []
+
+      this.serverResponse = message
+      const jsonResponse = JSON.parse(this.serverResponse)
+      let positions: number[] = []
+
+      switch (jsonResponse.messageType) {
+        case MessageType.ShuffleDeckStart:
+          this.userBattle = jsonResponse.userBattleDto
+          this.currentBattle = jsonResponse.currentBattle
+          this.activateTimer()
+          break;
+        case MessageType.TurnResult:
+          this.board = jsonResponse.board
+
+          const newPlayer: UserBattleDto = jsonResponse.player
+          const cards = this.userBattle!!.cards
+
+          this.userBattle = newPlayer
+          const newCard = jsonResponse.card
+          this.userBattle.cards = cards
+
+          // Por si la carta no se puede jugar
+          if(newCard && this.indexToDelete != -1)
+          {
+            console.error("BORRADO EN ", this.indexToDelete)
+            this.userBattle.cards.splice(this.indexToDelete, 1)
+            this.userBattle.cards.push(newCard)
+            this.indexToDelete = -1
+            console.error("BORRADO")
+          }
+      
+          this.bonus = jsonResponse.bonus
+          this.otherPlayerPunct = jsonResponse.otherplayer
+
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
+
+          this.activateTimer()
+        
+          break
 
     switch (jsonResponse.messageType) {
       case MessageType.ShuffleDeckStart:
@@ -184,6 +233,26 @@ export class GameComponent implements OnInit, OnDestroy {
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
 
+          break;
+        case MessageType.DisconnectedFromBattle:
+          alert("El otro usuario se ha desconectado, por lo que has ganado")
+          this.router.navigateByUrl("menu")
+          break
+      }
+      console.log("Respuesta del socket en JSON: ", jsonResponse)
+    
+
+  }
+
+  activateTimer()
+  {
+    if(this.currentBattle?.isAgainstBot == false && this.userBattle!!.isTheirTurn)
+      {
+        this.timeRemaining$ = timer(0, 1000).pipe(
+          map(n => (this.seconds - n) * 1000),
+          takeWhile(n => n >= 0),
+        );
+      }
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
@@ -271,17 +340,16 @@ export class GameComponent implements OnInit, OnDestroy {
         actionType: null
       }
 
-      console.error("CARTAS ANTES DE BORRAR: ", this.userBattle?.cards)
+      for(let i = 0; i < this.userBattle?.cards.length; i++)
+      {
+        if(this.userBattle.cards[i].id == this.cardToUse.id)
+        {
+          console.error("BORRAR EN ", i)
+          this.indexToDelete = i
 
-      for (let i = 0; i < this.userBattle?.cards.length; i++) {
-        if (this.userBattle.cards[i].id == this.cardToUse.id) {
-          this.userBattle.cards.splice(i, 1)
           break
         }
       }
-
-      console.error("CARTAS DESPUÉS DE BORRAR: ", this.userBattle?.cards)
-
       this.sendAction(action)
 
       this.cardToUse = null
@@ -290,6 +358,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   useButton() {
+    this.userBattle!!.isTheirTurn = false
     const actionType: ActionType = {
       name: "button"
     }

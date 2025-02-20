@@ -56,6 +56,21 @@ public class BattleController : ControllerBase
     }
 
 
+    [Authorize]
+    [HttpDelete("ragequit")]
+    public async Task ForfeitBattle()
+    {
+        User user1 = await GetAuthorizedUser();
+
+        if (user1 == null)
+        {
+            return;
+        }
+
+        await _battleService.ForfeitBattle(user1.Id);
+    }
+
+
     // Aceptar solicitud de batalla
     [Authorize]
     [HttpPut("{id}")]
