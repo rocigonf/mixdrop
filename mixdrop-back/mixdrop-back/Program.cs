@@ -56,6 +56,7 @@ public class Program
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
 
+
         // CONFIGURANDO JWT
         builder.Services.AddAuthentication()
             .AddJwtBearer(options =>
@@ -129,33 +130,44 @@ public class Program
 
         app.MapControllers();
 
+        // Utilizando expresiones regulares, configuramos el servidor para que, cuando reciba una petición dirigida a un endpoint de la API que no exista, responda con el resultado devuelto por el método HandleApiFallbackAsync.
+        app.Map("api/{**slug}", HandleApiFallbackAsync);
+        // Finalmente, si la solicitud no ha sido atendida por ninguna otra ruta previamente, asumimos que se trata de una petición del cliente y devolvemos el archiv index.html.
+        app.MapFallbackToFile("client/browser/index.html");
+
         app.UseStaticFiles();
 
         await SeedDataBaseAsync(app.Services);
 
         app.Run();
+    }
 
-        // metodo para el seeder
-        static async Task SeedDataBaseAsync(IServiceProvider serviceProvider)
+    // Devuelve un error 404 Not Found indicando que no existe tal endpoint.
+    private static IResult HandleApiFallbackAsync(HttpContext context)
+    {
+        return Results.NotFound($"Cannot {context.Request.Method} {context.Request.Path}");
+    }
+
+    // metodo para el seeder
+    static async Task SeedDataBaseAsync(IServiceProvider serviceProvider)
+    {
+        using IServiceScope scope = serviceProvider.CreateScope();
+        using MixDropContext dbContext = scope.ServiceProvider.GetService<MixDropContext>();
+
+        // Si no existe la base de datos, la creamos y ejecutamos el seeder
+        if (dbContext.Database.EnsureCreated())
         {
-            using IServiceScope scope = serviceProvider.CreateScope();
-            using MixDropContext dbContext = scope.ServiceProvider.GetService<MixDropContext>();
-
-            // Si no existe la base de datos, la creamos y ejecutamos el seeder
-            if (dbContext.Database.EnsureCreated())
-            {
-                Seeder seeder = new Seeder(dbContext);
-                await seeder.SeedAsync();
-            }
-
-            // Por si se va la luz 😎
-            UnitOfWork unitOfWork = scope.ServiceProvider.GetService<UnitOfWork>();
-            ICollection<Battle> battles = await unitOfWork.BattleRepository.GetBattlesInProgressAsync();
-            foreach (Battle battle in battles)
-            {
-                unitOfWork.BattleRepository.Delete(battle);
-            }
-            await unitOfWork.SaveAsync();
+            Seeder seeder = new Seeder(dbContext);
+            await seeder.SeedAsync();
         }
+
+        // Por si se va la luz 😎
+        UnitOfWork unitOfWork = scope.ServiceProvider.GetService<UnitOfWork>();
+        ICollection<Battle> battles = await unitOfWork.BattleRepository.GetBattlesInProgressAsync();
+        foreach (Battle battle in battles)
+        {
+            unitOfWork.BattleRepository.Delete(battle);
+        }
+        await unitOfWork.SaveAsync();
     }
 }
