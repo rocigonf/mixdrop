@@ -53,8 +53,13 @@ export class AdminComponent implements OnInit {
   // Banear a un usuario
   async banUser(userId: number) {
     try {
-      this.userService.banUserAsync(userId)
-      this.loadUsers()
+
+      const confirmation = confirm(`¿Estás seguro de que quieres cambiar el estado del baneo del usuario #${userId}?`)
+      if (confirmation){
+        this.userService.banUserAsync(userId)
+        this.loadUsers()
+      }
+      
     } catch (error) {
       console.error("Error al banear este usuario", error)
     }
