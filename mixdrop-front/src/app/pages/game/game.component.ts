@@ -61,7 +61,7 @@ export class GameComponent implements OnInit, OnDestroy {
   otherPlayerPunct: number = 0
   otherUserId: number = 0
 
-  private indexToDelete = 0
+  private indexToDelete = -1
 
   private isProcessingAudio: boolean = false;
 
@@ -94,8 +94,8 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
-    this.audioContext.close()
     this.messageReceived$?.unsubscribe()
+    this.audioContext.close()
     if(this.gameEnded)
     {
       if(this.currentBattle?.isAgainstBot)
@@ -140,7 +140,7 @@ export class GameComponent implements OnInit, OnDestroy {
         case MessageType.ShuffleDeckStart:
           this.userBattle = jsonResponse.userBattleDto
           this.currentBattle = jsonResponse.currentBattle
-
+          this.activateTimer()
           break;
         case MessageType.TurnResult:
           this.board = jsonResponse.board
@@ -152,11 +152,14 @@ export class GameComponent implements OnInit, OnDestroy {
           const newCard = jsonResponse.card
           this.userBattle.cards = cards
 
-          if(newCard && this.indexToDelete != 0)
+          // Por si la carta no se puede jugar
+          if(newCard && this.indexToDelete != -1)
           {
+            console.error("BORRADO EN ", this.indexToDelete)
             this.userBattle.cards.splice(this.indexToDelete, 1)
             this.userBattle.cards.push(newCard)
-            this.indexToDelete = 0
+            this.indexToDelete = -1
+            console.error("BORRADO")
           }
       
           this.bonus = jsonResponse.bonus
@@ -165,13 +168,7 @@ export class GameComponent implements OnInit, OnDestroy {
           positions = jsonResponse.position
           this.playAudio(positions, jsonResponse.wheel); 
 
-          if(this.currentBattle?.isAgainstBot == false && this.userBattle.isTheirTurn)
-          {
-            this.timeRemaining$ = timer(0, 1000).pipe(
-              map(n => (this.seconds - n) * 1000),
-              takeWhile(n => n >= 0),
-            );
-          }
+          this.activateTimer()
         
           break
 
@@ -201,6 +198,17 @@ export class GameComponent implements OnInit, OnDestroy {
       }
       console.log("Respuesta del socket en JSON: ", jsonResponse)
     
+  }
+
+  activateTimer()
+  {
+    if(this.currentBattle?.isAgainstBot == false && this.userBattle!!.isTheirTurn)
+      {
+        this.timeRemaining$ = timer(0, 1000).pipe(
+          map(n => (this.seconds - n) * 1000),
+          takeWhile(n => n >= 0),
+        );
+      }
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
@@ -293,19 +301,15 @@ export class GameComponent implements OnInit, OnDestroy {
         actionType: null
       }
 
-      console.error("CARTAS ANTES DE BORRAR: ", this.userBattle?.cards)
-
       for(let i = 0; i < this.userBattle?.cards.length; i++)
       {
         if(this.userBattle.cards[i].id == this.cardToUse.id)
         {
+          console.error("BORRAR EN ", i)
           this.indexToDelete = i
           break
         }
       }
-
-      console.error("CARTAS DESPUÉS DE BORRAR: ", this.userBattle?.cards)
-
       this.sendAction(action)
 
       this.cardToUse = null
@@ -314,6 +318,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   useButton() {
+    this.userBattle!!.isTheirTurn = false
     const actionType: ActionType = {
       name: "button"
     }

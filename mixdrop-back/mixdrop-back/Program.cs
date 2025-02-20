@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Services;
 using mixdrop_back.Sockets;
@@ -146,6 +147,15 @@ public class Program
                 Seeder seeder = new Seeder(dbContext);
                 await seeder.SeedAsync();
             }
+
+            // Por si se va la luz 😎
+            UnitOfWork unitOfWork = scope.ServiceProvider.GetService<UnitOfWork>();
+            ICollection<Battle> battles = await unitOfWork.BattleRepository.GetBattlesInProgressAsync();
+            foreach (Battle battle in battles)
+            {
+                unitOfWork.BattleRepository.Delete(battle);
+            }
+            await unitOfWork.SaveAsync();
         }
     }
 }
