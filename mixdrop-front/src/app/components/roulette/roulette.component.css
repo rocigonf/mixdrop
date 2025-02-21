@@ -22,7 +22,7 @@ body {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
-    transition: transform 3s ease-out;
+    transition: transform 2s ease-out;
     background: conic-gradient(
         rgb(255, 67, 67) 0deg 180deg,    /* Nivel 3 (50%) */
         rgb(46, 255, 46) 180deg 270deg, /* Nivel 2 (25%) */

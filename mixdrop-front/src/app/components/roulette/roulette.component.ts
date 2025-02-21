@@ -16,10 +16,10 @@ export class RouletteComponent {
   @Input() levelToDelete: number = 1;
   private currentRotation = 0;
 
-  spinRoulette() {
+  spinRoulette(level : number) {
 
     var rotateLevel = 1;
-    switch (this.levelToDelete) {
+    switch (level) {
       case 3:
         rotateLevel = Math.random() * (1 - 0.5) + 0.5;
         break;

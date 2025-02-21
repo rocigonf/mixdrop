@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { map, Observable, Subscription, takeWhile, timer } from 'rxjs';
+import { delay, map, Observable, Subscription, takeWhile, timer } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
@@ -39,6 +39,9 @@ export class GameComponent implements OnInit, OnDestroy {
   // 7) El server notifica que se acabó la batalla
   // 8) Se muestran los resultados y se procede
 
+
+  @ViewChild(RouletteComponent) roulette!: RouletteComponent;
+
   public readonly IMG_URL = environment.apiImg;
 
   messageReceived$: Subscription | null = null;
@@ -71,7 +74,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   position: number = 0;
 
-  spinRouletteLevel :number = -1;
+  spinRouletteLevel: number = -1;
 
   private canReceive = true
 
@@ -93,6 +96,12 @@ export class GameComponent implements OnInit, OnDestroy {
     } else {
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
       this.askForInfo(MessageType.ShuffleDeckStart)
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.roulette) {
+      console.log("ruleta inicializada:", this.roulette);
     }
   }
 
@@ -164,12 +173,14 @@ export class GameComponent implements OnInit, OnDestroy {
 
         positions = jsonResponse.position
         this.spinRouletteLevel = jsonResponse.levelRoulette
-        this.spinTheRoulette()
 
-        this.playAudio(positions, jsonResponse.wheel);
-
-        this.activateTimer()
-
+        // RULETA
+        if (jsonResponse.levelRoulette > -1) {
+          console.log("NIVEL RULETA", this.spinRouletteLevel)
+          this.roulette.spinRoulette(this.spinRouletteLevel);
+        }
+          this.playAudio(positions, jsonResponse.wheel);
+          this.activateTimer()
         break
 
       case MessageType.EndGame:
@@ -200,9 +211,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
   }
 
-  spinTheRoulette(){
-
-  }
 
   activateTimer() {
     if (this.currentBattle?.isAgainstBot == false && this.userBattle!!.isTheirTurn) {
@@ -315,6 +323,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   useButton() {
     this.userBattle!!.isTheirTurn = false
+
     const actionType: ActionType = {
       name: "button"
     }
@@ -362,7 +371,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
-      event.dataTransfer!.dropEffect = "move"; 
+    event.dataTransfer!.dropEffect = "move";
   }
 
 
@@ -385,7 +394,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   }
 
-  shouldHighlightSlot(slotIndex: number, allowedTypes : string[]): boolean {
+  shouldHighlightSlot(slotIndex: number, allowedTypes: string[]): boolean {
     if (!this.userBattle?.isTheirTurn || !this.cardToUse) {
       return false;
     }
