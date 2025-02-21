@@ -97,6 +97,7 @@ public class GayHandler // GameHandler :3
         UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
 
         byte[] output = [];
+        int levelRoulette = -1;
         List<int> positions = new List<int>();
         Card randomCard = null;
         bool spinTheWheel = false;
@@ -222,7 +223,9 @@ public class GayHandler // GameHandler :3
             switch (actionType.Name)
             {
                 case "button":
-                    positions = SpinTheWheel(otherUser);
+                    var spin = SpinTheWheel(otherUser);
+                    levelRoulette = spin.Level;
+                    positions = spin.Positions;
                     spinTheWheel = true;
                     playerInTurn.ActionsLeft--;
                     break;
@@ -267,6 +270,7 @@ public class GayHandler // GameHandler :3
             { "position", positions },
             { "otherplayer", otherUser.Punctuation },
             { "wheel", spinTheWheel },
+            { "levelRoulette", levelRoulette},
             { "card", randomCard }
         };
 
@@ -465,7 +469,9 @@ public class GayHandler // GameHandler :3
             // Si no pudo jugar ninguna carta, tira la ruleta
             if (!couldPlay)
             {
-                dict["position"] = SpinTheWheel(notBot);
+                var spin = SpinTheWheel(notBot);
+                dict["position"] = spin.Positions;
+                dict["levelRoulette"] = spin.Level;
                 spinTheWheel = true;
                 totalActions++;
             }
@@ -490,29 +496,39 @@ public class GayHandler // GameHandler :3
         }
     }
 
-    private List<int> SpinTheWheel(UserBattle opponent)
+    private RouletteInfo SpinTheWheel(UserBattle opponent)
     {
         int result = _random.Next(0, 100);
         List<int> positions;
 
+        int levelDeleted;
+
         if (result < 50)
         {
             positions = RemoveCardsOfLevel(3, opponent);
+            levelDeleted = 3;
         }
         else if (result >= 50 && result < 75)
         {
             positions = RemoveCardsOfLevel(2, opponent);
+            levelDeleted = 2;
         }
         else if(result >= 75 && result < 90)
         {
             positions = RemoveCardsOfLevel(1, opponent);
+            levelDeleted = 1;
         }
         else
         {
             positions = RemoveCardsOfLevel(0, opponent);
+            levelDeleted = 0;
         }
 
-        return positions;
+        RouletteInfo info = new();
+        info.Level = levelDeleted;
+        info.Positions = positions;
+
+        return info;
     }
 
     private List<int> RemoveCardsOfLevel(int level, UserBattle player)

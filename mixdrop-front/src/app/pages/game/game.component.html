@@ -13,6 +13,7 @@
 }
 
 
+
 @if(userBattle != null){
 <p>
     @if(gameEnded)
@@ -170,6 +171,7 @@
 </div>
 
 @if (!gameEnded && this.userBattle.isTheirTurn) {
+<app-roulette [levelToDelete]="spinRouletteLevel"></app-roulette>
 <button (click)="useButton()">MIXDROP</button>
 }
 }

@@ -19,12 +19,13 @@ import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { CardComponent } from "../../components/card/card.component";
+import { RouletteComponent } from "../../components/roulette/roulette.component";
 
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent, CommonModule],
+  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent, CommonModule, RouletteComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -70,6 +71,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   position: number = 0;
 
+  spinRouletteLevel :number = -1;
+
   private canReceive = true
 
   private audioContext: AudioContext = new AudioContext();
@@ -86,7 +89,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
     console.log(this.authService.isAuthenticated())
     if (!this.authService.isAuthenticated()) {
-      console.log("no esta autenticfado")
       this.navigateToUrl("login");
     } else {
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
@@ -161,6 +163,9 @@ export class GameComponent implements OnInit, OnDestroy {
         this.otherPlayerPunct = jsonResponse.otherplayer
 
         positions = jsonResponse.position
+        this.spinRouletteLevel = jsonResponse.levelRoulette
+        this.spinTheRoulette()
+
         this.playAudio(positions, jsonResponse.wheel);
 
         this.activateTimer()
@@ -192,6 +197,10 @@ export class GameComponent implements OnInit, OnDestroy {
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
+
+  }
+
+  spinTheRoulette(){
 
   }
 
