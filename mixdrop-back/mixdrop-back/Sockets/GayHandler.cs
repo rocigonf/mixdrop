@@ -2,6 +2,7 @@ using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Sockets.Game;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Action = mixdrop_back.Models.DTOs.Action;
@@ -30,6 +31,13 @@ public class GayHandler // GameHandler :3
     private RemoveAFKPlayers _service;
 
     private string Bonus { get; set; } = "";
+
+    private Dictionary<string, Dictionary<string, int>> Grades = new Dictionary<string, Dictionary<string, int>>()
+    {
+        { "FirstGrade", new Dictionary<string, int> { { "", 0 } } },
+        { "ForthGrade", new Dictionary<string, int> { { "", 0 } } },
+        { "FifthGrade", new Dictionary<string, int> { { "", 0 } } },
+    };
 
 
     /// <summary>
@@ -539,6 +547,14 @@ public class GayHandler // GameHandler :3
             }
         }
 
+        int total = _board.Slots.Where(s => s.Card == null).Count();
+        
+        // Si no hay ninguna otra carta
+        if(total == 5)
+        {
+            _board.Playing = null;
+        }
+
         return positions;
     }
 
@@ -574,6 +590,34 @@ public class GayHandler // GameHandler :3
         if (playing == null)
         {
             _board.Playing = card.Track;
+            string cardNote = card.Track.Song.Pitch;
+
+            for(int i = 0; i < MusicNotes.NOTES.Length; i++)
+            {
+                string currentNote = MusicNotes.NOTES[i];
+                if (currentNote == cardNote)
+                {
+                    Grades["FirstGrade"] = new Dictionary<string, int> { { currentNote, i } };
+
+                    int j = i + 3;
+                    if(j >= MusicNotes.NOTES.Length)
+                    {
+                        j = j - MusicNotes.NOTES.Length;
+                    }
+
+                    Grades["ForthGrade"] = new Dictionary<string, int> { { currentNote, j } };
+                    j++;
+
+                    if(j >= MusicNotes.NOTES.Length)
+                    {
+                        j = j - MusicNotes.NOTES.Length; 
+                    }
+
+                    Grades["FifthGrade"] = new Dictionary<string, int> { { currentNote, j } };
+                    break;
+                }
+            }
+
             return File.ReadAllBytes("wwwroot/" + card.Track.TrackPath);
         }
         else
@@ -585,29 +629,53 @@ public class GayHandler // GameHandler :3
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
             float newBpmForCard = CalculateNewBpm(changeForCard);
 
-            // Cálculo del nuevo pitch (CALCULAR COMO EN EL BPM PORQUE SI EN LA NOTA "Do" LA CANTIDAD SE SEMITONOS A DIVIDIR SERÍA 0)            
-            int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
-            int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
-
-            // TODO: LA DIFERENCIA SE CALCULA SI LA DISTANCIA ARMÓNICA ES MAYOR QUE 1, IGUAL QUE TODO LO DEMÁS
-            int difference = semitoneCard - semitoneCurrent;
+            // Cálculo del pitch
             float pitchFactor = 1.0f;
+            string cardNote = card.Track.Song.Pitch;
 
-            // Sólo aplico si es mayor que 1
-            if (Math.Abs(difference) > 1)
+            if (cardNote != Grades["FirstGrade"].Keys.First() && cardNote == Grades["ForthGrade"].Keys.First() && cardNote == Grades["FifthGrade"].Keys.First())
             {
-                pitchFactor = (float)Math.Pow(2, difference / 12.0);
-            }
+                string firstNote = Grades["FirstGrade"].Keys.First();
+                int firstGradePosition = Grades["FirstGrade"][firstNote];
 
-            if (pitchFactor < card.MinPitch)
-            {
-                difference += 12;
-                pitchFactor = (float)Math.Pow(2, difference / 12.0);
-            }
-            else if(pitchFactor > card.MaxPitch)
-            {
-                difference -= 12;
-                pitchFactor = (float)Math.Pow(2, difference / 12.0);
+                string secondNote = Grades["FirstGrade"].Keys.First(k => k != Grades["FirstGrade"].Keys.First() );
+                int secondGradePosition = Grades["FirstGrade"][secondNote];
+
+                string thirdNote = Grades["FirstGrade"].Keys.Last();
+                int thirdGradePosition = Grades["FirstGrade"][thirdNote];
+
+                int[] positions = [ firstGradePosition,  secondGradePosition, thirdGradePosition ];
+                int position = -1;
+
+                for (int i = 0; i < MusicNotes.NOTES.Length; i++)
+                {
+                    string currentNote = MusicNotes.NOTES[i];
+
+                    if (currentNote == cardNote)
+                    {
+                        position = i; break;
+                    }
+                }
+
+                int[] differences = [Math.Abs(firstGradePosition - position), Math.Abs(secondGradePosition - position), Math.Abs(thirdGradePosition - position)];
+                int difference = differences.Min();
+
+                int newDifference = 0;
+
+                if (difference == differences[0])
+                {
+                    newDifference = GetFromDictionary(cardNote) - GetFromDictionary(firstNote);
+                }
+                else if (difference == differences[1])
+                {
+                    newDifference = GetFromDictionary(cardNote) - GetFromDictionary(secondNote);
+                }
+                else
+                {
+                    newDifference = GetFromDictionary(cardNote) - GetFromDictionary(thirdNote);
+                }
+
+                pitchFactor = (float)Math.Pow(2, newDifference / 12.0);
             }
 
             byte[] newAudio = _audioModifier.Modify("wwwroot/" + card.Track.TrackPath, newBpmForCard, pitchFactor);
