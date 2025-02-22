@@ -77,7 +77,7 @@ export class LoginComponent {
 
       this.webSocketService.connectNative()
     } else {
-      alert("error al iniciar sesion")
+      alert("error al iniciar sesion: datos incorrectos o baneo existente")
       this.pressedEnter = false
 
     }

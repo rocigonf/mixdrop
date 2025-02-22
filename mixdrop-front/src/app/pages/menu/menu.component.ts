@@ -170,13 +170,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   async acceptBattle(battle: Battle) {
+    sessionStorage.setItem("battleId", battle.id.toString())
     const response = await this.battleService.acceptBattleById(battle.id)
     console.log("Respuesta de aceptar la batalla: ", response)
   }
 
   async deleteBattle(battle : Battle)
   {
-    const response = await this.battleService.removeBattleById(battle.id)
+    const response = await this.battleService.removeBattleById(battle.id, false)
     console.log("Respuesta de borrar la batalla: ", response)
   }
 

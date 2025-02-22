@@ -67,7 +67,8 @@ public class BattleController : ControllerBase
             return;
         }
 
-        await _battleService.ForfeitBattle(user1.Id);
+        await _battleService.ForfeitBattle(user1);
+        await WebSocketHandler.SendStatsMessage();
     }
 
 
@@ -108,8 +109,8 @@ public class BattleController : ControllerBase
 
     // Rechazar solicitud de batalla
     [Authorize]
-    [HttpDelete("{id}")]
-    public async Task DeleteBattle(int id)
+    [HttpDelete("{id}/{notify}")]
+    public async Task DeleteBattle(int id, bool notify)
     {
         User user = await GetAuthorizedUser();
 
@@ -118,7 +119,7 @@ public class BattleController : ControllerBase
             return;
         }
 
-        await _battleService.DeleteBattleById(id, user.Id);
+        await _battleService.DeleteBattleById(id, user.Id, notify);
 
         // modo muy cutre 
         /*WebSocketHandler.TotalBattles--;
@@ -137,7 +138,8 @@ public class BattleController : ControllerBase
             return;
         }
 
-        await _battleService.DeleteBattleAgainstBot(user.Id);
+        await _battleService.DeleteBattleAgainstBot(user);
+        await WebSocketHandler.SendStatsMessage();
     }
 
     // Emparejamiento aleatorio

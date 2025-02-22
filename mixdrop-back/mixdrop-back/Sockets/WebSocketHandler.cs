@@ -51,6 +51,20 @@ public class WebSocketHandler
         USER_SOCKETS.Add(handler);
         Total++;
 
+        using var scope = _serviceProvider.CreateScope();
+        UnitOfWork unitOfWork = scope.ServiceProvider.GetService<UnitOfWork>();
+
+        // estado de conectado
+        var estadoConectado = await unitOfWork.StateRepositoty.GetByIdAsync(2);
+
+        user.StateId = estadoConectado.Id; // conectado
+        user.State = estadoConectado;
+
+        unitOfWork.UserRepository.Update(user);
+        await unitOfWork.SaveAsync();
+
+        scope.Dispose();
+
         // Liberamos el semáforo
         _semaphore.Release();
 
@@ -106,11 +120,11 @@ public class WebSocketHandler
             if (!battles.First().IsAgainstBot)
             {
                 UserBattle otherUser = battles.First().BattleUsers.FirstOrDefault(u => u.UserId != disconnectedHandler.User.Id);
-                await battleService.EndBattle(battles.First(), otherUser, user, true);
+                await battleService.EndBattle(battles.First(), otherUser, user);
             }
             else
             {
-                await battleService.DeleteBattleByObject(battles.First(), user.UserId);
+                await battleService.DeleteBattleByObject(battles.First(), user.UserId, false, false);
             }
             GayNetwork.DeleteHandler(disconnectedHandler.User.Id);
             await SendStatsMessage();

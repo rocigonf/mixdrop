@@ -4,7 +4,6 @@ import { environment } from '../../../environments/environment';
 import { WebsocketService } from '../../services/websocket.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { BattleService } from '../../services/battle.service';
 import { Subscription } from 'rxjs';
@@ -38,11 +37,11 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   myFriends: Friend[] = []
   conenctedFriends: User[] = []
 
-
   pendingBattles: Battle[] = []
 
   readyForBattle = false
   battle: Battle | null = null
+  battleId: number = 0
 
   loading: boolean = false
 
@@ -64,6 +63,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
           this.battle = JSON.parse(battle)
         }
       }
+      this.battleId = parseInt(sessionStorage.getItem("battleId")!!)
     }
 
     if(sessionStorage.getItem("revenge") == "true")
@@ -83,8 +83,13 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
     this.processFriends()
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy(): Promise<void> {
       this.messageReceived$?.unsubscribe()
+      if(this.battleId != 0 && this.readyForBattle)
+      {
+        await this.deleteBattleBydId(this.battleId, true)
+        this.resetData()
+      }
   }
 
   processMessage(message: any) {
@@ -107,15 +112,27 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         this.pendingBattles = jsonResponse.battles
         break
       case MessageType.DisconnectedFromBattle:
-        this.router.navigateByUrl("menu")
+        alert("La batalla se ha cancelado")
+        this.resetData()
+        //this.router.navigateByUrl("menu")
         //window.location.reload()
         break
       case MessageType.StartBattle:
-        this.loading = false
+        this.resetData()
         this.router.navigateByUrl("game")
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
+  }
+
+  resetData()
+  {
+    this.battle = null
+    this.readyForBattle = false
+    this.loading = false
+    this.battleId = 0
+    sessionStorage.removeItem("battle")
+    sessionStorage.removeItem("battleId")
   }
 
   askForInfo(messageType: MessageType) {
@@ -171,18 +188,21 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
     } else console.log("no se encuentra la batalla")
   }
 
-  async deleteBattle(friendId: number) {
+  async deleteBattleByFriendId(friendId: number) {
     const pendingBattle: Battle | undefined = this.pendingBattles.find(battle =>
       (battle.user.id === friendId) &&
       (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
     )
 
     if (pendingBattle != undefined) {
-      const response = await this.battleService.removeBattleById(pendingBattle.id)
-      console.log("Respuesta de aceptar la batalla: ", response)
+      await this.deleteBattleBydId(pendingBattle.id, false) // Si es byFriend no tengo que notificar
     } else console.log("no se encuentra la batalla")
   }
 
+  async deleteBattleBydId(battleId: number, notify: boolean) {
+      const response = await this.battleService.removeBattleById(battleId, notify)
+      console.log("Respuesta de borrar la batalla: ", response)
+  }
 
   processFriends() {
 

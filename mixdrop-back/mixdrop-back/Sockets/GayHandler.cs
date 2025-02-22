@@ -11,7 +11,7 @@ namespace mixdrop_back.Sockets;
 public class GayHandler // GameHandler :3
 {
     private const int ACTIONS_REQUIRED = 1;
-    private const int POINTS_REQUIRED = 21;
+    private const int POINTS_REQUIRED = 10;
 
     public readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public Battle Battle { get; set; }
@@ -326,10 +326,16 @@ public class GayHandler // GameHandler :3
         Battle.BattleUsers = [];
         Battle.FinishedAt = DateTime.UtcNow;
 
+        var state = await unitOfWork.StateRepositoty.GetByIdAsync(2); // Conectado
+
         if (!winner.IsBot)
         {
             winner.BattleResultId = 1;
             winner.Cards = new List<Card>();
+
+            winner.User.State = state;
+            winner.User.StateId = state.Id;
+
             Battle.BattleUsers.Add(winner);
         }
 
@@ -337,6 +343,10 @@ public class GayHandler // GameHandler :3
         {
             loser.BattleResultId = 2;
             loser.Cards = new List<Card>();
+
+            loser.User.State = state;
+            loser.User.StateId = state.Id;
+
             Battle.BattleUsers.Add(loser);
         }
 
