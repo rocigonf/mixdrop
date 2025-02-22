@@ -61,7 +61,7 @@ export class GameComponent implements OnInit, OnDestroy {
   otherPlayerPunct: number = 0
   otherUserId: number = 0
 
-  private indexToDelete = -1
+  //private indexToDelete = -1
 
   private isProcessingAudio: boolean = false;
 
@@ -146,10 +146,10 @@ export class GameComponent implements OnInit, OnDestroy {
           this.board = jsonResponse.board
 
           const newPlayer: UserBattleDto = jsonResponse.player
-          const cards = this.userBattle!!.cards
+          //const cards = this.userBattle!!.cards
 
           this.userBattle = newPlayer
-          const newCard = jsonResponse.card
+          /*const newCard = jsonResponse.card
           this.userBattle.cards = cards
 
           // Por si la carta no se puede jugar
@@ -160,7 +160,7 @@ export class GameComponent implements OnInit, OnDestroy {
             this.userBattle.cards.push(newCard)
             this.indexToDelete = -1
             console.error("BORRADO")
-          }
+          }*/
       
           this.bonus = jsonResponse.bonus
           this.otherPlayerPunct = jsonResponse.otherplayer
@@ -301,7 +301,7 @@ export class GameComponent implements OnInit, OnDestroy {
         actionType: null
       }
 
-      for(let i = 0; i < this.userBattle?.cards.length; i++)
+      /*for(let i = 0; i < this.userBattle?.cards.length; i++)
       {
         if(this.userBattle.cards[i].id == this.cardToUse.id)
         {
@@ -309,7 +309,7 @@ export class GameComponent implements OnInit, OnDestroy {
           this.indexToDelete = i
           break
         }
-      }
+      }*/
       this.sendAction(action)
 
       this.cardToUse = null

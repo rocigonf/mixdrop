@@ -289,6 +289,10 @@ public class BattleService
                 }
 
                 _unitOfWork.BattleRepository.Update(battle);
+                await _unitOfWork.SaveAsync();
+
+                GayHandler handler = GayNetwork._handlers.FirstOrDefault(h => h._participants.Any(u => u.UserId == winner.Id));
+                GayNetwork._handlers.Remove(handler);
 
                 if (notify)
                 {
@@ -303,7 +307,6 @@ public class BattleService
                     await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), winner.UserId);
                 }
 
-                await _unitOfWork.SaveAsync();
             }
         }
         catch(Exception e)

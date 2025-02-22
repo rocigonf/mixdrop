@@ -100,13 +100,13 @@ public class UserService
         }
 
         // estado de conectado
-        /*var estadoConectado = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
+        var estadoConectado = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
 
-        user.StateId = 2; // conectado
+        user.StateId = estadoConectado.Id; // conectado
         user.State = estadoConectado;
 
         _unitOfWork.UserRepository.Update(user);
-        await _unitOfWork.SaveAsync();*/
+        await _unitOfWork.SaveAsync();
 
         return user;
     }
@@ -114,6 +114,8 @@ public class UserService
     // REGISTRO 
     public async Task<User> RegisterAsync(RegisterDto model)
     {
+        var state = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
+
         // validacion email
 
         if (!emailRegex.IsMatch(model.Email))
@@ -147,7 +149,8 @@ public class UserService
                 Role = "User", // Rol por defecto
                 Password = PasswordHelper.Hash(model.Password),
                 IsInQueue = false,  // por defecto al crearse
-                StateId = 1
+                StateId = state.Id,
+                State = state
             };
 
             if (model.Image != null)

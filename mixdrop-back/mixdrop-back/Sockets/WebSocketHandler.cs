@@ -68,7 +68,6 @@ public class WebSocketHandler
         USER_SOCKETS.Remove(disconnectedHandler);
         Total--;
 
-
         using IServiceScope scope = _serviceProvider.CreateScope();
 
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
@@ -90,7 +89,10 @@ public class WebSocketHandler
             }
         }
 
-        disconnectedHandler.User.StateId = 1;
+        var state = await unitOfWork.StateRepositoty.GetByIdAsync(1);
+
+        disconnectedHandler.User.StateId = state.Id;
+        disconnectedHandler.User.State = state;
         disconnectedHandler.User.IsInQueue = false;
         unitOfWork.UserRepository.Update(disconnectedHandler.User);
         await unitOfWork.SaveAsync();
