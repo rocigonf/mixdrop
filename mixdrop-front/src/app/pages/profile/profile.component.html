@@ -110,13 +110,25 @@
     <!-- Historial de batallas -->
     <h2>Batallas</h2>
     <div>
-        @for(battle of user.battles; track $index){
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage == 1">Anterior</button>
+            <span>Página {{ currentPage }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">Siguiente</button>
+        </div>
+        @for(battle of battlesPaginated; track $index){
             @if(battle.battleStateId == 4)
             {
                 <p>Tiempo total {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</p>
                     @if(battle.usersBattles[0].userId == user.id)
                     {
-                        <p>Puntuación: {{ battle.usersBattles[0].punctuation }}</p>
+                        <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
+                        @if(battle.usersBattles[0].punctuation < 10) 
+                        {
+                            <p>El usuario abandonó la sala</p>
+                        }
+                        @else {
+                            <p>Puntuación: {{ battle.usersBattles[0].punctuation }}</p>
+                        }
                         @switch (battle.usersBattles[0].battleResultId) {
                             @case (1) {
                                 <p>Victoria</p>
@@ -131,7 +143,14 @@
                         }
                     }
                     @else {
-                        <p>Puntuación: {{ battle.usersBattles[1].punctuation }}</p>
+                        <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
+                        @if(battle.usersBattles[1].punctuation < 10) 
+                        {
+                            <p>El usuario abandonó la sala</p>
+                        }
+                        @else {
+                            <p>Puntuación: {{ battle.usersBattles[1].punctuation }}</p>
+                        }
                         @switch (battle.usersBattles[1].battleResultId) {
                             @case (1) {
                                 <p>Victoria</p>
