@@ -43,7 +43,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
-
   friendsRaw: Friend[] = []
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
@@ -199,25 +198,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     console.log("Respuesta de agregar al amigo: ", response)
   }
 
-  async acceptFriendship(id: number) {
-    const response = await this.friendshipService.acceptFriendship(id)
-    console.log("Respuesta de aceptar al amigo: ", response)
-  }
-
-
   // comprueba si se le ha enviado una solicitud de amistad y esta en espera
   waitingFriendship(user: User): boolean {
-
-    const amistad: Friend | undefined = this.friendsRaw.find(friend =>
-      (friend.senderUserId === user.id && friend.receiverUserId === this.myUser?.id) ||
-      (friend.receiverUserId === user.id && friend.senderUserId === this.myUser?.id)
-    )
+    const amistad = this.hasFriendship(user)
+    
     if (amistad) {
       return !amistad.accepted
     } else return false
   }
-
-
 
 
   // TODO: Agregar verificación
@@ -300,12 +288,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  getDiffDays(begin: any, end: any) {
+  getDiffTime(begin: any, end: any): string {
     const startDate = new Date(begin);
     const endDate = new Date(end);
     const time = endDate.getTime() - startDate.getTime();
-
-    return time / (1000 * 3600);
+  
+    const hours = Math.floor(time / (1000 * 3600));
+    const minutes = Math.floor((time % (1000 * 3600)) / (1000 * 60));
+  
+    return `${hours} horas ${minutes} minutos`;
   }
 
 }

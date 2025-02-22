@@ -95,7 +95,16 @@
         }
         @else
         {
-            
+            @if(waitingFriendship(user) == false)
+            {
+                @if(hasFriendship(user))
+                {
+                    <button (click)="removeFriend(hasFriendship(user))">Borrar amigo</button>
+                }
+                @else {
+                    <button (click)="addFriend(user)">Agregar amigo</button>
+                }
+            }
         }
     </div>
     <!-- Historial de batallas -->
@@ -104,7 +113,7 @@
         @for(battle of user.battles; track $index){
             @if(battle.battleStateId == 4)
             {
-                <p>Tiempo total {{ getDiffDays(battle.createdAt, battle.finishedAt) }}</p>
+                <p>Tiempo total {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</p>
                     @if(battle.usersBattles[0].userId == user.id)
                     {
                         <p>Puntuación: {{ battle.usersBattles[0].punctuation }}</p>
