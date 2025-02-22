@@ -96,16 +96,16 @@ export class GameComponent implements OnInit, OnDestroy {
   async ngOnDestroy(): Promise<void> {
     this.messageReceived$?.unsubscribe()
     this.audioContext.close()
-    if(this.gameEnded)
+    if(!this.gameEnded)
     {
       if(this.currentBattle?.isAgainstBot)
       {
         await this.battleService.deleteBotBattle()
       }
-    }
-    else
-    {
-      await this.battleService.forfeitBattle()
+      else
+      {
+        await this.battleService.forfeitBattle()
+      }
     }
   }
 
@@ -169,7 +169,6 @@ export class GameComponent implements OnInit, OnDestroy {
           this.playAudio(positions, jsonResponse.wheel); 
 
           this.activateTimer()
-        
           break
 
         case MessageType.EndGame:
@@ -190,7 +189,13 @@ export class GameComponent implements OnInit, OnDestroy {
             alert("Perdiste :(")
           }
 
+          this.timeRemaining$ = null
+
           break;
+          case MessageType.AskForBattle:
+            alert("Revancha solicitada")
+            this.router.navigateByUrl("menu")
+            break
         case MessageType.DisconnectedFromBattle:
           alert("El otro usuario se ha desconectado, por lo que has ganado")
           this.router.navigateByUrl("menu")

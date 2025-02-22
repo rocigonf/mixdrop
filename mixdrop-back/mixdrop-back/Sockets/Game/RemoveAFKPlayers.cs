@@ -55,6 +55,9 @@ public class RemoveAFKPlayers : BackgroundService
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var _unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+
+                    var state = await _unitOfWork.StateRepositoty.GetByIdAsync(2); // Conectado
+
                     _battle.BattleStateId = 4;
                     _battle.FinishedAt = DateTime.UtcNow;
 
@@ -63,6 +66,12 @@ public class RemoveAFKPlayers : BackgroundService
 
                     _otherPlayer.Cards = new List<Card>();
                     _playerInTurn.Cards = new List<Card>();
+
+                    _otherPlayer.User.State = state;
+                    _otherPlayer.User.StateId = state.Id;
+
+                    _playerInTurn.User.State = state;
+                    _playerInTurn.User.StateId = state.Id;
 
                     _battle.BattleUsers = [_otherPlayer, _playerInTurn];
 

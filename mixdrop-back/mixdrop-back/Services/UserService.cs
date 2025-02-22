@@ -99,15 +99,6 @@ public class UserService
             return null;
         }
 
-        // estado de conectado
-        var estadoConectado = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
-
-        user.StateId = estadoConectado.Id; // conectado
-        user.State = estadoConectado;
-
-        _unitOfWork.UserRepository.Update(user);
-        await _unitOfWork.SaveAsync();
-
         return user;
     }
 
