@@ -47,6 +47,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
+  battlesPerPage = 1;
+  currentPage = 1;
+  totalBattles = 0;
+  battlesPaginated: any[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -99,7 +103,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if (result != null) {
       this.user = result
-      console.error(this.user)
+      this.totalBattles = this.user!!.battles.length;
+      this.paginateBattles();
+      //console.error(this.user)
 
       // Pillo el id del JWT como en el ECommerce y si coincide con el usuario que he pedido, intenta acceder a sí mismo
       const jwt = this.userService.api.jwt
@@ -297,6 +303,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const minutes = Math.floor((time % (1000 * 3600)) / (1000 * 60));
   
     return `${hours} horas ${minutes} minutos`;
+  }
+
+  paginateBattles() {
+    const startIndex = (this.currentPage - 1) * this.battlesPerPage;
+    const endIndex = startIndex + this.battlesPerPage;
+    this.battlesPaginated = this.user?.battles.slice(startIndex, endIndex) || [];
+  }
+
+  nextPage() {
+    if (this.currentPage * this.battlesPerPage < this.totalBattles) {
+      this.currentPage++;
+      this.paginateBattles();
+    }
+  }
+  
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.paginateBattles();
+    }
   }
 
 }

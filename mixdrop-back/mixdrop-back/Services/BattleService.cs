@@ -306,7 +306,7 @@ public class BattleService
                 _unitOfWork.BattleRepository.Update(battle);
                 await _unitOfWork.SaveAsync();
 
-                GayHandler handler = GayNetwork._handlers.FirstOrDefault(h => h._participants.Any(u => u.UserId == winner.Id));
+                GayHandler handler = GayNetwork._handlers.FirstOrDefault(h => h._participants.Any(u => u.UserId == winner.UserId));
                 GayNetwork._handlers.Remove(handler);
 
                 Dictionary<object, object> dict = new Dictionary<object, object>
