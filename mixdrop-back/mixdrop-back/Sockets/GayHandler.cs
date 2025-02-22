@@ -267,7 +267,7 @@ public class GayHandler // GameHandler :3
             { "position", positions },
             { "otherplayer", otherUser.Punctuation },
             { "wheel", spinTheWheel },
-            { "card", randomCard }
+            //{ "card", randomCard }
         };
 
         await NotifyUsers(dict, playerInTurn, otherUser, output);
@@ -316,7 +316,7 @@ public class GayHandler // GameHandler :3
     private UserBattleDto MapUserBattle(UserBattle userBattle)
     {
         UserBattleDto userBattleDto = _mapper.ToDto(userBattle);
-        userBattleDto.Cards = null;
+        //userBattleDto.Cards = null;
         return userBattleDto;
     }
 
@@ -599,7 +599,7 @@ public class GayHandler // GameHandler :3
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
             }
 
-            if (pitchFactor < card.MinPitch)
+            /*if (pitchFactor < card.MinPitch)
             {
                 difference += 12;
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
@@ -608,7 +608,7 @@ public class GayHandler // GameHandler :3
             {
                 difference -= 12;
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
-            }
+            }*/
 
             byte[] newAudio = _audioModifier.Modify("wwwroot/" + card.Track.TrackPath, newBpmForCard, pitchFactor);
             //byte[] message = [..BitConverter.GetBytes(card.Id), .. newAudio];
