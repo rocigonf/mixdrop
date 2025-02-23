@@ -125,15 +125,6 @@ public class UserController : ControllerBase
     [HttpPut("modifyUserRole")]
     public async Task<IActionResult> ModifyUserRole(ModifyRoleRequest request)
     {
-
-        // Obtener datos del usuario
-        UserDto userData = await _userService.GetUserByIdAsync(request.UserId);
-
-        if (userData == null)
-        {
-            return BadRequest("El usuario es null");
-        }
-
         try
         {
             if (request.NewRole == "User" || request.NewRole == "Admin")
