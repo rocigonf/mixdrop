@@ -68,7 +68,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
 
     this.passwordForm = this.formBuild.group({
-      newPassword: ['', [Validators.required, Validators.minLength(1)]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
       { validators: this.passwordValidator.passwordMatchValidator });
@@ -88,8 +88,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       this.myUser = this.authService.getUser();
 
-
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+      
     }
   }
 
@@ -180,7 +180,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
-
   async removeFriend(friend: Friend | undefined) {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
@@ -251,7 +250,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if (!newPassword) {
       console.error("Error: El campo de la contraseña está vacío.");
-
       return;
     }
 
