@@ -15,6 +15,7 @@ namespace mixdrop_back.Repositories
             return await GetQueryable()
                 .Include(card => card.Track)
                     .ThenInclude(track => track.Song)
+                        .ThenInclude(s => s.Preferred)
                 .Include(card => card.Track)
                     .ThenInclude(track => track.Part)
                 .Include(card => card.Track)
