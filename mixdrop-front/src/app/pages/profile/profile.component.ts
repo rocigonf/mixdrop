@@ -87,9 +87,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       })
 
       this.myUser = this.authService.getUser();
-
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
-      
+      this.askForInfo(MessageType.Friend)
     }
   }
 

@@ -144,17 +144,26 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.searchFriend("")
   }
 
-  async removeFriend(friend: Friend) {
+  async removeFriend(friend: Friend, accepted: boolean) {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
 
     const nickname = friend.receiverUser?.nickname || friend.senderUser?.nickname;
 
-    const confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+    let confirmed
+
+    if(accepted)
+    {
+      confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+    }
+    else
+    {
+      confirmed = window.confirm(`¿Seguro que quieres rechazar la solicitud de ser amigo de ${nickname}?`);
+    }
   
     if (confirmed) {
       await this.friendshipService.removeFriendById(friend.id)
-      alert(`Has dejado de ser amigo de ${nickname}.`);
+      alert(`Amistad con ${nickname} rechazada.`);
     } 
   }
 

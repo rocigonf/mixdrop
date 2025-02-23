@@ -42,12 +42,11 @@ export class AdminComponent implements OnInit {
   // Editar el rol de un usuario
   async modifyUserRole(userId: number, newRole: string) {
     try {
-      this.userService.modifyRole(userId, newRole)
-      this.loadUsers()
+      await this.userService.modifyRole(userId, newRole)
     } catch (error) {
       console.error("Error al modificar el rol", error)
     }
-    this.loadUsers()
+    await this.loadUsers()
   }
 
   // Banear a un usuario

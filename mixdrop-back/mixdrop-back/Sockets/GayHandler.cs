@@ -27,6 +27,7 @@ public class GayHandler // GameHandler :3
 
     private readonly UserBattleMapper _mapper = new UserBattleMapper();
     private readonly Random _random = new Random();
+    private readonly PitchCalculator _pitchCalculator = new PitchCalculator();
     private RemoveAFKPlayers _service;
 
     private string Bonus { get; set; } = "";
@@ -549,6 +550,14 @@ public class GayHandler // GameHandler :3
             }
         }
 
+        int total = _board.Slots.Where(s => s.Card == null).Count();
+
+        // Si no hay ninguna otra carta
+        if (total == 5)
+        {
+            _board.Playing = null;
+        }
+
         return positions;
     }
 
@@ -595,8 +604,11 @@ public class GayHandler // GameHandler :3
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
             float newBpmForCard = CalculateNewBpm(changeForCard);
 
-            // Cálculo del nuevo pitch (CALCULAR COMO EN EL BPM PORQUE SI EN LA NOTA "Do" LA CANTIDAD SE SEMITONOS A DIVIDIR SERÍA 0)            
-            int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
+            // Cálculo del nuevo pitch
+            int totalSemitones = _pitchCalculator.CalculateSemitones(playing.Song.Preferred, card.Track.Song, out _);
+            float pitchFactor = (float)Math.Pow(2, totalSemitones / 12.0);
+
+            /*int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
             // TODO: LA DIFERENCIA SE CALCULA SI LA DISTANCIA ARMÓNICA ES MAYOR QUE 1, IGUAL QUE TODO LO DEMÁS
@@ -624,12 +636,19 @@ public class GayHandler // GameHandler :3
             //byte[] message = [..BitConverter.GetBytes(card.Id), .. newAudio];
             byte[] message = [..newAudio];
 
+            string noteName = playing.Song.Pitch;
+            bool couldGet = MusicNotes.NOTE_MAP.TryGetValue(playing.Song.Pitch, out _);
+            if (!couldGet)
+            {
+                noteName = MusicNotes.FIFTH_CIRCLE[playing.Song.Pitch];
+            }
+
             _board.Playing = new Track()
             {
-                Song = new Song()
+                Song = new Song(noteName, true)
                 {
                     Bpm = playing.Song.Bpm,
-                    Pitch = playing.Song.Pitch,
+                    Pitch = noteName,
                 }
             };
 

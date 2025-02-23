@@ -56,12 +56,12 @@ export class UserService {
   }
 
   // Modificar rol del usuario
-  modifyRole(id: number, newRole: string): Promise<any> {
+  async modifyRole(id: number, newRole: string): Promise<any> {
     const body = {
         userId: id,
         newRole: newRole
     }
-    return this.api.put(`User/modifyUserRole`, body)
+    await this.api.put(`User/modifyUserRole`, body)
   }
 
   // Banear usuario

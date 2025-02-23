@@ -3,6 +3,7 @@ using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Helper;
 using mixdrop_back.Models.Mappers;
+using mixdrop_back.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -251,6 +252,16 @@ public class UserService
         if (!string.IsNullOrEmpty(newRole))
         {
             existingUser.Role = newRole;
+        }
+        else
+        {
+            return;
+        }
+
+        UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == userId);
+        if (socket != null)
+        {
+            socket.User.Role = newRole;
         }
 
         _unitOfWork.UserRepository.Update(existingUser);

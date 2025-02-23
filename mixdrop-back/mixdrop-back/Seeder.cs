@@ -1,5 +1,6 @@
 ﻿using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Helper;
+using mixdrop_back.Sockets.Game;
 using System.Reflection.Emit;
 using System.Xml.Linq;
 
@@ -155,7 +156,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Vocal/BringMeToLife_LEAD_BringMeToLife_VOX1_Em_95(120).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Em"], false)
                     {
                         Name = "Bring Me To Life",
                         Bpm = 120,
@@ -174,7 +175,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Vocal/Attention_VOX_Attention_VOX_Ebm_100(120).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Ebm"], false)
                     {
                         Name = "Attention",
                         Bpm = 120,
@@ -193,7 +194,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Vocal/Radioactive_LEAD_Radioactive_VOX_Bm_137.mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Bm"], false)
                     {
                         Name = "Radioactive",
                         Bpm = 137,
@@ -212,7 +213,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Vocal/Centuries_LEAD_Centuries_VOX_Em_88(120).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Em"], false)
                     {
                         Name = "Centuries",
                         Bpm = 120,
@@ -231,7 +232,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Vocal/AnimalsM5_VOX_AnimalsM5_VOX_Em_95(120).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Em"], false)
                     {
                         Name = "Animals",
                         Bpm = 120,
@@ -252,7 +253,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Main/CantFeelMyFace_LOOP_CantFeelMyFace_LOOP_min.mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Am"], false)
                     {
                         Name = "Can't Feel My Face",
                         Bpm = 108,
@@ -290,7 +291,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Main/GimmeChocolate_SYN_GimmeChocolate_SYN_Em_110(120).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Em"], false)
                     { 
                         Name = "Gimme Chocolate!!",
                         Bpm = 120,
@@ -309,7 +310,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Main/CallMeMaybe_LOOP_CallMeMaybe_LOOP_maj.mp3",
-                    Song = new Song
+                    Song = new Song("G", true)
                     {
                         Name = "Call Me Maybe",
                         Bpm = 120,
@@ -350,7 +351,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Bass/DaysAhead_BASS_DaysAhead_BASS_C_124.mp3",
-                    Song = new Song
+                    Song = new Song("C", true)
                     {
                         Name = "Days Ahead, Days Behind",
                         Bpm = 124,
@@ -369,7 +370,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Bass/TakeMeOut_BASS_TakeMeOut_BASS_Em_120(104).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Em"], false)
                     {
                         Name = "Take Me Out",
                         Bpm = 104,
@@ -388,7 +389,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Bass/AllAboutThatBass_BASS_AllAboutThatBass_BASS_A_134.mp3",
-                    Song = new Song
+                    Song = new Song("A", true)
                     {
                         Name = "All About That Bass",
                         Bpm = 134,
@@ -426,7 +427,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Bass/AllIDoIsWin_BASS_AllIDoIsWin_BASS_Dm_151.mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Dm"], false)
                     {
                         Name = "All I Do Is Win",
                         Bpm = 151,
@@ -445,7 +446,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Bass/AYo_BASS_AYo_BASS2_A_150.mp3",
-                    Song = new Song
+                    Song = new Song("A" ,true)
                     {
                         Name = "A-YO",
                         Bpm = 150,
@@ -464,7 +465,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Bass/CheapThrills_BASS_CheapThrills_BASS_Gbm_90(120).mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Gbm"], false)
                     {
                         Name = "Cheap Thrills",
                         Bpm = 120,
@@ -486,7 +487,7 @@ public class Seeder
                 Track = new Track
                 {
                     TrackPath = "Songs/Input/Drums/AtomicHandbrake_DMSebmin_129.mp3",
-                    Song = new Song
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Ebm"], false)
                     {
                         Name = "Atomic Handbrake",
                         Bpm = 129,
