@@ -85,7 +85,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
       this.messageReceived$?.unsubscribe()
-      if(this.battleId != 0 && this.readyForBattle)
+      if((this.battle || this.battleId != 0) && this.readyForBattle)
       {
         await this.deleteBattleBydId(this.battleId, true)
         this.resetData()
@@ -110,6 +110,9 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         break
       case MessageType.PendingBattle:
         this.pendingBattles = jsonResponse.battles
+        break
+      case MessageType.AskForFriend:
+        this.askForInfo(MessageType.Friend)
         break
       case MessageType.DisconnectedFromBattle:
         alert("La batalla se ha cancelado")
