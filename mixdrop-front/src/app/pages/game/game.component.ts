@@ -260,7 +260,14 @@ export class GameComponent implements OnInit, OnDestroy {
             break
           
         case MessageType.DisconnectedFromBattle:
-          alert("El otro usuario se ha desconectado, por lo que has ganado")
+          if(jsonResponse.reported == false)
+          {
+            alert("El otro usuario se ha desconectado, por lo que has ganado")
+          }
+          else
+          {
+            alert("Se te acabó el tiempo, por lo que has perdido")
+          }
           this.router.navigateByUrl("menu")
           break
       }
