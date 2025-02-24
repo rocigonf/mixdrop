@@ -39,7 +39,7 @@ public class BattleRepository : Repository<Battle, int>
     {
         // Con el Any obtengo todas las batallas que incluyan al id del usuario :'D
         return await GetQueryable()
-            .Where(battle => battle.BattleStateId == 1)
+            .Where(battle => battle.BattleStateId == 1 || battle.BattleStateId == 2)
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId && user.Receiver == true))
                 .Include(battle => battle.BattleUsers.Where(user => user.UserId != userId))
                 .ThenInclude(userBattle => userBattle.User)

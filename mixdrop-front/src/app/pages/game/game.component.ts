@@ -70,7 +70,7 @@ export class GameComponent implements OnInit, OnDestroy {
   otherUserId: number = 0
   enemyUser: UserBattle | undefined = undefined;
 
-  private indexToDelete = -1
+  //private indexToDelete = -1
 
   private isProcessingAudio: boolean = false;
 
@@ -147,13 +147,16 @@ export class GameComponent implements OnInit, OnDestroy {
   async ngOnDestroy(): Promise<void> {
     this.messageReceived$?.unsubscribe()
     this.audioContext.close()
-    if (this.gameEnded) {
-      if (this.currentBattle?.isAgainstBot) {
+    if(!this.gameEnded)
+    {
+      if(this.currentBattle?.isAgainstBot)
+      {
         await this.battleService.deleteBotBattle()
       }
-    }
-    else {
-      await this.battleService.forfeitBattle()
+      else
+      {
+        await this.battleService.forfeitBattle()
+      }
     }
   }
 
@@ -178,42 +181,40 @@ export class GameComponent implements OnInit, OnDestroy {
       return
     }
 
-    this.serverResponse = message
-    const jsonResponse = JSON.parse(this.serverResponse)
-    let positions: number[] = []
 
-    switch (jsonResponse.messageType) {
-      case MessageType.ShuffleDeckStart:
-        this.userBattle = jsonResponse.userBattleDto
-        this.currentBattle = jsonResponse.currentBattle
+      this.serverResponse = message
+      const jsonResponse = JSON.parse(this.serverResponse)
+      let positions: number[] = []
 
-        this.enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.userBattle?.userId)
+      switch (jsonResponse.messageType) {
+        case MessageType.ShuffleDeckStart:
+          this.userBattle = jsonResponse.userBattleDto
+          this.currentBattle = jsonResponse.currentBattle
+          this.enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.userBattle?.userId)
+          this.activateTimer()
+          break;
+          
+         case MessageType.TurnResult:
+          this.board = jsonResponse.board
 
-        this.activateTimer()
-        break;
-      case MessageType.TurnResult:
-        this.board = jsonResponse.board
+          const newPlayer: UserBattleDto = jsonResponse.player
+          //const cards = this.userBattle!!.cards
 
-        const newPlayer: UserBattleDto = jsonResponse.player
-        const cards = this.userBattle!!.cards
-        this.userBattle = newPlayer
-        const newCard = jsonResponse.card
-        this.userBattle.cards = cards
+          this.userBattle = newPlayer
+          /*const newCard = jsonResponse.card
+          this.userBattle.cards = cards
 
-        // Por si la carta no se puede jugar
-        if (newCard && this.indexToDelete != -1) {
-          console.error("BORRADO EN ", this.indexToDelete)
-          this.userBattle.cards.splice(this.indexToDelete, 1)
-          this.userBattle.cards.push(newCard)
-          this.indexToDelete = -1
-          console.error("BORRADO")
-        }
-
-        this.bonus = jsonResponse.bonus
-        this.otherPlayerPunct = jsonResponse.otherplayer
-
-        positions = jsonResponse.position
-        this.spinRouletteLevel = jsonResponse.levelRoulette
+          // Por si la carta no se puede jugar
+          if(newCard && this.indexToDelete != -1)
+          {
+            console.error("BORRADO EN ", this.indexToDelete)
+            this.userBattle.cards.splice(this.indexToDelete, 1)
+            this.userBattle.cards.push(newCard)
+            this.indexToDelete = -1
+            console.error("BORRADO")
+          }*/
+      
+          this.spinRouletteLevel = jsonResponse.levelRoulette
 
         // RULETA
         if (this.spinRouletteLevel > -1) {
@@ -222,38 +223,55 @@ export class GameComponent implements OnInit, OnDestroy {
           console.log("NIVEL RULETA", this.spinRouletteLevel)
           this.showAndHideRoulette(this.spinRouletteLevel);
         }
+          
+          this.bonus = jsonResponse.bonus
+          this.otherPlayerPunct = jsonResponse.otherplayer
 
-        this.playAudio(positions, jsonResponse.wheel);
-        this.activateTimer()
-        break
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
 
+          this.activateTimer()
+          break
+   
       case MessageType.EndGame:
-        this.gameEnded = true
-        this.otherUserId = jsonResponse.otherUserId
+          this.gameEnded = true
+          this.otherUserId = jsonResponse.otherUserId
 
-        this.otherPlayerPunct = jsonResponse.otherplayer
+          this.otherPlayerPunct = jsonResponse.otherplayer
 
-        this.board = jsonResponse.board
-        this.userBattle = jsonResponse.player
-        positions = jsonResponse.position
-        this.playAudio(positions, jsonResponse.wheel);
+          this.board = jsonResponse.board
+          this.userBattle = jsonResponse.player
+          positions = jsonResponse.position
+          this.playAudio(positions, jsonResponse.wheel); 
 
-        if (this.userBattle?.battleResultId == 1) {
-          alert("Ganaste :D")
-        }
-        else {
-          alert("Perdiste :(")
-        }
+          if (this.userBattle?.battleResultId == 1) {
+            alert("Ganaste :D")
+          }
+          else {
+            alert("Perdiste :(")
+          }
 
-        break;
-      case MessageType.DisconnectedFromBattle:
-        alert("El otro usuario se ha desconectado, por lo que has ganado")
-        this.router.navigateByUrl("menu")
-        break
-    }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
-
-
+          this.timeRemaining$ = null
+          break;
+          
+          case MessageType.AskForBattle:
+            alert("Revancha solicitada")
+            this.router.navigateByUrl("menu")
+            break
+          
+        case MessageType.DisconnectedFromBattle:
+          if(jsonResponse.reported == false)
+          {
+            alert("El otro usuario se ha desconectado, por lo que has ganado")
+          }
+          else
+          {
+            alert("Se te acabó el tiempo, por lo que has perdido")
+          }
+          this.router.navigateByUrl("menu")
+          break
+      }
+      console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
 
@@ -341,7 +359,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   useCard(desiredPosition: number) {
-
     if (this.cardToUse && this.userBattle) {
       const cardToPlay: CardToPlay = {
         cardId: this.cardToUse.id,
@@ -352,13 +369,15 @@ export class GameComponent implements OnInit, OnDestroy {
         actionType: null
       }
 
-      for (let i = 0; i < this.userBattle?.cards.length; i++) {
-        if (this.userBattle.cards[i].id == this.cardToUse.id) {
+      /*for(let i = 0; i < this.userBattle?.cards.length; i++)
+      {
+        if(this.userBattle.cards[i].id == this.cardToUse.id)
+        {
           console.error("BORRAR EN ", i)
           this.indexToDelete = i
           break
         }
-      }
+      }*/
       this.sendAction(action)
 
       this.cardToUse = null

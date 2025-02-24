@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.Entities;
 using mixdrop_back.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -113,7 +112,6 @@ public class BattleService
 
 
     // Método solicitud de batalla
-    // TODO: Verificar que el usuario no esté ya en una batalla
     public async Task AcceptBattle(int battleId, int userId)
     {
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
@@ -130,10 +128,13 @@ public class BattleService
             return;
         }
 
-        existingBattle.BattleStateId = 2;
-
-        _unitOfWork.BattleRepository.Update(existingBattle);
-        await _unitOfWork.SaveAsync();
+        // Porque este método sirve también para mostrar batallas que, si bien estaban aceptadas, no han comenzado
+        if (existingBattle.BattleStateId == 1)
+        {
+            existingBattle.BattleStateId = 2;
+            _unitOfWork.BattleRepository.Update(existingBattle);
+            await _unitOfWork.SaveAsync();
+        }
 
         JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -181,7 +182,7 @@ public class BattleService
     }
 
     // Método borrar batalla o rechazar solicitud de batalla
-    public async Task DeleteBattleById(int battleId, int userId)
+    public async Task DeleteBattleById(int battleId, int userId, bool notify)
     {
         // Comprobamos que la batalla existe
         Battle existingBattle = await _unitOfWork.BattleRepository.GetCompleteBattleAsync(battleId);
@@ -191,18 +192,24 @@ public class BattleService
             return;
         }
 
-        await DeleteBattleByObject(existingBattle, userId);
+        await DeleteBattleByObject(existingBattle, userId, notify);
     }
 
-    public async Task DeleteBattleByObject(Battle existingBattle, int userId)
+    public async Task DeleteBattleByObject(Battle existingBattle, int userId, bool notify = false, bool check = true)
     {
-        // Comprobamos que el usuario es parte de la batalla
-        UserBattle userBattle = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
-        if (userBattle == null)
+        if (check)
         {
-            Console.WriteLine("Este usuario no forma parte de esta batalla");
-            return;
+            // Comprobamos que el usuario es parte de la batalla
+            UserBattle userBattle = existingBattle.BattleUsers.FirstOrDefault(user => user.UserId == userId);
+            if (userBattle == null)
+            {
+                Console.WriteLine("Este usuario no forma parte de esta batalla");
+                return;
+            }
         }
+
+        GayHandler handler = GayNetwork._handlers.FirstOrDefault(h => h._participants.Any(u => u.UserId == userId));
+        GayNetwork._handlers.Remove(handler);
 
         _unitOfWork.BattleRepository.Delete(existingBattle);
         await _unitOfWork.SaveAsync();
@@ -215,6 +222,10 @@ public class BattleService
         // Por si es un bot
         if (otherUser != null)
         {
+            if(notify)
+            {
+                dict["messageType"] = MessageType.DisconnectedFromBattle;
+            }
 
             // Notifico a ambos usuarios a que vuelvan a solicitar las peticiones de batallas
             await Task.WhenAll(
@@ -223,23 +234,23 @@ public class BattleService
         }
     }
 
-    public async Task DeleteBattleAgainstBot(int userId)
+    public async Task DeleteBattleAgainstBot(User user)
     {
         // Comprobamos que la batalla existe
-        Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleWithBotByUserAsync(userId);
+        Battle existingBattle = await _unitOfWork.BattleRepository.GetBattleWithBotByUserAsync(user.Id);
         if (existingBattle == null)
         {
             Console.WriteLine("Esta batalla no existe :(");
             return;
         }
 
-        _unitOfWork.BattleRepository.Delete(existingBattle);
-        await _unitOfWork.SaveAsync();
+        await ChangeUserStateAsync(user, 2);
+        await DeleteBattleByObject(existingBattle, user.Id, false, false);
     }
 
-    public async Task ForfeitBattle(int userId)
+    public async Task ForfeitBattle(User user)
     {
-        ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetCurrentBattleByUserWithoutThem(userId);
+        ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetCurrentBattleByUserWithoutThem(user.Id);
         Battle battle = battles.FirstOrDefault();
 
         if(battle == null || battle.IsAgainstBot)
@@ -247,14 +258,15 @@ public class BattleService
             return;
         }
 
-        UserBattle winner = battle.BattleUsers.FirstOrDefault(u => u.UserId != userId);
-        UserBattle loser = battle.BattleUsers.FirstOrDefault(u => u.UserId == userId);
+        UserBattle winner = battle.BattleUsers.FirstOrDefault(u => u.UserId != user.Id);
+        UserBattle loser = battle.BattleUsers.FirstOrDefault(u => u.UserId == user.Id);
 
-        await EndBattle(battle, winner, loser, true);
+        await ChangeUserStateAsync(user, 2);
+        await EndBattle(battle, winner, loser);
     }
 
     // Esto se podría reutilizar en el timer y en el GayHandler
-    public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser, bool notify = false)
+    public async Task EndBattle(Battle battle, UserBattle winner, UserBattle loser)
     {
         try
         {
@@ -278,6 +290,9 @@ public class BattleService
                     winner.BattleResultId = 1;
                     winner.Cards = new List<Card>();
                     battle.BattleUsers.Add(winner);
+
+                    User userWinner = await _unitOfWork.UserRepository.GetByIdAsync(winner.UserId);
+                    await ChangeUserStateAsync(userWinner, 2);
                 }
 
                 if (!loser.IsBot)
@@ -289,27 +304,37 @@ public class BattleService
                 }
 
                 _unitOfWork.BattleRepository.Update(battle);
+                await _unitOfWork.SaveAsync();
 
-                if (notify)
-                {
-                    Dictionary<object, object> dict = new Dictionary<object, object>
+                GayHandler handler = GayNetwork._handlers.FirstOrDefault(h => h._participants.Any(u => u.UserId == winner.UserId));
+                GayNetwork._handlers.Remove(handler);
+
+                Dictionary<object, object> dict = new Dictionary<object, object>
                 {
                     { "messageType", MessageType.DisconnectedFromBattle },
                 };
 
-                    JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-                    options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
-                    await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), winner.UserId);
-                }
-
-                await _unitOfWork.SaveAsync();
+                await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), winner.UserId);
             }
         }
         catch(Exception e)
         {
             Console.WriteLine(e);
         }
+    }
+
+    private async Task ChangeUserStateAsync(User user, int stateId)
+    {
+        // estado de conectado
+        var state = await _unitOfWork.StateRepositoty.GetByIdAsync(stateId);
+
+        user.StateId = state.Id; // conectado
+        user.State = state;
+
+        _unitOfWork.UserRepository.Update(user);
     }
 
     // Emparejamiento aleatorio

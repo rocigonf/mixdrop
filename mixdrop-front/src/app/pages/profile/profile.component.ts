@@ -43,11 +43,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   messageReceived$: Subscription | null = null;
   serverResponse: string = '';
 
-
   friendsRaw: Friend[] = []
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
+  battlesPerPage = 1;
+  currentPage = 1;
+  totalBattles = 0;
+  battlesPaginated: any[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -65,7 +68,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
 
     this.passwordForm = this.formBuild.group({
-      newPassword: ['', [Validators.required, Validators.minLength(1)]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
       { validators: this.passwordValidator.passwordMatchValidator });
@@ -84,9 +87,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       })
 
       this.myUser = this.authService.getUser();
-
-
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+      this.askForInfo(MessageType.Friend)
     }
   }
 
@@ -100,7 +102,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if (result != null) {
       this.user = result
-      console.error(this.user)
+      this.totalBattles = this.user!!.battles.length;
+      this.paginateBattles();
+      //console.error(this.user)
 
       // Pillo el id del JWT como en el ECommerce y si coincide con el usuario que he pedido, intenta acceder a sí mismo
       const jwt = this.userService.api.jwt
@@ -175,7 +179,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
-
   async removeFriend(friend: Friend | undefined) {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
@@ -199,25 +202,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     console.log("Respuesta de agregar al amigo: ", response)
   }
 
-  async acceptFriendship(id: number) {
-    const response = await this.friendshipService.acceptFriendship(id)
-    console.log("Respuesta de aceptar al amigo: ", response)
-  }
-
-
   // comprueba si se le ha enviado una solicitud de amistad y esta en espera
   waitingFriendship(user: User): boolean {
-
-    const amistad: Friend | undefined = this.friendsRaw.find(friend =>
-      (friend.senderUserId === user.id && friend.receiverUserId === this.myUser?.id) ||
-      (friend.receiverUserId === user.id && friend.senderUserId === this.myUser?.id)
-    )
+    const amistad = this.hasFriendship(user)
+    
     if (amistad) {
       return !amistad.accepted
     } else return false
   }
-
-
 
 
   // TODO: Agregar verificación
@@ -257,7 +249,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if (!newPassword) {
       console.error("Error: El campo de la contraseña está vacío.");
-
       return;
     }
 
@@ -300,12 +291,35 @@ export class ProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  getDiffDays(begin: any, end: any) {
+  getDiffTime(begin: any, end: any): string {
     const startDate = new Date(begin);
     const endDate = new Date(end);
     const time = endDate.getTime() - startDate.getTime();
+  
+    const hours = Math.floor(time / (1000 * 3600));
+    const minutes = Math.floor((time % (1000 * 3600)) / (1000 * 60));
+  
+    return `${hours} horas ${minutes} minutos`;
+  }
 
-    return time / (1000 * 3600);
+  paginateBattles() {
+    const startIndex = (this.currentPage - 1) * this.battlesPerPage;
+    const endIndex = startIndex + this.battlesPerPage;
+    this.battlesPaginated = this.user?.battles.slice(startIndex, endIndex) || [];
+  }
+
+  nextPage() {
+    if (this.currentPage * this.battlesPerPage < this.totalBattles) {
+      this.currentPage++;
+      this.paginateBattles();
+    }
+  }
+  
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.paginateBattles();
+    }
   }
 
 }

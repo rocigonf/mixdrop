@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Melanchall.DryWetMidi.Nativeless" Version="7.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
@@ -47,6 +48,36 @@
 		<Content Include="wwwroot\avatar\**">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Remove="wwwroot\cards\allaboutthatbass_beat.jpg" />
+	  <None Remove="wwwroot\cards\city1_bass.jpg" />
+	  <None Remove="wwwroot\cards\findyou_loop.jpg" />
+	  <None Remove="wwwroot\cards\iwillsurvive_loop.jpg" />
+	  <None Remove="wwwroot\cards\scifi2_bass.jpg" />
+	  <None Remove="wwwroot\cards\scifi3_lead.jpg" />
+	  <None Remove="wwwroot\cards\sexyandiknowit_bass.jpg" />
+	  <None Remove="wwwroot\cards\shutupanddance_lead.jpg" />
+	  <None Remove="wwwroot\cards\superfreak_wild.jpg" />
+	  <None Remove="wwwroot\cards\temperature_loop.jpg" />
+	  <None Remove="wwwroot\cards\wanttowantme_lead.jpg" />
+	  <None Remove="wwwroot\Songs\Input\Bass\MovesLikeJagger_MovesLikeJagger_BASS1_B_128.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Bass\SexyAndIKnowIt_BASS_SexyAndIKnowIt_BASS_maj.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Bass\StraightUp_BASS_StraightUp_BASS_D_96(120).mp3" />
+	  <None Remove="wwwroot\Songs\Input\Bass\Superfreak_Superfreak_BASS_A_132.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Bass\WhatIsLove_WhatIsLove_BASS_G_124.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Bass\wipeout_loop.jpg" />
+	  <None Remove="wwwroot\Songs\Input\Main\IWillSurvive_LOOP_IWillSurvive_STR_A_120(116).mp3" />
+	  <None Remove="wwwroot\Songs\Input\Main\ScreamAndShout_LOOP_ScreamAndShout_SYN_G_130.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Main\Temperature_LOOP_Temperature_SYN_Bb_125.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Main\Warm_GTR_warm_loop_bmin_132.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Main\Wipeout_LOOP_Wipeout_GTR_B_150.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Vocal\AllAboutThatBass_LEAD_AllAboutThatBass_VOX_A_134.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Vocal\FindYou_LOOP_guitar.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Vocal\September_September_VOX_A_126.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Vocal\ShutUpAndDance_VOX_ShutUpAndDance_VOX_maj.mp3" />
+	  <None Remove="wwwroot\Songs\Input\Vocal\WantToWantMe_LEAD_WantToWantMe_VOX_Eb_120(114).mp3" />
 	</ItemGroup>
 
 </Project>

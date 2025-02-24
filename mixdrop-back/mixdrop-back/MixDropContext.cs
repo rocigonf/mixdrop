@@ -27,6 +27,7 @@ public class MixDropContext : DbContext
     public DbSet<Track> Tracks { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserBattle> UsersBattles { get; set; }
+    public DbSet<Tone> Tones { get; set; }
     //public DbSet<UserFriend> UsersFriends { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -105,7 +105,7 @@
 
                                 <div class="contenedorIcono">
                                     <img #tooltip="matTooltip"
-                                        matTooltip="Eliminar amigo" matTooltipPosition="above" matTooltipClass="tooltip" class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                        matTooltip="Eliminar amigo" matTooltipPosition="above" matTooltipClass="tooltip" class="icono" (click)="removeFriend(friend, true)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div> 
                                 @if (!hasBattle(friend.receiverUser|| friend.senderUser)) {
@@ -159,7 +159,7 @@
                                 </span>
 
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                    <img class="icono" (click)="removeFriend(friend, true)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div>
                             </div>
@@ -205,7 +205,7 @@
                                 </span>
 
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="removeFriend(friend)" src="/images/deleteFriend.webp"
+                                    <img class="icono" (click)="removeFriend(friend, true)" src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div>
                             </div>
@@ -296,7 +296,7 @@
                             alt="aceptar solicitud de amistad">
                     </div>
                     <div class="contenedorIcono">
-                        <img class="icono" (click)="removeFriend(friend)" src="/images/delete.webp"
+                        <img class="icono" (click)="removeFriend(friend, false)" src="/images/delete.webp"
                             alt="rechazar solicitud de amistad">
                     </div>
                 </div>

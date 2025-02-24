@@ -35,7 +35,7 @@ public class AuthController : ControllerBase
             var user = await _userService.LoginAsync(model);
 
             // Si el usuario es null, se devuelve Unauthorized
-            if (user == null)
+            if (user == null || user.Banned)
             {
                 return Unauthorized("Datos de inicio de sesión incorrectos.");
             }

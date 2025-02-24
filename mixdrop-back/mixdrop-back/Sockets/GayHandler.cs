@@ -11,7 +11,7 @@ namespace mixdrop_back.Sockets;
 public class GayHandler // GameHandler :3
 {
     private const int ACTIONS_REQUIRED = 1;
-    private const int POINTS_REQUIRED = 21;
+    private const int POINTS_REQUIRED = 10;
 
     public readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public Battle Battle { get; set; }
@@ -27,6 +27,7 @@ public class GayHandler // GameHandler :3
 
     private readonly UserBattleMapper _mapper = new UserBattleMapper();
     private readonly Random _random = new Random();
+    private readonly PitchCalculator _pitchCalculator = new PitchCalculator();
     private RemoveAFKPlayers _service;
 
     private string Bonus { get; set; } = "";
@@ -273,7 +274,8 @@ public class GayHandler // GameHandler :3
             { "wheel", spinTheWheel },
             { "whoSpinTheWheel", spinTheWheel? playerInTurn.User.Nickname : "" },
             { "levelRoulette", levelRoulette},
-            { "card", randomCard }
+            //{ "card", randomCard }
+
         };
 
         await NotifyUsers(dict, playerInTurn, otherUser, output);
@@ -322,7 +324,7 @@ public class GayHandler // GameHandler :3
     private UserBattleDto MapUserBattle(UserBattle userBattle)
     {
         UserBattleDto userBattleDto = _mapper.ToDto(userBattle);
-        userBattleDto.Cards = null;
+        //userBattleDto.Cards = null;
         return userBattleDto;
     }
 
@@ -332,10 +334,16 @@ public class GayHandler // GameHandler :3
         Battle.BattleUsers = [];
         Battle.FinishedAt = DateTime.UtcNow;
 
+        var state = await unitOfWork.StateRepositoty.GetByIdAsync(2); // Conectado
+
         if (!winner.IsBot)
         {
             winner.BattleResultId = 1;
             winner.Cards = new List<Card>();
+
+            winner.User.State = state;
+            winner.User.StateId = state.Id;
+
             Battle.BattleUsers.Add(winner);
         }
 
@@ -343,6 +351,10 @@ public class GayHandler // GameHandler :3
         {
             loser.BattleResultId = 2;
             loser.Cards = new List<Card>();
+
+            loser.User.State = state;
+            loser.User.StateId = state.Id;
+
             Battle.BattleUsers.Add(loser);
         }
 
@@ -564,6 +576,14 @@ public class GayHandler // GameHandler :3
             }
         }
 
+        int total = _board.Slots.Where(s => s.Card == null).Count();
+
+        // Si no hay ninguna otra carta
+        if (total == 5)
+        {
+            _board.Playing = null;
+        }
+
         return positions;
     }
 
@@ -610,8 +630,11 @@ public class GayHandler // GameHandler :3
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
             float newBpmForCard = CalculateNewBpm(changeForCard);
 
-            // Cálculo del nuevo pitch (CALCULAR COMO EN EL BPM PORQUE SI EN LA NOTA "Do" LA CANTIDAD SE SEMITONOS A DIVIDIR SERÍA 0)            
-            int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
+            // Cálculo del nuevo pitch
+            int totalSemitones = _pitchCalculator.CalculateSemitones(playing.Song.Preferred, card.Track.Song, out _);
+            float pitchFactor = (float)Math.Pow(2, totalSemitones / 12.0);
+
+            /*int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
             int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
 
             // TODO: LA DIFERENCIA SE CALCULA SI LA DISTANCIA ARMÓNICA ES MAYOR QUE 1, IGUAL QUE TODO LO DEMÁS
@@ -624,7 +647,7 @@ public class GayHandler // GameHandler :3
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
             }
 
-            if (pitchFactor < card.MinPitch)
+            /*if (pitchFactor < card.MinPitch)
             {
                 difference += 12;
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
@@ -633,18 +656,25 @@ public class GayHandler // GameHandler :3
             {
                 difference -= 12;
                 pitchFactor = (float)Math.Pow(2, difference / 12.0);
-            }
+            }*/
 
             byte[] newAudio = _audioModifier.Modify("wwwroot/" + card.Track.TrackPath, newBpmForCard, pitchFactor);
             //byte[] message = [..BitConverter.GetBytes(card.Id), .. newAudio];
             byte[] message = [..newAudio];
 
+            string noteName = playing.Song.Pitch;
+            bool couldGet = MusicNotes.NOTE_MAP.TryGetValue(playing.Song.Pitch, out _);
+            if (!couldGet)
+            {
+                noteName = MusicNotes.FIFTH_CIRCLE[playing.Song.Pitch];
+            }
+
             _board.Playing = new Track()
             {
-                Song = new Song()
+                Song = new Song(noteName, true)
                 {
                     Bpm = playing.Song.Bpm,
-                    Pitch = playing.Song.Pitch,
+                    Pitch = noteName,
                 }
             };
 

@@ -12,14 +12,15 @@
 
 @if(readyForBattle)
 {
-@if(battle)
-{
-<button (click)="startBattle()">Comenzar partida</button>
-}
-@else
-{
-<p>Esperando a que el anfitrión comience la partida...</p>
-}
+    @if(battle)
+    {
+    <button (click)="startBattle()">Comenzar partida</button>
+    }
+    @else
+    {
+    <p>Esperando a que el anfitrión comience la partida...</p>
+    }
+    <button (click)="deleteBattleBydId(battleId || battle!!.id, true)">Abandonar partida</button>
 } @else {
 
 
@@ -55,7 +56,7 @@
                 <img class="icono" (click)="acceptBattle(friend.id)" src="/images/battle.webp" alt="aceptar batalla">
             </div>
             <div class="contenedorIcono">
-                <img class="icono" (click)="deleteBattle(friend.id)" src="/images/delete.webp" alt="rechazar batalla">
+                <img class="icono" (click)="deleteBattleByFriendId(friend.id)" src="/images/delete.webp" alt="rechazar batalla">
             </div>
             }
         </div>

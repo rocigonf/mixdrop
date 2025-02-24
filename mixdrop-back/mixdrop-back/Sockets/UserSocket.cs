@@ -93,6 +93,15 @@ public class UserSocket
                             dict.Add("battles", battleListDto);
                             break;
                         case MessageType.ShuffleDeckStart:
+                            // Cambio el estado a jugando
+                            var state = await unitOfWork.StateRepositoty.GetByIdAsync(3);
+
+                            User.StateId = state.Id;
+                            User.State = state;
+
+                            unitOfWork.UserRepository.Update(User);
+                            await unitOfWork.SaveAsync();
+
                             Battle currentBattle = await battleService.GetCurrentBattleByUserAsync(User.Id);
                             if (currentBattle == null)
                             {
