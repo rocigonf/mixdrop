@@ -15,7 +15,9 @@ public class UserBattleMapper
             IsTheirTurn = user.IsTheirTurn,
             BattleResultId = user.BattleResultId,
             UserId = user.UserId,
-            UserName = user.User.Nickname
+            UserName = user.User.Nickname,
+            UserImage = user.User.AvatarPath
+            
         };
     }
 

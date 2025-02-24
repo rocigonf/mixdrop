@@ -2,6 +2,8 @@ import { Component, HostListener, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { WebsocketService } from './services/websocket.service';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-root',

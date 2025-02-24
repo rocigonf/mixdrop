@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-size: 1.5rem;
+    font-size: 2rem;
 }
 
 h1 {
@@ -22,7 +22,14 @@ body {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
-    transition: transform 3s ease-out; /* Asegúrate de que la transición esté aquí */
+    transition: transform 2s ease-out;
+    background: conic-gradient(
+        rgb(255, 67, 67) 0deg 180deg,    /* Nivel 3 (50%) */
+        rgb(46, 255, 46) 180deg 270deg, /* Nivel 2 (25%) */
+        rgb(77, 199, 255) 270deg 324deg,  /* Nivel 1 (15%) */
+        rgb(255, 255, 81) 324deg 360deg /* X (10%) */
+    );
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .wheel-segment {
@@ -36,23 +43,19 @@ body {
 }
 
 .wheel-segment:nth-child(1) {
-    background: red;
-    transform: rotate(0deg);
+    transform:  rotate(180deg) ;
 }
 
 .wheel-segment:nth-child(2) {
-    background: green;
-    transform: rotate(90deg);
+    transform: rotate(-45deg) ;
 }
 
 .wheel-segment:nth-child(3) {
-    background: blue;
-    transform: rotate(180deg);
+    transform:  rotate(25deg) ;
 }
 
 .wheel-segment:nth-child(4) {
-    background: yellow;
-    transform: rotate(270deg);
+    transform: rotate(70deg);
 }
 
 .wheel-text {
@@ -60,9 +63,9 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-90deg);
-    font-size: 1.25rem;
+    font-size: 1.9rem;
     font-weight: bold;
-    color: white;
+    color: rgb(0, 0, 0);
     text-align: center;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     white-space: nowrap;
@@ -84,41 +87,9 @@ body {
     transform: translate(-50%, -50%) rotate(45deg);
     width: 24px;
     height: 24px;
-    background-color: darkorange;
+    background-color: rgb(0, 0, 0);
     border-radius: 50% 50% 0 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 20;
 }
 
-.roulette button {
-    border: none;
-    cursor: pointer;
-    background: dodgerblue;
-    color: white;
-    padding: 10px 30px;
-    margin: 20px 0;
-    font-size: 1.5rem;
-}
-
-
-.zone{
-    width: 50%;
-    border: 2px dotted white;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.carta {
-    width: 50%;
-    height: 100px;
-    background-color: #6495ED;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px;
-    padding:10px;
-    cursor: move;
-}

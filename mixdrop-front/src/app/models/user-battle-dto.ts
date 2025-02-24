@@ -6,5 +6,6 @@ export interface UserBattleDto {
     isTheirTurn: boolean,
     punctuation: number,
     battleResultId: number,
-    userName: string
+    userName: string,
+    userImage : string
 }

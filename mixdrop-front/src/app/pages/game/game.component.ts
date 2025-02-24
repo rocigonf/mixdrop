@@ -1,6 +1,7 @@
-import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { map, Observable, Subscription, takeWhile, timer } from 'rxjs';
+import { delay, map, Observable, Subscription, takeWhile, timer } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
@@ -18,12 +19,16 @@ import { ChatComponent } from "../../components/chat/chat.component";
 import { Battle } from '../../models/battle';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { CardComponent } from "../../components/card/card.component";
+import { RouletteComponent } from "../../components/roulette/roulette.component";
+import { UserBattle } from '../../models/user-battle';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent],
+  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent, CommonModule, RouletteComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -36,6 +41,9 @@ export class GameComponent implements OnInit, OnDestroy {
   // 6) El server verifica que está todo bien, y SE REPITE EN BUCLE DESDE EL PASO 3
   // 7) El server notifica que se acabó la batalla
   // 8) Se muestran los resultados y se procede
+
+
+  @ViewChild(RouletteComponent) roulette!: RouletteComponent;
 
   public readonly IMG_URL = environment.apiImg;
 
@@ -60,6 +68,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   otherPlayerPunct: number = 0
   otherUserId: number = 0
+  enemyUser: UserBattle | undefined = undefined;
 
   //private indexToDelete = -1
 
@@ -68,8 +77,15 @@ export class GameComponent implements OnInit, OnDestroy {
   currentBattle: Battle | null = null;
 
   position: number = 0;
-  
+
+  spinRouletteLevel: number = -1;
+  whoSpinRoulette: string = ""
+
   private canReceive = true
+
+  showRoulette: boolean = false;
+  isRouletteSpinning: boolean = false;
+
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
@@ -77,7 +93,8 @@ export class GameComponent implements OnInit, OnDestroy {
   constructor(private webSocketService: WebsocketService,
     public battleService: BattleService,
     public authService: AuthService,
-    public router: Router) {
+    public router: Router,
+    private cdr: ChangeDetectorRef) {
   }
 
 
@@ -85,11 +102,45 @@ export class GameComponent implements OnInit, OnDestroy {
 
     console.log(this.authService.isAuthenticated())
     if (!this.authService.isAuthenticated()) {
-      console.log("no esta autenticfado")
       this.navigateToUrl("login");
     } else {
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
       this.askForInfo(MessageType.ShuffleDeckStart)
+    }
+  }
+
+  ngAfterViewInit(): void {
+    console.log('Ruleta cargada:', this.roulette);
+  }
+
+  startRoulette(level: number) {
+    this.isRouletteSpinning = true;
+    if (this.roulette && this.roulette.wheel) {
+      this.roulette.spinRoulette(level);
+      console.log("Ruleta girada por " , this.whoSpinRoulette);
+
+      setTimeout(() => {
+        this.showRoulette = false;
+        this.isRouletteSpinning = false;
+      }, 4000);
+    }
+  }
+
+  showAndHideRoulette(level: number) {
+    if (this.isRouletteSpinning) {
+      console.log("esta girando ya")
+    } else {
+      this.showRoulette = true;
+      this.spinRouletteLevel = level;
+
+      this.startRoulette(level);
+
+      setTimeout(() => {
+        this.startRoulette(level);
+        setTimeout(() => {
+          this.showRoulette = false;
+        }, 4000);
+      }, 100);
     }
   }
 
@@ -115,22 +166,21 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async processMessage(message: any) {
     // Esto es porque parece que recibe los mensajes dos veces
-    if(!this.canReceive)
-      {
-        this.canReceive = true
-        return
-      }
+    if (!this.canReceive) {
+      this.canReceive = true
+      return
+    }
 
-      console.warn("Entrando al semáforo...")
-      await this.waitForAudioProcessing()
-      console.warn("Saliendo...")
+    console.warn("Entrando al semáforo...")
+    await this.waitForAudioProcessing()
+    console.warn("Saliendo...")
 
-      if(message instanceof Blob)
-      {
-        const data = await message.arrayBuffer()
-        await this.processAudio(data)
-        return
-      }
+    if (message instanceof Blob) {
+      const data = await message.arrayBuffer()
+      await this.processAudio(data)
+      return
+    }
+
 
       this.serverResponse = message
       const jsonResponse = JSON.parse(this.serverResponse)
@@ -140,9 +190,11 @@ export class GameComponent implements OnInit, OnDestroy {
         case MessageType.ShuffleDeckStart:
           this.userBattle = jsonResponse.userBattleDto
           this.currentBattle = jsonResponse.currentBattle
+          this.enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.userBattle?.userId)
           this.activateTimer()
           break;
-        case MessageType.TurnResult:
+          
+         case MessageType.TurnResult:
           this.board = jsonResponse.board
 
           const newPlayer: UserBattleDto = jsonResponse.player
@@ -162,6 +214,16 @@ export class GameComponent implements OnInit, OnDestroy {
             console.error("BORRADO")
           }*/
       
+          this.spinRouletteLevel = jsonResponse.levelRoulette
+
+        // RULETA
+        if (this.spinRouletteLevel > -1) {
+          this.whoSpinRoulette = jsonResponse.whoSpinTheWheel
+          this.showRoulette = true;
+          console.log("NIVEL RULETA", this.spinRouletteLevel)
+          this.showAndHideRoulette(this.spinRouletteLevel);
+        }
+          
           this.bonus = jsonResponse.bonus
           this.otherPlayerPunct = jsonResponse.otherplayer
 
@@ -170,8 +232,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
           this.activateTimer()
           break
-
-        case MessageType.EndGame:
+   
+      case MessageType.EndGame:
           this.gameEnded = true
           this.otherUserId = jsonResponse.otherUserId
 
@@ -190,41 +252,37 @@ export class GameComponent implements OnInit, OnDestroy {
           }
 
           this.timeRemaining$ = null
-
           break;
+          
           case MessageType.AskForBattle:
             alert("Revancha solicitada")
             this.router.navigateByUrl("menu")
             break
+          
         case MessageType.DisconnectedFromBattle:
           alert("El otro usuario se ha desconectado, por lo que has ganado")
           this.router.navigateByUrl("menu")
           break
       }
       console.log("Respuesta del socket en JSON: ", jsonResponse)
-    
   }
 
-  activateTimer()
-  {
-    if(this.currentBattle?.isAgainstBot == false && this.userBattle!!.isTheirTurn)
-      {
-        this.timeRemaining$ = timer(0, 1000).pipe(
-          map(n => (this.seconds - n) * 1000),
-          takeWhile(n => n >= 0),
-        );
-      }
+
+  activateTimer() {
+    if (this.currentBattle?.isAgainstBot == false && this.userBattle!!.isTheirTurn) {
+      this.timeRemaining$ = timer(0, 1000).pipe(
+        map(n => (this.seconds - n) * 1000),
+        takeWhile(n => n >= 0),
+      );
+    }
   }
 
   // reproduce el mix en byte que le envia al jugar una carta
-  async playAudio(positions: number[], spinTheWheel : boolean) 
-  {
+  async playAudio(positions: number[], spinTheWheel: boolean) {
     this.isProcessingAudio = true
-    if(spinTheWheel)
-    {
+    if (spinTheWheel) {
       console.log("Se ha girado la ruleta. El resultado ha sido: ", positions)
-      for(let i = 0; i < positions.length; i++)
-      {
+      for (let i = 0; i < positions.length; i++) {
         this.stopTrack(positions[i])
       }
       this.isProcessingAudio = false
@@ -241,9 +299,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.isProcessingAudio = false
   }
-  
-  private async processAudio(audio: ArrayBuffer)
-  {
+
+  private async processAudio(audio: ArrayBuffer) {
     this.isProcessingAudio = true
 
     const audioBuffer = await this.audioContext.decodeAudioData(audio);
@@ -260,8 +317,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isProcessingAudio = false
   }
 
-  private stopTrack(position: number)
-  {
+  private stopTrack(position: number) {
     console.log("Posición a borrar: ", position)
     //const source = this.activeSources.get(position)
     this.activeSources.get(position)?.stop()
@@ -273,7 +329,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.activeSources.delete(position)
       }
       else
-      {console.error("NO EXISTE LA POSICIÓN")}*/    
+      {console.error("NO EXISTE LA POSICIÓN")}*/
   }
 
   // Semaforeame esta mister
@@ -323,7 +379,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   useButton() {
-    this.userBattle!!.isTheirTurn = false
     const actionType: ActionType = {
       name: "button"
     }
@@ -339,8 +394,7 @@ export class GameComponent implements OnInit, OnDestroy {
     return posibleType.indexOf(actualType) != -1
   }
 
-  revenge()
-  {
+  revenge() {
     sessionStorage.setItem("revenge", "true")
     sessionStorage.setItem("otherUserId", this.otherUserId.toString())
     this.navigateToUrl("matchmaking")
@@ -362,23 +416,21 @@ export class GameComponent implements OnInit, OnDestroy {
     this.webSocketService.sendNative(message)
   }
 
-  
-  // DRAG AND DROP --------------------------------
 
+  // DRAG AND DROP --------------------------------
 
   onDragStart(event: DragEvent, card: Card) {
     event.dataTransfer?.setData('text/plain', JSON.stringify(card));
+    event.dataTransfer!.effectAllowed = "move";
   }
 
-  onDragOver(event: DragEvent, slotIndex: number) {
+  onDragOver(event: DragEvent) {
     event.preventDefault();
+    event.dataTransfer!.dropEffect = "move";
   }
 
-  onDragEnd() {
-    this.cardToUse = null;
-  }
 
-  onDragEnter(event: DragEvent, slotIndex: number) {
+  onDragEnter(event: DragEvent) {
     event.preventDefault();
   }
 
@@ -396,4 +448,14 @@ export class GameComponent implements OnInit, OnDestroy {
     }
 
   }
+
+  shouldHighlightSlot(slotIndex: number, allowedTypes: string[]): boolean {
+    if (!this.userBattle?.isTheirTurn || !this.cardToUse) {
+      return false;
+    }
+    const slotCard = this.board?.slots?.[slotIndex]?.card;
+    return (this.checkType(allowedTypes, this.cardToUse.track.part.name) &&
+      (!slotCard || slotCard.level <= this.cardToUse.level));
+  }
+
 }

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import {MatIconModule} from '@angular/material/icon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   private isReproducing : boolean = false
   private interval : any
   private audio = new Audio('/songs/home_song.mp3');
+
+  constructor(public router: Router) {
+  }
+
 
   private readonly RUNA_FRAMES: string[] = [
     '/images/runa-speaker/runa-speaker1.png',
@@ -69,6 +74,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.interval?.cancel()
     this.audio.pause()
+  }
+
+  navigateToUrl(url: string)
+  {
+    console.log("sss")
+    this.router.navigateByUrl(url);
   }
 
   // CRÉDITOS POR EL "bind": https://stackoverflow.com/questions/70634283/react-typescript-uncaught-typeerror-this-is-undefined
