@@ -2,6 +2,32 @@
     font-size: 1.5rem;
 }
 
+.info{
+    display: flex;
+    align-items: center;
+}
+
+h2{
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+label{
+    flex: 1;
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: left;
+    position: relative;
+}
+
+.profile-row {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* input[type="text"]{
+} */
+
 .panel-top{
     font-size: 3rem;
     text-align: center;
@@ -13,24 +39,133 @@
 }
 
 .container{
-    display: grid;
-    justify-content: center;
     font-size: 2rem;
+    display: flex;
+    width: 100%;
+}
+
+.column{
+    flex: 50%;
+    padding: 20px;
 }
 
 .avatar{
     width: 150px;
     height: 150px;
-    border: 2px solid white;
-    border-radius: 5px;
+    border: 4px solid white;
 }
 
-fieldset{
-    border-spacing: 1.5rem;
-    background-color: #302244;
-    border: 5px solid transparent;
-    border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
-    border-image-slice: 1;
-    margin: 20px auto;
-    width: 700px;
+.avatar-preview-img{
+    display: flex;
+    justify-content: center;
+}
+
+.avatar-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 2em;
+}
+
+/* --- INICIO ESTILOS BOTÓN CAMBIAR AVATAR --- */
+
+.button-wrapper {
+    position: relative;
+    text-align: center;
+    width: 200px;
+    padding: 5px;
+    background: #7c679a;
+    border: 4px solid white;
+    box-shadow: 4px 4px 0 black;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.button-wrapper span.label {
+    text-transform: uppercase;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    user-select: none; /* Para q no se pueda seleccionar el texto del botón */
+}
+
+.button-wrapper:active {
+    box-shadow: 2px 2px 0 black;
+    transform: translate(2px, 2px);
+}
+
+#input-file {
+    display: inline-block;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* --- FIN ESTILOS BOTÓN CAMBIAR AVATAR --- */
+
+.form-button{ /* BOTONES MORADOS */
+    text-align: center;
+    min-width: 200px;
+    height: 50px;
+    color: white;
+    background: #7c679a;
+    border: 4px solid white;
+    box-shadow: 4px 4px 0 black;
+    font-size: 1.2em !important;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.form-button:active {
+    box-shadow: 2px 2px 0 black;
+    transform: translate(2px, 2px);
+}
+
+.centered-button{
+    display: flex;
+    justify-content: center;
+}
+
+.rainbow-button{ /* BOTÓN GUARDAR CAMBIOS */
+    width: 250px;
+}
+
+/* --- INICIO HISTORIAL DE BATALLA ---*/
+
+.pagination{
+    display: flex;
+    justify-content: space-between;
+}
+
+#pagination-text{
+    font-size: 1.5em;
+}
+
+.battle-card{
+    background-color: #7c679a;
+}
+
+/* --- RESPONSIVE ---*/
+@media (max-width: 700px) {
+    span.label{
+        font-size: 1em;
+    }
+    button{
+        font-size: 1em;
+    }
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .column {
+        width: 100%;
+    }
 }
