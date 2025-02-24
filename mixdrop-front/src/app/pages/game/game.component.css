@@ -2,17 +2,46 @@
     font-size: 1.5rem;
 }
 
+.screen{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 40px;
+}
+
+.points {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    align-items: center;
+    align-content: center;
+}
+
+.points div span{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .board {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
     width: 100%;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .myCarts {
     display: flex;
     gap: 10px;
-
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .card {
@@ -21,8 +50,8 @@
     flex-direction: column;
     border-radius: 10px;
     border: 2px solid white;
-    height: 230px;
-    width: 160px;
+    height: 240px;
+    width: 140px;
     background-color: black;
 }
 
@@ -31,14 +60,31 @@ app-card {
     border-radius: 10PX;
 }
 
-.card img {
-    width: 95%;
-    height: 80%;
-}
 
 .countDown {
     color: red;
     font-size: 2rem;
+}
+
+.btn-roulette {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    height: 240px;
+    background-color: black;
+}
+
+.btn-roulette button {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    height: 240px;
+    background-color: #242424;
 }
 
 .slot0 {
@@ -66,21 +112,6 @@ app-card {
     background: linear-gradient(to right, rgb(0, 255, 255), rgb(43, 228, 89));
 }
 
-/*
-.card:after {
-    content:"";
-    position:relative;
-    left:0px;
-    top: 0;
-    width: 0; 
-    height: 0; 
-    border-left: 30px solid transparent;
-    border-right: 30px solid transparent;
-    border-top: 30px solid #f00;
-    z-index:2;
-  }
-  */
-
 .myCarts * {
     outline: 3px solid rgba(0, 0, 0, 0.3);
     cursor: grab;
@@ -97,7 +128,192 @@ app-card {
     transition: box-shadow 0.3s ease-in-out;
 }
 
-app-card:active{
+app-card:active {
     cursor: grab;
 }
 
+
+
+
+.player {
+    background: conic-gradient(white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white, white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white);
+    border: 2px solid rgb(29, 29, 29);
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+}
+
+.disk {
+    margin: 10px 9px;
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background-size: cover;
+    border: 4px solid black;
+    border-radius: 100px;
+}
+
+
+
+.pen {
+    position: absolute;
+    margin: 5px 0 0 90px;
+}
+
+
+.move {
+    margin: 22px 0 0 145px;
+    transform: rotate(25deg);
+}
+
+
+.hand {
+    background: #242424;
+    width: 4px;
+    height: 80px;
+    border-radius: 2px;
+}
+
+.niddle {
+    margin: -8px 0 0 -4px;
+    width: 12px;
+    height: 12px;
+    background: #242424;
+    border-radius: 6px;
+}
+
+.btns {
+    position: absolute;
+    margin: 75px 0 0 5px;
+}
+
+.btns div {
+    display: inline-block;
+    font-size: 2.5rem;
+    color: #000000;
+}
+
+@keyframes anim {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.disk {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background-size: cover;
+    border: 4px solid black;
+    border-radius: 100px;
+    transition: transform 1s ease-in-out;
+}
+
+.anim {
+    animation: anim 2s linear infinite;
+}
+
+
+/*ruleta*/
+.roulette-overlay {
+    flex-direction: column;
+    gap: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.roulette-overlay h1 {
+    font-size: 3rem;
+}
+
+.roulette-animation app-roulette {
+    width: 300px;
+    height: auto;
+    animation: spin 3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg) scale(0);
+        opacity: 0;
+    }
+    10% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+    }
+    90% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(360deg) scale(0);
+        opacity: 0;
+    }
+}
+
+
+
+.shadow {
+    margin-bottom: 30px;
+  position: relative;
+  background: #161a1f;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.shadow::before,
+.shadow::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  border-radius: 10px;
+  background: linear-gradient(45deg,red,blue,green,yellow,#e11d74,black,#ffff00,#aa0000);
+  background-size: 400%;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  z-index: -1;
+  animation: animate 60s linear infinite;
+}
+
+.shadow::after {
+  filter: blur(8px);
+}
+
+@keyframes animate {
+  0% {
+    background-position: 0 0;
+  }
+
+  50% {
+    background-position: 400% 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}

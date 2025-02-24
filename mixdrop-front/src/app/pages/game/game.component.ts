@@ -20,6 +20,9 @@ import { Battle } from '../../models/battle';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { CardComponent } from "../../components/card/card.component";
 import { RouletteComponent } from "../../components/roulette/roulette.component";
+import { UserBattle } from '../../models/user-battle';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 
 @Component({
@@ -65,6 +68,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   otherPlayerPunct: number = 0
   otherUserId: number = 0
+  enemyUser: UserBattle | undefined = undefined;
 
   private indexToDelete = -1
 
@@ -75,8 +79,13 @@ export class GameComponent implements OnInit, OnDestroy {
   position: number = 0;
 
   spinRouletteLevel: number = -1;
+  whoSpinRoulette: string = ""
 
   private canReceive = true
+
+  showRoulette: boolean = false;
+  isRouletteSpinning: boolean = false;
+
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
@@ -84,7 +93,8 @@ export class GameComponent implements OnInit, OnDestroy {
   constructor(private webSocketService: WebsocketService,
     public battleService: BattleService,
     public authService: AuthService,
-    public router: Router) {
+    public router: Router,
+    private cdr: ChangeDetectorRef) {
   }
 
 
@@ -99,9 +109,38 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngAfterViewInit() {
-    if (this.roulette) {
-      console.log("ruleta inicializada:", this.roulette);
+  ngAfterViewInit(): void {
+    console.log('Ruleta cargada:', this.roulette);
+  }
+
+  startRoulette(level: number) {
+    this.isRouletteSpinning = true;
+    if (this.roulette && this.roulette.wheel) {
+      this.roulette.spinRoulette(level);
+      console.log("Ruleta girada por " , this.whoSpinRoulette);
+
+      setTimeout(() => {
+        this.showRoulette = false;
+        this.isRouletteSpinning = false;
+      }, 4000);
+    }
+  }
+
+  showAndHideRoulette(level: number) {
+    if (this.isRouletteSpinning) {
+      console.log("esta girando ya")
+    } else {
+      this.showRoulette = true;
+      this.spinRouletteLevel = level;
+
+      this.startRoulette(level);
+
+      setTimeout(() => {
+        this.startRoulette(level);
+        setTimeout(() => {
+          this.showRoulette = false;
+        }, 4000);
+      }, 100);
     }
   }
 
@@ -147,6 +186,9 @@ export class GameComponent implements OnInit, OnDestroy {
       case MessageType.ShuffleDeckStart:
         this.userBattle = jsonResponse.userBattleDto
         this.currentBattle = jsonResponse.currentBattle
+
+        this.enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.userBattle?.userId)
+
         this.activateTimer()
         break;
       case MessageType.TurnResult:
@@ -154,7 +196,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
         const newPlayer: UserBattleDto = jsonResponse.player
         const cards = this.userBattle!!.cards
-
         this.userBattle = newPlayer
         const newCard = jsonResponse.card
         this.userBattle.cards = cards
@@ -175,12 +216,15 @@ export class GameComponent implements OnInit, OnDestroy {
         this.spinRouletteLevel = jsonResponse.levelRoulette
 
         // RULETA
-        if (jsonResponse.levelRoulette > -1) {
+        if (this.spinRouletteLevel > -1) {
+          this.whoSpinRoulette = jsonResponse.whoSpinTheWheel
+          this.showRoulette = true;
           console.log("NIVEL RULETA", this.spinRouletteLevel)
-          this.roulette.spinRoulette(this.spinRouletteLevel);
+          this.showAndHideRoulette(this.spinRouletteLevel);
         }
-          this.playAudio(positions, jsonResponse.wheel);
-          this.activateTimer()
+
+        this.playAudio(positions, jsonResponse.wheel);
+        this.activateTimer()
         break
 
       case MessageType.EndGame:
@@ -208,6 +252,7 @@ export class GameComponent implements OnInit, OnDestroy {
         break
     }
     console.log("Respuesta del socket en JSON: ", jsonResponse)
+
 
   }
 
@@ -322,8 +367,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   useButton() {
-    this.userBattle!!.isTheirTurn = false
-
     const actionType: ActionType = {
       name: "button"
     }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
@@ -10,14 +10,15 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
   styleUrls: ['./roulette.component.css']
 })
 export class RouletteComponent {
+
+  @ViewChild('rouletteElement') rouletteElement!: ElementRef;
   @ViewChild('wheel', { static: false }) wheel!: ElementRef<HTMLDivElement>;
   @ViewChild('spinButton', { static: false }) spinButton!: ElementRef<HTMLButtonElement>;
-
   @Input() levelToDelete: number = 1;
+
   private currentRotation = 0;
 
   spinRoulette(level : number) {
-
     var rotateLevel = 1;
     switch (level) {
       case 3:
@@ -43,15 +44,7 @@ export class RouletteComponent {
     this.wheel.nativeElement.style.transition = "transform 2s ease-out";
     this.wheel.nativeElement.style.transform = `rotate(${finalAngle}deg)`;
 
-    this.currentRotation = finalAngle; // Guardar el estado actual de la rotación
-
-    // Deshabilitar el botón mientras la ruleta gira
-    this.spinButton.nativeElement.disabled = true;
-
-    // Reactivar el botón una vez que el giro termine
-    this.wheel.nativeElement.addEventListener("transitionend", () => {
-      this.spinButton.nativeElement.disabled = false;
-    }, { once: true });
+    this.currentRotation = finalAngle;
   }
 
-}
+} 

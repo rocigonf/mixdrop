@@ -228,6 +228,7 @@ public class GayHandler // GameHandler :3
                     positions = spin.Positions;
                     spinTheWheel = true;
                     playerInTurn.ActionsLeft--;
+                    otherUser.Punctuation -= positions.Count;
                     break;
                 default:
                     Console.WriteLine("La acción no existe");
@@ -270,6 +271,7 @@ public class GayHandler // GameHandler :3
             { "position", positions },
             { "otherplayer", otherUser.Punctuation },
             { "wheel", spinTheWheel },
+            { "whoSpinTheWheel", spinTheWheel? playerInTurn.User.Nickname : "" },
             { "levelRoulette", levelRoulette},
             { "card", randomCard }
         };
@@ -472,6 +474,11 @@ public class GayHandler // GameHandler :3
                 var spin = SpinTheWheel(notBot);
                 dict["position"] = spin.Positions;
                 dict["levelRoulette"] = spin.Level;
+
+                if(notBot.Punctuation!=0){
+                    notBot.Punctuation -= spin.Positions.Count;
+                    if (notBot.Punctuation < 0) notBot.Punctuation = 0;
+                }
                 spinTheWheel = true;
                 totalActions++;
             }
@@ -486,6 +493,8 @@ public class GayHandler // GameHandler :3
             }
 
             dict["wheel"] = spinTheWheel;
+            dict["whoSpinTheWheel"] = spinTheWheel ? "bot" : "";
+
             await NotifyUsers(dict, notBot, bot, output, end);
         }
 

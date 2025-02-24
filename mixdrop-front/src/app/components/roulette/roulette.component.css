@@ -87,18 +87,9 @@ body {
     transform: translate(-50%, -50%) rotate(45deg);
     width: 24px;
     height: 24px;
-    background-color: darkorange;
+    background-color: rgb(0, 0, 0);
     border-radius: 50% 50% 0 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 20;
 }
 
-.roulette button {
-    border: none;
-    cursor: pointer;
-    background: dodgerblue;
-    color: white;
-    padding: 10px 30px;
-    margin: 20px 0;
-    font-size: 1.5rem;
-}
