@@ -154,7 +154,7 @@
                             @if(battle.usersBattles[0].userId == user.id)
                             {
                                 <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
-                                @if(battle.usersBattles[0].punctuation < 10) 
+                                @if(battle.usersBattles[1].punctuation < 10) 
                                 {
                                     <label>El usuario abandonó la sala</label>
                                 }
@@ -176,7 +176,7 @@
                             }
                             @else {
                                 <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
-                                @if(battle.usersBattles[1].punctuation < 10) 
+                                @if(battle.usersBattles[0].punctuation < 10) 
                                 {
                                     <label>El usuario abandonó la sala</label>
                                 }
