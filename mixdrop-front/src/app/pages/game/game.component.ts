@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { delay, map, Observable, Subscription, takeWhile, timer } from 'rxjs';
+import { Observable, map, Subscription, takeWhile, timer } from 'rxjs';
 import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Card } from '../../models/card';
@@ -88,7 +88,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   private audioContext: AudioContext = new AudioContext();
-  private activeSources: Map<number, AudioBufferSourceNode> = new Map<number, AudioBufferSourceNode>;
+  private activeSources: Map<string, AudioBufferSourceNode> = new Map;
 
   constructor(private webSocketService: WebsocketService,
     public battleService: BattleService,
@@ -319,7 +319,7 @@ export class GameComponent implements OnInit, OnDestroy {
     source.start(undefined, this.audioContext.currentTime)
     source.connect(this.audioContext.destination)
 
-    this.activeSources.set(this.position, source)
+    this.activeSources[this.position.toString()] = source
 
     this.isProcessingAudio = false
   }
@@ -327,8 +327,8 @@ export class GameComponent implements OnInit, OnDestroy {
   private stopTrack(position: number) {
     console.log("Posición a borrar: ", position)
     //const source = this.activeSources.get(position)
-    this.activeSources.get(position)?.stop()
-    this.activeSources.delete(position)
+    this.activeSources[position.toString()]?.stop()
+    this.activeSources.delete(position.toString())
     /*if(source)
       {
         console.error("Borrando...")
