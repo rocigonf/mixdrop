@@ -257,7 +257,7 @@ public class GayHandler // GameHandler :3
         }
 
 
-        if (playerInTurn.ActionsLeft <= 0 && !otherUser.IsBot)
+        if (playerInTurn.ActionsLeft <= 0)
         {
             playerInTurn.IsTheirTurn = false;
             otherUser.IsTheirTurn = true;
@@ -302,6 +302,11 @@ public class GayHandler // GameHandler :3
         {
             if (otherUser.IsBot)
             {
+                await Task.Delay(2000);
+
+                playerInTurn.IsTheirTurn = true;
+                otherUser.IsTheirTurn = false;
+
                 await DoBotActions(otherUser, playerInTurn, dict, unitOfWork);
                 playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
             }
