@@ -312,6 +312,7 @@ public class BattleService
                 Dictionary<object, object> dict = new Dictionary<object, object>
                 {
                     { "messageType", MessageType.DisconnectedFromBattle },
+                    { "reported", false }
                 };
 
                 JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
