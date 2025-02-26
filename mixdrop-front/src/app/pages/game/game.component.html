@@ -10,7 +10,7 @@
 
 <!--RULETA-->
 
-<div *ngIf="showRoulette" class="roulette-overlay">
+<div *ngIf="showRoulette && whoSpinRoulette" class="roulette-overlay">
     <h1> {{ whoSpinRoulette + ' ha tirado de la ruleta'|| ' ha tirado de la ruleta' }}</h1>
     <div class="roulette-animation">
         <app-roulette [levelToDelete]="spinRouletteLevel"></app-roulette>
@@ -28,7 +28,7 @@
                     <div class="player">
                         <div class="vinul">
                             @if (currentBattle.isAgainstBot) {
-                            <div class="disk" [style.backgroundImage]="'url(' + IMG_URL + userBattle?.userImage + ')'">
+                            <div class="disk" [ngClass]="{'anim': userBattle?.isTheirTurn}" [style.backgroundImage]="'url(' + IMG_URL + userBattle?.userImage + ')'">
                             </div>
                             } @else {
                             <div class="disk" [ngClass]="{'anim': userBattle?.isTheirTurn}"
@@ -54,7 +54,7 @@
                     <div class="player">
                         <div class="vinul">
                             @if(currentBattle.isAgainstBot){
-                            <div class="disk" [style.backgroundImage]="'url(/images/bot.webp)'">
+                            <div class="disk" [ngClass]="{'anim': !userBattle?.isTheirTurn}" [style.backgroundImage]="'url(/images/bot.webp)'">
                             </div>
                             } @else{
                             <div class="disk" [ngClass]="{'anim': !userBattle?.isTheirTurn}"
