@@ -212,7 +212,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(url);
   }
 
-  visitUserPorfile(user: User | null)
+  visitUserProfile(user: User | null)
   {
     if(user){
       this.router.navigateByUrl("profile/" +user?.id  );

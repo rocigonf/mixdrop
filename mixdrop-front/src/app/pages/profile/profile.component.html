@@ -3,6 +3,7 @@
 @if(user)
 {
     <div class="panel-top">
+
         <div class="header">
             @if(user.avatarPath != "" && !deleteAvatar)
             {
@@ -12,29 +13,23 @@
             {
                 <img class="avatar" src="/images/user.png" alt="avatar">
             }
-        
-            <!-- @if (hasFriendship(this.user) && !waitingFriendship(this.user)  ) {
-                <button (click)="removeFriend( hasFriendship(this.user) )">Eliminar amigo</button>
-    
-            } @else if (hasFriendship(this.user) && waitingFriendship(this.user) ) {
-                Solicitud de amistad en espera de ser aceptada
-    
-            } @else if(!hasFriendship(this.user) ){
-                <button (click)="addFriend(this.user)">Añadir amigo</button>
-            } -->
+
         </div>
 
         - {{user.nickname}} -
+
     </div>
     
     <hr>
 
     <div class="container">
-        <div class="column">
-            <h2>Información</h2>
-            @if(isItself)
-            {
-                <fieldset class="info">
+
+        @if(isItself)
+        {
+            <div class="column">
+
+                <h2>Información</h2>
+                <fieldset class="info-avatar">
 
                 <div class="avatar-preview-img">
                     @if (this.image) {
@@ -65,52 +60,65 @@
 
                 <fieldset class="info">
                     <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
+
                         <div class="profile-row">
+
                             <label for="nickname">Nombre:
                                 <input type="text" [value]="user.nickname" formControlName="nickname" [readonly]="!isEditing">
                             </label>
-                        </div>
-                        <div class="profile-row">
+
                             <label for="email">Correo:
                                 <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.email" />
                             </label>
+
                         </div>
+
                         <div class="profile-row-buttons">
+                            
                             <button type="button" [ngClass]="isEditing ? 'btn-edit' : 'btn-secondary'" class="form-button"
                                 (click)="edit()">
                                 {{ isEditing? 'Cancelar edición' : 'Editar' }}
                             </button>
+                            
                             <button type="submit" class="form-button" [hidden]="!isEditing || userForm.invalid">
                                 Guardar Cambios
                             </button>
+                        
                         </div>
                     </form>
                 </fieldset>
                 
                 <fieldset class="info">
-                    <Label>Contraseña: <input type="password" placeholder="***********" [readonly]="!isEditing"></Label>
-                    <button type="button" class="form-button" style="float: right;" (click)="showEditPassword()"> Cambiar
-                        Contraseña </button>
+                    <div class="profile-row">
+                        <label>Contraseña: <input type="password" placeholder="***********" [readonly]="!isEditing"></label>
+                        <button type="button" class="form-button" style="float: right;" (click)="showEditPassword()"> Cambiar
+                            Contraseña </button>
+                    </div>
                 </fieldset>
                 
                 <div id="newPassword" [hidden]="isNewPasswordHidden">
+                    
                     <fieldset class="info">
                         <form [formGroup]="passwordForm" (ngSubmit)="editPassword()">
-                            <label>Cambiar contraseña:</label>
-                            <br><br>
-                            <input type="password" formControlName="newPassword" required placeholder="Nueva Contraseña" />
-            
-                            <!-- COMENTO ESTO PORQUE DA FALLO IDK WHY
-                            <br>
-                            <div class="error" *ngIf="passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched">La contraseña debe
-                                tener mínimo 6 caracteres.</div>
-                            <br>--->
-                            <input class="icon-input" placeholder="Repetir contraseña" type="password"
-                                formControlName="confirmPassword" />
-                            <!--<div class="error" *ngIf="passwordForm.get('confirmPassword')?.hasError(('mismatch'))  && passwordForm.get('confirmPassword')?.touched">Las contraseñas no coinciden.</div>
-                            <br>--->
-                
-                            <button type="submit" class="form-button" [disabled]="">Actualizar contraseña</button>
+                            
+                            <div class="new-password-row">
+                                <label>Nueva contraseña:</label>
+                        
+                                <input type="password" formControlName="newPassword" required placeholder="Nueva Contraseña" />
+                            
+                                <div class="error" *ngIf="passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched">La contraseña debe
+                                    tener mínimo 6 caracteres.</div>
+
+                                <input class="icon-input" placeholder="Repetir contraseña" type="password"
+                                    formControlName="confirmPassword" />
+                                <div class="error" *ngIf="passwordForm.get('confirmPassword')?.hasError(('mismatch'))  && passwordForm.get('confirmPassword')?.touched">Las contraseñas no coinciden.</div>
+
+                            </div>
+
+                            <div class="centered-button">
+                                <button type="submit" class="form-button" [disabled]="">Actualizar</button>
+                            </div>
+                        
                         </form>
                     </fieldset>
                 </div>
@@ -118,91 +126,133 @@
                 <div class="centered-button">
                     <button class="rainbow-button" (click)="updateUser()">Guardar cambios</button>
                 </div>
-            }
-            @else
-            {
+            </div>
+
+            <!-- Historial de batallas -->
+            <div class="column">
+
+                <h2>Batallas</h2>
+                <fieldset class="battle-history">
+
+                <div class="pagination">
+                    <button class="form-button" (click)="prevPage()" [disabled]="currentPage == 1">Anterior</button>
+                    <span id="pagination-text">Página {{ currentPage }}</span>
+                    <button class="form-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">Siguiente</button>
+                </div>
+
+                @for(battle of battlesPaginated; track $index){
+                    <div class="battle-card">
+                    @if(battle.battleStateId == 4)
+                    {
+                        @switch (battle.usersBattles[0].battleResultId) {
+                            @case (1) {
+                                <label style="text-align: center;">
+                                    Victoria contra 
+                                    @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
+                                    {
+                                        {{ battle.usersBattles[1].userName }}
+                                    }
+                                    @else
+                                    {
+                                        bot
+                                    }
+                                </label>
+                            }
+                            @case (2) {
+                                <label style="text-align: center;">
+                                    Derrota contra 
+                                    @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
+                                    {
+                                        {{ battle.usersBattles[1].userName }}
+                                    }
+                                    @else
+                                    {
+                                        bot
+                                    }
+                                </label>
+                            }
+                        }
+                        <label>Duración de partida: {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
+                        <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
+                        <label>Puntuación: {{ battle.usersBattles[0].punctuation }}</label>
+                    
+                    }
+                    </div>
+                }
+                </fieldset>
+            </div>
+        } 
+        @else 
+        {
+            <div class="other-column">
+
                 @if(waitingFriendship(user) == false)
                 {
                     @if(hasFriendship(user))
                     {
-                        <button (click)="removeFriend(hasFriendship(user))">Borrar amigo</button>
+                        <button class="form-button" (click)="removeFriend(hasFriendship(user))">Borrar amigo</button>
                     }
                     @else {
-                        <button (click)="addFriend(user)">Agregar amigo</button>
+                        <button class="form-button" (click)="addFriend(user)">Agregar amigo</button>
                     }
                 }
-            }
-        </div>
-        <!-- Historial de batallas -->
-        <div class="column">
+                @else 
+                {
+                    <label for="waitingFriendship" style="background-color: #7c679a; border: 4px solid white; padding: 10px;">Solicitud de amistad enviada...</label>
+                }
 
-            <h2>Batallas</h2>
+                <h2>Batallas</h2>
+                <fieldset class="battle-history">
 
-            <fieldset>
+                <div class="pagination">
+                    <button class="form-button" (click)="prevPage()" [disabled]="currentPage == 1">Anterior</button>
+                    <span id="pagination-text">Página {{ currentPage }}</span>
+                    <button class="form-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">Siguiente</button>
+                </div>
 
-            <div class="pagination">
-                <button class="form-button" (click)="prevPage()" [disabled]="currentPage == 1">Anterior</button>
-                <span id="pagination-text">Página {{ currentPage }}</span>
-                <button class="form-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">Siguiente</button>
-            </div>
-
-            <div class="battle-card">
                 @for(battle of battlesPaginated; track $index){
-                    @if(battle.battleStateId == 4)
-                    {
-                        <label>Tiempo total {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
-                            @if(battle.usersBattles[0].userId == user.id)
-                            {
-                                <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
-                                @if(battle.usersBattles[1].punctuation < 10) 
-                                {
-                                    <label>El usuario abandonó la sala</label>
+                    <div class="battle-card">
+                        @if(battle.battleStateId == 4)
+                        {
+                            @switch (battle.usersBattles[0].battleResultId) {
+                                @case (1) {
+                                    <label style="text-align: center;">
+                                        Victoria contra 
+                                        @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
+                                        {
+                                            {{ battle.usersBattles[1].userName }}
+                                        }
+                                        @else
+                                        {
+                                            bot
+                                        }
+                                    </label>
                                 }
-                                @else {
-                                    <label>Puntuación: {{ battle.usersBattles[0].punctuation }}</label>
-                                }
-                                @switch (battle.usersBattles[0].battleResultId) {
-                                    @case (1) {
-                                        <label>Victoria</label>
-                                    }
-                                    @case (2) {
-                                        <label>Derrota</label>
-                                    }
-                                }
-                                @if(battle.isAgainstBot == false)
-                                {
-                                    <label>Fue contra: {{ battle.usersBattles[1].userName }}</label>
-                                }
-                            }
-                            @else {
-                                <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
-                                @if(battle.usersBattles[0].punctuation < 10) 
-                                {
-                                    <label>El usuario abandonó la sala</label>
-                                }
-                                @else {
-                                    <label>Puntuación: {{ battle.usersBattles[1].punctuation }}</label>
-                                }
-                                @switch (battle.usersBattles[1].battleResultId) {
-                                    @case (1) {
-                                        <label>Victoria</label>
-                                    }
-                                    @case (2) {
-                                        <label>Derrota</label>
-                                    }
-                                }
-                                @if(battle.isAgainstBot == false)
-                                {
-                                    <label>Fue contra: {{ battle.usersBattles[0].userName }}</label>
+                                @case (2) {
+                                    <label style="text-align: center;">
+                                        Derrota contra 
+                                        @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
+                                        {
+                                            {{ battle.usersBattles[1].userName }}
+                                        }
+                                        @else
+                                        {
+                                            bot
+                                        }
+                                    </label>
                                 }
                             }
-                    }
+                            <label>Duración de partida: {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
+                            <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
+                            <label>Puntuación: {{ battle.usersBattles[1].punctuation }}</label>
+                        }
+                    </div>
                 }
+                </fieldset>
             </div>
-            </fieldset>
+        }
         </div>
-    </div>
 }
 @else {
-<p>Cargando...</p>
+    <h1 style="text-align: center; font-size: 3em;">Cargando...</h1>
 }
