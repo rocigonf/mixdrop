@@ -97,6 +97,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
 
+
   async ngOnInit(): Promise<void> {
 
     console.log(this.authService.isAuthenticated())
@@ -453,6 +454,7 @@ export class GameComponent implements OnInit, OnDestroy {
   onDragLeave(event: DragEvent) {
     event.preventDefault();
   }
+
 
   onDrop(event: DragEvent, slotIndex: number) {
     event.preventDefault();

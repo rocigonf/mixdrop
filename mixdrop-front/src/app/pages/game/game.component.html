@@ -110,14 +110,14 @@
         <div class="board shadow">
 
             <!--primera casilla VOZ Y PRINCIPAL-->
-            <div class="slot0" [ngClass]="{'highlight': shouldHighlightSlot(0, ['Vocal', 'Main'])}"
+            <div class="slot0 slot" [ngClass]="{'highlight': shouldHighlightSlot(0, ['Vocal', 'Main'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 0)">
                 @if(board.slots[0].card )
                 {
                 <app-card [currentCard]="board.slots[0].card"></app-card>
                 @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)
                 &&
-                board.slots[0].card.level <= cardToUse.level) { <p>Colocar carta</p>
+                board.slots[0].card.level <= cardToUse.level) {
                     }
                     }
                     @else {
@@ -125,7 +125,7 @@
                         @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"],
                         cardToUse.track.part.name)
                         ) {
-                        <p>Colocar carta</p>
+                        <p>Colocar aquí</p>
                         }
                     </div>
                     }
@@ -133,13 +133,13 @@
 
             <!--segunda casilla PRINCIPAL -->
 
-            <div class="slot1" [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
+            <div class="slot1 slot" [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 1)">
                 @if(board.slots[1].card)
                 {
                 <app-card [currentCard]="board.slots[1].card"></app-card>
                 @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) &&
-                board.slots[1].card.level <= cardToUse.level ) { <p>Colocar carta</p>
+                board.slots[1].card.level <= cardToUse.level ) { 
                     }
 
                     }
@@ -147,7 +147,7 @@
                     <div class="card">
                         @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name))
                         {
-                        <p>Colocar carta</p>
+                        <p>Colocar aquí</p>
                         }
                     </div>
                     }
@@ -155,14 +155,14 @@
 
             <!--segunda casilla PRINCIPAL y BATERIA -->
 
-            <div class="slot2" [ngClass]="{'highlight': shouldHighlightSlot(2 , ['Drums', 'Main'])}"
+            <div class="slot2 slot" [ngClass]="{'highlight': shouldHighlightSlot(2 , ['Drums', 'Main'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 2)">
                 @if(board.slots[2].card)
                 {
                 <app-card [currentCard]="board.slots[2].card"></app-card>
                 @if ( this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"], cardToUse.track.part.name)
                 &&
-                board.slots[2].card.level <= cardToUse.level) { <p>Colocar carta</p>
+                board.slots[2].card.level <= cardToUse.level) { 
                     }
                     }
                     @else {
@@ -170,7 +170,7 @@
                         @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"],
                         cardToUse.track.part.name))
                         {
-                        <p>Colocar carta</p>
+                        <p>Colocar aquí</p>
                         }
                     </div>
                     }
@@ -178,20 +178,20 @@
 
 
             <!--tercera casilla BATERIA-->
-            <div class="slot3" [ngClass]="{'highlight': shouldHighlightSlot(3, ['Drums'])}"
+            <div class="slot3 slot" [ngClass]="{'highlight': shouldHighlightSlot(3, ['Drums'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 3)">
                 @if(board.slots[3].card)
                 {
                 <app-card [currentCard]="board.slots[3].card"></app-card>
                 @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) &&
-                board.slots[3].card.level <= cardToUse.level) { <p>Colocar carta</p>
+                board.slots[3].card.level <= cardToUse.level) { 
                     }
                     }
                     @else {
                     <div class="card">
                         @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name))
                         {
-                        <p>Colocar carta</p>
+                        <p>Colocar aquí</p>
                         }
                     </div>
                     }
@@ -199,7 +199,7 @@
 
             <!-- cuarta casilla BATERIA Y BAJO-->
 
-            <div class="slot4" [ngClass]="{'highlight': shouldHighlightSlot(4, ['Drums', 'Bass'])}"
+            <div class="slot4 slot" [ngClass]="{'highlight': shouldHighlightSlot(4, ['Drums', 'Bass'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 4)">
 
                 @if(board.slots[4].card)
@@ -208,7 +208,7 @@
 
                 @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"], cardToUse.track.part.name)
                 &&
-                board.slots[4].card.level <= cardToUse.level) { <p>Colocar carta</p>
+                board.slots[4].card.level <= cardToUse.level) { 
                     }
                     }
                     @else {
@@ -216,7 +216,7 @@
                         @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums", "Bass"],
                         cardToUse.track.part.name))
                         {
-                        <p>Colocar carta</p>
+                        <p>Colocar aquí</p>
                         }
                     </div>
                     }
@@ -232,7 +232,8 @@
             @for (card of userBattle.cards; track $index)
             {
             @if (userBattle.isTheirTurn && !gameEnded) {
-            <app-card draggable="true" [currentCard]="card" (dragstart)="selectCard(card)"></app-card>
+            <app-card   (touchstart)="selectCard(card)"
+            draggable="true" [currentCard]="card" (dragstart)="selectCard(card)"></app-card>
             }
             @else {
             <app-card [currentCard]="card"></app-card>
