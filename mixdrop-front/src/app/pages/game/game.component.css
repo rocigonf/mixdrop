@@ -2,6 +2,7 @@
     font-size: 1.5rem;
 }
 
+
 .screen {
     display: flex;
     justify-content: center;
@@ -45,6 +46,7 @@
 }
 
 .card {
+    text-align: center;
     margin: 6px auto;
     display: flex;
     flex-direction: column;
@@ -369,14 +371,19 @@ app-card:active {
         display: block;
     }
 
+    .points, .board{
+    margin-top: 0;
+    }
+
     .myCarts * {
-        height: 30vh;
-        width: 20vh;
+        height: 34vh;
+        width: 24vh;
     }
 
     :host ::ng-deep app-card .card{
         height: 30vh;
         width: 20vh;
+        margin: 3%;
     }
     :host ::ng-deep app-card * {
         font-size: 0.6rem;
@@ -404,16 +411,20 @@ app-card:active {
         border-top-width: 0.6rem;   
     }
     
+    .shadow {
+        margin-bottom: 10px;
+        padding: 5px;
+    }
 
     .slot{
-        height: 30vh;
-        width: 20vh;
+        height: 35vh;
+        width: 25vh;
     }
 
     .card {
-        height: 28vh;
-        width: 18vh;
-        margin: 1px auto;
+        height: 32vh;
+        width: 22vh;
+        margin: 4px auto;
     }
 
     .card p {
@@ -425,11 +436,12 @@ app-card:active {
     }
 
     .btn-roulette button {
-        font-size: 1.2rem;
+        font-size: 1rem;
+        height: 30vh;
     }
 
     .roulette-animation app-roulette {
-        width: 30vh;
+        width: 20vh;
         height: auto;
     }
 
@@ -469,6 +481,10 @@ app-card:active {
 
     .myCarts {
         gap: 0;
+    }
+
+    .screen {   
+        gap: 1rem;
     }
 
 }
