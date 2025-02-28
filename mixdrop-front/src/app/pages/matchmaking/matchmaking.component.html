@@ -1,71 +1,126 @@
 <app-navbar></app-navbar>
 
-<div class="cabecera">
-    <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
+<div class="panel-top">
+    <h1>EMPAREJAMIENTO</h1>
 </div>
 
-@if(loading)
-{
-    <button (click)="deleteRandomBattle()">Cancelar matchmaking</button>
-}
+<hr>
 
-@if(readyForBattle)
-{
-    @if(battle)
+<div class="cabecera">
+    @if(user.avatarPath != "")
     {
-    <button (click)="startBattle()">Comenzar partida</button>
+        <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
     }
     @else
     {
-    <p>Esperando a que el anfitrión comience la partida...</p>
+        <img class="avatar" src="/images/user.png" alt="avatar">
     }
-    <button (click)="deleteBattleBydId(battleId || battle!!.id, true)">Abandonar partida</button>
-} @else {
+    @if (battle) 
+    {
+        <p> {{user.nickname}}  VS  {{battle.user.nickname}} </p>
+        @if(user.avatarPath != "")
+        {
+            <img class="avatar" [src]="IMG_URL + battle.user.avatarPath" alt="avatar">
+        }
+    }
+    @else 
+    {
+        <p> {{user.nickname}} </p>
+    }
+</div>
 
 
-<!--mostrar tamb avatar de invitado / anfitrion-->
+<div class="matchmaking-container">
+@if(loading)
+{
+    <img src="/images/waiting.gif" alt="Buscando">
+    <p>Buscando partida...</p>
+    <button class="rainbow-button" (click)="deleteRandomBattle()">Cancelar emparejamiento</button>
+}
+@else 
+{
+    @if(readyForBattle)
+    {
+        @if(battle)
+        {
+        <button class="rainbow-button" (click)="startBattle()">Comenzar partida</button>
+        }
+        @else
+        {
+        <p>Esperando a que el anfitrión comience la partida...</p>
+        }
+        <button class="rainbow-button" (click)="deleteBattleBydId(battleId || battle!!.id, true)">Abandonar partida</button>
+    } @else {
 
-<button (click)="gameWithBot()">Jugar contra un bot</button>
-<button (click)="gameRandom()">Jugar con oponente aleatorio</button>
+        <!--mostrar tamb avatar de invitado / anfitrion-->
 
-<!-- q te abra ventana model con amigos conectados ? -->
-<p>Invitar amigo a jugar</p>
-<div class="listaUsuarios">
-    @if (conenctedFriends.length < 1) { <span> No hay amigos conectados </span>
-        } @else {
-        @for (friend of conenctedFriends; track $index) {
+        <button class="rainbow-button" (click)="gameWithBot()">Jugar VS bot</button>
+        <button class="rainbow-button" (click)="gameRandom()">Jugar VS oponente aleatorio</button>
 
-        <div class="tarjetaUsuario">
-            <div class="contenedorAvatar">
-                <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
-            </div>
+        <!-- q te abra ventana model con amigos conectados ? -->
+        <hr>
+        <p>Jugar con amigos</p>
+        <div class="listaUsuarios">
+            @if (connectedFriends.length < 1) 
+            { 
+                <span> No hay amigos conectados </span>
+            } @else 
+            {
+                <div class="friendList">
+                @for (friend of connectedFriends; track $index) {
 
-            <span class="nickname">
-                {{ friend.nickname }}
-            </span>
+                <div class="tarjetaUsuario">
+                    <div class="contenedorAvatar">
+                        <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
+                    </div>
+
+                    <span class="nickname">
+                        {{ friend.nickname }}
+                    </span>
 
 
-            @if (!hasBattle(friend)) {
-            <div class="contenedorIcono">
-                <img class="icono" (click)="gameWithFriend(friend)" src="/images/battle.webp"
-                    alt="invitar a jugar a amigo">
-            </div>
-            } @else if (hasBattle(friend)) {
-            <div class="contenedorIcono">
-                <img class="icono" (click)="acceptBattle(friend.id)" src="/images/battle.webp" alt="aceptar batalla">
-            </div>
-            <div class="contenedorIcono">
-                <img class="icono" (click)="deleteBattleByFriendId(friend.id)" src="/images/delete.webp" alt="rechazar batalla">
-            </div>
+                    @if (!hasBattle(friend)) 
+                    {
+                        <div class="contenedorIcono">
+                            <img #tooltip="matTooltip"
+                                matTooltip="Retar a batalla" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="gameWithFriend(friend)" 
+                                src="/images/battle.webp"
+                                alt="Retar a batalla">
+                        </div>
+                    } @else if (hasBattle(friend)) 
+                    {
+                        <div class="contenedorIcono">
+                            <img #tooltip="matTooltip"
+                                matTooltip="Aceptar invitación" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="acceptBattle(friend.id)" 
+                                src="/images/battle.webp" 
+                                alt="Aceptar invitación de batalla">
+                        </div>
+
+                        <div class="contenedorIcono">
+                            <img #tooltip="matTooltip"
+                                matTooltip="Rechazar invitación" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="deleteBattleByFriendId(friend.id)" 
+                                src="/images/delete.webp" 
+                                alt="Rechazar invitación de batalla">
+                        </div>
+                    }
+                </div>
+
+                }
+                </div>
             }
         </div>
-
-
-        }
-        }
-
-</div>
-<br>
-
+    }
 }
+</div>
