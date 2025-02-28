@@ -162,7 +162,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.webSocketService.sendNative(messageType.toString())
   }
 
-
   processFriends() {
     this.acceptedFriends = []
     console.log(this.friendsRaw)
@@ -214,8 +213,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else return false
   }
 
-
-  // TODO: Agregar verificación
   async updateUser(): Promise<void> {
     const role = this.user?.role.toString();
     const formData = new FormData();
@@ -228,9 +225,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     else if (this.deleteAvatar) {
       formData.append("ChangeImage", "true")
     }
+    else if (!this.image){
+      formData.append("ChangeImage", "false")
+    }
 
     formData.append("Email", this.userForm.value.email)
-    formData.append("Password", this.passwordForm.get('newPassword')?.value)
+
+    const newPassword = this.passwordForm.get('newPassword')?.value
+    if (newPassword) {
+      if (!this.passwordForm.valid) {
+        console.error("Error: La nueva contraseña no es válida.")
+        return;
+      }
+      
+      formData.append("Password", newPassword)
+    }
 
     if (role) formData.append("Role", role)
 
@@ -254,13 +263,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       console.error("Error: El campo de la contraseña está vacío.");
       return;
     }
-
-    this.showEditPassword()
-    /*if (this.passwordForm.valid) {
-      
-    } else{
-      console.error("Error: El formulario de contraseña no es válido.")
-    }*/
   }
 
   showEditPassword() {

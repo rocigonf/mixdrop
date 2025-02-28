@@ -45,6 +45,18 @@ label{
     padding: 10px;
 }
 
+.new-password-columm{
+    display: flex;
+    flex-direction: column;
+    columns: 2;
+}
+
+.error {
+    color: rgb(241, 126, 126);
+    text-align: left;
+    font-size: 1.5rem;
+}
+
 .panel-top{
     font-size: 3rem;
     text-align: center;
