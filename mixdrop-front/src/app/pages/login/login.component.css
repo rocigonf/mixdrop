@@ -1,6 +1,5 @@
 .caja {
     max-width: 400px; /*Max width para que se estreche en pantallas pequeñas*/
-    margin: auto;
     box-shadow: 0 4px 8px rgba(113, 113, 113, 0.953);
     border-spacing: 1.5rem;
     background-color: #302244;
@@ -14,6 +13,10 @@
                             #fd1892 100%);
     border-image-slice: 1;
     margin: 20px auto;
+}
+
+.container{
+    margin: 20px;
 }
 
 .menu {
@@ -81,6 +84,7 @@ input[type="checkbox"] {
 
 label {
     font-size: 1.4rem;
+    line-height: 2rem;
 }
 
 button {

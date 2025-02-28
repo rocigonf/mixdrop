@@ -405,7 +405,7 @@ app-card:active {
     }
        
     :host ::ng-deep app-card #part-icon {
-        margin-top: 1.3rem;
+        margin-top: 1.5rem;
     }
        
     :host ::ng-deep app-card .trapecio:nth-child(1){
@@ -454,9 +454,9 @@ app-card:active {
         font-size: 1rem;
     }
 
-    .roulette-animation app-roulette {
-        width: 20vh;
-        height: auto;
+    .roulette-animation{
+        width: auto;
+        height: 80vh;
     }
 
     .player {

@@ -117,7 +117,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isRouletteSpinning = true;
     if (this.roulette && this.roulette.wheel) {
       this.roulette.spinRoulette(level);
-      console.log("Ruleta girada por " , this.whoSpinRoulette);
+      console.log("Ruleta girada por ", this.whoSpinRoulette);
 
       setTimeout(() => {
         this.showRoulette = false;
@@ -147,14 +147,11 @@ export class GameComponent implements OnInit, OnDestroy {
   async ngOnDestroy(): Promise<void> {
     this.messageReceived$?.unsubscribe()
     this.audioContext.close()
-    if(!this.gameEnded)
-    {
-      if(this.currentBattle?.isAgainstBot)
-      {
+    if (!this.gameEnded) {
+      if (this.currentBattle?.isAgainstBot) {
         await this.battleService.deleteBotBattle()
       }
-      else
-      {
+      else {
         await this.battleService.forfeitBattle()
       }
     }
@@ -182,39 +179,39 @@ export class GameComponent implements OnInit, OnDestroy {
     }
 
 
-      this.serverResponse = message
-      const jsonResponse = JSON.parse(this.serverResponse)
-      let positions: number[] = []
+    this.serverResponse = message
+    const jsonResponse = JSON.parse(this.serverResponse)
+    let positions: number[] = []
 
-      switch (jsonResponse.messageType) {
-        case MessageType.ShuffleDeckStart:
-          this.userBattle = jsonResponse.userBattleDto
-          this.currentBattle = jsonResponse.currentBattle
-          this.enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.userBattle?.userId)
-          this.activateTimer()
-          break;
-          
-         case MessageType.TurnResult:
-          this.board = jsonResponse.board
+    switch (jsonResponse.messageType) {
+      case MessageType.ShuffleDeckStart:
+        this.userBattle = jsonResponse.userBattleDto
+        this.currentBattle = jsonResponse.currentBattle
+        this.enemyUser = this.currentBattle?.battleUsers.find(u => u.userId != this.userBattle?.userId)
+        this.activateTimer()
+        break;
 
-          const newPlayer: UserBattleDto = jsonResponse.player
-          //const cards = this.userBattle!!.cards
+      case MessageType.TurnResult:
+        this.board = jsonResponse.board
 
-          this.userBattle = newPlayer
-          /*const newCard = jsonResponse.card
-          this.userBattle.cards = cards
+        const newPlayer: UserBattleDto = jsonResponse.player
+        //const cards = this.userBattle!!.cards
 
-          // Por si la carta no se puede jugar
-          if(newCard && this.indexToDelete != -1)
-          {
-            console.error("BORRADO EN ", this.indexToDelete)
-            this.userBattle.cards.splice(this.indexToDelete, 1)
-            this.userBattle.cards.push(newCard)
-            this.indexToDelete = -1
-            console.error("BORRADO")
-          }*/
-      
-          this.spinRouletteLevel = jsonResponse.levelRoulette
+        this.userBattle = newPlayer
+        /*const newCard = jsonResponse.card
+        this.userBattle.cards = cards
+
+        // Por si la carta no se puede jugar
+        if(newCard && this.indexToDelete != -1)
+        {
+          console.error("BORRADO EN ", this.indexToDelete)
+          this.userBattle.cards.splice(this.indexToDelete, 1)
+          this.userBattle.cards.push(newCard)
+          this.indexToDelete = -1
+          console.error("BORRADO")
+        }*/
+
+        this.spinRouletteLevel = jsonResponse.levelRoulette
 
         // RULETA
         if (this.spinRouletteLevel > -1) {
@@ -223,55 +220,53 @@ export class GameComponent implements OnInit, OnDestroy {
           console.log("NIVEL RULETA", this.spinRouletteLevel)
           this.showAndHideRoulette(this.spinRouletteLevel);
         }
-          
-          this.bonus = jsonResponse.bonus
-          this.otherPlayerPunct = jsonResponse.otherplayer
 
-          positions = jsonResponse.position
-          this.playAudio(positions, jsonResponse.wheel); 
+        this.bonus = jsonResponse.bonus
+        this.otherPlayerPunct = jsonResponse.otherplayer
 
-          this.activateTimer()
-          break
-   
+        positions = jsonResponse.position
+        this.playAudio(positions, jsonResponse.wheel);
+
+        this.activateTimer()
+        break
+
       case MessageType.EndGame:
-          this.gameEnded = true
-          this.otherUserId = jsonResponse.otherUserId
+        this.gameEnded = true
+        this.otherUserId = jsonResponse.otherUserId
 
-          this.otherPlayerPunct = jsonResponse.otherplayer
+        this.otherPlayerPunct = jsonResponse.otherplayer
 
-          this.board = jsonResponse.board
-          this.userBattle = jsonResponse.player
-          positions = jsonResponse.position
-          this.playAudio(positions, jsonResponse.wheel); 
+        this.board = jsonResponse.board
+        this.userBattle = jsonResponse.player
+        positions = jsonResponse.position
+        this.playAudio(positions, jsonResponse.wheel);
 
-          if (this.userBattle?.battleResultId == 1) {
-            this.showAlert("Ganaste", "Ganaste :D")
-          }
-          else {
-            this.showAlert("Perdiste", "Perdiste :(")
-          }
+        if (this.userBattle?.battleResultId == 1) {
+          this.showAlert("Ganaste", "Ganaste :D")
+        }
+        else {
+          this.showAlert("Perdiste", "Perdiste :(")
+        }
 
-          this.timeRemaining$ = null
-          break;
-          
-          case MessageType.AskForBattle:
-            this.showAlert("Revancha solicitada", "Revancha solicitada")
-            this.router.navigateByUrl("menu")
-            break
-          
-        case MessageType.DisconnectedFromBattle:
-          if(jsonResponse.reported == false)
-          {
-            alert("El otro usuario se ha desconectado, por lo que has ganado")
-          }
-          else
-          {
-            alert("Se te acabó el tiempo, por lo que has perdido")
-          }
-          this.router.navigateByUrl("menu")
-          break
-      }
-      console.log("Respuesta del socket en JSON: ", jsonResponse)
+        this.timeRemaining$ = null
+        break;
+
+      case MessageType.AskForBattle:
+        this.showAlert("Revancha solicitada", "Revancha solicitada")
+        this.router.navigateByUrl("menu")
+        break
+
+      case MessageType.DisconnectedFromBattle:
+        if (jsonResponse.reported == false) {
+          alert("El otro usuario se ha desconectado, por lo que has ganado")
+        }
+        else {
+          alert("Se te acabó el tiempo, por lo que has perdido")
+        }
+        this.router.navigateByUrl("menu")
+        break
+    }
+    console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
 
@@ -395,6 +390,22 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  isCardInUse(card: Card): boolean {
+    if (!this.board || !this.board.slots || !card) {
+      return true;
+    }
+
+    for (const slot of this.board.slots) {
+      if (slot.card !== null && slot.card !== undefined && slot.card.id === card.id) {
+        if (slot.card.id === card.id)
+          return false;
+      }
+    }
+    return true;
+  }
+
+
+
   useButton() {
     const actionType: ActionType = {
       name: "button"
@@ -472,8 +483,7 @@ export class GameComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if(this.cardToUse.effect != "")
-    {
+    if (this.cardToUse.effect != "") {
       return true
     }
 
