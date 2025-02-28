@@ -2,7 +2,7 @@ nav {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.5rem;
+    padding: 0.8rem;
 }
 
 span {

@@ -26,7 +26,7 @@
       </div>
 
       <div>
-        <button [disabled]="emailOrNickname.length < 1  || password.length < 1" type="submit" class="button">Iniciar
+        <button [disabled]="emailOrNickname.length < 1  || password.length < 1" type="submit" class="form-button">Iniciar
           sesión</button>
       </div>
 
@@ -76,16 +76,25 @@
 
       <label for="productImage" id="labelImage">Imagen de perfil:</label> <br>
       
+      <div class="load-avatar-container">
+        <div class="button-wrapper">
+          <span class="label">Cargar avatar</span>
+          <input 
+              type="file" 
+              accept="image/png, image/jpeg, image/jpg" 
+              id="input-file"  
+              placeholder="Cargar avatar" 
+              (change)="onFileSelected($event)"
+          >
+        </div>
       
-      <!-- para que se vea miniatura de lo que ha elegido -->
-      @if (this.image) {
-      <img id="preview-img" [src]="this.imagePreview" alt="imagen">
-      } 
-      <input name="image" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
-
-      
+        <!-- para que se vea miniatura de lo que ha elegido -->
+        @if (this.image) {
+          <img id="preview-img" [src]="this.imagePreview" alt="imagen">
+        } 
+      </div>
       <br>
-      <button [disabled]="!registerForm.valid" type="submit">Crear Cuenta</button>
+      <button [disabled]="!registerForm.valid" type="submit" class="form-button">Crear Cuenta</button>
     </form>
 
   </div>
