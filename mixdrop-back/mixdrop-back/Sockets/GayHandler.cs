@@ -133,11 +133,11 @@ public class GayHandler // GameHandler :3
             {
                 switch (existingCard.Effect)
                 {
-                    case "Barajar":
+                    case "Baraja tus cartas":
                         playerInTurn.Cards = new List<Card>();
                         DistributeCards(playerInTurn);
                         break;
-                    case "-1":
+                    case "-1 punto al rival":
                         otherUser.Punctuation--;
                         break;
                 }

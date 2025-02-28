@@ -715,7 +715,7 @@ public class Seeder
                 },
 
                 CardTypeId = 4,
-                Effect = "-1"
+                Effect = "-1 punto al rival"
             },
             new Card {
                 ImagePath = "cards/mvpfx2_fx.jpg",
@@ -738,7 +738,7 @@ public class Seeder
                 },
 
                 CardTypeId = 4,
-                Effect = "Barajar"
+                Effect = "Baraja tus cartas"
             },
         };
         await _context.Cards.AddRangeAsync(cards);
