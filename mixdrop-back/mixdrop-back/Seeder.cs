@@ -692,6 +692,54 @@ public class Seeder
                 },
                 CardTypeId = 4
             },
+
+            // Comodines
+            new Card {
+                ImagePath = "cards/storybookfx1_fx.jpg",
+                Level = 0, // Los comodines deberían tener nivel 4
+
+                // El track da igual, es para que no le de la paja xD
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Main/FindYou_LOOP_guitar.mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Am"], false)
+                    {
+                        Name = "Find You",
+                        Bpm = 150,
+                        Pitch = "Am",
+                        Artist = new Artist {
+                            Name = "Nightfeels"
+                        }
+                    },
+                    PartId = 2
+                },
+
+                CardTypeId = 4,
+                Effect = "-1 punto al rival"
+            },
+            new Card {
+                ImagePath = "cards/mvpfx2_fx.jpg",
+                Level = 0,
+
+
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Main/FindYou_LOOP_guitar.mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Am"], false)
+                    {
+                        Name = "Find You",
+                        Bpm = 150,
+                        Pitch = "Am",
+                        Artist = new Artist {
+                            Name = "Nightfeels"
+                        }
+                    },
+                    PartId = 2
+                },
+
+                CardTypeId = 4,
+                Effect = "Baraja tus cartas"
+            },
         };
         await _context.Cards.AddRangeAsync(cards);
     }
@@ -729,7 +777,10 @@ public class Seeder
             },
             new CardType {
                 Name = "Azul"
-            }
+            },
+            new CardType {
+                Name = "Gris"
+            },
         };
         await _context.CardTypes.AddRangeAsync(cardType);
     }

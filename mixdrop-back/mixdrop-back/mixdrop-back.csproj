@@ -55,6 +55,7 @@
 	  <None Remove="wwwroot\cards\city1_bass.jpg" />
 	  <None Remove="wwwroot\cards\findyou_loop.jpg" />
 	  <None Remove="wwwroot\cards\iwillsurvive_loop.jpg" />
+	  <None Remove="wwwroot\cards\mvpfx2_fx.jpg" />
 	  <None Remove="wwwroot\cards\scifi2_bass.jpg" />
 	  <None Remove="wwwroot\cards\scifi3_lead.jpg" />
 	  <None Remove="wwwroot\cards\sexyandiknowit_bass.jpg" />

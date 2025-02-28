@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 
 @Component({
@@ -105,7 +106,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.pendingBattles = jsonResponse.battles
         break
       case MessageType.Play:
-        alert("Partida encontrada :3")
+        this.showAlert("Partida encontrada", "Partida encontrada :3", 'info')
         this.router.navigateByUrl("matchmaking")
         if(jsonResponse.battle)
         {
@@ -163,7 +164,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   
     if (confirmed) {
       await this.friendshipService.removeFriendById(friend.id)
-      alert(`Amistad con ${nickname} rechazada.`);
+      this.showAlert("Éxito", `Amistad con ${nickname} rechazada.`, 'info')
     } 
   }
 
@@ -301,5 +302,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     // te lleva al emparejamiento
     this.router.navigateByUrl("matchmaking");
   }
+
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+        Swal.fire({
+          title: title,
+          text: message,
+          showConfirmButton: false,
+          icon: icon,
+          timer: 2000
+        })
+      }
 
 }

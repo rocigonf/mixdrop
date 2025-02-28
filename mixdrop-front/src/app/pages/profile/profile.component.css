@@ -45,10 +45,16 @@ label{
     padding: 10px;
 }
 
-input[type="text"], input[type="password"], input[type="email"]{
-    max-height: 34px;
-    border-style: solid;
-    border-width: 2px;
+.new-password-columm{
+    display: flex;
+    flex-direction: column;
+    columns: 2;
+}
+
+.error {
+    color: rgb(241, 126, 126);
+    text-align: left;
+    font-size: 1.5rem;
 }
 
 .panel-top{
@@ -105,68 +111,6 @@ input[type="text"], input[type="password"], input[type="email"]{
     gap: 2em;
 }
 
-/* --- INICIO ESTILOS BOTÓN CAMBIAR AVATAR --- */
-
-.button-wrapper {
-    position: relative;
-    text-align: center;
-    box-sizing: border-box;
-    width: 200px;
-    height: 50px;
-    padding: 5px;
-    background: #7c679a;
-    border: 4px solid white;
-    box-shadow: 4px 4px 0 black;
-    transition: all 0.1s ease-in-out;
-    cursor: pointer;
-}
-
-.button-wrapper span.label {
-    text-transform: uppercase;
-    align-items: center;
-    font-weight: bold;
-    font-size: 1.6rem;
-    user-select: none; /* Para q no se pueda seleccionar el texto del botón */
-}
-
-.button-wrapper:active {
-    box-shadow: 2px 2px 0 black;
-    transform: translate(2px, 2px);
-}
-
-#input-file {
-    display: inline-block;
-    position: absolute;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    cursor: pointer;
-}
-
-/* --- FIN ESTILOS BOTÓN CAMBIAR AVATAR --- */
-
-.form-button{ /* BOTONES MORADOS */
-    text-align: center;
-    width: 200px;
-    height: 50px;
-    color: white;
-    background: #7c679a;
-    border: 4px solid white;
-    box-shadow: 4px 4px 0 black;
-    font-size: 1.6rem;
-    text-transform: uppercase;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.form-button:active {
-    box-shadow: 2px 2px 0 black;
-    transform: translate(2px, 2px);
-}
-
 .centered-button{
     display: flex;
     justify-content: center;
@@ -180,12 +124,31 @@ input[type="text"], input[type="password"], input[type="email"]{
 
 .pagination{
     display: flex;
-    justify-content: space-between;
-    gap: 1em;
+    justify-content: center;
+    gap: 1rem;
 }
 
 #pagination-text{
     font-size: 1.5em;
+}
+
+.pagination-button{ /* BOTONES PAGINACIÓN */
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    color: white;
+    background: #7c679a;
+    border: 3px solid white;
+    box-shadow: 4px 4px 0 black;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pagination-button:active {
+    box-shadow: 2px 2px 0 black;
+    transform: translate(2px, 2px);
 }
 
 .battle-history{
@@ -204,7 +167,6 @@ input[type="text"], input[type="password"], input[type="email"]{
 
 /* --- RESPONSIVE ---*/
 @media (max-width: 1170px) {
-
 
     .profile-row, .profile-row-buttons, .new-password-row{
         display: flex;

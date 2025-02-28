@@ -1,11 +1,25 @@
 <nav>
-    <a (click)="startMusic()">
-        <img id="speaker" [src]="frameName" alt="altavoz">
-    </a>
+
+    @if (this.router.url == '/'){
+        <a (click)="startMusic()">
+            <img #tooltip="matTooltip"
+                matTooltip="Pulsa para un secreto :D" 
+                matTooltipPosition="below" 
+                matTooltipClass="tooltip" 
+                id="speaker" 
+                [src]="frameName" 
+                alt="altavoz">
+        </a>
+    }
+    @else 
+    {
+        <a (click)="startMusic()">
+            <img id="speaker" [src]="frameName" alt="altavoz">
+        </a>
+    }
+    
 
     <div class="nav-right">
-
-        
 
         @if (this.router.url == '/' || this.router.url == '/#rules') {
 
@@ -46,17 +60,26 @@
                 }  
             </div>
             
-        } @else {
-            
-            <a (click)="navigateToUrl('login')">
-                <img class="avatar" src="/images/user.png" alt="avatar">
-            </a>
-
         }
     </div>
     @if (authService.isAuthenticated()) {
         <a class="logout" (click)="authClick()">
-            <img src="/images/acceso.webp" alt="Cerrar sesión">
+            <img #tooltip="matTooltip"
+                matTooltip="Cerrar sesión" 
+                matTooltipPosition="below" 
+                matTooltipClass="tooltip" 
+                src="/images/salida.webp" 
+                alt="Cerrar sesión">
+        </a>
+    }
+    @else {
+        <a class="logout" (click)="navigateToUrl('login')">
+            <img #tooltip="matTooltip"
+                matTooltip="Iniciar sesión" 
+                matTooltipPosition="below" 
+                matTooltipClass="tooltip" 
+                src="/images/acceso.webp" 
+                alt="Iniciar sesión">
         </a>
     }
 </div>

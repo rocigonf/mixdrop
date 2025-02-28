@@ -13,6 +13,8 @@ import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { FriendshipService } from '../../services/friendship.service';
+import { BattleDto } from '../../models/battle-dto';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -47,10 +49,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
-  battlesPerPage = 3;
+  battlesPerPage = 1;
   currentPage = 1;
+  totalPages = 1;
   totalBattles = 0;
-  battlesPaginated: any[] = [];
+  battlesPaginated: BattleDto[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -159,7 +162,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.webSocketService.sendNative(messageType.toString())
   }
 
-
   processFriends() {
     this.acceptedFriends = []
     console.log(this.friendsRaw)
@@ -190,7 +192,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       if (confirmed) {
         await this.friendshipService.removeFriendById(friend.id)
-        alert(`Has dejado de ser amigo de ${nickname}.`);
+        this.showAlert("Éxito", `Amistad con ${nickname} rechazada.`, 'info')
       }
     }
 
@@ -211,8 +213,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else return false
   }
 
-
-  // TODO: Agregar verificación
   async updateUser(): Promise<void> {
     const role = this.user?.role.toString();
     const formData = new FormData();
@@ -225,9 +225,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     else if (this.deleteAvatar) {
       formData.append("ChangeImage", "true")
     }
+    else if (!this.image){
+      formData.append("ChangeImage", "false")
+    }
 
     formData.append("Email", this.userForm.value.email)
-    formData.append("Password", this.passwordForm.get('newPassword')?.value)
+
+    const newPassword = this.passwordForm.get('newPassword')?.value
+    if (newPassword) {
+      if (!this.passwordForm.valid) {
+        console.error("Error: La nueva contraseña no es válida.")
+        return;
+      }
+      
+      formData.append("Password", newPassword)
+    }
 
     if (role) formData.append("Role", role)
 
@@ -251,13 +263,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       console.error("Error: El campo de la contraseña está vacío.");
       return;
     }
-
-    this.showEditPassword()
-    /*if (this.passwordForm.valid) {
-      
-    } else{
-      console.error("Error: El formulario de contraseña no es válido.")
-    }*/
   }
 
   showEditPassword() {
@@ -275,15 +280,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.userForm.valid) {
       this.isEditing = false
-      // ACTUALIZAR
-
+      // Recarga la página
+      this.authService.getUser();
     } else {
-      alert("Los datos introducidos no son válidos")
+      this.showAlert("Error", "Formulario no válido", 'error')
     }
   }
 
+  // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+          Swal.fire({
+            title: title,
+            text: message,
+            showConfirmButton: false,
+            icon: icon,
+            timer: 2000
+          })
+        }
 
-  // comprueba q el usuatio ya tiene amistad (aceptada o no) con otro usuario
+
+  // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
   hasFriendship(user: User): Friend | undefined {
     return this.friendsRaw.find(friend =>
       (friend.senderUserId === user.id && friend.receiverUserId === this.myUser?.id) ||
@@ -296,16 +312,34 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const endDate = new Date(end);
     const time = endDate.getTime() - startDate.getTime();
   
-    const hours = Math.floor(time / (1000 * 3600));
+    //const hours = Math.floor(time / (1000 * 3600));
     const minutes = Math.floor((time % (1000 * 3600)) / (1000 * 60));
   
-    return `${hours} horas ${minutes} minutos`;
+    if (minutes == 1) {
+      return `${minutes} minuto`;
+    }
+    return `${minutes} minutos`;
   }
 
   paginateBattles() {
     const startIndex = (this.currentPage - 1) * this.battlesPerPage;
     const endIndex = startIndex + this.battlesPerPage;
     this.battlesPaginated = this.user?.battles.slice(startIndex, endIndex) || [];
+  }
+
+  firstPage(){
+    if (this.currentPage !== 1){
+      this.currentPage = 1;
+      this.paginateBattles();
+    }
+  }
+
+  lastPage(){
+    this.totalPages = Math.ceil(this.totalBattles / this.battlesPerPage);
+    if (this.currentPage !== this.totalPages && this.totalPages > 0) {
+      this.currentPage = this.totalPages;
+      this.paginateBattles();
+    }
   }
 
   nextPage() {
@@ -318,6 +352,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.paginateBattles();
+    }
+  }
+
+  newBattlesPerPage() {
+    const battlesPerPageElement = document.getElementById("battles-per-page") as HTMLInputElement | HTMLSelectElement;
+    if (battlesPerPageElement) {
+      this.battlesPerPage = parseInt(battlesPerPageElement.value);
+      this.currentPage = 1;
       this.paginateBattles();
     }
   }

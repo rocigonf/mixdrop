@@ -103,21 +103,28 @@
                             
                             <div class="new-password-row">
                                 <label>Nueva contraseña:</label>
-                        
-                                <input type="password" formControlName="newPassword" required placeholder="Nueva Contraseña" />
                             
-                                <div class="error" *ngIf="passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched">La contraseña debe
-                                    tener mínimo 6 caracteres.</div>
-
-                                <input class="icon-input" placeholder="Repetir contraseña" type="password"
-                                    formControlName="confirmPassword" />
-                                <div class="error" *ngIf="passwordForm.get('confirmPassword')?.hasError(('mismatch'))  && passwordForm.get('confirmPassword')?.touched">Las contraseñas no coinciden.</div>
-
+                                <div class="new-password-columm">
+                                    <input type="password" formControlName="newPassword" required placeholder="Nueva Contraseña" />
+                                    
+                                    <div class="error" 
+                                        *ngIf="passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched">
+                                        La contraseña debe tener mínimo 6 caracteres.
+                                    </div>
+                                </div>
+                                <div class="new-password-columm">
+                                    <input class="icon-input" placeholder="Repetir contraseña" type="password" formControlName="confirmPassword" />
+                                    
+                                    <div class="error" 
+                                        *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched">
+                                        Las contraseñas no coinciden.
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="centered-button">
+                            
+                            <!-- <div class="centered-button">
                                 <button type="submit" class="form-button" [disabled]="">Actualizar</button>
-                            </div>
+                            </div> -->
                         
                         </form>
                     </fieldset>
@@ -128,46 +135,62 @@
                 </div>
             </div>
 
-            <!-- Historial de batallas -->
+            <!-- Historial de batallas si es TU PROPIO PERFIL -->
             <div class="column">
 
                 <h2>Batallas</h2>
                 <fieldset class="battle-history">
 
                 <div class="pagination">
-                    <button class="form-button" (click)="prevPage()" [disabled]="currentPage == 1">Anterior</button>
+
+                    <button class="pagination-button" (click)="firstPage()" [disabled]="currentPage == 1"><<</button>
+                    <button class="pagination-button" (click)="prevPage()" [disabled]="currentPage == 1"><</button>
+                    
                     <span id="pagination-text">Página {{ currentPage }}</span>
-                    <button class="form-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">Siguiente</button>
+                    
+                    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">></button>
+                    <button class="pagination-button" (click)="lastPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">>></button>
+                    
+                    <select id="battles-per-page" (change)="newBattlesPerPage()">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
                 </div>
 
                 @for(battle of battlesPaginated; track $index){
                     <div class="battle-card">
-                    @if(battle.battleStateId == 4)
+                    @if(battle.battleStateId == 4 && battle.usersBattles[0].userId == myUser?.id)
                     {
                         @switch (battle.usersBattles[0].battleResultId) {
                             @case (1) {
                                 <label style="text-align: center;">
-                                    Victoria contra 
-                                    @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
+                                    @if(!battle.isAgainstBot)
                                     {
+                                        {{ myUser?.nickname }}
+                                        ganó contra 
                                         {{ battle.usersBattles[1].userName }}
                                     }
                                     @else
                                     {
-                                        bot
+                                        {{ myUser?.nickname }}
+                                        ganó contra un bot
                                     }
                                 </label>
                             }
                             @case (2) {
                                 <label style="text-align: center;">
-                                    Derrota contra 
-                                    @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
+                                    @if(!battle.isAgainstBot)
                                     {
+                                        {{ myUser?.nickname }}
+                                        perdió contra 
                                         {{ battle.usersBattles[1].userName }}
                                     }
                                     @else
                                     {
-                                        bot
+                                        {{ myUser?.nickname }}
+                                        perdió contra un bot
                                     }
                                 </label>
                             }
@@ -201,51 +224,69 @@
                     <label for="waitingFriendship" style="background-color: #7c679a; border: 4px solid white; padding: 10px;">Solicitud de amistad enviada...</label>
                 }
 
+                <!-- Historial de batallas si el PERFIL DE OTRO -->
                 <h2>Batallas</h2>
                 <fieldset class="battle-history">
 
                 <div class="pagination">
-                    <button class="form-button" (click)="prevPage()" [disabled]="currentPage == 1">Anterior</button>
+
+                    <button class="pagination-button" (click)="firstPage()" [disabled]="currentPage == 1"><<</button>
+                    <button class="pagination-button" (click)="prevPage()" [disabled]="currentPage == 1"><</button>
+                    
                     <span id="pagination-text">Página {{ currentPage }}</span>
-                    <button class="form-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">Siguiente</button>
+                    
+                    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">></button>
+                    <button class="pagination-button" (click)="lastPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">>></button>
+                    
+                    <select id="battles-per-page" (change)="newBattlesPerPage()">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
                 </div>
 
                 @for(battle of battlesPaginated; track $index){
                     <div class="battle-card">
-                        @if(battle.battleStateId == 4)
-                        {
-                            @switch (battle.usersBattles[0].battleResultId) {
-                                @case (1) {
-                                    <label style="text-align: center;">
-                                        Victoria contra 
-                                        @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
-                                        {
-                                            {{ battle.usersBattles[1].userName }}
-                                        }
-                                        @else
-                                        {
-                                            bot
-                                        }
-                                    </label>
-                                }
-                                @case (2) {
-                                    <label style="text-align: center;">
-                                        Derrota contra 
-                                        @if(!battle.isAgainstBot && battle.usersBattles[0].userId == user.id)
-                                        {
-                                            {{ battle.usersBattles[1].userName }}
-                                        }
-                                        @else
-                                        {
-                                            bot
-                                        }
-                                    </label>
-                                }
+                    @if(battle.battleStateId == 4 && battle.usersBattles[0].userId !== myUser?.id)
+                    {
+                        @switch (battle.usersBattles[0].battleResultId) {
+                            @case (1) {
+                                <label style="text-align: center;">
+                                    @if(!battle.isAgainstBot)
+                                    {
+                                        {{ battle.usersBattles[0].userName }}
+                                        ganó contra 
+                                        {{ battle.usersBattles[1].userName }}
+                                    }
+                                    @else
+                                    {
+                                        {{ battle.usersBattles[0].userName }}
+                                        ganó contra un bot
+                                    }
+                                </label>
                             }
-                            <label>Duración de partida: {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
-                            <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
-                            <label>Puntuación: {{ battle.usersBattles[1].punctuation }}</label>
+                            @case (2) {
+                                <label style="text-align: center;">
+                                    @if(!battle.isAgainstBot)
+                                    {
+                                        {{ battle.usersBattles[0].userName }}
+                                        perdió contra 
+                                        {{ battle.usersBattles[1].userName }}
+                                    }
+                                    @else
+                                    {
+                                        {{ battle.usersBattles[0].userName }}
+                                        perdió contra un bot
+                                    }
+                                </label>
+                            }
                         }
+                        <label>Duración de partida: {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
+                        <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL -->
+                        <label>Puntuación: {{ battle.usersBattles[0].punctuation }}</label>
+                    
+                    }
                     </div>
                 }
                 </fieldset>

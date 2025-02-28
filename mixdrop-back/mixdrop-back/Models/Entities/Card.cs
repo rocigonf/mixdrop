@@ -8,6 +8,7 @@ public class Card
     public int TrackId { get; set; }
     public int CardTypeId { get; set; }
     public int CollectionId { get; set; }
-    public Track Track { get; set; }
-    public CardType CardType { get; set; } // Comodín, color, etc
+    public Track Track { get; set; } = null;
+    public CardType CardType { get; set; } = null; // Comodín, color, etc
+    public string Effect { get; set; } = "";
 }

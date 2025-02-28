@@ -26,7 +26,7 @@
       </div>
 
       <div>
-        <button [disabled]="emailOrNickname.length < 1  || password.length < 1" type="submit" class="button">Iniciar
+        <button [disabled]="emailOrNickname.length < 1  || password.length < 1" type="submit" class="form-button">Iniciar
           sesión</button>
       </div>
 
@@ -55,37 +55,43 @@
         </div>
       </div>
 
-      <input type="password" placeholder="Contraseña" formControlName="password" />
+      <input type="password" placeholder="Contraseña" formControlName="newPassword" />
 
       <div class="error">
-        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-          <div *ngIf="registerForm.get('password')?.hasError('required')">La contraseña es obligatoria.</div>
-          <div *ngIf="registerForm.get('password')?.hasError('minlength')">Debe tener mínimo 6 caracteres.
-          </div>
+        <div *ngIf="registerForm.get('newPassword')?.invalid && registerForm.get('newPassword')?.touched">
+          <div *ngIf="registerForm.get('newPassword')?.hasError('required')">La contraseña es obligatoria.</div>
+          <div *ngIf="registerForm.get('newPassword')?.hasError('minlength')">Debe tener mínimo 6 caracteres.</div>
         </div>
       </div>
 
       <input type="password" placeholder="Confirmar contraseña" formControlName="confirmPassword">
 
       <div class="error">
-        <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
-          class="error">
-          <div *ngIf="registerForm.get('confirmPassword')?.hasError('mismatch')">Las contraseñas deben coincidir.</div>
-        </div>
+        <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched">
+          Las contraseñas no coinciden.</div>
       </div>
 
       <label for="productImage" id="labelImage">Imagen de perfil:</label> <br>
       
+      <div class="load-avatar-container">
+        <div class="button-wrapper">
+          <span class="label">Cargar avatar</span>
+          <input 
+              type="file" 
+              accept="image/png, image/jpeg, image/jpg" 
+              id="input-file"  
+              placeholder="Cargar avatar" 
+              (change)="onFileSelected($event)"
+          >
+        </div>
       
-      <!-- para que se vea miniatura de lo que ha elegido -->
-      @if (this.image) {
-      <img id="preview-img" [src]="this.imagePreview" alt="imagen">
-      } 
-      <input name="image" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
-
-      
+        <!-- para que se vea miniatura de lo que ha elegido -->
+        @if (this.image) {
+          <img id="preview-img" [src]="this.imagePreview" alt="imagen">
+        } 
+      </div>
       <br>
-      <button [disabled]="!registerForm.valid" type="submit">Crear Cuenta</button>
+      <button [disabled]="!registerForm.valid" type="submit" class="form-button">Crear Cuenta</button>
     </form>
 
   </div>

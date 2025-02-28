@@ -1,3 +1,4 @@
+using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
@@ -124,90 +125,109 @@ public class GayHandler // GameHandler :3
                 return;
             }
 
-            Slot alreadyPlacedCard = _board.Slots.FirstOrDefault(s => s.Card?.Id == card.CardId);
-            if(alreadyPlacedCard != null)
-            {
-                Console.WriteLine("Esa carta ya está en juego :(");
-                return;
-            }
-
-            // Chequeo para ver si hay puntos extra
-            Slot slut = _board.Slots.ElementAt(card.Position);
-            if (slut.Card == null)
-            {
-                wasEmpty = true;
-            }
-            else
-            {
-                // Chequeo del nivel para que no se jueguen cartas inferiores
-                if (slut.Card.Level > existingCard.Level)
-                {
-                    Console.WriteLine("El nivel de la carta jugada es inferior");
-                    return;
-                }
-            }
-
-            bool isCorrectType = true;
-            string partName = existingCard.Track.Part.Name;
-
-            // Chequeo que se pueda jugar una carta del tipo correcto para esa posición
-            switch (card.Position)
-            {
-                case 0:
-                    isCorrectType = CheckCardType(["Vocal", "Main"], partName);
-                    break;
-                case 1:
-                    isCorrectType = CheckCardType(["Main"], partName);
-                    break;
-                case 2:
-                    isCorrectType = CheckCardType(["Main", "Drums"], partName);
-                    break;
-                case 3:
-                    isCorrectType = CheckCardType(["Drums"], partName);
-                    break;
-                case 4:
-                    isCorrectType = CheckCardType(["Drums", "Bass"], partName);
-                    break;
-                default:
-                    Console.WriteLine("La posición no es correcta");
-                    return;
-            }
-
-            if (!isCorrectType)
-            {
-                Console.WriteLine("El tipo de la carta no es el correcto");
-                return;
-            }
-
-            // Si todo está correcto, establezco la nueva carta y la borro del mazo
-            slut.Card = existingCard;
-            slut.UserId = playerInTurn.UserId;
             playerInTurn.Cards.Remove(existingCard);
-
             randomCard = _cards.ElementAt(_random.Next(0, _cards.Count));
             playerInTurn.Cards.Add(randomCard);
 
-            positions.Add(card.Position);
-
-            // Bonificaciones random
-            switch (Bonus)
+            // Comodines
+            if (existingCard.Effect != "")
             {
-                case "Amarillo":
-                    playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
-                    break;
-                case "Rojo":
-                    playerInTurn.Punctuation += CheckForCardType(2, existingCard.CardType.Id);
-                    break;
-                case "Verde":
-                    playerInTurn.Punctuation += CheckForCardType(3, existingCard.CardType.Id);
-                    break;
-                case "Azul":
-                    playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
-                    break;
+                switch (existingCard.Effect)
+                {
+                    case "Baraja tus cartas":
+                        playerInTurn.Cards = new List<Card>();
+                        DistributeCards(playerInTurn);
+                        break;
+                    case "-1 punto al rival":
+                        otherUser.Punctuation--;
+                        break;
+                }
+            }
+            else
+            {
+                Slot alreadyPlacedCard = _board.Slots.FirstOrDefault(s => s.Card?.Id == card.CardId);
+                if (alreadyPlacedCard != null)
+                {
+                    Console.WriteLine("Esa carta ya está en juego :(");
+                    return;
+                }
+
+                // Chequeo para ver si hay puntos extra
+                Slot slut = _board.Slots.ElementAt(card.Position);
+                if (slut.Card == null)
+                {
+                    wasEmpty = true;
+                }
+                else
+                {
+                    // Chequeo del nivel para que no se jueguen cartas inferiores
+                    if (slut.Card.Level > existingCard.Level)
+                    {
+                        Console.WriteLine("El nivel de la carta jugada es inferior");
+                        return;
+                    }
+                }
+
+                bool isCorrectType = true;
+                string partName = existingCard.Track.Part.Name;
+
+                // Chequeo que se pueda jugar una carta del tipo correcto para esa posición
+                switch (card.Position)
+                {
+                    case 0:
+                        isCorrectType = CheckCardType(["Vocal", "Main"], partName);
+                        break;
+                    case 1:
+                        isCorrectType = CheckCardType(["Main"], partName);
+                        break;
+                    case 2:
+                        isCorrectType = CheckCardType(["Main", "Drums"], partName);
+                        break;
+                    case 3:
+                        isCorrectType = CheckCardType(["Drums"], partName);
+                        break;
+                    case 4:
+                        isCorrectType = CheckCardType(["Drums", "Bass"], partName);
+                        break;
+                    default:
+                        Console.WriteLine("La posición no es correcta");
+                        return;
+                }
+
+                if (!isCorrectType)
+                {
+                    Console.WriteLine("El tipo de la carta no es el correcto");
+                    return;
+                }
+
+                // Si todo está correcto, establezco la nueva carta y la borro del mazo
+                slut.Card = existingCard;
+                slut.UserId = playerInTurn.UserId;
+                
+
+                positions.Add(card.Position);
+
+                // Bonificaciones random
+                switch (Bonus)
+                {
+                    case "Amarillo":
+                        playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
+                        break;
+                    case "Rojo":
+                        playerInTurn.Punctuation += CheckForCardType(2, existingCard.CardType.Id);
+                        break;
+                    case "Verde":
+                        playerInTurn.Punctuation += CheckForCardType(3, existingCard.CardType.Id);
+                        break;
+                    case "Azul":
+                        playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
+                        break;
+                }
+
+                // Establezco la nueva mezcla
+                output = PlayMusic(_board.Playing, existingCard);
             }
 
-            // Establezco la nueva mezcla
-            output = PlayMusic(_board.Playing, existingCard);
             playerInTurn.Punctuation += 1;
 
             if (TotalTurns >= 1)
@@ -398,7 +418,7 @@ public class GayHandler // GameHandler :3
             return;
         }
 
-        if(end)
+        if (end)
         {
             dict["otherUserId"] = playerInTurn.UserId;
         }
@@ -430,11 +450,11 @@ public class GayHandler // GameHandler :3
         {
             bool couldPlay = false;
 
-            for(int i = 0; i < _board.Slots.Length; i++)
+            for (int i = 0; i < _board.Slots.Length; i++)
             {
                 Slot currentSlot = _board.Slots.ElementAt(i);
                 Card card = GetValidCardForSlot(currentSlot, bot);
-                if(card == null)
+                if (card == null)
                 {
                     continue;
                 }
@@ -492,7 +512,8 @@ public class GayHandler // GameHandler :3
                 dict["position"] = spin.Positions;
                 dict["levelRoulette"] = spin.Level;
 
-                if(notBot.Punctuation!=0){
+                if (notBot.Punctuation != 0)
+                {
                     notBot.Punctuation -= spin.Positions.Count;
                     if (notBot.Punctuation < 0) notBot.Punctuation = 0;
                 }
@@ -539,7 +560,7 @@ public class GayHandler // GameHandler :3
             positions = RemoveCardsOfLevel(2, opponent);
             levelDeleted = 2;
         }
-        else if(result >= 75 && result < 90)
+        else if (result >= 75 && result < 90)
         {
             positions = RemoveCardsOfLevel(1, opponent);
             levelDeleted = 1;
@@ -564,17 +585,17 @@ public class GayHandler // GameHandler :3
         for (int i = 0; i < _board.Slots.Length; i++)
         {
             Slot slot = _board.Slots[i];
-            if(slot.Card == null || slot.UserId != player.UserId)
+            if (slot.Card == null || slot.UserId != player.UserId)
             {
                 continue;
             }
 
-            if(level == 0)
+            if (level == 0)
             {
                 slot.Card = null;
                 positions.Add(i);
             }
-            else if(slot.Card.Level == level)
+            else if (slot.Card.Level == level)
             {
                 slot.Card = null;
                 positions.Add(i);
@@ -599,15 +620,15 @@ public class GayHandler // GameHandler :3
         switch (Array.IndexOf(_board.Slots, slot))
         {
             case 0:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id));
             case 1:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id));
             case 3:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() &&  c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
             case 4:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id));
             default:
                 return null;
         }
@@ -665,7 +686,7 @@ public class GayHandler // GameHandler :3
 
             byte[] newAudio = _audioModifier.Modify("wwwroot/" + card.Track.TrackPath, newBpmForCard, pitchFactor);
             //byte[] message = [..BitConverter.GetBytes(card.Id), .. newAudio];
-            byte[] message = [..newAudio];
+            byte[] message = [.. newAudio];
 
             string noteName = playing.Song.Pitch;
             bool couldGet = MusicNotes.NOTE_MAP.TryGetValue(playing.Song.Pitch, out _);

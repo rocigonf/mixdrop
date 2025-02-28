@@ -55,13 +55,12 @@ export class AdminComponent implements OnInit {
 
       const confirmation = confirm(`¿Estás seguro de que quieres cambiar el estado del baneo del usuario #${userId}?`)
       if (confirmation){
-        this.userService.banUserAsync(userId)
-        this.loadUsers()
+        await this.userService.banUserAsync(userId)
       }
       
     } catch (error) {
       console.error("Error al banear este usuario", error)
     }
-    this.loadUsers()
+    await this.loadUsers()
   }
 }
