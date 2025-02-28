@@ -13,7 +13,7 @@
     <img draggable="false" id="card-img" [src]="img" alt="imagen">
     <div class="content">
         <span id="artist">{{ artist }}</span>
-        <span>{{ name }}</span>
+        <span>{{ name || effect }}</span>
         
         @switch (this.part) {
             @case ("Vocal") {

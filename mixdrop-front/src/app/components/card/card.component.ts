@@ -19,28 +19,39 @@ export class CardComponent {
   @Input() currentCard: Card | null = null
 
   turn: boolean = false;
-  part: string = "Bass"
-  artist: string = "Lorde"
+  part: string = ""
+  artist: string = ""
   level: number = 3;
-  name: string = "Green li asd ad asd asght";
+  name: string = "";
   img: string = this.IMG_URL + ""
   color: string = "";
   gris : string = "#3a3a3a"
+  effect: string = ""
 
 
   setCart(card: Card) {
-    this.part = card.track.part.name;
     this.level = card.level;
     this.img = this.IMG_URL + card.imagePath;
-    this.name = card.track.song.name;
-    this.artist = card.track.song.artist.name
+
+    if(card.effect == ""){
+      this.part = card.track.part.name;
+      this.name = card.track.song.name;
+      this.artist = card.track.song.artist.name
+    }
+    else
+    {
+      this.effect = card.effect
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['currentCard'] && changes['currentCard'].currentValue) {
       if (this.currentCard) {
         this.setCart(this.currentCard);
-        this.setColor(this.currentCard.track.part.name);
+        if(this.currentCard.effect == "")
+        {
+          this.setColor(this.currentCard.track.part.name);
+        }
       }
     }
   }
@@ -48,7 +59,9 @@ export class CardComponent {
   ngOnInit() {
     if (this.currentCard) {
       this.setCart(this.currentCard);
-      this.setColor(this.currentCard.track.part.name);
+      if(this.currentCard.effect == ""){
+        this.setColor(this.currentCard.track.part.name);
+      }
     }
   }
 

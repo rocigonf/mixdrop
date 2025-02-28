@@ -471,7 +471,14 @@ export class GameComponent implements OnInit, OnDestroy {
     if (!this.userBattle?.isTheirTurn || !this.cardToUse) {
       return false;
     }
+
+    if(this.cardToUse.effect != "")
+    {
+      return true
+    }
+
     const slotCard = this.board?.slots?.[slotIndex]?.card;
+
     return (this.checkType(allowedTypes, this.cardToUse.track.part.name) &&
       (!slotCard || slotCard.level <= this.cardToUse.level));
   }
