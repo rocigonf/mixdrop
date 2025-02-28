@@ -22,8 +22,7 @@ import { CardComponent } from "../../components/card/card.component";
 import { RouletteComponent } from "../../components/roulette/roulette.component";
 import { UserBattle } from '../../models/user-battle';
 import { ChangeDetectorRef } from '@angular/core';
-
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-game',
@@ -96,6 +95,7 @@ export class GameComponent implements OnInit, OnDestroy {
     public router: Router,
     private cdr: ChangeDetectorRef) {
   }
+
 
 
   async ngOnInit(): Promise<void> {
@@ -245,17 +245,17 @@ export class GameComponent implements OnInit, OnDestroy {
           this.playAudio(positions, jsonResponse.wheel); 
 
           if (this.userBattle?.battleResultId == 1) {
-            alert("Ganaste :D")
+            this.showAlert("Ganaste", "Ganaste :D")
           }
           else {
-            alert("Perdiste :(")
+            this.showAlert("Perdiste", "Perdiste :(")
           }
 
           this.timeRemaining$ = null
           break;
           
           case MessageType.AskForBattle:
-            alert("Revancha solicitada")
+            this.showAlert("Revancha solicitada", "Revancha solicitada")
             this.router.navigateByUrl("menu")
             break
           
@@ -283,6 +283,16 @@ export class GameComponent implements OnInit, OnDestroy {
       );
     }
   }
+
+  private showAlert(title: string, message: string) {
+    Swal.fire({
+      title: title,
+      text: message,
+      showConfirmButton: false,
+      timer: 2000
+    })
+  }
+
 
   // reproduce el mix en byte que le envia al jugar una carta
   async playAudio(positions: number[], spinTheWheel: boolean) {
@@ -444,6 +454,7 @@ export class GameComponent implements OnInit, OnDestroy {
   onDragLeave(event: DragEvent) {
     event.preventDefault();
   }
+
 
   onDrop(event: DragEvent, slotIndex: number) {
     event.preventDefault();

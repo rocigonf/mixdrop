@@ -2,6 +2,10 @@
     font-size: 1.5rem;
 }
 
+fieldset{
+    max-width: 570px;
+}
+
 .info{
     display: flex;
     align-items: center;
@@ -21,12 +25,31 @@ label{
 }
 
 .profile-row {
-    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
     margin-bottom: 15px;
+    margin-top: 15px;
 }
 
-/* input[type="text"]{
-} */
+.profile-row-buttons{
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+.new-password-row{
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    padding: 10px;
+}
+
+input[type="text"], input[type="password"], input[type="email"]{
+    max-height: 34px;
+    border-style: solid;
+    border-width: 2px;
+}
 
 .panel-top{
     font-size: 3rem;
@@ -47,6 +70,20 @@ label{
 .column{
     flex: 50%;
     padding: 20px;
+}
+
+.other-column{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.info-avatar{
+    display: flex;
+    flex-direction: column;
 }
 
 .avatar{
@@ -73,7 +110,9 @@ label{
 .button-wrapper {
     position: relative;
     text-align: center;
+    box-sizing: border-box;
     width: 200px;
+    height: 50px;
     padding: 5px;
     background: #7c679a;
     border: 4px solid white;
@@ -86,7 +125,7 @@ label{
     text-transform: uppercase;
     align-items: center;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.6rem;
     user-select: none; /* Para q no se pueda seleccionar el texto del botón */
 }
 
@@ -111,13 +150,13 @@ label{
 
 .form-button{ /* BOTONES MORADOS */
     text-align: center;
-    min-width: 200px;
+    width: 200px;
     height: 50px;
     color: white;
     background: #7c679a;
     border: 4px solid white;
     box-shadow: 4px 4px 0 black;
-    font-size: 1.2em !important;
+    font-size: 1.6rem;
     text-transform: uppercase;
     font-weight: bold;
     cursor: pointer;
@@ -142,30 +181,111 @@ label{
 .pagination{
     display: flex;
     justify-content: space-between;
+    gap: 1em;
 }
 
 #pagination-text{
     font-size: 1.5em;
 }
 
+.battle-history{
+    display: flex;
+    flex-direction: column;
+}
+
 .battle-card{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1em;
+    padding: 0.5em;
     background-color: #7c679a;
+    border: 4px solid white;
 }
 
 /* --- RESPONSIVE ---*/
-@media (max-width: 700px) {
-    span.label{
-        font-size: 1em;
+@media (max-width: 1170px) {
+
+
+    .profile-row, .profile-row-buttons, .new-password-row{
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+        gap: 1rem;
     }
-    button{
-        font-size: 1em;
+
+    .avatar-preview{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
     }
+
     .container{
         display: flex;
         flex-direction: column;
         align-items: center;
     }
+
     .column {
         width: 100%;
+    }
+
+    fieldset {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+}
+
+/* --- RESPONSIVE ---*/
+@media (max-width: 570px) {
+    label, span.label, .form-button, input{
+        font-size: 1em !important;
+    }
+
+    .form-button, .button-wrapper{
+        width: 180px !important;
+        height: 45px !important;
+    }
+
+    .avatar-preview-img .avatar{
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    .profile-row, .profile-row-buttons, .new-password-row{
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .avatar-preview{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .column {
+        width: 100%;
+    }
+
+    fieldset {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pagination{
+        font-size: 1em;
+        
     }
 }

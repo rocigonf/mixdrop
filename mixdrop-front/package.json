@@ -23,7 +23,9 @@
     "@angular/service-worker": "^18.2.0",
     "aos": "^2.3.4",
     "mixdrop-front": "file:",
+    "primeng": "^19.0.8",
     "rxjs": "~7.8.0",
+    "sweetalert2": "^11.17.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"
   },
