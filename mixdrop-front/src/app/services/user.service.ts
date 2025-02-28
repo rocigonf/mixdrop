@@ -65,7 +65,7 @@ export class UserService {
   }
 
   // Banear usuario
-  banUserAsync(userId: number){
-    return this.api.put(`User/banUser/${userId}`)
+  async banUserAsync(userId: number){
+    return await this.api.put(`User/banUser/${userId}`)
   }
 }
