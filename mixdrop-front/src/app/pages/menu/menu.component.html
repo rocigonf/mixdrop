@@ -6,7 +6,7 @@
     } @else {
         <img src="images/user.png" alt="avatar de usuario">
     }
-    <span>{{user?.nickname}}</span>
+    <span> - {{user?.nickname}} - </span>
     
     <button class="rainbow-button" (click)="emparejar()">Jugar</button>
 </div>
@@ -55,9 +55,8 @@
                     <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
                         [ngModelOptions]="{standalone: true}" />
 
-                    <button type="submit" [disabled]="!queryfriend"> Buscar</button>
+                    <button class="form-button" type="submit" [disabled]="!queryfriend"> Buscar</button>
                 </form>
-
 
                 @if (acceptedFriends.length < 1) { <p> No tienes amigos :C</p> }
 
@@ -105,13 +104,24 @@
 
                                 <div class="contenedorIcono">
                                     <img #tooltip="matTooltip"
-                                        matTooltip="Eliminar amigo" matTooltipPosition="above" matTooltipClass="tooltip" class="icono" (click)="removeFriend(friend, true)" src="/images/deleteFriend.webp"
+                                        matTooltip="Eliminar amigo" 
+                                        matTooltipPosition="above" 
+                                        matTooltipClass="tooltip" 
+                                        class="icono" 
+                                        (click)="removeFriend(friend, true)" 
+                                        src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div> 
                                 @if (!hasBattle(friend.receiverUser|| friend.senderUser)) {
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="createBattle(friend.receiverUser || friend.senderUser)"
-                                        src="/images/battle.webp" alt="retar a batalla">
+                                    <img #tooltip="matTooltip"
+                                        matTooltip="Retar a batalla" 
+                                        matTooltipPosition="above" 
+                                        matTooltipClass="tooltip" 
+                                        class="icono" 
+                                        (click)="createBattle(friend.receiverUser || friend.senderUser)"
+                                        src="/images/battle.webp" 
+                                        alt="Retar a batalla">
                                 </div>}
                             </div>
 
@@ -159,7 +169,13 @@
                                 </span>
 
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="removeFriend(friend, true)" src="/images/deleteFriend.webp"
+                                    <img #tooltip="matTooltip"
+                                        matTooltip="Eliminar amigo" 
+                                        matTooltipPosition="above" 
+                                        matTooltipClass="tooltip" 
+                                        class="icono" 
+                                        (click)="removeFriend(friend, true)" 
+                                        src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div>
                             </div>
@@ -205,7 +221,13 @@
                                 </span>
 
                                 <div class="contenedorIcono">
-                                    <img class="icono" (click)="removeFriend(friend, true)" src="/images/deleteFriend.webp"
+                                    <img #tooltip="matTooltip"
+                                        matTooltip="Eliminar amigo" 
+                                        matTooltipPosition="above" 
+                                        matTooltipClass="tooltip" 
+                                        class="icono" 
+                                        (click)="removeFriend(friend, true)" 
+                                        src="/images/deleteFriend.webp"
                                         alt="eliminar amigo">
                                 </div>
                             </div>
@@ -229,7 +251,7 @@
                 <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser"
                     [ngModelOptions]="{standalone: true}" />
 
-                <button type="submit" [disabled]="!queryuser"> Buscar</button>
+                <button class="form-button" type="submit" [disabled]="!queryuser"> Buscar</button>
             </form>
 
             @if (searchedUsers) {
@@ -253,10 +275,26 @@
 
                         <div class="contenedorIcono">
                             @if (!hasFriendship(user)) {
-                            <img class="icono" (click)="addFriend(user)" src="/images/addFriend.webp"
+
+                            <img #tooltip="matTooltip"
+                                matTooltip="Añadir amigo" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="addFriend(user)" 
+                                src="/images/addFriend.webp"
                                 alt="añadir amigo">
+
                             } @else if (waitingFriendship(user)) {
-                            <img class="icono" src="/images/waiting.gif" alt="esperando solicitud de amistad">
+
+                            <img #tooltip="matTooltip"
+                                matTooltip="Solicitud enviada..." 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                src="/images/waiting.gif" 
+                                alt="Solicitud enviada">
+
                             }
                         </div>
                     </div>
@@ -292,12 +330,24 @@
                     </span>
 
                     <div class="contenedorIcono">
-                        <img class="icono" (click)="acceptFriendship(friend.id)" src="/images/addFriend.webp"
-                            alt="aceptar solicitud de amistad">
+                        <img #tooltip="matTooltip"
+                            matTooltip="Aceptar solicitud" 
+                            matTooltipPosition="above" 
+                            matTooltipClass="tooltip" 
+                            class="icono" 
+                            (click)="acceptFriendship(friend.id)" 
+                            src="/images/addFriend.webp"
+                            alt="Aceptar solicitud de amistad">
                     </div>
                     <div class="contenedorIcono">
-                        <img class="icono" (click)="removeFriend(friend, false)" src="/images/delete.webp"
-                            alt="rechazar solicitud de amistad">
+                        <img #tooltip="matTooltip"
+                            matTooltip="Rechazar solicitud" 
+                            matTooltipPosition="above" 
+                            matTooltipClass="tooltip" 
+                            class="icono" 
+                            (click)="removeFriend(friend, false)" 
+                            src="/images/delete.webp"
+                            alt="Rechazar solicitud de amistad">
                     </div>
                 </div>
                 }
@@ -333,12 +383,24 @@
                         </span>
 
                         <div class="contenedorIcono">
-                            <img class="icono" (click)="acceptBattle(battle)" src="/images/battle.webp"
-                                alt="aceptar batalla">
+                            <img #tooltip="matTooltip"
+                                matTooltip="Aceptar batalla" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="acceptBattle(battle)" 
+                                src="/images/battle.webp"
+                                alt="Aceptar batalla">
                         </div>
                         <div class="contenedorIcono">
-                            <img class="icono" (click)="deleteBattle(battle)" src="/images/delete.webp"
-                                alt="rechazar batalla">
+                            <img #tooltip="matTooltip"
+                                matTooltip="Rechazar batalla" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="deleteBattle(battle)" 
+                                src="/images/delete.webp"
+                                alt="Rechazar batalla">
                         </div>
                     </div>
                     } }
@@ -347,30 +409,20 @@
             }
 
     </section>
-
-
 </div>
 
-<div class="container">
-    <p>Total de jugadores conectados: {{ this.totalUsers }}</p>
+<hr>
+
+<div class="stats">
+    <fieldset>
+        <p style="font-size: 2rem;">Usuarios conectados: <br> {{ this.totalUsers }}</p>
+    </fieldset>
+    <fieldset>
+        <p style="font-size: 2rem;">Partidas en juego: <br> {{ this.totalBattles }} </p>
+    </fieldset>
+    <fieldset>
+        <p style="font-size: 2rem;">Usuarios jugando: <br> {{ this.totalPlayers }} </p>
+    </fieldset>
 </div>
 
-<div class="container">
-    <p>Total de partidas en juego: {{ this.totalBattles }} </p>
-</div>
-
-<div class="container">
-    <p>Total de usuarios jugando: {{ this.totalPlayers }} </p>
-</div>
-
-
-<!--
-
-<br><br><br><br>
-<div>
-    <button (click)="askForInfo(0)">Pedir dato 1</button>
-    <button (click)="askForInfo(1)">Pedir dato 2</button>
-    <button (click)="askForInfo(2)">Pedir dato 3</button>
-    <p>{{ serverResponse }}</p>
-    <p>Total de jugadores: {{ totalPlayers }}</p>
-</div>-->
+<hr>

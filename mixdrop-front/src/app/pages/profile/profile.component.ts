@@ -13,6 +13,8 @@ import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { FriendshipService } from '../../services/friendship.service';
+import { Battle } from '../../models/battle';
+import { BattleDto } from '../../models/battle-dto';
 
 @Component({
   selector: 'app-profile',
@@ -47,10 +49,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
-  battlesPerPage = 3;
+  battlesPerPage = 1;
   currentPage = 1;
+  totalPages = 1;
   totalBattles = 0;
-  battlesPaginated: any[] = [];
+  battlesPaginated: BattleDto[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -275,15 +278,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.userForm.valid) {
       this.isEditing = false
-      // ACTUALIZAR
-
+      // Recarga la página
+      this.authService.getUser();
     } else {
       alert("Los datos introducidos no son válidos")
     }
   }
 
-
-  // comprueba q el usuatio ya tiene amistad (aceptada o no) con otro usuario
+  // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
   hasFriendship(user: User): Friend | undefined {
     return this.friendsRaw.find(friend =>
       (friend.senderUserId === user.id && friend.receiverUserId === this.myUser?.id) ||
@@ -296,16 +298,34 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const endDate = new Date(end);
     const time = endDate.getTime() - startDate.getTime();
   
-    const hours = Math.floor(time / (1000 * 3600));
+    //const hours = Math.floor(time / (1000 * 3600));
     const minutes = Math.floor((time % (1000 * 3600)) / (1000 * 60));
   
-    return `${hours} horas ${minutes} minutos`;
+    if (minutes == 1) {
+      return `${minutes} minuto`;
+    }
+    return `${minutes} minutos`;
   }
 
   paginateBattles() {
     const startIndex = (this.currentPage - 1) * this.battlesPerPage;
     const endIndex = startIndex + this.battlesPerPage;
     this.battlesPaginated = this.user?.battles.slice(startIndex, endIndex) || [];
+  }
+
+  firstPage(){
+    if (this.currentPage !== 1){
+      this.currentPage = 1;
+      this.paginateBattles();
+    }
+  }
+
+  lastPage(){
+    this.totalPages = Math.ceil(this.totalBattles / this.battlesPerPage);
+    if (this.currentPage !== this.totalPages && this.totalPages > 0) {
+      this.currentPage = this.totalPages;
+      this.paginateBattles();
+    }
   }
 
   nextPage() {
@@ -318,6 +338,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.paginateBattles();
+    }
+  }
+
+  newBattlesPerPage() {
+    const battlesPerPageElement = document.getElementById("battles-per-page") as HTMLInputElement | HTMLSelectElement;
+    if (battlesPerPageElement) {
+      this.battlesPerPage = parseInt(battlesPerPageElement.value);
+      this.currentPage = 1;
       this.paginateBattles();
     }
   }
