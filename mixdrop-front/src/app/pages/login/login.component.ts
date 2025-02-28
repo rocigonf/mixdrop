@@ -6,6 +6,7 @@ import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { WebsocketService } from '../../services/websocket.service';
 import { NgIf } from '@angular/common';
 import { PasswordValidatorService } from '../../services/password-validator.service';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 
 
@@ -51,6 +52,16 @@ export class LoginComponent {
       { validators: this.passwordValidator.passwordMatchValidator });
   }
 
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+      Swal.fire({
+        title: title,
+        text: message,
+        showConfirmButton: false,
+        icon: icon,
+        timer: 2000
+      })
+    }
+
 
   async login() {
     if(this.pressedEnter) return;
@@ -71,13 +82,13 @@ export class LoginComponent {
         localStorage.setItem('jwtToken', this.jwt);
       }
 
-      alert("inicio sesion exitoso");
+      this.showAlert("Éxito", "Inicio de sesión exitoso", 'success')
 
       this.router.navigateByUrl("menu"); // redirige a inicio
 
       this.webSocketService.connectNative()
     } else {
-      alert("error al iniciar sesion: datos incorrectos o baneo existente")
+      this.showAlert("Error", "Datos incorrectos o baneo existente", 'error')
       this.pressedEnter = false
 
     }
@@ -110,23 +121,23 @@ export class LoginComponent {
         const loginResult = await this.authService.login(authData, false);
 
         if (loginResult.success) {
-          alert("Te has registrado con éxito.")
+          this.showAlert("Éxito", "Te has registrado con éxito", 'success')
           this.router.navigateByUrl("menu"); // redirige a inicio
 
           this.webSocketService.connectNative()
 
         } else {
-          alert("Error en el inicio de sesión");
+          this.showAlert("Error", "Error en el registro", 'error')
           this.pressedEnter = false
         }
 
       } else {
-        alert("Error en el registro");
+        this.showAlert("Error", "Error en el registro", 'error')
         this.pressedEnter = false;
       }
 
     } else {
-      alert("Formulario no válido");
+      this.showAlert("Error", "Formulario no válido", 'error')
       this.pressedEnter = false;
     }
   }

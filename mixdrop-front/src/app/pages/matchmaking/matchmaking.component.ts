@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { Battle } from '../../models/battle';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-matchmaking',
@@ -98,7 +99,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
     switch (jsonResponse.messageType) {
       case MessageType.Play:
-        alert("Partida encontrada :3")
+        this.showAlert("Partida encontrada", "Partida encontrada :3", 'info')
         this.readyForBattle = true
         if (jsonResponse.battle) {
           this.battle = jsonResponse.battle
@@ -224,4 +225,14 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+        Swal.fire({
+          title: title,
+          text: message,
+          showConfirmButton: false,
+          icon: icon,
+          timer: 2000
+        })
+      }
 }

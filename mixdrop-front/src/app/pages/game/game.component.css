@@ -2,11 +2,12 @@
     font-size: 1.5rem;
 }
 
-.screen{
+
+.screen {
     display: flex;
     justify-content: center;
     width: 100%;
-    gap: 40px;
+    gap: 1.5rem;
 }
 
 .points {
@@ -21,7 +22,7 @@
     align-content: center;
 }
 
-.points div span{
+.points div span {
     text-align: center;
     display: flex;
     align-items: center;
@@ -40,18 +41,19 @@
 .myCarts {
     display: flex;
     gap: 10px;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: wrap;
 }
 
 .card {
-    margin: 5px;
+    text-align: center;
+    margin: 6px auto;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
     border: 2px solid white;
-    height: 240px;
-    width: 140px;
+    height: 15.5rem;
+    width: 10rem;
     background-color: black;
 }
 
@@ -73,7 +75,7 @@ app-card {
     margin: 5px;
     display: flex;
     flex-direction: column;
-    height: 240px;
+    height: 15rem;
     background-color: black;
 }
 
@@ -83,7 +85,7 @@ app-card {
     padding: 10px;
     color: white;
     border-radius: 5px;
-    height: 240px;
+    height: 15rem;
     background-color: #242424;
 }
 
@@ -107,14 +109,27 @@ app-card {
     background-color: rgb(0, 225, 255);
 }
 
+.slot {
+    height: 16.5rem;
+    width: 11rem;
+}
+
 .slot4 {
     border-radius: 10px;
     background: linear-gradient(to right, rgb(0, 255, 255), rgb(43, 228, 89));
 }
 
 .myCarts * {
+    height: 16.5rem;
+    width: 11rem;
     outline: 3px solid rgba(0, 0, 0, 0.3);
     cursor: grab;
+}
+
+.selectCars {
+    box-shadow: 0px 0px 10px 0 rgb(255, 2, 0), 4px 4px 10px 0 rgb(0, 132, 255), 0px 0px 10px 0px rgb(255, 255, 0);
+    transition: 0.5s;
+    filter: brightness(1.3);
 }
 
 .myCarts app-card:hover {
@@ -133,7 +148,7 @@ app-card:active {
 }
 
 
-
+/*TOCADISCO CON INFO DE USUARIO*/
 
 .player {
     background: conic-gradient(white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white, white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white);
@@ -236,7 +251,7 @@ app-card:active {
 }
 
 .roulette-animation app-roulette {
-    width: 300px;
+    width: 50vh;
     height: auto;
     animation: spin 3s ease-in-out;
 }
@@ -256,6 +271,7 @@ app-card:active {
         transform: rotate(0deg) scale(0);
         opacity: 0;
     }
+
     10% {
         transform: rotate(180deg) scale(1);
         opacity: 1;
@@ -265,6 +281,7 @@ app-card:active {
         transform: rotate(180deg) scale(1);
         opacity: 1;
     }
+
     90% {
         transform: rotate(180deg) scale(1);
         opacity: 1;
@@ -277,43 +294,211 @@ app-card:active {
 }
 
 
-
+/*BORDE LED DE TABLERO*/
 .shadow {
     margin-bottom: 30px;
-  position: relative;
-  background: #161a1f;
-  padding: 10px;
-  border-radius: 10px;
+    position: relative;
+    background: #161a1f;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .shadow::before,
 .shadow::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  border-radius: 10px;
-  background: linear-gradient(45deg,red,blue,green,yellow,#e11d74,black,#ffff00,#aa0000);
-  background-size: 400%;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-  z-index: -1;
-  animation: animate 60s linear infinite;
+    content: '';
+    position: absolute;
+    top: -2px;
+    border-radius: 10px;
+    background: linear-gradient(45deg, red, blue, green, yellow, #e11d74, black, #ffff00, #aa0000);
+    background-size: 400%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1;
+    animation: animate 60s linear infinite;
 }
 
 .shadow::after {
-  filter: blur(8px);
+    filter: blur(8px);
 }
 
 @keyframes animate {
-  0% {
-    background-position: 0 0;
-  }
+    0% {
+        background-position: 0 0;
+    }
 
-  50% {
-    background-position: 400% 0;
-  }
+    50% {
+        background-position: 400% 0;
+    }
 
-  100% {
-    background-position: 0 0;
-  }
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.mobileButton{
+    display: none;
+}
+
+/* ORIENTACION PANTALLA */
+
+@media (orientation: portrait) {
+    .screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: black;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        padding: 20px;
+    }
+
+    .screen::before {
+        content: "Gira tu dispositivo para jugar";
+    }
+
+    .game,
+    .info, .mobileButton{
+        display: none;
+    }
+
+
+}
+
+@media (orientation: landscape) and (max-width: 900px) {
+    .screen::before {
+        content: "";
+    }
+
+    .mobileButton{
+        display: block;
+        font-size: 0.7rem;
+        margin: auto;
+    }
+
+    .slot p{
+        display: none;
+    }
+
+    .game,
+    .info {
+        display: block;
+    }
+
+    .points, .board{
+    margin-top: 0;
+    }
+
+    .myCarts * {
+        height: 34vh;
+        width: 24vh;
+    }
+
+    :host ::ng-deep app-card .card{
+        height: 30vh;
+        width: 20vh;
+        margin: 3%;
+    }
+    :host ::ng-deep app-card * {
+        font-size: 0.6rem;
+    }
+       
+    :host ::ng-deep app-card #part-icon {
+        margin-top: 1.3rem;
+    }
+       
+    :host ::ng-deep app-card .trapecio:nth-child(1){
+        margin-top: 1.15rem;
+        border-width: 0.5rem 0.4rem 0 0;
+    }
+    
+    :host ::ng-deep app-card .trapecio:nth-child(2){
+        margin-top: 0.69921rem;
+        width: 0.45rem;
+        border-right-width: 0.3rem;
+        border-top-width: 0.4rem;
+    }
+    
+    :host ::ng-deep app-card .trapecio:nth-child(3){
+        width: 0.75rem;
+        border-right-width: 0.4rem;
+        border-top-width: 0.6rem;   
+    }
+    
+    .shadow {
+        margin-bottom: 15px;
+        padding: 5px;
+    }
+
+    .slot{
+        height: 35vh;
+        width: 25vh;
+    }
+
+    .card {
+        height: 32vh;
+        width: 22vh;
+        margin: 4px auto;
+    }
+
+    .card p {
+        font-size: 1rem;
+    }
+
+    .btn-roulette {
+        height: 30vh;
+    }
+
+    .btn-roulette button {
+        font-size: 1rem;
+    }
+
+    .roulette-animation app-roulette {
+        width: 20vh;
+        height: auto;
+    }
+
+    .player {
+        width: 60px;
+        height: 60Px;
+    }
+
+    .disk {
+        width: 35px;
+        height: 35px;
+        margin: 5px;
+    }
+
+    .pen {
+        margin: 5px 0 0 50px;
+    }
+
+    .move {
+        margin: 22px 0 0 50px;
+    }
+
+    .hand {
+        height: 40px;
+        width: 3px;
+    }
+
+    .niddle {
+        margin: -8px 0 0 -4px;
+        width: 12px;
+        height: 12px;
+    }
+
+    .btns {
+        margin: 40px 0 0 5px;
+    }
+
+    .myCarts {
+        gap: 0;
+    }
+
+    .screen {   
+        gap: 1rem;
+    }
+
 }

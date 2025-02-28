@@ -97,6 +97,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
 
+
   async ngOnInit(): Promise<void> {
 
     console.log(this.authService.isAuthenticated())
@@ -454,6 +455,7 @@ export class GameComponent implements OnInit, OnDestroy {
     event.preventDefault();
   }
 
+
   onDrop(event: DragEvent, slotIndex: number) {
     event.preventDefault();
     if (!this.cardToUse) return;
@@ -469,7 +471,14 @@ export class GameComponent implements OnInit, OnDestroy {
     if (!this.userBattle?.isTheirTurn || !this.cardToUse) {
       return false;
     }
+
+    if(this.cardToUse.effect != "")
+    {
+      return true
+    }
+
     const slotCard = this.board?.slots?.[slotIndex]?.card;
+
     return (this.checkType(allowedTypes, this.cardToUse.track.part.name) &&
       (!slotCard || slotCard.level <= this.cardToUse.level));
   }

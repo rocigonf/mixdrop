@@ -5,6 +5,7 @@ import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { WebsocketService } from '../../services/websocket.service';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-navbar',
@@ -40,8 +41,7 @@ export class NavbarComponent implements OnInit{
       this.authService.logout()
       this.webSocketService.disconnectNative()
       this.navigateToUrl("/")
-      alert("Sesion cerrada corectamente.")
-      
+      this.showAlert("Éxito", "Sesión cerrada correctamente", 'success')
       // Iniciar sesión
     } else {
       this.navigateToUrl("login");
@@ -52,4 +52,14 @@ export class NavbarComponent implements OnInit{
   {
     this.router.navigateByUrl(url);
   }
+
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+        Swal.fire({
+          title: title,
+          text: message,
+          showConfirmButton: false,
+          icon: icon,
+          timer: 2000
+        })
+      }
 }

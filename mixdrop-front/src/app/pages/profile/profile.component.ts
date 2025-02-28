@@ -13,8 +13,8 @@ import { WebsocketService } from '../../services/websocket.service';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { FriendshipService } from '../../services/friendship.service';
-import { Battle } from '../../models/battle';
 import { BattleDto } from '../../models/battle-dto';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -193,7 +193,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       if (confirmed) {
         await this.friendshipService.removeFriendById(friend.id)
-        alert(`Has dejado de ser amigo de ${nickname}.`);
+        this.showAlert("Éxito", `Amistad con ${nickname} rechazada.`, 'info')
       }
     }
 
@@ -281,9 +281,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
       // Recarga la página
       this.authService.getUser();
     } else {
-      alert("Los datos introducidos no son válidos")
+      this.showAlert("Error", "Formulario no válido", 'error')
     }
   }
+
+  // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+          Swal.fire({
+            title: title,
+            text: message,
+            showConfirmButton: false,
+            icon: icon,
+            timer: 2000
+          })
+        }
+
 
   // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
   hasFriendship(user: User): Friend | undefined {
