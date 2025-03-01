@@ -38,6 +38,20 @@ public class BattleController : ControllerBase
         return friendship;
     }*/
 
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<List<BattleDto>> GetBattleById(int id)
+    {
+        User user1 = await GetAuthorizedUser();
+
+        if (user1 == null)
+        {
+            return null;
+        }
+
+        return await _battleService.GetBattleByIdAsync(id);
+    }
+
     // Crear batalla
     [Authorize]
     [HttpPost]

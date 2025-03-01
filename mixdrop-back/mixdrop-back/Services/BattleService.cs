@@ -1,4 +1,6 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Entities;
+using mixdrop_back.Models.Mappers;
 using mixdrop_back.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -403,6 +405,22 @@ public class BattleService
     public async Task<ICollection<Battle>> GetPendingBattlesByUserIdAsync(int userId)
     {
         ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetPendingBattlesByUserIdAsync(userId);
+        return battles;
+    }
+
+    public async Task<List<BattleDto>> GetBattleByIdAsync(int id)
+    {
+        Battle battle = await _unitOfWork.BattleRepository.GetCompleteBattleWithUsersAsync(id);
+
+        if(battle == null)
+        {
+            return null;
+        }
+        
+        BattleMapper battleMapper = new BattleMapper();
+
+        List<BattleDto> battles = battleMapper.ToDtoWithAllInfo(new List<Battle> { battle });
+
         return battles;
     }
 }

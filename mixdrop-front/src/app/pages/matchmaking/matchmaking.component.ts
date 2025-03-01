@@ -12,6 +12,7 @@ import { Friend } from '../../models/friend';
 import { Battle } from '../../models/battle';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { BattleDto } from '../../models/battle-dto';
 
 @Component({
   selector: 'app-matchmaking',
@@ -44,6 +45,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   readyForBattle = false
   battle: Battle | null = null
   battleId: number = 0
+  actualBattle: BattleDto | null = null
 
   loading: boolean = false
 
@@ -68,6 +70,12 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         }
       }
       this.battleId = parseInt(sessionStorage.getItem("battleId")!!)
+      const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
+      console.log("RESULTADO: ", result)
+      
+      this.actualBattle = result.data[0]
+      this.battleId = this.actualBattle.id
+      sessionStorage.setItem("battleId", this.battleId.toString())
     }
 
     if(sessionStorage.getItem("revenge") == "true")
@@ -89,11 +97,13 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
       this.messageReceived$?.unsubscribe()
-      if((this.battle || this.battleId != 0) && this.readyForBattle)
+      await this.deleteBattleBydId(this.battleId, true)
+      this.resetData()
+      /*if((this.battle || this.battleId != 0) && this.readyForBattle)
       {
         await this.deleteBattleBydId(this.battleId, true)
         this.resetData()
-      }
+      }*/
   }
 
   processMessage(message: any) {
@@ -138,6 +148,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
     this.readyForBattle = false
     this.loading = false
     this.battleId = 0
+    this.actualBattle = null
     sessionStorage.removeItem("battle")
     sessionStorage.removeItem("battleId")
   }
