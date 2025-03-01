@@ -11,18 +11,38 @@
 <!--RULETA-->
 
 <div *ngIf="showRoulette && whoSpinRoulette" class="roulette-overlay">
-    <h1> {{ whoSpinRoulette + ' ha tirado de la ruleta'|| ' ha tirado de la ruleta' }}</h1>
+    <h1> {{ 'Has tirado de la ruleta' }}</h1>
     <div class="roulette-animation">
         <app-roulette [levelToDelete]="spinRouletteLevel"></app-roulette>
     </div>
 </div>
 
+<div *ngIf="showEnemyRoulette" class="enemyRoulette">
+    <h2 *ngIf="this.spinRouletteLevel>0">{{this.whoSpinRoulette}} ha girado la ruleta y te ha quitado cartas de nivel {{this.spinRouletteLevel}}.</h2>
+    <h2 *ngIf="this.spinRouletteLevel==0">{{this.whoSpinRoulette}} ha girado la ruleta y te quitó todas las cartas del tablero.</h2>
+</div>
+
 
 <div class="screen">
     <div class="info">
+        @if(currentBattle){
+        <div class="time">
+            <!-- CONTADOR -->
+            @if(this.userBattle?.isTheirTurn)
+            {
+            <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+            }
+
+            <!-- SI HAY BONUS -->
+            @if(bonus != "")
+            {
+            <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
+            <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
+            }
+        </div>
+
         <!-- PUNTOS Y AVATARES -->
         <div class="points">
-            @if(currentBattle){
             <div class="myPoints">
                 <div class="wrapper">
                     <div class="player">
@@ -79,24 +99,8 @@
                 <span>{{enemyUser?.user?.nickname}}</span>
                 }
             </div>
-            }
         </div>
-
-        <div class="time">
-            <!-- CONTADOR -->
-            @if(this.userBattle?.isTheirTurn)
-            {
-            <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
-            }
-
-            <!-- SI HAY BONUS -->
-            @if(bonus != "")
-            {
-            <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
-            }
-        </div>
-
-
+        }
     </div>
 
     <!-- REVANCHA -->
@@ -111,7 +115,6 @@
 
     <div class="game">
         <div class="board shadow">
-
             <!--primera casilla VOZ Y PRINCIPAL-->
             <div class="slot0 slot" [ngClass]="{'highlight': shouldHighlightSlot(0, ['Vocal', 'Main'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 0)">
@@ -119,16 +122,15 @@
                 {
                 <app-card [currentCard]="board.slots[0].card"></app-card>
                 @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)
-                && isCardInUse(cardToUse) &&
-                board.slots[0].card.level <= cardToUse.level) { 
-                    <button (click)="useCard(0)" class="mobileButton">
+                && !isCardInUse(cardToUse) &&
+                board.slots[0].card.level <= cardToUse.level) { <button (click)="useCard(0)" class="mobileButton">
                     Colocar aqui</button>
                     }
                     }
                     @else {
                     <div class="card">
                         @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"],
-                        cardToUse.track.part.name) && isCardInUse(cardToUse) 
+                        cardToUse.track.part.name) && !isCardInUse(cardToUse)
                         ) {
                         <p>Colocar aquí</p>
                         <button (click)="useCard(0)" class="mobileButton">Colocar aqui</button>
@@ -146,12 +148,14 @@
                 {
                 <app-card [currentCard]="board.slots[1].card"></app-card>
                 @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) &&
-                board.slots[1].card.level <= cardToUse.level && isCardInUse(cardToUse) ) { } <button (click)="useCard(1)" class="mobileButton">
+                board.slots[1].card.level <= cardToUse.level && !isCardInUse(cardToUse) ) { } <button
+                    (click)="useCard(1)" class="mobileButton">
                     Colocar aqui</button>
                     }
                     @else {
                     <div class="card">
-                        @if (this.userBattle.isTheirTurn && cardToUse && isCardInUse(cardToUse)  && checkType(["Main"], cardToUse.track.part.name))
+                        @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Main"],
+                        cardToUse.track.part.name))
                         {
                         <button (click)="useCard(1)" class="mobileButton">Colocar aqui</button>
                         <p>Colocar aquí</p>
@@ -167,7 +171,8 @@
                 @if(board.slots[2].card)
                 {
                 <app-card [currentCard]="board.slots[2].card"></app-card>
-                @if ( this.userBattle.isTheirTurn &&cardToUse && isCardInUse(cardToUse)  && checkType(["Main", "Drums"], cardToUse.track.part.name)
+                @if ( this.userBattle.isTheirTurn &&cardToUse && !isCardInUse(cardToUse) && checkType(["Main", "Drums"],
+                cardToUse.track.part.name)
                 && board.slots[2].card.level <= cardToUse.level) { <button (click)="useCard(2)" class="mobileButton">
                     Colocar aqui</button>
                     }
@@ -175,7 +180,7 @@
                     @else {
                     <div class="card">
                         @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"],
-                        cardToUse.track.part.name) && isCardInUse(cardToUse) )
+                        cardToUse.track.part.name) && !isCardInUse(cardToUse) )
                         {
                         <button (click)="useCard(2)" class="mobileButton">Colocar aqui</button>
                         <p>Colocar aquí</p>
@@ -192,13 +197,15 @@
                 {
                 <app-card [currentCard]="board.slots[3].card"></app-card>
                 @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) &&
-                board.slots[3].card.level <= cardToUse.level && isCardInUse(cardToUse) ) { <button (click)="useCard(3)" class="mobileButton">
+                board.slots[3].card.level <= cardToUse.level && !isCardInUse(cardToUse) ) { <button (click)="useCard(3)"
+                    class="mobileButton">
                     Colocar aqui</button>
                     }
                     }
                     @else {
                     <div class="card">
-                        @if (this.userBattle.isTheirTurn && cardToUse && isCardInUse(cardToUse) && checkType(["Drums"], cardToUse.track.part.name))
+                        @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Drums"],
+                        cardToUse.track.part.name))
                         {
                         <button (click)="useCard(3)" class="mobileButton">Colocar aqui</button>
                         <p>Colocar aquí</p>
@@ -216,7 +223,8 @@
                 {
                 <app-card [currentCard]="board.slots[4].card"></app-card>
 
-                @if (this.userBattle.isTheirTurn && cardToUse  && isCardInUse(cardToUse) && checkType(["Drums", "Bass"], cardToUse.track.part.name)
+                @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Drums", "Bass"],
+                cardToUse.track.part.name)
                 &&
                 board.slots[4].card.level <= cardToUse.level) { <button (click)="useCard(4)" class="mobileButton">
                     Colocar aqui</button>
@@ -224,7 +232,8 @@
                     }
                     @else {
                     <div class="card">
-                        @if (this.userBattle.isTheirTurn && isCardInUse(cardToUse) && cardToUse && checkType(["Drums", "Bass"],
+                        @if (this.userBattle.isTheirTurn && !isCardInUse(cardToUse) && cardToUse && checkType(["Drums",
+                        "Bass"],
                         cardToUse.track.part.name))
                         {
                         <button (click)="useCard(4)" class="mobileButton">Colocar aqui</button>

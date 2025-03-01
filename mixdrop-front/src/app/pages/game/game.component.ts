@@ -65,6 +65,8 @@ export class GameComponent implements OnInit, OnDestroy {
   cardToUse: Card | null = null
   bonus: string = ""
 
+  bonusColor: string = "";
+
   otherPlayerPunct: number = 0
   otherUserId: number = 0
   enemyUser: UserBattle | undefined = undefined;
@@ -83,6 +85,7 @@ export class GameComponent implements OnInit, OnDestroy {
   private canReceive = true
 
   showRoulette: boolean = false;
+  showEnemyRoulette : boolean = false;
   isRouletteSpinning: boolean = false;
 
 
@@ -212,16 +215,28 @@ export class GameComponent implements OnInit, OnDestroy {
         }*/
 
         this.spinRouletteLevel = jsonResponse.levelRoulette
+        var wheel: boolean = jsonResponse.wheel
 
         // RULETA
-        if (this.spinRouletteLevel > -1) {
-          this.whoSpinRoulette = jsonResponse.whoSpinTheWheel
-          this.showRoulette = true;
+        if (this.spinRouletteLevel > -1 && wheel) {
           console.log("NIVEL RULETA", this.spinRouletteLevel)
-          this.showAndHideRoulette(this.spinRouletteLevel);
+          this.whoSpinRoulette = jsonResponse.whoSpinTheWheel
+
+          // si no he tirado yo, sale en forma de alerta, sino sale la animación
+          if (this.whoSpinRoulette == this.userBattle.userName) {
+            this.showRoulette = true;
+            this.showAndHideRoulette(this.spinRouletteLevel);
+          } else {
+            // modal
+            this.showEnemyRoulette = true;
+            setTimeout(() => {
+              this.showEnemyRoulette = false;
+            }, 6000);
+          }
         }
 
         this.bonus = jsonResponse.bonus
+        this.processBonus(this.bonus)
         this.otherPlayerPunct = jsonResponse.otherplayer
 
         positions = jsonResponse.position
@@ -392,19 +407,35 @@ export class GameComponent implements OnInit, OnDestroy {
 
   isCardInUse(card: Card): boolean {
     if (!this.board || !this.board.slots || !card) {
-      return true;
+      return false;
     }
 
     for (const slot of this.board.slots) {
       if (slot.card !== null && slot.card !== undefined && slot.card.id === card.id) {
-        if (slot.card.id === card.id)
-          return false;
+        if (slot.card.id === card.id) {
+          return true;
+        }
       }
     }
-    return true;
+    return false;
   }
 
-
+  processBonus(bonus: string) {
+    switch (bonus) {
+      case 'Amarillo':
+        this.bonusColor = "#fee710";
+        break;
+      case 'Rojo':
+        this.bonusColor = "#e50061";
+        break;
+      case 'Verde':
+        this.bonusColor = "#49af38"
+        break;
+      case 'Azul':
+        this.bonusColor = "#02a7e9";
+        break;
+    }
+  }
 
   useButton() {
     const actionType: ActionType = {
@@ -490,7 +521,7 @@ export class GameComponent implements OnInit, OnDestroy {
     const slotCard = this.board?.slots?.[slotIndex]?.card;
 
     return (this.checkType(allowedTypes, this.cardToUse.track.part.name) &&
-      (!slotCard || slotCard.level <= this.cardToUse.level));
+      (!slotCard || slotCard.level <= this.cardToUse.level) && !this.isCardInUse(this.cardToUse));
   }
 
 }
