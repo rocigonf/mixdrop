@@ -696,7 +696,7 @@ public class Seeder
             // Comodines
             new Card {
                 ImagePath = "cards/storybookfx1_fx.jpg",
-                Level = 4, // Los comodines deberían tener nivel 4
+                Level = 0, // Los comodines deberían tener nivel 4
 
                 // El track da igual, es para que no le de la paja xD
                 Track = new Track
@@ -715,11 +715,11 @@ public class Seeder
                 },
 
                 CardTypeId = 4,
-                Effect = "-1"
+                Effect = "-1 punto al rival"
             },
             new Card {
                 ImagePath = "cards/mvpfx2_fx.jpg",
-                Level = 4,
+                Level = 0,
 
 
                 Track = new Track
@@ -738,7 +738,7 @@ public class Seeder
                 },
 
                 CardTypeId = 4,
-                Effect = "Barajar"
+                Effect = "Baraja tus cartas"
             },
         };
         await _context.Cards.AddRangeAsync(cards);

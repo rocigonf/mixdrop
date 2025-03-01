@@ -1,93 +1,97 @@
 <app-navbar></app-navbar>
 
 <br>
-<div class="caja">
-  <!-- Pestañas -->
-  <div class="menu">
-    <button [class.active]="menuSeleccion === 'login'" (click)="menuSeleccion = 'login'">Iniciar Sesión</button>
-    <button [class.active]="menuSeleccion === 'register'" (click)="menuSeleccion = 'register'">Registrarse</button>
-  </div>
+<div class="container">
+  <div class="caja">
+    <!-- Pestañas -->
+    <div class="menu">
+      <button [class.active]="menuSeleccion === 'login'" (click)="menuSeleccion = 'login'">Iniciar Sesión</button>
+      <button [class.active]="menuSeleccion === 'register'" (click)="menuSeleccion = 'register'">Registrarse</button>
+    </div>
 
-  <!-- Contenido de las pestañas -->
-  @if (menuSeleccion === 'login') {
-  <div class="contenido login">
-    <form (submit)="login()">
-      <div>
+    <!-- Contenido de las pestañas -->
+    @if (menuSeleccion === 'login') {
+    <div class="contenido login">
+      <form (submit)="login()">
+        <div>
 
-        <input type="text" [maxlength]="30" placeholder="Apodo o email" class="icon-input" required
-          [(ngModel)]="emailOrNickname" [ngModelOptions]="{standalone: true}" />
+          <input type="text" [maxlength]="30" placeholder="Apodo o email" class="icon-input" required
+            [(ngModel)]="emailOrNickname" [ngModelOptions]="{standalone: true}" />
 
-        <input type="password" placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
-          [ngModelOptions]="{standalone: true}" />
+          <input type="password" placeholder="Contraseña" class="icon-input" required [(ngModel)]="password"
+            [ngModelOptions]="{standalone: true}" />
 
-        <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" inputId="rememberMe"
-          binary="true" />
-        <label for="rememberMe" class="remember-me-label">Recuérdame</label>
-      </div>
-
-      <div>
-        <button [disabled]="emailOrNickname.length < 1  || password.length < 1" type="submit" class="button">Iniciar
-          sesión</button>
-      </div>
-
-    </form>
-
-  </div>
-  }
-  @else {
-  <div class="contenido registro">
-    <form [formGroup]="registerForm" (submit)="register()">
-
-      <input type="text" [maxlength]="16" placeholder="Nickname" formControlName="nickname" />
-
-      <div class="error">
-        <div *ngIf="registerForm.get('nickname')?.invalid && registerForm.get('nickname')?.touched">
-          <div *ngIf="registerForm.get('nickname')?.hasError('required')">El nickname es obligatorio.</div>
+          <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" inputId="rememberMe"
+            binary="true" />
+          <label for="rememberMe" class="remember-me-label">Recuérdame</label>
         </div>
-      </div>
 
-      <input type="email" placeholder="Correo Electrónico" formControlName="email" />
-
-      <div class="error">
-        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-          <div *ngIf="registerForm.get('email')?.hasError('required')">El correo electrónico es obligatorio.</div>
-          <div *ngIf="registerForm.get('email')?.hasError('email')">Debe ser un correo electrónico válido.</div>
+        <div>
+          <button [disabled]="emailOrNickname.length < 1  || password.length < 1" type="submit"
+            class="form-button">Iniciar
+            sesión</button>
         </div>
-      </div>
 
-      <input type="password" placeholder="Contraseña" formControlName="password" />
+      </form>
 
-      <div class="error">
-        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-          <div *ngIf="registerForm.get('password')?.hasError('required')">La contraseña es obligatoria.</div>
-          <div *ngIf="registerForm.get('password')?.hasError('minlength')">Debe tener mínimo 6 caracteres.
+    </div>
+    }
+    @else {
+    <div class="contenido registro">
+      <form [formGroup]="registerForm" (submit)="register()">
+
+        <input type="text" [maxlength]="16" placeholder="Nickname" formControlName="nickname" />
+
+        <div class="error">
+          <div *ngIf="registerForm.get('nickname')?.invalid && registerForm.get('nickname')?.touched">
+            <div *ngIf="registerForm.get('nickname')?.hasError('required')">El nickname es obligatorio.</div>
           </div>
         </div>
-      </div>
 
-      <input type="password" placeholder="Confirmar contraseña" formControlName="confirmPassword">
+        <input type="email" placeholder="Correo Electrónico" formControlName="email" />
 
-      <div class="error">
-        <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
-          class="error">
-          <div *ngIf="registerForm.get('confirmPassword')?.hasError('mismatch')">Las contraseñas deben coincidir.</div>
+        <div class="error">
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            <div *ngIf="registerForm.get('email')?.hasError('required')">El correo electrónico es obligatorio.</div>
+            <div *ngIf="registerForm.get('email')?.hasError('email')">Debe ser un correo electrónico válido.</div>
+          </div>
         </div>
-      </div>
 
-      <label for="productImage" id="labelImage">Imagen de perfil:</label> <br>
-      
-      
-      <!-- para que se vea miniatura de lo que ha elegido -->
-      @if (this.image) {
-      <img id="preview-img" [src]="this.imagePreview" alt="imagen">
-      } 
-      <input name="image" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)">
+        <input type="password" placeholder="Contraseña" formControlName="newPassword" />
 
-      
-      <br>
-      <button [disabled]="!registerForm.valid" type="submit">Crear Cuenta</button>
-    </form>
+        <div class="error">
+          <div *ngIf="registerForm.get('newPassword')?.invalid && registerForm.get('newPassword')?.touched">
+            <div *ngIf="registerForm.get('newPassword')?.hasError('required')">La contraseña es obligatoria.</div>
+            <div *ngIf="registerForm.get('newPassword')?.hasError('minlength')">Debe tener mínimo 6 caracteres.</div>
+          </div>
+        </div>
 
+        <input type="password" placeholder="Confirmar contraseña" formControlName="confirmPassword">
+
+        <div class="error">
+          <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched">
+            Las contraseñas no coinciden.</div>
+        </div>
+
+        <label for="productImage" id="labelImage">Imagen de perfil:</label> 
+        <br>
+        <div class="load-avatar-container">
+          <div class="button-wrapper">
+            <span style="line-height: 2rem;" class="label">Cargar avatar</span>
+            <input type="file" accept="image/png, image/jpeg, image/jpg" id="input-file" placeholder="Cargar avatar"
+              (change)="onFileSelected($event)">
+          </div>
+
+          <!-- para que se vea miniatura de lo que ha elegido -->
+          @if (this.image) {
+          <img id="preview-img" [src]="this.imagePreview" alt="imagen">
+          }
+        </div>
+        <br>
+        <button [disabled]="!registerForm.valid" type="submit" class="form-button">Crear Cuenta</button>
+      </form>
+
+    </div>
+    }
   </div>
-  }
 </div>

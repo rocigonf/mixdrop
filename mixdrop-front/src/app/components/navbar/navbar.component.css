@@ -2,7 +2,7 @@ nav {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.5rem;
+    padding: 0.8rem;
 }
 
 span {
@@ -23,7 +23,6 @@ span {
     height: 40px;
     width: 40px;
     border: 2px solid white;
-    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -44,10 +43,6 @@ a :hover{
 
 .logout {
     cursor: pointer;
-}
-
-.logout img {
-    height: 45px;
 }
 
 .dropdown {

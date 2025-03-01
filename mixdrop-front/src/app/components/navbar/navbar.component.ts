@@ -4,12 +4,13 @@ import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { WebsocketService } from '../../services/websocket.service';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [MatTooltipModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

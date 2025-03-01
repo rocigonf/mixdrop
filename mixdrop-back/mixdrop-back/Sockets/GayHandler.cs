@@ -1,3 +1,4 @@
+using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
@@ -99,7 +100,7 @@ public class GayHandler // GameHandler :3
 
         byte[] output = [];
         int levelRoulette = -1;
-        List<int> positions = new List<int>() {  -1 };
+        List<int> positions = new List<int>();
         Card randomCard = null;
         bool spinTheWheel = false;
 
@@ -133,11 +134,11 @@ public class GayHandler // GameHandler :3
             {
                 switch (existingCard.Effect)
                 {
-                    case "Barajar":
+                    case "Baraja tus cartas":
                         playerInTurn.Cards = new List<Card>();
                         DistributeCards(playerInTurn);
                         break;
-                    case "-1":
+                    case "-1 punto al rival":
                         otherUser.Punctuation--;
                         break;
                 }
@@ -619,15 +620,15 @@ public class GayHandler // GameHandler :3
         switch (Array.IndexOf(_board.Slots, slot))
         {
             case 0:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id) && c.Effect == "");
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id));
             case 1:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id) && c.Effect == "");
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id));
             case 3:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() &&  c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
             case 4:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id) && c.Effect == "");
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id));
             default:
                 return null;
         }

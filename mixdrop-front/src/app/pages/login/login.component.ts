@@ -46,7 +46,7 @@ export class LoginComponent {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
       { validators: this.passwordValidator.passwordMatchValidator });
@@ -61,7 +61,6 @@ export class LoginComponent {
         timer: 2000
       })
     }
-
 
   async login() {
     if(this.pressedEnter) return;
@@ -109,7 +108,7 @@ export class LoginComponent {
         formData.append("Image", this.image, this.image.name)
       }
       formData.append("Email", this.registerForm.value.email)
-      formData.append("Password", this.registerForm.value.password)
+      formData.append("Password", this.registerForm.value.newPassword)
 
       const registerResult = await this.authService.register(formData);
 
@@ -117,7 +116,7 @@ export class LoginComponent {
 
         const formUser = this.registerForm.value;
 
-        const authData = { emailOrNickname: formUser.email, password: formUser.password };
+        const authData = { emailOrNickname: formUser.email, password: formUser.newPassword };
         const loginResult = await this.authService.login(authData, false);
 
         if (loginResult.success) {
