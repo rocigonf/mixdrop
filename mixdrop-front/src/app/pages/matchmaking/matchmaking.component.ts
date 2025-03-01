@@ -75,12 +75,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         }
       }
       this.battleId = parseInt(sessionStorage.getItem("battleId")!!)
-      const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
-      console.log("RESULTADO: ", result)
-      
-      this.actualBattle = result.data[0]
-      this.battleId = this.actualBattle.id
-      sessionStorage.setItem("battleId", this.battleId.toString())
+      await this.getActualBattle()
     }
 
     if(sessionStorage.getItem("revenge") == "true")
@@ -106,7 +101,17 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
       }*/
   }
 
-  processMessage(message: any) {
+  async getActualBattle()
+  {
+    const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
+    console.log("RESULTADO: ", result)
+      
+    this.actualBattle = result.data[0]
+    this.battleId = this.actualBattle.id
+    sessionStorage.setItem("battleId", this.battleId.toString())
+  }
+
+  async processMessage(message: any) {
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
 
@@ -117,6 +122,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         if (jsonResponse.battle) {
           this.battle = jsonResponse.battle
         }
+        this.battleId = jsonResponse.battleId
+        await this.getActualBattle()
         break
       case MessageType.Friend:
         this.friendsRaw = jsonResponse.friends
