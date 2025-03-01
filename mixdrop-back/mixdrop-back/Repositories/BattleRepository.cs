@@ -24,7 +24,14 @@ public class BattleRepository : Repository<Battle, int>
         return await GetQueryable()
             .Include(battle => battle.BattleUsers)
             .FirstOrDefaultAsync(battle => battle.Id == battleId);
+    }
 
+    public async Task<Battle> GetCompleteBattleWithUsersAsync(int battleId)
+    {
+        return await GetQueryable()
+            .Include(battle => battle.BattleUsers)
+            .ThenInclude(u => u.User)
+            .FirstOrDefaultAsync(battle => battle.Id == battleId);
     }
 
     public async Task<ICollection<Battle>> GetBattlesInProgressAsync()
