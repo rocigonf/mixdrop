@@ -1,4 +1,6 @@
-﻿using mixdrop_back.Models.Entities;
+﻿using mixdrop_back.Models.DTOs;
+using mixdrop_back.Models.Entities;
+using mixdrop_back.Models.Mappers;
 using mixdrop_back.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -8,10 +10,11 @@ namespace mixdrop_back.Services;
 public class BattleService
 {
     private readonly UnitOfWork _unitOfWork;
-    private Dictionary<object, object> dict = new Dictionary<object, object>
+    private readonly Dictionary<object, object> dict = new Dictionary<object, object>
     {
         { "messageType", MessageType.AskForBattle }
     };
+    //private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public BattleService(UnitOfWork unitOfWork)
     {
@@ -20,6 +23,8 @@ public class BattleService
 
     public async Task CreateBattle(User user1, int user2Id = 0, bool isRandom = false)
     {
+        //await _semaphore.WaitAsync();
+
         BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(1);
 
         Battle battle = new Battle() { CreatedAt = DateTime.UtcNow };
@@ -44,6 +49,14 @@ public class BattleService
         }
         else
         {
+            /*var existingBattle = _unitOfWork.BattleRepository.GetByIdAsync(user1.Id);
+
+            if(existingBattle != null)
+            {
+                Console.WriteLine("Ya existe una batalla");
+                return;
+            }*/
+
             await Task.Delay(1000);
             // Si es contra un bot, se acepta y se pone como jugando
             dict["messageType"] = MessageType.StartBattle;
@@ -108,6 +121,8 @@ public class BattleService
         {
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2Id);
         }
+
+        //_semaphore.Release();
     }
 
 
@@ -140,6 +155,8 @@ public class BattleService
         options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
         UserBattle sender = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == false);
+
+        dict.Add("battleId", existingBattle.Id);
 
         dict["messageType"] = MessageType.Play;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), receiverUser.UserId);
@@ -390,6 +407,22 @@ public class BattleService
     public async Task<ICollection<Battle>> GetPendingBattlesByUserIdAsync(int userId)
     {
         ICollection<Battle> battles = await _unitOfWork.BattleRepository.GetPendingBattlesByUserIdAsync(userId);
+        return battles;
+    }
+
+    public async Task<List<BattleDto>> GetBattleByIdAsync(int id)
+    {
+        Battle battle = await _unitOfWork.BattleRepository.GetCompleteBattleWithUsersAsync(id);
+
+        if(battle == null)
+        {
+            return null;
+        }
+        
+        BattleMapper battleMapper = new BattleMapper();
+
+        List<BattleDto> battles = battleMapper.ToDtoWithAllInfo(new List<Battle> { battle });
+
         return battles;
     }
 }

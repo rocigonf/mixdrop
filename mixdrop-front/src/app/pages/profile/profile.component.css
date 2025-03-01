@@ -122,17 +122,18 @@ label{
 
 /* --- INICIO HISTORIAL DE BATALLA ---*/
 
-.pagination{
+.pagination {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 1rem;
 }
 
-#pagination-text{
+#pagination-text {
     font-size: 1.5em;
 }
 
-.pagination-button{ /* BOTONES PAGINACIÓN */
+.pagination-button { /* BOTONES PAGINACIÓN */
     text-align: center;
     width: 50px;
     height: 50px;
@@ -151,7 +152,7 @@ label{
     transform: translate(2px, 2px);
 }
 
-.battle-history{
+.battle-history {
     display: flex;
     flex-direction: column;
 }
@@ -197,10 +198,8 @@ label{
         flex-direction: column;
         align-items: center;
     }
-
 }
 
-/* --- RESPONSIVE ---*/
 @media (max-width: 570px) {
     label, span.label, .form-button, input{
         font-size: 1em !important;
@@ -246,8 +245,21 @@ label{
         align-items: center;
     }
 
-    .pagination{
-        font-size: 1em;
-        
+    #pagination-text{
+        font-size: 0.9em;
+    }
+
+    .pagination-button { /* BOTONES PAGINACIÓN */
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 385px) {
+    .pagination-button { /* BOTONES PAGINACIÓN */
+        width: 25px;
+        height: 25px;
+        font-size: 1rem;
     }
 }

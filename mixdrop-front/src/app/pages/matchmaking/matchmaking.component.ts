@@ -10,12 +10,14 @@ import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { Battle } from '../../models/battle';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { BattleDto } from '../../models/battle-dto';
 
 @Component({
   selector: 'app-matchmaking',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [NavbarComponent, MatTooltipModule],
   templateUrl: './matchmaking.component.html',
   styleUrl: './matchmaking.component.css'
 })
@@ -36,15 +38,18 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   friendsRaw: Friend[] = []
   myFriends: Friend[] = []
-  conenctedFriends: User[] = []
+  connectedFriends: User[] = []
 
   pendingBattles: Battle[] = []
 
   readyForBattle = false
   battle: Battle | null = null
   battleId: number = 0
+  actualBattle: BattleDto | null = null
 
   loading: boolean = false
+
+  disabled: boolean = false
 
   async ngOnInit(): Promise<void> {
 
@@ -57,6 +62,11 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
 
+      // pide info de amigos 
+      this.askForInfo(MessageType.Friend)
+      this.askForInfo(MessageType.PendingBattle)
+      this.processFriends()
+
       const battle = sessionStorage.getItem("battle")
       if (battle) {
         this.readyForBattle = true
@@ -65,6 +75,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         }
       }
       this.battleId = parseInt(sessionStorage.getItem("battleId")!!)
+      await this.getActualBattle()
     }
 
     if(sessionStorage.getItem("revenge") == "true")
@@ -77,23 +88,30 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         sessionStorage.removeItem("revenge")
       }
     }
-
-    // pide info de amigos 
-    this.askForInfo(MessageType.Friend)
-    this.askForInfo(MessageType.PendingBattle)
-    this.processFriends()
   }
 
   async ngOnDestroy(): Promise<void> {
       this.messageReceived$?.unsubscribe()
-      if((this.battle || this.battleId != 0) && this.readyForBattle)
+      await this.deleteBattleBydId(this.battleId, true)
+      this.resetData()
+      /*if((this.battle || this.battleId != 0) && this.readyForBattle)
       {
         await this.deleteBattleBydId(this.battleId, true)
         this.resetData()
-      }
+      }*/
   }
 
-  processMessage(message: any) {
+  async getActualBattle()
+  {
+    const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
+    console.log("RESULTADO: ", result)
+      
+    this.actualBattle = result.data[0]
+    this.battleId = this.actualBattle.id
+    sessionStorage.setItem("battleId", this.battleId.toString())
+  }
+
+  async processMessage(message: any) {
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
 
@@ -104,6 +122,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         if (jsonResponse.battle) {
           this.battle = jsonResponse.battle
         }
+        this.battleId = jsonResponse.battleId
+        await this.getActualBattle()
         break
       case MessageType.Friend:
         this.friendsRaw = jsonResponse.friends
@@ -135,6 +155,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
     this.readyForBattle = false
     this.loading = false
     this.battleId = 0
+    this.actualBattle = null
     sessionStorage.removeItem("battle")
     sessionStorage.removeItem("battleId")
   }
@@ -151,8 +172,18 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
 
   async gameWithBot() {
-    // el user 2 es nulo y el false de que no es random
-    await this.battleService.createBattle(0, false)
+    if(!this.disabled)
+    {
+      //console.error("PULSANDO")
+      const button = document.getElementById("prueba") as HTMLButtonElement
+      if(button)
+      {
+        button.disabled = true
+      }
+      // el user 2 es nulo y el false de que no es random
+      this.disabled = true
+      await this.battleService.createBattle(0, false)
+    }
   }
 
   async gameWithFriend(friend: User) {
@@ -209,9 +240,9 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   processFriends() {
-
+    console.log("amigos crudos: ", this.friendsRaw)
     this.myFriends = []
-    this.conenctedFriends = []
+    this.connectedFriends = []
 
     for (const friend of this.friendsRaw) {
       if (friend.accepted) {
@@ -219,8 +250,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
         if (friend.senderUser?.stateId == 2 || friend.receiverUser?.stateId == 2) {
 
-          if (friend.senderUser) this.conenctedFriends.push(friend.senderUser)
-          else if (friend.receiverUser) this.conenctedFriends.push(friend.receiverUser)
+          if (friend.senderUser) this.connectedFriends.push(friend.senderUser)
+          else if (friend.receiverUser) this.connectedFriends.push(friend.receiverUser)
         }
       }
     }
