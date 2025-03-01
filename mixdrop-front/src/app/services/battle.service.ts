@@ -59,4 +59,10 @@ export class BattleService {
     const result = await this.api.put(`Battle/start/${id}`)
     return result
   }
+
+  async getBattleById(id : number): Promise<any>
+  {
+    const result = await this.api.get(`Battle/${id}`)
+    return result
+  }
 }

@@ -7,26 +7,28 @@
 <hr>
 
 <div class="cabecera">
-    @if(user.avatarPath != "")
+    @if(actualBattle)
     {
-        <img class="avatar" [src]="IMG_URL + user.avatarPath" alt="avatar">
-    }
-    @else
-    {
-        <img class="avatar" src="/images/user.png" alt="avatar">
-    }
-    @if (battle) 
-    {
-        <p> {{user.nickname}}  VS  {{battle.user.nickname}} </p>
-        @if(user.avatarPath != "")
+        <p> {{actualBattle.usersBattles[0].userName}}  VS  {{actualBattle.usersBattles[1].userName}} </p>
+        @if(actualBattle.usersBattles[0].userImage != "")
         {
-            <img class="avatar" [src]="IMG_URL + battle.user.avatarPath" alt="avatar">
+            <img class="avatar" [src]="IMG_URL + actualBattle.usersBattles[0].userImage" alt="avatar">
+        }
+        @else
+        {
+            <img class="avatar" src="/images/user.png" alt="avatar">
+        }
+
+        @if(actualBattle.usersBattles[1].userImage != "")
+        {
+            <img class="avatar" [src]="IMG_URL + actualBattle.usersBattles[1].userImage" alt="avatar">
+        }
+        @else
+        {
+            <img class="avatar" src="/images/user.png" alt="avatar">
         }
     }
-    @else 
-    {
-        <p> {{user.nickname}} </p>
-    }
+
 </div>
 
 
