@@ -47,6 +47,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   loading: boolean = false
 
+  disabled: boolean = false
+
   async ngOnInit(): Promise<void> {
 
     if (!this.authService.isAuthenticated()) {
@@ -152,8 +154,18 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
 
   async gameWithBot() {
-    // el user 2 es nulo y el false de que no es random
-    await this.battleService.createBattle(0, false)
+    if(!this.disabled)
+    {
+      //console.error("PULSANDO")
+      const button = document.getElementById("prueba") as HTMLButtonElement
+      if(button)
+      {
+        button.disabled = true
+      }
+      // el user 2 es nulo y el false de que no es random
+      this.disabled = true
+      await this.battleService.createBattle(0, false)
+    }
   }
 
   async gameWithFriend(friend: User) {
