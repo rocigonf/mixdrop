@@ -28,7 +28,7 @@
         @if(currentBattle){
         <div class="time">
             <!-- CONTADOR -->
-            @if(this.userBattle?.isTheirTurn)
+            @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
             {
             <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
             }
@@ -36,8 +36,9 @@
             <!-- SI HAY BONUS -->
             @if(bonus != "")
             {
-            <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
-            <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
+            <span class="star" [style]="{ '--bonusColor': bonusColor}"></span>
+            <p>Hay un bonus por jugar cartas de color {{ bonus }} 
+                <span class="star" [style]="{ '--bonusColor': bonusColor}"></span></p>
             }
         </div>
 
