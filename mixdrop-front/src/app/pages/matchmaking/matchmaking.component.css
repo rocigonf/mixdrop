@@ -30,6 +30,7 @@ p{
 .friendList{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    padding: 2%;
     gap: 1rem;
 }
 
@@ -89,4 +90,16 @@ p{
 .rainbow-button{
     width: 300px;
     margin: 0;
+}
+
+/*  RESPONSIVE  */
+@media (max-width: 900px){
+    .friendList{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px){
+    .friendList{
+        grid-template-columns: repeat(1, 1fr);
+    }
 }

@@ -62,6 +62,11 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
       this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
 
+      // pide info de amigos 
+      this.askForInfo(MessageType.Friend)
+      this.askForInfo(MessageType.PendingBattle)
+      this.processFriends()
+
       const battle = sessionStorage.getItem("battle")
       if (battle) {
         this.readyForBattle = true
@@ -88,11 +93,6 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         sessionStorage.removeItem("revenge")
       }
     }
-
-    // pide info de amigos 
-    this.askForInfo(MessageType.Friend)
-    this.askForInfo(MessageType.PendingBattle)
-    this.processFriends()
   }
 
   async ngOnDestroy(): Promise<void> {
@@ -233,7 +233,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   processFriends() {
-
+    console.log("amigos crudos: ", this.friendsRaw)
     this.myFriends = []
     this.connectedFriends = []
 

@@ -9,7 +9,7 @@
 <div class="cabecera">
     @if(actualBattle)
     {
-        <p> {{actualBattle.usersBattles[0].userName}}  VS  {{actualBattle.usersBattles[1].userName}} </p>
+        
         @if(actualBattle.usersBattles[0].userImage != "")
         {
             <img class="avatar" [src]="IMG_URL + actualBattle.usersBattles[0].userImage" alt="avatar">
@@ -18,7 +18,7 @@
         {
             <img class="avatar" src="/images/user.png" alt="avatar">
         }
-
+        <p> {{actualBattle.usersBattles[0].userName}}  VS  {{actualBattle.usersBattles[1].userName}} </p>
         @if(actualBattle.usersBattles[1].userImage != "")
         {
             <img class="avatar" [src]="IMG_URL + actualBattle.usersBattles[1].userImage" alt="avatar">
@@ -80,7 +80,6 @@
                         {{ friend.nickname }}
                     </span>
 
-
                     @if (!hasBattle(friend)) 
                     {
                         <div class="contenedorIcono">
@@ -92,29 +91,6 @@
                                 (click)="gameWithFriend(friend)" 
                                 src="/images/battle.webp"
                                 alt="Retar a batalla">
-                        </div>
-                    } @else if (hasBattle(friend)) 
-                    {
-                        <div class="contenedorIcono">
-                            <img #tooltip="matTooltip"
-                                matTooltip="Aceptar invitación" 
-                                matTooltipPosition="above" 
-                                matTooltipClass="tooltip" 
-                                class="icono" 
-                                (click)="acceptBattle(friend.id)" 
-                                src="/images/battle.webp" 
-                                alt="Aceptar invitación de batalla">
-                        </div>
-
-                        <div class="contenedorIcono">
-                            <img #tooltip="matTooltip"
-                                matTooltip="Rechazar invitación" 
-                                matTooltipPosition="above" 
-                                matTooltipClass="tooltip" 
-                                class="icono" 
-                                (click)="deleteBattleByFriendId(friend.id)" 
-                                src="/images/delete.webp" 
-                                alt="Rechazar invitación de batalla">
                         </div>
                     }
                 </div>
