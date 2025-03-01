@@ -3,7 +3,7 @@
 <div class="cabecera">
 
     <img [src]="IMG_URL + (user?.avatarPath || 'user.png')" alt="Avatar">
-    <span> - {{user?.nickname}} - </span>
+    <span>{{user?.nickname}}</span>
     <button class="rainbow-button" (click)="emparejar()">Jugar</button>
 
 </div>
@@ -13,11 +13,13 @@
     <!----------------------MENÚ LATERAL ------------------------------->
     <aside>
         <div (click)="menuSelector='myFriends'">
-            <img src="/images/amigos.webp" alt="Amigos"> Tus amigos
+            <img src="/images/amigos.webp" alt="Amigos"> 
+            <span>Tus amigos</span>
         </div>
 
         <div (click)="menuSelector='searchUsers'">
-            <img src="/images/buzon.webp" alt="Añadir amigo"> Añadir a un amigo
+            <img src="/images/buzon.webp" alt="Añadir amigo">
+            <span>Añadir a un amigo</span>
         </div>
 
         <div class="mostrarNoti" (click)="menuSelector='friendRequest'">
@@ -25,7 +27,7 @@
             @if (pendingFriends.length > 0) {
                 <span class="notificacionNum">{{pendingFriends.length}}</span>
             }
-            Solicitudes de amistad
+            <span>Solicitudes de amistad</span>
         </div>
 
         <div class="mostrarNoti" (click)="menuSelector='battleRequest'">
@@ -34,10 +36,9 @@
             @if (pendingBattles.length > 0) {
                 <span class="notificacionNum">{{pendingBattles.length}}</span>
             }
-            Solicitudes de batalla
+            <span>Solicitudes de batalla</span>
         </div>
     </aside>
-
 
     <!--- CONTENIDO --->
 
