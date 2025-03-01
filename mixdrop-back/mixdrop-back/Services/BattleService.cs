@@ -8,10 +8,11 @@ namespace mixdrop_back.Services;
 public class BattleService
 {
     private readonly UnitOfWork _unitOfWork;
-    private Dictionary<object, object> dict = new Dictionary<object, object>
+    private readonly Dictionary<object, object> dict = new Dictionary<object, object>
     {
         { "messageType", MessageType.AskForBattle }
     };
+    //private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public BattleService(UnitOfWork unitOfWork)
     {
@@ -20,6 +21,8 @@ public class BattleService
 
     public async Task CreateBattle(User user1, int user2Id = 0, bool isRandom = false)
     {
+        //await _semaphore.WaitAsync();
+
         BattleState battleState = await _unitOfWork.BattleStateRepository.GetByIdAsync(1);
 
         Battle battle = new Battle() { CreatedAt = DateTime.UtcNow };
@@ -44,6 +47,14 @@ public class BattleService
         }
         else
         {
+            /*var existingBattle = _unitOfWork.BattleRepository.GetByIdAsync(user1.Id);
+
+            if(existingBattle != null)
+            {
+                Console.WriteLine("Ya existe una batalla");
+                return;
+            }*/
+
             await Task.Delay(1000);
             // Si es contra un bot, se acepta y se pone como jugando
             dict["messageType"] = MessageType.StartBattle;
@@ -108,6 +119,8 @@ public class BattleService
         {
             await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), user2Id);
         }
+
+        //_semaphore.Release();
     }
 
 

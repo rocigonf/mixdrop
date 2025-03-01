@@ -10,12 +10,13 @@ import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { Battle } from '../../models/battle';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-matchmaking',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [NavbarComponent, MatTooltipModule],
   templateUrl: './matchmaking.component.html',
   styleUrl: './matchmaking.component.css'
 })
@@ -36,7 +37,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   friendsRaw: Friend[] = []
   myFriends: Friend[] = []
-  conenctedFriends: User[] = []
+  connectedFriends: User[] = []
 
   pendingBattles: Battle[] = []
 
@@ -45,6 +46,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   battleId: number = 0
 
   loading: boolean = false
+
+  disabled: boolean = false
 
   async ngOnInit(): Promise<void> {
 
@@ -151,8 +154,18 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
 
   async gameWithBot() {
-    // el user 2 es nulo y el false de que no es random
-    await this.battleService.createBattle(0, false)
+    if(!this.disabled)
+    {
+      //console.error("PULSANDO")
+      const button = document.getElementById("prueba") as HTMLButtonElement
+      if(button)
+      {
+        button.disabled = true
+      }
+      // el user 2 es nulo y el false de que no es random
+      this.disabled = true
+      await this.battleService.createBattle(0, false)
+    }
   }
 
   async gameWithFriend(friend: User) {
@@ -211,7 +224,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   processFriends() {
 
     this.myFriends = []
-    this.conenctedFriends = []
+    this.connectedFriends = []
 
     for (const friend of this.friendsRaw) {
       if (friend.accepted) {
@@ -219,8 +232,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
         if (friend.senderUser?.stateId == 2 || friend.receiverUser?.stateId == 2) {
 
-          if (friend.senderUser) this.conenctedFriends.push(friend.senderUser)
-          else if (friend.receiverUser) this.conenctedFriends.push(friend.receiverUser)
+          if (friend.senderUser) this.connectedFriends.push(friend.senderUser)
+          else if (friend.receiverUser) this.connectedFriends.push(friend.receiverUser)
         }
       }
     }

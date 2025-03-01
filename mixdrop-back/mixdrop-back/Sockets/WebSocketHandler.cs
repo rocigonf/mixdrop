@@ -92,7 +92,12 @@ public class WebSocketHandler
         
         if(battles.Count > 1)
         {
-            throw new Exception("El usuario está en más de una batalla al mismo tiempo :(");
+            /*foreach(Battle battle in battles)
+            {
+                unitOfWork.BattleRepository.Delete(battle);
+            }*/
+
+            Console.WriteLine("El usuario está en más de una batalla al mismo tiempo :(");
         }
         else
         {
