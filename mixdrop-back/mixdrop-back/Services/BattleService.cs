@@ -156,6 +156,8 @@ public class BattleService
 
         UserBattle sender = existingBattle.BattleUsers.FirstOrDefault(user => user.Receiver == false);
 
+        dict.Add("battleId", existingBattle.Id);
+
         dict["messageType"] = MessageType.Play;
         await WebSocketHandler.NotifyOneUser(JsonSerializer.Serialize(dict, options), receiverUser.UserId);
 
