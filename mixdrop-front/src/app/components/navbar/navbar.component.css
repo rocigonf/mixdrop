@@ -91,7 +91,6 @@ a :hover{
 #level{
     color: #cf7216;;
     text-align: center;
-    border-radius: 50%;
     height: 1.2rem;
     width: 1.2rem;
     line-height: 1.5rem;
@@ -117,7 +116,7 @@ a :hover{
     }
 
     span {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         align-self: center;
     }
 
@@ -125,7 +124,18 @@ a :hover{
         height: 30px;
     }
 
-    #trophy {
+    .ranking {
         height: 30px;
+        width: 30px;
+    }
+
+    .nav-right{
+        gap: 0.5rem;
+    }
+
+    #level{
+        height: 1rem;
+        width: 0.8rem;
+        line-height: 1.2rem;
     }
 }
