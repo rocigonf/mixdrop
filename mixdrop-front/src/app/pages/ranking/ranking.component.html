@@ -1,4 +1,44 @@
 <app-navbar></app-navbar>
-@for (user of users; track $index) {
-    <p>{{ user.nickname }} - {{ user.totalPoints }}</p>
-}
+
+<header>
+    <img src="images/trophy.webp" alt="ranking icon">
+    <div>
+        <h1>Ranking</h1>
+        <h3>Juega y gana para estar en el top `⎚ᴗ⎚´</h3>
+    </div>
+</header>
+
+<hr><br>
+<div class="list">
+    @for (user of users; track $index) {
+    <div class="card" [style.cursor]="authService.isAuthenticated() ? 'pointer' : 'default'"
+    [ngClass]="authService.isAuthenticated() ? 'card' : 'cursor-pointer card'" 
+    (click)="this.user!==null ? visitUserProfile(user) : {} ">
+        @switch ($index) {
+        @case (0) {
+        <img class="range" src="images/gold_star.webp" alt="gold">
+        }
+        @case (1) {
+        <img class="range" src="images/silver_star.webp" alt="silver">
+        }
+        @case (2) {
+        <img class="range" src="images/bronze_star.webp" alt="bronze">
+        }
+        @default {
+            <span class="level">{{$index+1}}</span>
+        }
+        }
+
+        <img [src]="IMG_URL + user.avatarPath" alt="avatar"
+            [className]="$index === 0 ? 'gold' : $index === 1 ? 'silver' : $index === 2 ? 'bronze' : 'avatar'">
+
+        {{ user.nickname }}
+
+        <span class="xp">
+            {{ user.totalPoints }} XP
+        </span>
+
+    </div>
+    <hr>
+    }
+</div>

@@ -1,88 +1,76 @@
 <nav>
 
     @if (this.router.url == '/'){
-        <a (click)="startMusic()">
-            <img #tooltip="matTooltip"
-                matTooltip="Pulsa para un secreto :D" 
-                matTooltipPosition="below" 
-                matTooltipClass="tooltip" 
-                id="speaker" 
-                [src]="frameName" 
-                alt="altavoz">
-        </a>
+    <a (click)="startMusic()">
+        <img #tooltip="matTooltip" matTooltip="Pulsa para un secreto :D" matTooltipPosition="below"
+            matTooltipClass="tooltip" id="speaker" [src]="frameName" alt="altavoz">
+    </a>
     }
-    @else 
+    @else
     {
-        <a (click)="startMusic()">
-            <img id="speaker" [src]="frameName" alt="altavoz">
-        </a>
+    <a (click)="startMusic()">
+        <img id="speaker" [src]="frameName" alt="altavoz">
+    </a>
     }
-    
+
 
     <div class="nav-right">
 
         @if (this.router.url == '/' || this.router.url == '/#rules') {
 
-            <a href="#rules">
-                <span>REGLAS</span>
-            </a>
+        <a href="#rules">
+            <span>REGLAS</span>
+        </a>
 
 
         } @else {
 
-            <a class="home" (click)="navigateToUrl('/')">
-                <span>INICIO</span>
-            </a>
-            
+        <a class="home" (click)="navigateToUrl('/')">
+            <span>INICIO</span>
+        </a>
+
         }
 
         @if (authService.isAuthenticated()) {
 
-            <a class="home" (click)="navigateToUrl('/menu')">
-                <span>MENÚ</span>
-            </a>
+        <a class="home" (click)="navigateToUrl('/menu')">
+            <span>MENÚ</span>
+        </a>
         }
 
-        <img class="ranking" src="/images/trophy.webp" 
-        (click)="navigateToUrl('ranking')" alt="ranking">   
+        <img class="ranking" src="/images/trophy.webp" (click)="navigateToUrl('ranking')" alt="ranking">
 
 
-    <div class="dropdown">
+
         @if (authService.isAuthenticated()) {
-
+        <div class="dropdown">
             @if(user?.avatarPath != ""){
-                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+            <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
             }@else {
-                <img class="avatar" src="/images/user.png" alt="avatar">
+            <img class="avatar" src="/images/user.png" alt="avatar">
             }
             <div class="dropdown-content">
                 <a (click)="navigateToUrl('profile/' + user?.id)">Perfil</a>
                 @if (authService.isAdmin()) {
-                    <a (click)="navigateToUrl('admin/' + user?.id)">Administración</a>
-                }  
+                <a (click)="navigateToUrl('admin/' + user?.id)">Administración</a>
+                }
             </div>
-            
+        </div>
+        }
+
+
+
+        @if (authService.isAuthenticated()) {
+        <a class="logout" (click)="authClick()">
+            <img #tooltip="matTooltip" matTooltip="Cerrar sesión" matTooltipPosition="below" matTooltipClass="tooltip"
+                src="/images/salida.webp" alt="Cerrar sesión">
+        </a>
+        }
+        @else {
+        <a class="logout" (click)="navigateToUrl('login')">
+            <img #tooltip="matTooltip" matTooltip="Iniciar sesión" matTooltipPosition="below" matTooltipClass="tooltip"
+                src="/images/acceso.webp" alt="Iniciar sesión">
+        </a>
         }
     </div>
-    @if (authService.isAuthenticated()) {
-        <a class="logout" (click)="authClick()">
-            <img #tooltip="matTooltip"
-                matTooltip="Cerrar sesión" 
-                matTooltipPosition="below" 
-                matTooltipClass="tooltip" 
-                src="/images/salida.webp" 
-                alt="Cerrar sesión">
-        </a>
-    }
-    @else {
-        <a class="logout" (click)="navigateToUrl('login')">
-            <img #tooltip="matTooltip"
-                matTooltip="Iniciar sesión" 
-                matTooltipPosition="below" 
-                matTooltipClass="tooltip" 
-                src="/images/acceso.webp" 
-                alt="Iniciar sesión">
-        </a>
-    }
-</div>
 </nav>

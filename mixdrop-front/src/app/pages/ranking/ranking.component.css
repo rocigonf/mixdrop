@@ -1,0 +1,103 @@
+* {
+    font-size: 1.5rem;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 5px;
+    margin: 0 2rem;
+}
+
+header img {
+    width: 6rem;
+    height: 6rem;
+}
+
+h1 {
+    font-size: 3rem;
+    margin: 1rem 0;
+    letter-spacing: 0.2rem;
+}
+
+h3 {
+    margin: 1rem 0;
+    font-weight: 300;
+}
+
+.list {
+    margin: auto;
+    width: fit-content;
+}
+
+.card {
+    width: 20rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin: 1rem;
+}
+
+.card .level {
+    width: 1em;
+    text-align: center;
+}
+
+.card .avatar {
+    width: 1.8em;
+    height: 1.8em;
+    border: 2px solid white;
+}
+
+.gold {
+    width: 1.8em;
+    height: 1.8em;
+    border: 3px solid gold;
+    background: linear-gradient(145deg, #ffd700, #f2c600, #e6ac00);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3),
+        inset 0px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.silver {
+    width: 1.8em;
+    height: 1.8em;
+    border: 3px solid silver;
+    background: linear-gradient(145deg, #dcdcdc, #c0c0c0, #a9a9a9);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3),
+        inset 0px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.bronze {
+    width: 1.8em;
+    height: 1.8em;
+    border: 3px solid #cd7f32;
+    background: linear-gradient(145deg, #cd7f32, #b87333, #8b4513);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3),
+        inset 0px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+
+.card .xp {
+    margin-left: auto;
+}
+
+.card .range {
+    width: 1em;
+}
+
+hr {
+    width: 80%;
+    height: 2px;
+    background-image: linear-gradient(to right,
+            rgba(255, 0, 0, 0), rgba(255, 0, 0, 0.26), rgba(255, 166, 0, 0.5), yellow, green, cyan, rgba(0, 0, 255, 0.568), rgba(238, 130, 238, 0));
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-default {
+    cursor: default;
+}
