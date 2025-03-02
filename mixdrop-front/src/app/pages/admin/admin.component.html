@@ -43,8 +43,10 @@
                         </select>
                     </td>
                     <td data-label="Acción">
-                        <button class="form-button" (click)="modifyUserRole(user.id, user.role)">Actualizar</button> |
-                        <button class="form-button" (click)="banUser(user.id)">Cambiar estado</button>
+                        <div class="center-button">
+                            <button class="form-button" (click)="modifyUserRole(user.id, user.role)">Actualizar</button>
+                            <button class="form-button" (click)="banUser(user.id)">Cambiar estado</button>
+                        </div>
                     </td>
                 </tr>
                 }
