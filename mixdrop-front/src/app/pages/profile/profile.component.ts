@@ -55,6 +55,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   totalBattles = 0;
   battlesPaginated: BattleDto[] = [];
 
+  shouldReload = false;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private userService: UserService,
@@ -239,11 +241,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
       
       formData.append("Password", newPassword)
+      this.shouldReload = true
     }
 
     if (role) formData.append("Role", role)
 
     const result = await this.userService.updateUser(formData, this.id)
+    if(this.shouldReload)
+    {
+      this.messageReceived$.unsubscribe()
+      await this.authService.logout()
+      this.router.navigateByUrl("login")
+      return
+    }
+
     console.error(result)
     this.authService.saveUser(result.data)
     window.location.reload()
@@ -277,11 +288,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   // envia cambios para mofidicar el usuario
-  onSubmit(): void {
+  async onSubmit() {
     if (this.userForm.valid) {
       this.isEditing = false
-      // Recarga la página
-      this.authService.getUser();
+      this.shouldReload = true
+      this.authService.getUser()
     } else {
       this.showAlert("Error", "Formulario no válido", 'error')
     }

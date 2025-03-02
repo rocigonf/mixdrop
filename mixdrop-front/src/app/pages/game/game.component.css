@@ -2,6 +2,13 @@
     font-size: 1.5rem;
 }
 
+.container-column{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-left: -1.5rem;
+}
 
 .screen {
     display: flex;
@@ -431,6 +438,34 @@ app-card:active {
     display: none;
 }
 
+.rainbow-button-game {
+    text-align: center;
+    margin: 5% auto;
+    width: 150px;
+    padding: 5px;
+    color: black;
+    background: linear-gradient(
+                    to bottom right, 
+                    #b827fc 0%, 
+                    #2c90fc 25%, 
+                    #b8fd33 50%, 
+                    #fec837 75%, 
+                    #fd1892 100%);
+    border: 4px solid white;
+    box-shadow: 4px 4px 0 white;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.5em !important;
+    user-select: none; /* Para q no se pueda seleccionar el texto del botón */
+}
+
+.rainbow-button-game:active {
+    box-shadow: 2px 2px 0 white;
+    transform: translate(2px, 2px);
+}
+
 /* ORIENTACION PANTALLA */
 
 @media (orientation: portrait) {
@@ -455,7 +490,6 @@ app-card:active {
     .mobileButton {
         display: none;
     }
-
 
 }
 
@@ -613,6 +647,11 @@ app-card:active {
     :host ::ng-deep app-roulette  .wheel-text {
         font-size: 1.4rem;
     }
+
+    .rainbow-button-game{
+        width: 90px;
+        font-size: 0.8em !important;
+    }
 }
 
 
@@ -652,4 +691,8 @@ app-card:active {
         height: auto;
     }
 
+    .rainbow-button-game{
+        width: 90px;
+        font-size: 0.8em !important;
+    }
 }

@@ -81,10 +81,8 @@ label{
 .other-column{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    width: 100%;
-    padding: 20px;
+    width: 50%;
 }
 
 .info-avatar{
@@ -113,6 +111,12 @@ label{
 
 .centered-button{
     display: flex;
+    justify-content: center;
+}
+
+.form-button{
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
