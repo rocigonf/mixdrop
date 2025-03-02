@@ -42,9 +42,11 @@
                 <span>MENÚ</span>
             </a>
         }
+
+        <a class="home" (click)="navigateToUrl('/ranking')">
+            <span>RANKING</span>
+        </a>
     
-
-
     <div class="dropdown">
         @if (authService.isAuthenticated()) {
 

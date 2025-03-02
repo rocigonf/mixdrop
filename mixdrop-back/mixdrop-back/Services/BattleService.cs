@@ -309,6 +309,14 @@ public class BattleService
                     battle.BattleUsers.Add(winner);
 
                     User userWinner = await _unitOfWork.UserRepository.GetByIdAsync(winner.UserId);
+                    userWinner.TotalPoints++;
+
+                    UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == winner.UserId);
+                    if (socket != null)
+                    {
+                        socket.User.TotalPoints++;
+                    }
+
                     await ChangeUserStateAsync(userWinner, 2);
                 }
 

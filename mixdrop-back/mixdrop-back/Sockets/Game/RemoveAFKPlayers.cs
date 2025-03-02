@@ -69,6 +69,13 @@ public class RemoveAFKPlayers : BackgroundService
 
                     _otherPlayer.User.State = state;
                     _otherPlayer.User.StateId = state.Id;
+                    _otherPlayer.User.TotalPoints++;
+
+                    UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == _playerInTurn.UserId);
+                    if (socket != null)
+                    {
+                        socket.User.TotalPoints++;
+                    }
 
                     _playerInTurn.User.State = state;
                     _playerInTurn.User.StateId = state.Id;

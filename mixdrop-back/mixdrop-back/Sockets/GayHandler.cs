@@ -383,6 +383,13 @@ public class GayHandler // GameHandler :3
 
             winner.User.State = state;
             winner.User.StateId = state.Id;
+            winner.User.TotalPoints++;
+
+            UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == winner.UserId);
+            if (socket != null)
+            {
+                socket.User.TotalPoints++;
+            }
 
             Battle.BattleUsers.Add(winner);
         }
