@@ -26,6 +26,12 @@ span {
     cursor: pointer;
 }
 
+.ranking{
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+}
+
 .nav-right {
     display: flex;
     align-items: center;
@@ -52,6 +58,7 @@ a :hover{
 }
 
 .dropdown-content {
+    z-index: 300;
     display: none;
     position: absolute;
     background-color: #f9f9f9;
