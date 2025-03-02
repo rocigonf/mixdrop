@@ -291,7 +291,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   async onSubmit() {
     if (this.userForm.valid) {
       this.isEditing = false
-      this.shouldReload = true
+      //this.shouldReload = true
       this.authService.getUser()
     } else {
       this.showAlert("Error", "Formulario no válido", 'error')
