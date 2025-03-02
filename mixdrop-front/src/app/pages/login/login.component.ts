@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { WebsocketService } from '../../services/websocket.service';
 import { NgIf } from '@angular/common';
+import { Validator } from '@angular/forms';
 import { PasswordValidatorService } from '../../services/password-validator.service';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 
@@ -45,7 +46,8 @@ export class LoginComponent {
   ) {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email, 
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
