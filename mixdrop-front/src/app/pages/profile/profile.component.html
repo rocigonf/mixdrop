@@ -17,6 +17,7 @@
         </div>
 
         - {{user.nickname}} - <br>
+        - {{ user.email }} -
     </div>
     
     <hr>
@@ -79,10 +80,9 @@
                                 {{ isEditing? 'Cancelar edición' : 'Editar' }}
                             </button>
                             
-                            <button type="submit" class="form-button" 
-                            [hidden]="!isEditing || userForm.invalid">
+                            <!-- <button type="submit" class="form-button" [hidden]="!isEditing || userForm.invalid">
                                 Guardar Cambios
-                            </button>
+                            </button> -->
                         
                         </div>
                     </form>
@@ -141,7 +141,6 @@
 
                 <h2>Información</h2>
 
-                <p>- {{ user.email }} -</p>
                 <br>
                 @if(waitingFriendship(user) == false)
                 {
