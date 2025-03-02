@@ -84,6 +84,23 @@ a :hover{
     cursor: pointer;
 }
 
+.trofeo{
+    position: relative;
+}
+
+#level{
+    color: #cf7216;;
+    text-align: center;
+    border-radius: 50%;
+    height: 1.2rem;
+    width: 1.2rem;
+    line-height: 1.5rem;
+    left: 0.5rem;
+    font-size: smaller;
+    position: absolute;
+    cursor: pointer;
+}
+
 @media (max-width: 450px) {
     nav {
         max-width: 100%;

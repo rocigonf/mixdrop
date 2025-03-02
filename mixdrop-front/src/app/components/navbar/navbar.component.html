@@ -38,7 +38,13 @@
         </a>
         }
 
-        <img class="ranking" src="/images/trophy.webp" (click)="navigateToUrl('ranking')" alt="ranking">
+
+        <div class="trofeo" (click)="navigateToUrl('ranking')" >
+            <img class="ranking" src="/images/trophy.webp" alt="ranking">
+            @if (authService.isAuthenticated()) {
+                <span id="level">{{this.user.totalPoints}}</span>
+            }
+        </div>
 
 
 
