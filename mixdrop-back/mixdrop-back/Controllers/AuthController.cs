@@ -48,7 +48,6 @@ public class AuthController : ControllerBase
                 {
                     { ClaimTypes.NameIdentifier, user.Id },      // ID del usuario
                     { ClaimTypes.Name, user.Nickname},           // Apodo
-                    { ClaimTypes.Email, user.Email     },        // Email del usuario
                     { ClaimTypes.Role, user.Role }               // Rol del usuario
                 },
                 // Expiración del token en 5 años
