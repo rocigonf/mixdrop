@@ -1,5 +1,5 @@
 export const environment = {
-    apiUrl: "https://mix-drop.runasp.net/api/",
-    apiImg: "https://mix-drop.runasp.net/",
-    socketUrl: 'https://mix-drop.runasp.net/socket'
+    apiUrl: "https://mixdrop-server.runasp.net/api/",
+    apiImg: "https://mixdrop-server.runasp.net/",
+    socketUrl: 'https://mixdrop-server.runasp.net/socket'
 };
