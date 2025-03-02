@@ -96,7 +96,10 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
       this.messageReceived$?.unsubscribe()
       const battleId = this.battleId
       this.resetData()
-      await this.deleteBattleBydId(battleId, true)
+      if(this.readyForBattle)
+      {
+        await this.deleteBattleBydId(battleId, true)
+      }
       /*if((this.battle || this.battleId != 0) && this.readyForBattle)
       {
         await this.deleteBattleBydId(this.battleId, true)

@@ -127,10 +127,10 @@ public class WebSocketHandler
                 UserBattle otherUser = battles.First().BattleUsers.FirstOrDefault(u => u.UserId != disconnectedHandler.User.Id);
                 await battleService.EndBattle(battles.First(), otherUser, user);
             }
-            else
+            /*else
             {
                 await battleService.DeleteBattleByObject(battles.First(), user.UserId, false, false);
-            }
+            }*/
             GayNetwork.DeleteHandler(disconnectedHandler.User.Id);
             await SendStatsMessage();
         }
