@@ -149,6 +149,10 @@ public class UserService
             {
                 newUser.AvatarPath = "/" + await imageService.InsertAsync(model.Image);
             }
+            else
+            {
+                newUser.AvatarPath = "/avatar/user.png";
+            }
 
             await _unitOfWork.UserRepository.InsertAsync(newUser);
             await _unitOfWork.SaveAsync();
@@ -220,6 +224,12 @@ public class UserService
             if (model.Password != null && model.Password != "")
             {
                 existingUser.Password = PasswordHelper.Hash(model.Password);
+            }
+
+            UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == existingUser.Id);
+            if (socket != null)
+            {
+                socket.User = existingUser;
             }
 
             _unitOfWork.UserRepository.Update(existingUser);

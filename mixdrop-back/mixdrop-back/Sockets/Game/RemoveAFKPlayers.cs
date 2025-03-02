@@ -50,7 +50,7 @@ public class RemoveAFKPlayers : BackgroundService
     {
         try
         {
-            if (_battle.BattleStateId == 3)
+            if (_handler.Battle.BattleStateId == 3)
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {

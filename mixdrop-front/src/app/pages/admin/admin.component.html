@@ -25,7 +25,7 @@
             <tbody>
                 @for (user of users; track $index) {
                 <tr>
-                    <td data-label="Avatar"><img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar"></td>
+                    <td data-label="Avatar"><img class="avatar" [src]="user.avatarPath === '' ? 'images/user.png' : IMG_URL + user.avatarPath" alt="avatar"></td>
                     <td data-label="ID">{{user.id}}</td>
                     <td data-label="Nombre">{{user.nickname}}</td>
                     <td data-label="Email">{{user.email}}</td>

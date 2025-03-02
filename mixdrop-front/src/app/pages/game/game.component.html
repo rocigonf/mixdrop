@@ -24,25 +24,24 @@
         tablero.</h2>
 </div>
 
+<div class="time">
+    <!-- CONTADOR -->
+    @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
+    {
+    <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+    }
+
+    <!-- SI HAY BONUS -->
+    @if(bonus != "")
+    {
+    <p>Hay un bonus por jugar cartas de color {{ bonus }} </p>
+    <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
+    }
+</div>
 
 <div class="screen">
     <div class="info">
         @if(currentBattle){
-        <div class="time">
-            <!-- CONTADOR -->
-            @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
-            {
-            <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
-            }
-
-            <!-- SI HAY BONUS -->
-            @if(bonus != "")
-            {
-            <p>Hay un bonus por jugar cartas de color {{ bonus }} </p>
-            <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
-            }
-        </div>
-
         <!-- PUNTOS Y AVATARES -->
         <div class="points">
             <div class="myPoints">
@@ -143,8 +142,32 @@
             </div>
 
             <!--segunda casilla PRINCIPAL -->
-
             <div class="slot1 slot" [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
+                (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 1)">
+                @if(board.slots[1].card )
+                {
+                <app-card [currentCard]="board.slots[1].card"></app-card>
+                @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name)
+                && !isCardInUse(cardToUse) &&
+                board.slots[1].card.level <= cardToUse.level) { <button (click)="useCard(1)" class="mobileButton">
+                    Colocar aqui</button>
+                    }
+                    }
+                    @else {
+                    <div class="card">
+                        @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"],
+                        cardToUse.track.part.name) && !isCardInUse(cardToUse)
+                        ) {
+                        <p>Colocar aquí</p>
+                        <button (click)="useCard(1)" class="mobileButton">Colocar aqui</button>
+                        }
+                    </div>
+                    }
+
+            </div>
+
+            <!-- Ni idea de qué es diferente con respecto al de arriba (copié la primera casilla y cambié cosas xD) pero como está comentado se ve un botón-->
+            <!--<div class="slot1 slot" [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
                 (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 1)">
                 @if(board.slots[1].card)
                 {
@@ -159,12 +182,12 @@
                         @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Main"],
                         cardToUse.track.part.name))
                         {
-                        <button (click)="useCard(1)" class="mobileButton">Colocar aqui</button>
                         <p>Colocar aquí</p>
+                        <button (click)="useCard(1)" class="mobileButton">Colocar aqui</button>
                         }
                     </div>
                     }
-            </div>
+            </div>-->
 
             <!--segunda casilla PRINCIPAL y BATERIA -->
 
