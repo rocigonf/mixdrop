@@ -17,6 +17,7 @@
         </div>
 
         - {{user.nickname}} - <br>
+        - {{ user.email }} -
     </div>
     
     <hr>
@@ -140,7 +141,6 @@
 
                 <h2>Información</h2>
 
-                <p>- {{ user.email }} -</p>
                 <br>
                 @if(waitingFriendship(user) == false)
                 {
