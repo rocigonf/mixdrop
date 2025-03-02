@@ -1,271 +1,272 @@
-<app-navbar></app-navbar>
+    <app-navbar></app-navbar>
 
-<!-- CHAT -->
-@if (!currentBattle?.isAgainstBot) {
-@if (currentBattle && userBattle ) {
-<app-chat [currentBattle]="currentBattle" [userBattle]="userBattle">
-</app-chat>
-}
-}
+    <!-- CHAT -->
+    @if (!currentBattle?.isAgainstBot) {
+    @if (currentBattle && userBattle ) {
+    <app-chat [currentBattle]="currentBattle" [userBattle]="userBattle">
+    </app-chat>
+    }
+    }
 
-<!--RULETA-->
+    <!--RULETA-->
 
-<div *ngIf="showRoulette && whoSpinRoulette" class="roulette-overlay">
-    <h1> {{ 'Has tirado de la ruleta' }}</h1>
-    <div class="roulette-animation">
-        <app-roulette [levelToDelete]="spinRouletteLevel"></app-roulette>
+    <div *ngIf="showRoulette && whoSpinRoulette" class="roulette-overlay">
+        <h1> {{ 'Has tirado de la ruleta' }}</h1>
+        <div class="roulette-animation">
+            <app-roulette [levelToDelete]="spinRouletteLevel"></app-roulette>
+        </div>
     </div>
-</div>
 
-<div *ngIf="showEnemyRoulette" class="enemyRoulette">
-    <h2 *ngIf="this.spinRouletteLevel>0">{{this.whoSpinRoulette}} ha girado la ruleta y te ha quitado cartas de nivel {{this.spinRouletteLevel}}.</h2>
-    <h2 *ngIf="this.spinRouletteLevel==0">{{this.whoSpinRoulette}} ha girado la ruleta y te quitó todas las cartas del tablero.</h2>
-</div>
+    <div *ngIf="showEnemyRoulette" class="enemyRoulette">
+        <h2 *ngIf="this.spinRouletteLevel>0">{{this.whoSpinRoulette}} ha girado la ruleta y te ha quitado cartas de nivel {{this.spinRouletteLevel}}.</h2>
+        <h2 *ngIf="this.spinRouletteLevel==0">{{this.whoSpinRoulette}} ha girado la ruleta y te quitó todas las cartas del tablero.</h2>
+    </div>
 
 
-<div class="screen">
-    <div class="info">
-        @if(currentBattle){
-        <div class="time">
-            <!-- CONTADOR -->
-            @if(this.userBattle?.isTheirTurn)
-            {
-            <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
-            }
+    <div class="screen">
+        <div class="info">
+            @if(currentBattle){
+            <div class="time">
+                <!-- CONTADOR -->
+                @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
+                {
+                <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+                }
 
-            <!-- SI HAY BONUS -->
-            @if(bonus != "")
-            {
-            <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
-            <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
+                <!-- SI HAY BONUS -->
+                @if(bonus != "")
+                {
+                <span class="star" [style]="{ '--bonusColor': bonusColor}"></span>
+                <p>Hay un bonus por jugar cartas de color {{ bonus }} 
+                    <span class="star" [style]="{ '--bonusColor': bonusColor}"></span></p>
+                }
+            </div>
+
+            <!-- PUNTOS Y AVATARES -->
+            <div class="points">
+                <div class="myPoints">
+                    <div class="wrapper">
+                        <div class="player">
+                            <div class="vinul">
+                                @if (currentBattle.isAgainstBot) {
+                                <div class="disk" [ngClass]="{'anim': userBattle?.isTheirTurn}"
+                                    [style.backgroundImage]="'url(' + IMG_URL + userBattle?.userImage + ')'">
+                                </div>
+                                } @else {
+                                <div class="disk" [ngClass]="{'anim': userBattle?.isTheirTurn}"
+                                    [style.backgroundImage]="'url(' + IMG_URL + userBattle?.userImage + ')'">
+                                </div>
+                                }
+
+                            </div>
+                            <div class="pen">
+                                <div class="hand"></div>
+                                <div class="niddle"></div>
+                            </div>
+                            <div class="btns">
+                                {{userBattle?.punctuation}}
+                            </div>
+                        </div>
+                    </div>
+                    <span>{{userBattle?.userName}}</span>
+                </div>
+                VS
+                <div class="enemyPoints">
+                    <div class="wrapper">
+                        <div class="player">
+                            <div class="vinul">
+                                @if(currentBattle.isAgainstBot){
+                                <div class="disk" [ngClass]="{'anim': !userBattle?.isTheirTurn}"
+                                    [style.backgroundImage]="'url(/images/bot.webp)'">
+                                </div>
+                                } @else{
+                                <div class="disk" [ngClass]="{'anim': !userBattle?.isTheirTurn}"
+                                    [style.backgroundImage]="'url(' + IMG_URL + enemyUser?.user?.avatarPath + ')'">
+                                </div>
+                                }
+                            </div>
+                            <div class="pen">
+                                <div class="hand"></div>
+                                <div class="niddle"></div>
+                            </div>
+                            <div class="btns">
+                                {{ otherPlayerPunct }}
+                            </div>
+                        </div>
+                    </div>
+                    @if (currentBattle.isAgainstBot) {
+                    <span>Bot</span>
+                    } @else {
+                    <span>{{enemyUser?.user?.nickname}}</span>
+                    }
+                </div>
+            </div>
             }
         </div>
 
-        <!-- PUNTOS Y AVATARES -->
-        <div class="points">
-            <div class="myPoints">
-                <div class="wrapper">
-                    <div class="player">
-                        <div class="vinul">
-                            @if (currentBattle.isAgainstBot) {
-                            <div class="disk" [ngClass]="{'anim': userBattle?.isTheirTurn}"
-                                [style.backgroundImage]="'url(' + IMG_URL + userBattle?.userImage + ')'">
-                            </div>
-                            } @else {
-                            <div class="disk" [ngClass]="{'anim': userBattle?.isTheirTurn}"
-                                [style.backgroundImage]="'url(' + IMG_URL + userBattle?.userImage + ')'">
-                            </div>
-                            }
+        <!-- REVANCHA -->
+        @if(userBattle != null){
+        <p>
+            @if(gameEnded)
+            {
+            <button class="rainbow-button" (click)="router.navigateByUrl('menu')">Volver al menú</button> <br>
+            <button class="rainbow-button" (click)="revenge()">Revancha >:D</button>
+            }
+        </p>
 
-                        </div>
-                        <div class="pen">
-                            <div class="hand"></div>
-                            <div class="niddle"></div>
-                        </div>
-                        <div class="btns">
-                            {{userBattle?.punctuation}}
-                        </div>
-                    </div>
-                </div>
-                <span>{{userBattle?.userName}}</span>
-            </div>
-            VS
-            <div class="enemyPoints">
-                <div class="wrapper">
-                    <div class="player">
-                        <div class="vinul">
-                            @if(currentBattle.isAgainstBot){
-                            <div class="disk" [ngClass]="{'anim': !userBattle?.isTheirTurn}"
-                                [style.backgroundImage]="'url(/images/bot.webp)'">
-                            </div>
-                            } @else{
-                            <div class="disk" [ngClass]="{'anim': !userBattle?.isTheirTurn}"
-                                [style.backgroundImage]="'url(' + IMG_URL + enemyUser?.user?.avatarPath + ')'">
-                            </div>
+        <div class="game">
+            <div class="board shadow">
+                <!--primera casilla VOZ Y PRINCIPAL-->
+                <div class="slot0 slot" [ngClass]="{'highlight': shouldHighlightSlot(0, ['Vocal', 'Main'])}"
+                    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 0)">
+                    @if(board.slots[0].card )
+                    {
+                    <app-card [currentCard]="board.slots[0].card"></app-card>
+                    @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)
+                    && !isCardInUse(cardToUse) &&
+                    board.slots[0].card.level <= cardToUse.level) { <button (click)="useCard(0)" class="mobileButton">
+                        Colocar aqui</button>
+                        }
+                        }
+                        @else {
+                        <div class="card">
+                            @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"],
+                            cardToUse.track.part.name) && !isCardInUse(cardToUse)
+                            ) {
+                            <p>Colocar aquí</p>
+                            <button (click)="useCard(0)" class="mobileButton">Colocar aqui</button>
                             }
                         </div>
-                        <div class="pen">
-                            <div class="hand"></div>
-                            <div class="niddle"></div>
-                        </div>
-                        <div class="btns">
-                            {{ otherPlayerPunct }}
-                        </div>
-                    </div>
+                        }
+
                 </div>
-                @if (currentBattle.isAgainstBot) {
-                <span>Bot</span>
-                } @else {
-                <span>{{enemyUser?.user?.nickname}}</span>
+
+                <!--segunda casilla PRINCIPAL -->
+
+                <div class="slot1 slot" [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
+                    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 1)">
+                    @if(board.slots[1].card)
+                    {
+                    <app-card [currentCard]="board.slots[1].card"></app-card>
+                    @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) &&
+                    board.slots[1].card.level <= cardToUse.level && !isCardInUse(cardToUse) ) { } <button
+                        (click)="useCard(1)" class="mobileButton">
+                        Colocar aqui</button>
+                        }
+                        @else {
+                        <div class="card">
+                            @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Main"],
+                            cardToUse.track.part.name))
+                            {
+                            <button (click)="useCard(1)" class="mobileButton">Colocar aqui</button>
+                            <p>Colocar aquí</p>
+                            }
+                        </div>
+                        }
+                </div>
+
+                <!--segunda casilla PRINCIPAL y BATERIA -->
+
+                <div class="slot2 slot" [ngClass]="{'highlight': shouldHighlightSlot(2 , ['Drums', 'Main'])}"
+                    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 2)">
+                    @if(board.slots[2].card)
+                    {
+                    <app-card [currentCard]="board.slots[2].card"></app-card>
+                    @if ( this.userBattle.isTheirTurn &&cardToUse && !isCardInUse(cardToUse) && checkType(["Main", "Drums"],
+                    cardToUse.track.part.name)
+                    && board.slots[2].card.level <= cardToUse.level) { <button (click)="useCard(2)" class="mobileButton">
+                        Colocar aqui</button>
+                        }
+                        }
+                        @else {
+                        <div class="card">
+                            @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"],
+                            cardToUse.track.part.name) && !isCardInUse(cardToUse) )
+                            {
+                            <button (click)="useCard(2)" class="mobileButton">Colocar aqui</button>
+                            <p>Colocar aquí</p>
+                            }
+                        </div>
+                        }
+                </div>
+
+
+                <!--tercera casilla BATERIA-->
+                <div class="slot3 slot" [ngClass]="{'highlight': shouldHighlightSlot(3, ['Drums'])}"
+                    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 3)">
+                    @if(board.slots[3].card)
+                    {
+                    <app-card [currentCard]="board.slots[3].card"></app-card>
+                    @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) &&
+                    board.slots[3].card.level <= cardToUse.level && !isCardInUse(cardToUse) ) { <button (click)="useCard(3)"
+                        class="mobileButton">
+                        Colocar aqui</button>
+                        }
+                        }
+                        @else {
+                        <div class="card">
+                            @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Drums"],
+                            cardToUse.track.part.name))
+                            {
+                            <button (click)="useCard(3)" class="mobileButton">Colocar aqui</button>
+                            <p>Colocar aquí</p>
+                            }
+                        </div>
+                        }
+                </div>
+
+                <!-- cuarta casilla BATERIA Y BAJO-->
+
+                <div class="slot4 slot" [ngClass]="{'highlight': shouldHighlightSlot(4, ['Drums', 'Bass'])}"
+                    (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 4)">
+
+                    @if(board.slots[4].card)
+                    {
+                    <app-card [currentCard]="board.slots[4].card"></app-card>
+
+                    @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Drums", "Bass"],
+                    cardToUse.track.part.name)
+                    &&
+                    board.slots[4].card.level <= cardToUse.level) { <button (click)="useCard(4)" class="mobileButton">
+                        Colocar aqui</button>
+                        }
+                        }
+                        @else {
+                        <div class="card">
+                            @if (this.userBattle.isTheirTurn && !isCardInUse(cardToUse) && cardToUse && checkType(["Drums",
+                            "Bass"],
+                            cardToUse.track.part.name))
+                            {
+                            <button (click)="useCard(4)" class="mobileButton">Colocar aqui</button>
+                            <p>Colocar aquí</p>
+                            }
+                        </div>
+                        }
+                </div>
+                <div class="btn-roulette">
+                    <button [disabled]="gameEnded || !this.userBattle.isTheirTurn" (click)="useButton()">MIXDROP</button>
+                </div>
+            </div>
+
+            <!--------------------- CARTAS USUARIO ------------------->
+
+            <div class="myCarts">
+                @for (card of userBattle.cards; track $index)
+                {
+                @if (userBattle.isTheirTurn && !gameEnded) {
+                <app-card (touchstart)="selectCard(card)" draggable="true" [currentCard]="card"
+                    (dragstart)="selectCard(card)"></app-card>
+                }
+                @else {
+                <app-card [currentCard]="card"></app-card>
+                }
                 }
             </div>
         </div>
+
+        }
+        @else {
+        <p>Cargando...</p>
+        <button (click)="router.navigateByUrl('menu')">Salir</button>
         }
     </div>
-
-    <!-- REVANCHA -->
-    @if(userBattle != null){
-    <p>
-        @if(gameEnded)
-        {
-        <button class="rainbow-button" (click)="router.navigateByUrl('menu')">Volver al menú</button> <br>
-        <button class="rainbow-button" (click)="revenge()">Revancha >:D</button>
-        }
-    </p>
-
-    <div class="game">
-        <div class="board shadow">
-            <!--primera casilla VOZ Y PRINCIPAL-->
-            <div class="slot0 slot" [ngClass]="{'highlight': shouldHighlightSlot(0, ['Vocal', 'Main'])}"
-                (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 0)">
-                @if(board.slots[0].card )
-                {
-                <app-card [currentCard]="board.slots[0].card"></app-card>
-                @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"], cardToUse.track.part.name)
-                && !isCardInUse(cardToUse) &&
-                board.slots[0].card.level <= cardToUse.level) { <button (click)="useCard(0)" class="mobileButton">
-                    Colocar aqui</button>
-                    }
-                    }
-                    @else {
-                    <div class="card">
-                        @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Vocal", "Main"],
-                        cardToUse.track.part.name) && !isCardInUse(cardToUse)
-                        ) {
-                        <p>Colocar aquí</p>
-                        <button (click)="useCard(0)" class="mobileButton">Colocar aqui</button>
-                        }
-                    </div>
-                    }
-
-            </div>
-
-            <!--segunda casilla PRINCIPAL -->
-
-            <div class="slot1 slot" [ngClass]="{'highlight': shouldHighlightSlot(1, ['Main'])}"
-                (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 1)">
-                @if(board.slots[1].card)
-                {
-                <app-card [currentCard]="board.slots[1].card"></app-card>
-                @if (this.userBattle.isTheirTurn && cardToUse && checkType(["Main"], cardToUse.track.part.name) &&
-                board.slots[1].card.level <= cardToUse.level && !isCardInUse(cardToUse) ) { } <button
-                    (click)="useCard(1)" class="mobileButton">
-                    Colocar aqui</button>
-                    }
-                    @else {
-                    <div class="card">
-                        @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Main"],
-                        cardToUse.track.part.name))
-                        {
-                        <button (click)="useCard(1)" class="mobileButton">Colocar aqui</button>
-                        <p>Colocar aquí</p>
-                        }
-                    </div>
-                    }
-            </div>
-
-            <!--segunda casilla PRINCIPAL y BATERIA -->
-
-            <div class="slot2 slot" [ngClass]="{'highlight': shouldHighlightSlot(2 , ['Drums', 'Main'])}"
-                (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 2)">
-                @if(board.slots[2].card)
-                {
-                <app-card [currentCard]="board.slots[2].card"></app-card>
-                @if ( this.userBattle.isTheirTurn &&cardToUse && !isCardInUse(cardToUse) && checkType(["Main", "Drums"],
-                cardToUse.track.part.name)
-                && board.slots[2].card.level <= cardToUse.level) { <button (click)="useCard(2)" class="mobileButton">
-                    Colocar aqui</button>
-                    }
-                    }
-                    @else {
-                    <div class="card">
-                        @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Main", "Drums"],
-                        cardToUse.track.part.name) && !isCardInUse(cardToUse) )
-                        {
-                        <button (click)="useCard(2)" class="mobileButton">Colocar aqui</button>
-                        <p>Colocar aquí</p>
-                        }
-                    </div>
-                    }
-            </div>
-
-
-            <!--tercera casilla BATERIA-->
-            <div class="slot3 slot" [ngClass]="{'highlight': shouldHighlightSlot(3, ['Drums'])}"
-                (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 3)">
-                @if(board.slots[3].card)
-                {
-                <app-card [currentCard]="board.slots[3].card"></app-card>
-                @if (this.userBattle.isTheirTurn &&cardToUse && checkType(["Drums"], cardToUse.track.part.name) &&
-                board.slots[3].card.level <= cardToUse.level && !isCardInUse(cardToUse) ) { <button (click)="useCard(3)"
-                    class="mobileButton">
-                    Colocar aqui</button>
-                    }
-                    }
-                    @else {
-                    <div class="card">
-                        @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Drums"],
-                        cardToUse.track.part.name))
-                        {
-                        <button (click)="useCard(3)" class="mobileButton">Colocar aqui</button>
-                        <p>Colocar aquí</p>
-                        }
-                    </div>
-                    }
-            </div>
-
-            <!-- cuarta casilla BATERIA Y BAJO-->
-
-            <div class="slot4 slot" [ngClass]="{'highlight': shouldHighlightSlot(4, ['Drums', 'Bass'])}"
-                (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event, 4)">
-
-                @if(board.slots[4].card)
-                {
-                <app-card [currentCard]="board.slots[4].card"></app-card>
-
-                @if (this.userBattle.isTheirTurn && cardToUse && !isCardInUse(cardToUse) && checkType(["Drums", "Bass"],
-                cardToUse.track.part.name)
-                &&
-                board.slots[4].card.level <= cardToUse.level) { <button (click)="useCard(4)" class="mobileButton">
-                    Colocar aqui</button>
-                    }
-                    }
-                    @else {
-                    <div class="card">
-                        @if (this.userBattle.isTheirTurn && !isCardInUse(cardToUse) && cardToUse && checkType(["Drums",
-                        "Bass"],
-                        cardToUse.track.part.name))
-                        {
-                        <button (click)="useCard(4)" class="mobileButton">Colocar aqui</button>
-                        <p>Colocar aquí</p>
-                        }
-                    </div>
-                    }
-            </div>
-            <div class="btn-roulette">
-                <button [disabled]="gameEnded || !this.userBattle.isTheirTurn" (click)="useButton()">MIXDROP</button>
-            </div>
-        </div>
-
-        <!--------------------- CARTAS USUARIO ------------------->
-
-        <div class="myCarts">
-            @for (card of userBattle.cards; track $index)
-            {
-            @if (userBattle.isTheirTurn && !gameEnded) {
-            <app-card (touchstart)="selectCard(card)" draggable="true" [currentCard]="card"
-                (dragstart)="selectCard(card)"></app-card>
-            }
-            @else {
-            <app-card [currentCard]="card"></app-card>
-            }
-            }
-        </div>
-    </div>
-
-    }
-    @else {
-    <p>Cargando...</p>
-    <button (click)="router.navigateByUrl('menu')">Salir</button>
-    }
-</div>

@@ -47,7 +47,7 @@ export class ChatComponent {
     this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
   }
 
-  chatVisible: boolean = true;
+  chatVisible: boolean = false;
 
   envia() {
     this.mensaje.trim();
