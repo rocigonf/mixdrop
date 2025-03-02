@@ -19,6 +19,7 @@ public class GayHandler // GameHandler :3
 
     // Lista obtenida de la base de datos
     private static ICollection<Card> _cards = new List<Card>();
+    private static ICollection<Card> cardsWithoutEffect = new List<Card>();
 
     private readonly Board _board = new Board();
     private readonly AudioModifier _audioModifier = new AudioModifier();
@@ -49,6 +50,7 @@ public class GayHandler // GameHandler :3
         if (_cards.Count == 0)
         {
             _cards = await unitOfWork.CardRepository.GetAllCardsAsync();
+            cardsWithoutEffect = _cards.Where(c => c.Effect == "").ToList();
         }
 
         Random rand = new Random();
@@ -87,8 +89,16 @@ public class GayHandler // GameHandler :3
     {
         for (int i = 0; i < 5; i++)
         {
-            Card card = _cards.ElementAt(_random.Next(0, _cards.Count));
-            userBattle.Cards.Add(card);
+            if (!userBattle.IsBot)
+            {
+                Card card = _cards.ElementAt(_random.Next(0, _cards.Count));
+                userBattle.Cards.Add(card);
+            }
+            else
+            {
+                Card card = cardsWithoutEffect.ElementAt(_random.Next(0, cardsWithoutEffect.Count));
+                userBattle.Cards.Add(card);
+            }
         }
     }
 
@@ -355,7 +365,10 @@ public class GayHandler // GameHandler :3
 
     public async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
     {
-        await _service.StopAsync(CancellationToken.None);
+        if (_service != null)
+        {
+            await _service.StopAsync(CancellationToken.None);
+        }
 
         Battle.BattleStateId = 4;
         Battle.BattleUsers = [];
