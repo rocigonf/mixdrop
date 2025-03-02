@@ -109,8 +109,8 @@
     <p>
         @if(gameEnded)
         {
-        <button class="rainbow-button" (click)="router.navigateByUrl('menu')">Volver al menú</button> <br>
-        <button class="rainbow-button" (click)="revenge()">Revancha >:D</button>
+        <button class="rainbow-button-game" (click)="router.navigateByUrl('menu')">Volver al menú</button> <br>
+        <button class="rainbow-button-game" (click)="revenge()">Revancha >:D</button>
         }
     </p>
 
@@ -290,7 +290,9 @@
 
     }
     @else {
-    <p>Cargando...</p>
-    <button (click)="router.navigateByUrl('menu')">Salir</button>
+    <div class="container-column">
+        <p>Cargando...</p>
+        <button class="rainbow-button" (click)="router.navigateByUrl('menu')">Salir</button>
+    </div>
     }
 </div>
