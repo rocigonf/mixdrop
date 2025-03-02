@@ -91,24 +91,32 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
+    try
+    {
       this.messageReceived$?.unsubscribe()
-      await this.deleteBattleBydId(this.battleId, true)
+      const battleId = this.battleId
       this.resetData()
+      await this.deleteBattleBydId(battleId, true)
       /*if((this.battle || this.battleId != 0) && this.readyForBattle)
       {
         await this.deleteBattleBydId(this.battleId, true)
         this.resetData()
       }*/
+    }
+    catch {}
   }
 
   async getActualBattle()
   {
-    const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
-    console.log("RESULTADO: ", result)
-      
-    this.actualBattle = result.data[0]
-    this.battleId = this.actualBattle.id
-    sessionStorage.setItem("battleId", this.battleId.toString())
+    try
+    {
+      const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
+      console.log("RESULTADO: ", result)
+        
+      this.actualBattle = result.data[0]
+      this.battleId = this.actualBattle.id
+      sessionStorage.setItem("battleId", this.battleId.toString())
+    } catch{}
   }
 
   async processMessage(message: any) {

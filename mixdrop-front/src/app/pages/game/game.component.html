@@ -24,25 +24,24 @@
         tablero.</h2>
 </div>
 
+<div class="time">
+    <!-- CONTADOR -->
+    @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
+    {
+    <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
+    }
+
+    <!-- SI HAY BONUS -->
+    @if(bonus != "")
+    {
+    <p>Hay un bonus por jugar cartas de color {{ bonus }} </p>
+    <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
+    }
+</div>
 
 <div class="screen">
     <div class="info">
         @if(currentBattle){
-        <div class="time">
-            <!-- CONTADOR -->
-            @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
-            {
-            <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
-            }
-
-            <!-- SI HAY BONUS -->
-            @if(bonus != "")
-            {
-            <p>Hay un bonus por jugar cartas de color {{ bonus }} </p>
-            <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
-            }
-        </div>
-
         <!-- PUNTOS Y AVATARES -->
         <div class="points">
             <div class="myPoints">
