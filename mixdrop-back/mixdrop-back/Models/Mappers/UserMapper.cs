@@ -19,6 +19,7 @@ public class UserMapper
             Banned = user.Banned,
             StateId = user.StateId,
             Friendships = user.Friendships,
+            TotalPoints = user.TotalPoints
             //BattleUsers = user.BattleUsers
         };
     }
