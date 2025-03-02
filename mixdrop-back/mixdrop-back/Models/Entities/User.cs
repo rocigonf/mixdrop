@@ -17,4 +17,5 @@ public class User
     public int StateId { get; set; }
     public State State { get; set; }
     public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
+    public long TotalPoints { get; set; } = 0;
 }

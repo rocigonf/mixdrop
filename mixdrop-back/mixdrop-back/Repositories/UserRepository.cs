@@ -17,6 +17,14 @@ public class UserRepository : Repository<User, int>
             .ToListAsync();
     }
 
+    public async Task<ICollection<User>> GetRankingAsync()
+    {
+        return await GetQueryable()
+            .OrderByDescending(u => u.TotalPoints)
+            .ToListAsync();
+    }
+
+
     public async Task<User> GetByEmailAsync(string email)
     {
         return await GetQueryable()

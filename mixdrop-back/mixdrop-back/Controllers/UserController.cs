@@ -36,6 +36,13 @@ public class UserController : ControllerBase
         return Ok(users);
     }
 
+    [HttpGet("ranking")]
+    public async Task<List<UserDto>> GetRanking()
+    {
+        var users = await _userService.GetRankingAsync();
+        return users;
+    }
+
     [Authorize]
     [HttpGet("{id}")]
     public async Task<UserDto> GetUserById(int id)

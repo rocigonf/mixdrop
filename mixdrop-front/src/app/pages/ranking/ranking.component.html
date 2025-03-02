@@ -1,0 +1,4 @@
+<app-navbar></app-navbar>
+@for (user of users; track $index) {
+    <p>{{ user.nickname }} - {{ user.totalPoints }}</p>
+}
