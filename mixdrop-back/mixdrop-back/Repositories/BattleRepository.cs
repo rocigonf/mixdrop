@@ -60,7 +60,8 @@ public class BattleRepository : Repository<Battle, int>
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
                 .Include(battle => battle.BattleUsers)
                 .ThenInclude(ub => ub.User)
-                .ToListAsync();
+            .OrderByDescending(b => b.FinishedAt)
+            .ToListAsync();
     }
 
     public async Task<Battle> GetBattleWithBotByUserAsync(int userId)

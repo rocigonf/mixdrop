@@ -355,6 +355,8 @@ public class GayHandler // GameHandler :3
 
     public async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
     {
+        await _service.StopAsync(CancellationToken.None);
+
         Battle.BattleStateId = 4;
         Battle.BattleUsers = [];
         Battle.FinishedAt = DateTime.UtcNow;
