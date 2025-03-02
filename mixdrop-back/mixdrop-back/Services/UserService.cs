@@ -34,6 +34,12 @@ public class UserService
         return _userMapper.ToDto(users).ToList();
     }
 
+    public async Task<List<UserDto>> GetRankingAsync()
+    {
+        var users = await _unitOfWork.UserRepository.GetRankingAsync();
+        return _userMapper.ToDto(users).ToList();
+    }
+
     public async Task<List<UserDto>> GetAllUsersAsync(User currentUser)
     {
         var users = await _unitOfWork.UserRepository.GetAllUsersAsync(currentUser.Id);

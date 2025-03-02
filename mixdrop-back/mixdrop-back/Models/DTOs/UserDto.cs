@@ -16,4 +16,6 @@ public class UserDto
     public State State { get; set; }
     public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
     public List<BattleDto> Battles{ get; set; } = new List<BattleDto>();
+    public long TotalPoints { get; set; } = 0;
+
 }

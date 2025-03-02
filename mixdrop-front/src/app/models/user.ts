@@ -11,5 +11,6 @@ export interface User {
     stateId: number,
     friend: Friend[],
     banned : boolean,
-    battles: BattleDto[]
+    battles: BattleDto[],
+    totalPoints: number
 }

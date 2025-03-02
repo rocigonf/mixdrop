@@ -48,7 +48,8 @@ export class UserService {
         stateId: u.stateId,
         friend: u.friend,
         banned: u.banned,
-        battles: []
+        battles: [],
+        totalPoints: u.totalPoints
       }
       users.push(user);
     }
@@ -67,5 +68,31 @@ export class UserService {
   // Banear usuario
   async banUserAsync(userId: number){
     return await this.api.put(`User/banUser/${userId}`)
+  }
+
+  // Ranking
+  async getRanking(): Promise<User[]> {
+    const request = await this.api.get(`User/ranking`)
+    const dataRaw: any = request.data
+
+    const users: User[] = []
+
+    for (const u of dataRaw) {
+      const user: User = {
+        id: u.id,
+        nickname: u.nickname,
+        email: u.email,
+        avatarPath: u.avatarPath,
+        role: u.role,
+        isInQueue: u.isInQueue,
+        stateId: u.stateId,
+        friend: u.friend,
+        banned: u.banned,
+        battles: [],
+        totalPoints: u.totalPoints
+      }
+      users.push(user);
+    }
+    return users;
   }
 }

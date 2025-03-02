@@ -7,6 +7,7 @@ import { GameComponent } from './pages/game/game.component';
 import { MatchmakingComponent } from './pages/matchmaking/matchmaking.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { RouletteComponent } from './components/roulette/roulette.component';
+import { RankingComponent } from './pages/ranking/ranking.component';
 
 export const routes: Routes = [
     {path: "", component: HomeComponent},
@@ -16,5 +17,6 @@ export const routes: Routes = [
     { path: 'admin/:id', component: AdminComponent},
     { path: 'game', component: GameComponent},
     { path: 'matchmaking', component: MatchmakingComponent },
-    { path : 'test', component: RouletteComponent }
+    { path : 'test', component: RouletteComponent },
+    { path: 'ranking', component: RankingComponent }
 ];
