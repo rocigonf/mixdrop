@@ -39,19 +39,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   public currentSpeakerFrameName : string = this.SPEAKER_FRAMES[0]
 
   private readonly SONGS: { [index: string]: number; } = {
-    "/songs/pressure.mp3" : 114,
-    "/songs/break_free.mp3" : 109,
     "/songs/enemy.mp3" : 77,
     "/songs/hip_shop.mp3" : 97.50884434,
     "/songs/home_song.mp3" : 90,
-    "/songs/fly_octo_fly.flac" : 163,
-    "/songs/cat.flac" : 112,
     "/songs/hopes_and_dreams.mp3" : 171,
-    "/songs/underground.mp3" : 120,
-    "/songs/natures_crescendo.mp3" : 121,
-    "/songs/temazo.mp3" : 129
   }
-
 
   ngOnInit(): void {
     try 
