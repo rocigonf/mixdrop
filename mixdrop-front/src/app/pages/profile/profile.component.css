@@ -64,6 +64,8 @@ label {
 }
 
 .header {
+    margin: auto;
+    width: fit-content;
     display: flex;
     justify-content: center;
     position: relative;
@@ -173,20 +175,21 @@ label {
     background-color: #7c679a;
     border: 4px solid white;
 }
+
 /* Contenedor del badge */
 #badge-ribbon {
     position: absolute;
     background: gold;
-    top: -14%;
-    right: 36%;
-    height: 4rem; 
-    width: 4rem;   
+    top: -13%;
+    right: -21%;
+    height: 4rem;
+    width: 4rem;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 
-                inset 0 1px 3px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 1px 3px rgba(255, 255, 255, 0.5);
     border: 2px solid #e6ac00;
 }
 
@@ -195,10 +198,10 @@ label {
 #badge-ribbon:after {
     content: '';
     position: absolute;
-    border-bottom: 1.5rem solid gold;  
+    border-bottom: 1.5rem solid gold;
     border-left: 1rem solid transparent;
     border-right: 1rem solid transparent;
-    top: 3.2rem;  
+    top: 3.2rem;
     left: -0.3rem;
     transform: rotate(-140deg);
 }
@@ -329,6 +332,7 @@ label {
         height: 40px;
         font-size: 1.2rem;
     }
+
 }
 
 @media (max-width: 385px) {
