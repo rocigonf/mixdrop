@@ -285,7 +285,7 @@ public class Seeder
             },
             new Card
             {
-                ImagePath = "cards/allaboutthatbass_beat.jpg",
+                ImagePath = "cards/allaboutthatbass_lead.jpg",
                 Level = 3,
                 Track = new Track
                 {
@@ -458,25 +458,25 @@ public class Seeder
                 },
                 CardTypeId = 2
             },
-            //new Card {
-            //    ImagePath = "cards/animals0_loop.jpg",
-            //    Level = 3,
-            //    Track = new Track
-            //    {
-            //        TrackPath = "Songs/Input/Main/AnimalsGarrix_SYN_AnimalsGarrix_SYN_Fm_128.mp3",
-            //        Song = new Song
-            //        {
-            //            Name = "Animals",
-            //            Bpm = 128,
-            //            Pitch = "Fm",
-            //            Artist = new Artist {
-            //                Name = "Martin Garrix"
-            //            }
-            //        },
-            //        PartId = 2
-            //    },
-            //    CardTypeId = 2
-            //},
+            new Card {
+                ImagePath = "cards/fashion1_loop.jpg",
+                Level = 2,
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Main/LaCamisaNegra_GTR_LaCamisaNegra_GTR_Gbm_97(120).mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Gbm"], false)
+                    {
+                        Name = "La Camisa Negra",
+                        Bpm = 120,
+                        Pitch = "Gbm",
+                        Artist = new Artist {
+                            Name = "Juanes"
+                        }
+                    },
+                    PartId = 2
+                },
+                CardTypeId = 2
+            },
 
             /* BAJO */
 
@@ -686,6 +686,102 @@ public class Seeder
                         Pitch = "Ebm",
                         Artist = new Artist {
                             Name = "Bullwheel"
+                        }
+                    },
+                    PartId = 4
+                },
+                CardTypeId = 4
+            },
+            new Card {
+                ImagePath = "cards/boomboompow_beat.jpg",
+                Level = 1,
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Drums/BoomBoomPow_DMSAm_130.mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Am"], false)
+                    {
+                        Name = "Boom Boom Pow",
+                        Bpm = 130,
+                        Pitch = "Am",
+                        Artist = new Artist {
+                            Name = "The Black Eyed Peas"
+                        }
+                    },
+                    PartId = 4
+                },
+                CardTypeId = 4
+            },
+            new Card {
+                ImagePath = "cards/fashion1_beat.jpg",
+                Level = 2,
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Drums/LaCamisaNegra_DMSGbm_97(120).mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Gbm"], false)
+                    {
+                        Name = "La Camisa Negra",
+                        Bpm = 120,
+                        Pitch = "Gbm",
+                        Artist = new Artist {
+                            Name = "Juanes"
+                        }
+                    },
+                    PartId = 4
+                },
+                CardTypeId = 4
+            },
+            new Card {
+                ImagePath = "cards/storybook1_beat.jpg",
+                Level = 2,
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Drums/TheBreaks_DMSBm_114(120).mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Bm"], false)
+                    {
+                        Name = "The Breaks",
+                        Bpm = 120,
+                        Pitch = "Bm",
+                        Artist = new Artist {
+                            Name = "Kurtis Blow"
+                        }
+                    },
+                    PartId = 4
+                },
+                CardTypeId = 4
+            },
+            new Card
+            {
+                ImagePath = "cards/allaboutthatbass_beat.jpg",
+                Level = 3,
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Drums/AllAboutThatBass_DMSA_134.mp3",
+                    Song = new Song("A", true)
+                    {
+                        Name = "All About That Bass",
+                        Bpm = 134,
+                        Pitch = "A",
+                        Artist = new Artist {
+                            Name = "Meghan Trainor"
+                        }
+                    },
+                    PartId = 4
+                },
+                CardTypeId = 4
+            },
+            new Card {
+                ImagePath = "cards/radioactive_beat.jpg",
+                Level = 3,
+                Track = new Track
+                {
+                    TrackPath = "Songs/Input/Vocal/Radioactive_DMSBm_137.mp3",
+                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Bm"], false)
+                    {
+                        Name = "Radioactive",
+                        Bpm = 137,
+                        Pitch = "Bm",
+                        Artist = new Artist {
+                            Name = "Imagine Dragons"
                         }
                     },
                     PartId = 4
