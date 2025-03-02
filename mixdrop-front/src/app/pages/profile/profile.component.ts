@@ -49,7 +49,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   acceptedFriends: Friend[] = []
   pendingFriends: Friend[] = []
 
-  battlesPerPage = 1;
+  battlesPerPage = 5;
   currentPage = 1;
   totalPages = 1;
   totalBattles = 0;

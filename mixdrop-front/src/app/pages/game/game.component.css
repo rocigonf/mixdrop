@@ -22,6 +22,7 @@
 }
 
 .points {
+    height: 3rem;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -86,13 +87,31 @@ app-card {
 }
 
 
+
 @keyframes spin {
     0% {
-        transform: rotateY(0deg);
+        transform: rotate(-180deg) scale(0);
+        opacity: 0;
+    }
+
+    15% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+
+    85% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
     }
 
     100% {
-        transform: rotateY(360deg);
+        transform: rotate(360deg) scale(0);
+        opacity: 0;
     }
 }
 
@@ -285,6 +304,10 @@ app-card:active {
         transform: rotate(360deg);
     }
 }
+.anim {
+    animation: anim 2s linear infinite;
+}
+
 
 .disk {
     position: absolute;
@@ -296,9 +319,6 @@ app-card:active {
     transition: transform 1s ease-in-out;
 }
 
-.anim {
-    animation: anim 2s linear infinite;
-}
 
 
 /*ruleta*/
@@ -439,7 +459,7 @@ app-card:active {
 
 }
 
-@media (orientation: landscape) and (max-width: 900px) {
+@media (orientation: landscape) and (max-width: 1000px) {
     .screen::before {
         content: "";
     }
@@ -462,6 +482,7 @@ app-card:active {
     .points,
     .board {
         margin-top: 0;
+        gap: 10px;
     }
 
     .myCarts * {
@@ -476,29 +497,38 @@ app-card:active {
     }
 
     :host ::ng-deep app-card * {
-        font-size: 0.6rem;
+        font-size: 0.5rem;
     }
 
     :host ::ng-deep app-card #part-icon {
-        margin-top: 1.5rem;
+        margin-top: 1.3rem;
     }
 
     :host ::ng-deep app-card .trapecio:nth-child(1) {
         margin-top: 1.15rem;
-        border-width: 0.5rem 0.4rem 0 0;
+        border-width: 0.45rem 0.35rem 0 0;
     }
 
     :host ::ng-deep app-card .trapecio:nth-child(2) {
         margin-top: 0.69921rem;
-        width: 0.45rem;
+        width: 0.35rem;
         border-right-width: 0.3rem;
         border-top-width: 0.4rem;
     }
 
     :host ::ng-deep app-card .trapecio:nth-child(3) {
-        width: 0.75rem;
+        width: 0.65rem;
         border-right-width: 0.4rem;
         border-top-width: 0.6rem;
+    }
+
+    :host ::ng-deep app-chat .chat {
+        height: 90vh;
+        width: 300px;
+    }
+
+    :host ::ng-deep app-chat .icon {
+        top: 87%;
     }
 
     .shadow {
@@ -574,6 +604,52 @@ app-card:active {
 
     .screen {
         gap: 1rem;
+    }
+    :host ::ng-deep app-roulette .wheel{
+        width: 10rem;
+        height: 10rem;
+    }
+
+    :host ::ng-deep app-roulette  .wheel-text {
+        font-size: 1.4rem;
+    }
+}
+
+
+
+@media (orientation: landscape) and (max-width: 634px) {
+    .screen::before {
+        content: "";
+    }
+
+    .mobileButton {
+        display: block;
+        font-size: 0.7rem;
+        margin: auto;
+    }
+
+    .slot p {
+        display: none;
+    }
+
+    .game,
+    .info {
+        display: block;
+    }
+
+    .points,
+    .board {
+        margin-top: 0;
+    }
+
+    .btn-roulette {
+        height: fit-content;
+    }
+    
+    .btn-roulette button {
+        writing-mode:horizontal-tb;
+        text-orientation: sideways;
+        height: auto;
     }
 
 }

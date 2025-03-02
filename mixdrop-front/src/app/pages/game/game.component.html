@@ -18,8 +18,10 @@
 </div>
 
 <div *ngIf="showEnemyRoulette" class="enemyRoulette">
-    <h2 *ngIf="this.spinRouletteLevel>0">{{this.whoSpinRoulette}} ha girado la ruleta y te ha quitado cartas de nivel {{this.spinRouletteLevel}}.</h2>
-    <h2 *ngIf="this.spinRouletteLevel==0">{{this.whoSpinRoulette}} ha girado la ruleta y te quitó todas las cartas del tablero.</h2>
+    <h2 *ngIf="this.spinRouletteLevel>0">{{this.whoSpinRoulette}} ha girado la ruleta y te ha quitado cartas de nivel
+        {{this.spinRouletteLevel}}.</h2>
+    <h2 *ngIf="this.spinRouletteLevel==0">{{this.whoSpinRoulette}} ha girado la ruleta y te quitó todas las cartas del
+        tablero.</h2>
 </div>
 
 
@@ -28,7 +30,7 @@
         @if(currentBattle){
         <div class="time">
             <!-- CONTADOR -->
-            @if(this.userBattle?.isTheirTurn)
+            @if(this.userBattle?.isTheirTurn && !currentBattle.isAgainstBot)
             {
             <p class="countDown">{{this.timeRemaining$ | async | date:'mm:ss'}}</p>
             }
@@ -36,8 +38,8 @@
             <!-- SI HAY BONUS -->
             @if(bonus != "")
             {
+            <p>Hay un bonus por jugar cartas de color {{ bonus }} </p>
             <div class="star" [style]="{ '--bonusColor': bonusColor}"></div>
-            <p>Hay un bonus por jugar cartas de color {{ bonus }}</p>
             }
         </div>
 
@@ -108,8 +110,8 @@
     <p>
         @if(gameEnded)
         {
-        <button (click)="router.navigateByUrl('menu')">Volver al menú</button>
-        <button (click)="revenge()">Revancha >:D</button>
+        <button class="rainbow-button" (click)="router.navigateByUrl('menu')">Volver al menú</button> <br>
+        <button class="rainbow-button" (click)="revenge()">Revancha >:D</button>
         }
     </p>
 

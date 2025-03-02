@@ -240,7 +240,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   processFriends() {
-
+    console.log("amigos crudos: ", this.friendsRaw)
     this.myFriends = []
     this.connectedFriends = []
 
