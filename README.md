@@ -4,14 +4,30 @@ Mixdrop es un proyecto full-stack de un juego web multijugador, inspirado en Dro
 
 # Funcionalidades 🕹
 
-🎼 Mezcla de música en tiempo real – Cada carta representa un elemento musical y se sincroniza automáticamente con la mezcla.
-🃏 Reglas estratégicas – Las cartas tienen diferentes colores y niveles, que afectan la mezcla y la jugabilidad.
-🎡 Ruleta – Girando la ruleta puedes eliminar cartas de tu enemigo del tablero, lo que hará que pierda puntos.
-🔐 Autenticación y autorización con JWT – Sistema seguro de inicio de sesión mediante JSON Web Tokens.
-🎭 Modo multijugador y contra bots – Juega con amigos, enfréntate a un oponente aleatorio o reta a un bot.
-💬 Chat en vivo – Comunícate con otros jugadores en tiempo real mientras juegas.
-🏆 Sistema de ranking – Gana puntos en cada partida y asciende en la clasificación mundial.
-🎮 Panel de administración y perfiles – Gestión avanzada de usuarios y personalización de perfil.
+🎼 Mezcla de música en tiempo real: Cada carta representa un elemento musical y se sincroniza automáticamente con la mezcla.
+
+
+🃏 Reglas estratégicas: Las cartas tienen diferentes colores y niveles, que afectan la mezcla y la jugabilidad.
+
+
+🎡 Ruleta: Girando la ruleta puedes eliminar cartas de tu enemigo del tablero, lo que hará que pierda puntos.
+
+
+🔐 Autenticación y autorización con JWT: Sistema seguro de inicio de sesión mediante JSON Web Tokens.
+
+
+🎭 Modo multijugador y contra bots: Juega con amigos, enfréntate a un oponente aleatorio o reta a un bot.
+
+
+💬 Chat en vivo: Comunícate con otros jugadores en tiempo real mientras juegas.
+
+
+🏆 Sistema de ranking: Gana puntos en cada partida y asciende en la clasificación mundial.
+
+
+🎮 Panel de administración y perfiles: Gestión avanzada de usuarios y personalización de perfil.
+
+
  
 # Construido con 🛠️
 
