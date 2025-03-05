@@ -774,7 +774,7 @@ public class Seeder
                 Level = 3,
                 Track = new Track
                 {
-                    TrackPath = "Songs/Input/Vocal/Radioactive_DMSBm_137.mp3",
+                    TrackPath = "Songs/Input/Drums/Radioactive_DMSBm_137.mp3",
                     Song = new Song(MusicNotes.FIFTH_CIRCLE["Bm"], false)
                     {
                         Name = "Radioactive",
