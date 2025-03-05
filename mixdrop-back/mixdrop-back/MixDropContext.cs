@@ -37,7 +37,7 @@ public class MixDropContext : DbContext
         optionsBuilder.UseSqlite($"DataSource={baseDir}{DATABASE_PATH}");
 #else
 
-            optionsBuilder.UseMySql(_settings.DatabaseConnection, ServerVersion.AutoDetect(_settings.DatabaseConnection));
+            optionsBuilder.UseMySql("Server=db14814.databaseasp.net; Database=db14814; Uid=db14814; Pwd=zY!86_jJ?W9w; ", ServerVersion.AutoDetect(_settings.DatabaseConnection));
 #endif
     }
 
