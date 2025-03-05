@@ -712,25 +712,6 @@ public class Seeder
                 CardTypeId = 4
             },
             new Card {
-                ImagePath = "cards/fashion1_beat.jpg",
-                Level = 2,
-                Track = new Track
-                {
-                    TrackPath = "Songs/Input/Drums/LaCamisaNegra_DMSGbm_97(120).mp3",
-                    Song = new Song(MusicNotes.FIFTH_CIRCLE["Gbm"], false)
-                    {
-                        Name = "La Camisa Negra",
-                        Bpm = 120,
-                        Pitch = "Gbm",
-                        Artist = new Artist {
-                            Name = "Juanes"
-                        }
-                    },
-                    PartId = 4
-                },
-                CardTypeId = 4
-            },
-            new Card {
                 ImagePath = "cards/storybook1_beat.jpg",
                 Level = 2,
                 Track = new Track
