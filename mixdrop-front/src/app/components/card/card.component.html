@@ -1,32 +1,32 @@
 
 <div [style]="" #card class="card">
 
- @for (_ of MAX_LEVELS; track $index) {
+@for (_ of MAX_LEVELS; track $index) {
     @if( $index < level ){
         <div #card class="trapecio" [style]="{ '--color-level': color}"></div>
     } @else {
         <div #card class="trapecio" [style]="{ '--color-level': gris}"></div>
     }  
     
- }
+}
 
     <img draggable="false" id="card-img" [src]="img" alt="imagen">
     <div class="content">
         <span id="artist">{{ artist }}</span>
-        <span>{{ name }}</span>
+        <span>{{ name || effect }}</span>
         
         @switch (this.part) {
             @case ("Vocal") {
-                <img id="part-icon" src="http://dropmixin.com/w/images/3/34/Instrument_vocal_lead_32.png" alt="">
+                <img id="part-icon" src="/images/vocal_lead_icon.png" alt="">
             }
             @case ("Main") {
-                <img id="part-icon" src="http://dropmixin.com/w/images/b/be/Instrument_sampler_loop_32.png" alt="">
+                <img id="part-icon" src="/images/sampler_loop_icon.png" alt="">
             }
             @case ("Bass") {
-                <img id="part-icon" src="http://dropmixin.com/w/images/7/73/Instrument_guitar_bass_32.png" alt="">
+                <img id="part-icon" src="/images/guitar_bass_icon.png" alt="">
             }
             @case ("Drums") {
-                <img id="part-icon" src="http://dropmixin.com/w/images/4/40/Instrument_drums_beat_32.png" alt="">
+                <img id="part-icon" src="/images/drums_beat_icon.png" alt="">
             }
         }
         

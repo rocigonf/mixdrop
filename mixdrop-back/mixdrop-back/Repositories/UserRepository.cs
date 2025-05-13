@@ -17,6 +17,14 @@ public class UserRepository : Repository<User, int>
             .ToListAsync();
     }
 
+    public async Task<ICollection<User>> GetRankingAsync()
+    {
+        return await GetQueryable()
+            .OrderByDescending(u => u.TotalPoints)
+            .ToListAsync();
+    }
+
+
     public async Task<User> GetByEmailAsync(string email)
     {
         return await GetQueryable()
@@ -46,10 +54,10 @@ public class UserRepository : Repository<User, int>
         return await GetQueryable()
             .Include(user => user.Friendships)
             .Include(user => user.State)
-            /*.Include(user => user.BattleUsers)
-                .ThenInclude(userBattle => userBattle.Battle)
-            .Include(user => user.BattleUsers)
-               .ThenInclude(userBattle => userBattle.BattleResult)*/
+        /*.Include(user => user.BattleUsers)
+            .ThenInclude(userBattle => userBattle.Battle)
+        .Include(user => user.BattleUsers)
+           .ThenInclude(userBattle => userBattle.BattleResult)*/
         .FirstOrDefaultAsync(user => user.Email == emailOrNickname || user.Nickname == emailOrNickname);
     }
 

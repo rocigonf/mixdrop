@@ -7,11 +7,13 @@ import { WebsocketService } from '../../services/websocket.service';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { TranslatorService } from '../../services/translator.service';
 import { Language } from '../../models/language';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [TranslocoModule],
+  imports: [TranslocoModule, MatTooltipModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -56,8 +58,7 @@ export class NavbarComponent implements OnInit{
       this.authService.logout()
       this.webSocketService.disconnectNative()
       this.navigateToUrl("/")
-      alert("Sesion cerrada corectamente.")
-      
+      this.showAlert("Éxito", "Sesión cerrada correctamente", 'success')
       // Iniciar sesión
     } else {
       this.navigateToUrl("login");
@@ -98,4 +99,14 @@ export class NavbarComponent implements OnInit{
 
     this.langSelector.nativeElement.removeAttribute('open');
   }
+
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+        Swal.fire({
+          title: title,
+          text: message,
+          showConfirmButton: false,
+          icon: icon,
+          timer: 2000
+        })
+      }
 }

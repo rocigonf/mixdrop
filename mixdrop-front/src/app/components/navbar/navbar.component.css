@@ -2,7 +2,7 @@ nav {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1rem;
+    padding: 0.8rem;
 }
 
 span {
@@ -23,7 +23,12 @@ span {
     height: 40px;
     width: 40px;
     border: 2px solid white;
-    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ranking{
+    height: 40px;
+    width: 40px;
     cursor: pointer;
 }
 
@@ -46,21 +51,20 @@ a :hover{
     cursor: pointer;
 }
 
-.logout img {
-    height: 45px;
-}
-
 .dropdown {
     position: relative;
     display: inline-block;
+
 }
 
 .dropdown-content {
+    z-index: 300;
     display: none;
     position: absolute;
     background-color: #f9f9f9;
     min-width: 135px;
     border-radius: 2px;
+    right: 0;
 }
 
 .dropdown-content a {
@@ -80,6 +84,22 @@ a :hover{
     cursor: pointer;
 }
 
+.trofeo{
+    position: relative;
+}
+
+#level{
+    color: #cf7216;;
+    text-align: center;
+    height: 1.2rem;
+    width: 1.2rem;
+    line-height: 1.5rem;
+    left: 0.5rem;
+    font-size: smaller;
+    position: absolute;
+    cursor: pointer;
+}
+
 @media (max-width: 450px) {
     nav {
         max-width: 100%;
@@ -96,7 +116,7 @@ a :hover{
     }
 
     span {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         align-self: center;
     }
 
@@ -104,8 +124,19 @@ a :hover{
         height: 30px;
     }
 
-    #trophy {
+    .ranking {
         height: 30px;
+        width: 30px;
+    }
+
+    .nav-right{
+        gap: 0.5rem;
+    }
+
+    #level{
+        height: 1rem;
+        width: 0.8rem;
+        line-height: 1.2rem;
     }
 }
 

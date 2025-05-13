@@ -1,92 +1,698 @@
-*{
+* {
     font-size: 1.5rem;
 }
 
-.board
-{
+.container-column{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-left: -1.5rem;
+}
+
+.screen {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 1.5rem;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 200px;
+}
+
+.points {
+    height: 3rem;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    align-items: center;
+    align-content: center;
+}
+
+.points div span {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
     width: 100%;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
-.myCarts{
+.myCarts {
     display: flex;
     gap: 10px;
-    
+    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
-.card 
-{
-    margin: 5px;
+.card {
+    text-align: center;
+    margin: 6px auto;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
     border: 2px solid white;
-    height: 230px;
-    width: 160px;
+    height: 15.5rem;
+    width: 10rem;
     background-color: black;
 }
 
 app-card {
     cursor: grab;
+    border-radius: 10PX;
 }
 
-.card img{
-    width: 95%;
-    height: 80%;
+.star {
+    width: 50px;
+    aspect-ratio: 1;
+    background: var(--bonusColor);
+    animation: spin 3s linear infinite;
+    clip-path: polygon(50% 0,
+            calc(50%*(1 + sin(.4turn))) calc(50%*(1 - cos(.4turn))),
+            calc(50%*(1 - sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+            calc(50%*(1 + sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+            calc(50%*(1 - sin(.4turn))) calc(50%*(1 - cos(.4turn))));
 }
 
-.countDown{
+
+
+@keyframes spin {
+    0% {
+        transform: rotate(-180deg) scale(0);
+        opacity: 0;
+    }
+
+    15% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+
+    85% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(360deg) scale(0);
+        opacity: 0;
+    }
+}
+
+.enemyRoulette{
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.enemyRoulette h2 {
+    text-align: center;
+    width: 300px;
+    font-size: 1.5rem;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.5) 0%,
+        rgba(255, 154, 0, 0.5) 10%,
+        rgba(208, 222, 33, 0.5) 20%,
+        rgba(79, 220, 74, 0.5) 30%,
+        rgba(63, 218, 216, 0.5) 40%,
+        rgba(47, 201, 226, 0.5) 50%,
+        rgba(28, 127, 238, 0.5) 60%,
+        rgba(95, 21, 242, 0.5) 70%,
+        rgba(186, 12, 248, 0.5) 80%,
+        rgba(251, 7, 217, 0.5) 90%,
+        rgba(255, 0, 0, 0.5) 100%
+    );
+    border: 2px solid rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 20px;
+}
+
+
+.countDown {
     color: red;
     font-size: 2rem;
+    text-align: center;
 }
 
-.slot0{
+.btn-roulette {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    height: 15rem;
+    background-color: black;
+}
+
+.btn-roulette button {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    height: 15rem;
+    background-color: #242424;
+}
+
+.slot0 {
     border-radius: 10px;
     background: linear-gradient(to right, rgb(238, 255, 0), rgb(255, 46, 81));
 }
 
-.slot1{
+.slot1 {
     border-radius: 10px;
-    background-color:  rgb(255, 46, 81);
+    background-color: rgb(255, 46, 81);
 }
 
-.slot2{
+.slot2 {
     border-radius: 10px;
     background: linear-gradient(to right, rgb(255, 46, 81), rgb(0, 225, 255));
 }
 
-.slot3{
+.slot3 {
     border-radius: 10px;
     background-color: rgb(0, 225, 255);
 }
 
-.slot4{
+.slot {
+    height: 16.5rem;
+    width: 11rem;
+}
+
+.slot4 {
     border-radius: 10px;
     background: linear-gradient(to right, rgb(0, 255, 255), rgb(43, 228, 89));
 }
-/*
-.card:after {
-    content:"";
-    position:relative;
-    left:0px;
+
+.myCarts * {
+    height: 16.5rem;
+    width: 11rem;
+    outline: 3px solid rgba(0, 0, 0, 0.3);
+    cursor: grab;
+}
+
+.selectCars {
+    box-shadow: 0px 0px 10px 0 rgb(255, 2, 0), 4px 4px 10px 0 rgb(0, 132, 255), 0px 0px 10px 0px rgb(255, 255, 0);
+    transition: 0.5s;
+    filter: brightness(1.3);
+}
+
+.myCarts app-card:hover {
+    box-shadow: 0px 0px 10px 0 rgb(255, 2, 0), 4px 4px 10px 0 rgb(0, 132, 255), 0px 0px 10px 0px rgb(255, 255, 0);
+    transition: 0.5s;
+    filter: brightness(1.3);
+}
+
+.highlight {
+    box-shadow: 0px 0px 10px 4px rgba(255, 215, 0, 0.8);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+app-card:active {
+    cursor: grab;
+}
+
+
+/*TOCADISCO CON INFO DE USUARIO*/
+
+.player {
+    background: conic-gradient(white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white, white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white);
+    border: 2px solid rgb(29, 29, 29);
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+}
+
+.disk {
+    margin: 10px 9px;
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background-size: cover;
+    border: 4px solid black;
+    border-radius: 100px;
+}
+
+
+
+.pen {
+    position: absolute;
+    margin: 5px 0 0 90px;
+}
+
+
+.move {
+    margin: 22px 0 0 145px;
+    transform: rotate(25deg);
+}
+
+
+.hand {
+    background: #242424;
+    width: 4px;
+    height: 80px;
+    border-radius: 2px;
+}
+
+.niddle {
+    margin: -8px 0 0 -4px;
+    width: 12px;
+    height: 12px;
+    background: #242424;
+    border-radius: 6px;
+}
+
+.btns {
+    position: absolute;
+    margin: 75px 0 0 5px;
+}
+
+.btns div {
+    display: inline-block;
+    font-size: 2.5rem;
+    color: #000000;
+}
+
+@keyframes anim {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.anim {
+    animation: anim 2s linear infinite;
+}
+
+
+.disk {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background-size: cover;
+    border: 4px solid black;
+    border-radius: 100px;
+    transition: transform 1s ease-in-out;
+}
+
+
+
+/*ruleta*/
+.roulette-overlay {
+    flex-direction: column;
+    gap: 10px;
+    position: fixed;
     top: 0;
-    width: 0; 
-    height: 0; 
-    border-left: 30px solid transparent;
-    border-right: 30px solid transparent;
-    border-top: 30px solid #f00;
-    z-index:2;
-  }
-  
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    animation: fadeIn 0.5s ease-in-out;
+}
 
-.triangulo{
-      width: 0;
-  height: 0;
-  border-top: 100px solid #000; 
-  border-right: 100px solid transparent;  
-}*/
+.roulette-overlay h1 {
+    font-size: 3rem;
+}
+
+.roulette-animation app-roulette {
+    width: 50vh;
+    height: auto;
+    animation: spin 3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg) scale(0);
+        opacity: 0;
+    }
+
+    10% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+    }
+
+    90% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(360deg) scale(0);
+        opacity: 0;
+    }
+}
+
+
+/*BORDE LED DE TABLERO*/
+.shadow {
+    margin-bottom: 30px;
+    position: relative;
+    background: #161a1f;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.shadow::before,
+.shadow::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    border-radius: 10px;
+    background: linear-gradient(45deg, red, blue, green, yellow, #e11d74, black, #ffff00, #aa0000);
+    background-size: 400%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1;
+    animation: animate 60s linear infinite;
+}
+
+.shadow::after {
+    filter: blur(8px);
+}
+
+@keyframes animate {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 400% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.mobileButton {
+    display: none;
+}
+
+.rainbow-button-game {
+    text-align: center;
+    margin: 5% auto;
+    width: 150px;
+    padding: 5px;
+    color: black;
+    background: linear-gradient(
+                    to bottom right, 
+                    #b827fc 0%, 
+                    #2c90fc 25%, 
+                    #b8fd33 50%, 
+                    #fec837 75%, 
+                    #fd1892 100%);
+    border: 4px solid white;
+    box-shadow: 4px 4px 0 white;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.5em !important;
+    user-select: none; /* Para q no se pueda seleccionar el texto del botón */
+}
+
+.rainbow-button-game:active {
+    box-shadow: 2px 2px 0 white;
+    transform: translate(2px, 2px);
+}
+
+/* ORIENTACION PANTALLA */
+
+@media (orientation: portrait) {
+    .screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: black;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        padding: 20px;
+    }
+
+    .screen::before {
+        content: "Gira tu dispositivo para jugar";
+    }
+
+    .game,
+    .info,
+    .mobileButton {
+        display: none;
+    }
+
+}
+
+@media (orientation: landscape) and (max-width: 1000px) {
+    .screen::before {
+        content: "";
+    }
+
+    .mobileButton {
+        display: block;
+        font-size: 0.7rem;
+        margin: auto;
+    }
+
+    .slot p {
+        display: none;
+    }
+
+    .game,
+    .info {
+        display: block;
+    }
+
+    .points,
+    .board {
+        margin-top: 0;
+        gap: 10px;
+    }
+
+    .myCarts * {
+        height: 34vh;
+        width: 24vh;
+    }
+
+    :host ::ng-deep app-card .card {
+        height: 30vh;
+        width: 20vh;
+        margin: 3%;
+    }
+
+    :host ::ng-deep app-card * {
+        font-size: 0.5rem;
+    }
+
+    :host ::ng-deep app-card #part-icon {
+        margin-top: 1.3rem;
+    }
+
+    :host ::ng-deep app-card .trapecio:nth-child(1) {
+        margin-top: 1.15rem;
+        border-width: 0.45rem 0.35rem 0 0;
+    }
+
+    :host ::ng-deep app-card .trapecio:nth-child(2) {
+        margin-top: 0.69921rem;
+        width: 0.35rem;
+        border-right-width: 0.3rem;
+        border-top-width: 0.4rem;
+    }
+
+    :host ::ng-deep app-card .trapecio:nth-child(3) {
+        width: 0.65rem;
+        border-right-width: 0.4rem;
+        border-top-width: 0.6rem;
+    }
+
+    :host ::ng-deep app-chat .chat {
+        height: 90vh;
+        width: 300px;
+    }
+
+    :host ::ng-deep app-chat .icon {
+        top: 87%;
+    }
+
+    .shadow {
+        margin-bottom: 15px;
+        padding: 5px;
+    }
+
+    .slot {
+        height: 35vh;
+        width: 25vh;
+    }
+
+    .card {
+        height: 32vh;
+        width: 22vh;
+        margin: 4px auto;
+    }
+
+    .card p {
+        font-size: 1rem;
+    }
+
+    .btn-roulette {
+        height: 30vh;
+    }
+
+    .btn-roulette button {
+        font-size: 1rem;
+    }
+
+    .roulette-animation {
+        width: auto;
+        height: 80vh;
+    }
+
+    .player {
+        width: 60px;
+        height: 60Px;
+    }
+
+    .disk {
+        width: 35px;
+        height: 35px;
+        margin: 5px;
+    }
+
+    .pen {
+        margin: 5px 0 0 50px;
+    }
+
+    .move {
+        margin: 22px 0 0 50px;
+    }
+
+    .hand {
+        height: 40px;
+        width: 3px;
+    }
+
+    .niddle {
+        margin: -8px 0 0 -4px;
+        width: 12px;
+        height: 12px;
+    }
+
+    .btns {
+        margin: 40px 0 0 5px;
+    }
+
+    .myCarts {
+        gap: 0;
+    }
+
+    .screen {
+        gap: 1rem;
+    }
+    :host ::ng-deep app-roulette .wheel{
+        width: 10rem;
+        height: 10rem;
+    }
+
+    :host ::ng-deep app-roulette  .wheel-text {
+        font-size: 1.4rem;
+    }
+
+    .rainbow-button-game{
+        width: 90px;
+        font-size: 0.8em !important;
+    }
+}
 
 
 
+@media (orientation: landscape) and (max-width: 634px) {
+    .screen::before {
+        content: "";
+    }
+
+    .mobileButton {
+        display: block;
+        font-size: 0.7rem;
+        margin: auto;
+    }
+
+    .slot p {
+        display: none;
+    }
+
+    .game,
+    .info {
+        display: block;
+    }
+
+    .points,
+    .board {
+        margin-top: 0;
+    }
+
+    .btn-roulette {
+        height: fit-content;
+    }
+    
+    .btn-roulette button {
+        writing-mode:horizontal-tb;
+        text-orientation: sideways;
+        height: auto;
+    }
+
+    .rainbow-button-game{
+        width: 90px;
+        font-size: 0.8em !important;
+    }
+}

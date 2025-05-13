@@ -3,6 +3,7 @@ using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Helper;
 using mixdrop_back.Models.Mappers;
+using mixdrop_back.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -30,6 +31,12 @@ public class UserService
 
         var users = await _unitOfWork.UserRepository.SearchUser(searchSinTildes.ToLower());
 
+        return _userMapper.ToDto(users).ToList();
+    }
+
+    public async Task<List<UserDto>> GetRankingAsync()
+    {
+        var users = await _unitOfWork.UserRepository.GetRankingAsync();
         return _userMapper.ToDto(users).ToList();
     }
 
@@ -99,21 +106,14 @@ public class UserService
             return null;
         }
 
-        // estado de conectado
-        /*var estadoConectado = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
-
-        user.StateId = 2; // conectado
-        user.State = estadoConectado;
-
-        _unitOfWork.UserRepository.Update(user);
-        await _unitOfWork.SaveAsync();*/
-
         return user;
     }
 
     // REGISTRO 
     public async Task<User> RegisterAsync(RegisterDto model)
     {
+        var state = await _unitOfWork.StateRepositoty.GetByIdAsync(2);
+
         // validacion email
 
         if (!emailRegex.IsMatch(model.Email))
@@ -147,12 +147,17 @@ public class UserService
                 Role = "User", // Rol por defecto
                 Password = PasswordHelper.Hash(model.Password),
                 IsInQueue = false,  // por defecto al crearse
-                StateId = 1
+                StateId = state.Id,
+                State = state
             };
 
             if (model.Image != null)
             {
                 newUser.AvatarPath = "/" + await imageService.InsertAsync(model.Image);
+            }
+            else
+            {
+                newUser.AvatarPath = "/avatar/user.png";
             }
 
             await _unitOfWork.UserRepository.InsertAsync(newUser);
@@ -227,6 +232,12 @@ public class UserService
                 existingUser.Password = PasswordHelper.Hash(model.Password);
             }
 
+            UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == existingUser.Id);
+            if (socket != null)
+            {
+                socket.User = existingUser;
+            }
+
             _unitOfWork.UserRepository.Update(existingUser);
             await _unitOfWork.SaveAsync();
 
@@ -257,6 +268,16 @@ public class UserService
         if (!string.IsNullOrEmpty(newRole))
         {
             existingUser.Role = newRole;
+        }
+        else
+        {
+            return;
+        }
+
+        UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == userId);
+        if (socket != null)
+        {
+            socket.User.Role = newRole;
         }
 
         _unitOfWork.UserRepository.Update(existingUser);

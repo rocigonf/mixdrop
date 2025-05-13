@@ -24,7 +24,14 @@ public class BattleRepository : Repository<Battle, int>
         return await GetQueryable()
             .Include(battle => battle.BattleUsers)
             .FirstOrDefaultAsync(battle => battle.Id == battleId);
+    }
 
+    public async Task<Battle> GetCompleteBattleWithUsersAsync(int battleId)
+    {
+        return await GetQueryable()
+            .Include(battle => battle.BattleUsers)
+            .ThenInclude(u => u.User)
+            .FirstOrDefaultAsync(battle => battle.Id == battleId);
     }
 
     public async Task<ICollection<Battle>> GetBattlesInProgressAsync()
@@ -39,7 +46,7 @@ public class BattleRepository : Repository<Battle, int>
     {
         // Con el Any obtengo todas las batallas que incluyan al id del usuario :'D
         return await GetQueryable()
-            .Where(battle => battle.BattleStateId == 1)
+            .Where(battle => battle.BattleStateId == 1 || battle.BattleStateId == 2)
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId && user.Receiver == true))
                 .Include(battle => battle.BattleUsers.Where(user => user.UserId != userId))
                 .ThenInclude(userBattle => userBattle.User)
@@ -53,7 +60,8 @@ public class BattleRepository : Repository<Battle, int>
             .Where(battle => battle.BattleUsers.Any(user => user.UserId == userId))
                 .Include(battle => battle.BattleUsers)
                 .ThenInclude(ub => ub.User)
-                .ToListAsync();
+            .OrderByDescending(b => b.FinishedAt)
+            .ToListAsync();
     }
 
     public async Task<Battle> GetBattleWithBotByUserAsync(int userId)

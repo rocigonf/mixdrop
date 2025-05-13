@@ -3,6 +3,7 @@ import { NavbarComponent } from "../../components/navbar/navbar.component";
 import {MatIconModule} from '@angular/material/icon';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { TranslatorService } from '../../services/translator.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,7 @@ import { TranslatorService } from '../../services/translator.service';
 export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(private translocoService: TranslocoService,
-    private translatorService: TranslatorService)
+    private translatorService: TranslatorService, public router: Router)
     {}
 
   private bpm: number = 90;
@@ -41,17 +42,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   public currentSpeakerFrameName : string = this.SPEAKER_FRAMES[0]
 
   private readonly SONGS: { [index: string]: number; } = {
-    "/songs/pressure.mp3" : 114,
-    "/songs/break_free.mp3" : 109,
     "/songs/enemy.mp3" : 77,
     "/songs/hip_shop.mp3" : 97.50884434,
     "/songs/home_song.mp3" : 90,
-    "/songs/fly_octo_fly.flac" : 163,
-    "/songs/cat.flac" : 112,
     "/songs/hopes_and_dreams.mp3" : 171,
-    "/songs/underground.mp3" : 120,
-    "/songs/natures_crescendo.mp3" : 121,
-    "/songs/temazo.mp3" : 129
   }
 
   languageSelected: number = 0
@@ -82,6 +76,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.interval?.cancel()
     this.audio.pause()
+  }
+
+  navigateToUrl(url: string)
+  {
+    console.log("sss")
+    this.router.navigateByUrl(url);
   }
 
   // CRÉDITOS POR EL "bind": https://stackoverflow.com/questions/70634283/react-typescript-uncaught-typeerror-this-is-undefined

@@ -1,10 +1,22 @@
 .caja {
-    width: 400px;
-    margin: auto;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+    max-width: 400px; /*Max width para que se estreche en pantallas pequeñas*/
     box-shadow: 0 4px 8px rgba(113, 113, 113, 0.953);
-    background-color: #5b5b5b;
+    border-spacing: 1.5rem;
+    background-color: #302244;
+    border: 5px solid transparent;
+    border-image: linear-gradient(
+                            to bottom right, 
+                            #b827fc 0%, 
+                            #2c90fc 25%, 
+                            #b8fd33 50%, 
+                            #fec837 75%, 
+                            #fd1892 100%);
+    border-image-slice: 1;
+    margin: 20px auto;
+}
+
+.container{
+    margin: 20px;
 }
 
 .menu {
@@ -26,7 +38,7 @@
 
 .menu button.active {
     background-color: #fff;
-    border-bottom: 2px solid #009dff;
+    border-bottom: 2px solid #7c679a;
 }
 
 .contenido {
@@ -51,25 +63,29 @@ input[type="checkbox"] {
     width: 5%;
 }
 
-.registro input[type="file"]  {
-    width: 100%;
-    font-size: 1rem;
-    margin-bottom: 18px;
-    margin-top: 5px;
+.button-wrapper {
+    width: 150px;
+}
+
+.load-avatar-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 #preview-img{
-    width: 45px;
-    height: 45px;
-    margin: 5px;
+    width: 65px;
+    height: 65px;
+    margin-left: 25px;
+    border: 3px solid white;
     object-fit: cover; /* Recorta la imagen sin deformarla */
     object-position: center;
 }
 
 label {
     font-size: 1.4rem;
+    line-height: 2rem;
 }
-
 
 button {
     font-size: 1.5rem;

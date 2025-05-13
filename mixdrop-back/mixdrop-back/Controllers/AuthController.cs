@@ -35,7 +35,7 @@ public class AuthController : ControllerBase
             var user = await _userService.LoginAsync(model);
 
             // Si el usuario es null, se devuelve Unauthorized
-            if (user == null)
+            if (user == null || user.Banned)
             {
                 return Unauthorized("Datos de inicio de sesión incorrectos.");
             }
@@ -48,7 +48,6 @@ public class AuthController : ControllerBase
                 {
                     { ClaimTypes.NameIdentifier, user.Id },      // ID del usuario
                     { ClaimTypes.Name, user.Nickname},           // Apodo
-                    { ClaimTypes.Email, user.Email     },        // Email del usuario
                     { ClaimTypes.Role, user.Role }               // Rol del usuario
                 },
                 // Expiración del token en 5 años

@@ -4,5 +4,6 @@ export interface Card {
     id: number,
     imagePath: string,
     level: number,
-    track: Track
+    track: Track,
+    effect: string
 }

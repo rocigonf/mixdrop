@@ -59,7 +59,11 @@ export class WebsocketService {
   }
 
   sendNative(message: string) {
-    this.nativeSocket?.send(message);
+    try
+    {
+      this.nativeSocket?.send(message);
+    }
+    catch{}
   }
 
   disconnectNative() {

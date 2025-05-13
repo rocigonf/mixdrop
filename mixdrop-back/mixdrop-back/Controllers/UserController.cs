@@ -36,6 +36,13 @@ public class UserController : ControllerBase
         return Ok(users);
     }
 
+    [HttpGet("ranking")]
+    public async Task<List<UserDto>> GetRanking()
+    {
+        var users = await _userService.GetRankingAsync();
+        return users;
+    }
+
     [Authorize]
     [HttpGet("{id}")]
     public async Task<UserDto> GetUserById(int id)
@@ -125,15 +132,6 @@ public class UserController : ControllerBase
     [HttpPut("modifyUserRole")]
     public async Task<IActionResult> ModifyUserRole(ModifyRoleRequest request)
     {
-
-        // Obtener datos del usuario
-        UserDto userData = await _userService.GetUserByIdAsync(request.UserId);
-
-        if (userData == null)
-        {
-            return BadRequest("El usuario es null");
-        }
-
         try
         {
             if (request.NewRole == "User" || request.NewRole == "Admin")

@@ -50,11 +50,14 @@ public class RemoveAFKPlayers : BackgroundService
     {
         try
         {
-            if (_battle.BattleStateId == 3)
+            if (_handler.Battle.BattleStateId == 3)
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var _unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+
+                    var state = await _unitOfWork.StateRepositoty.GetByIdAsync(2); // Conectado
+
                     _battle.BattleStateId = 4;
                     _battle.FinishedAt = DateTime.UtcNow;
 
@@ -63,6 +66,19 @@ public class RemoveAFKPlayers : BackgroundService
 
                     _otherPlayer.Cards = new List<Card>();
                     _playerInTurn.Cards = new List<Card>();
+
+                    _otherPlayer.User.State = state;
+                    _otherPlayer.User.StateId = state.Id;
+                    _otherPlayer.User.TotalPoints++;
+
+                    UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == _playerInTurn.UserId);
+                    if (socket != null)
+                    {
+                        socket.User.TotalPoints++;
+                    }
+
+                    _playerInTurn.User.State = state;
+                    _playerInTurn.User.StateId = state.Id;
 
                     _battle.BattleUsers = [_otherPlayer, _playerInTurn];
 

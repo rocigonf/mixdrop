@@ -1,36 +1,345 @@
-*{
+* {
     font-size: 1.5rem;
 }
 
-.panel-top{
+fieldset {
+    max-width: 570px;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+}
+
+h2 {
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+label {
+    flex: 1;
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: left;
+    position: relative;
+    line-height: 2rem;
+}
+
+.profile-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.profile-row-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+.new-password-row {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    padding: 10px;
+}
+
+.new-password-columm {
+    display: flex;
+    flex-direction: column;
+    columns: 2;
+}
+
+.error {
+    color: rgb(241, 126, 126);
+    text-align: left;
+    font-size: 1.5rem;
+}
+
+.panel-top {
     font-size: 3rem;
     text-align: center;
 }
 
-.header{
+.header {
+    margin: auto;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.container {
+    font-size: 2rem;
+    display: flex;
+    width: 100%;
+}
+
+.column {
+    flex: 50%;
+    padding: 20px;
+}
+
+.other-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+
+.info-avatar {
+    display: flex;
+    flex-direction: column;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border: 4px solid white;
+}
+
+.avatar-preview-img {
     display: flex;
     justify-content: center;
 }
 
-.container{
-    display: grid;
+.avatar-preview {
+    display: flex;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 2em;
+}
+
+.centered-button {
+    display: flex;
+    justify-content: center;
+}
+
+.form-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.rainbow-button {
+    /* BOTÓN GUARDAR CAMBIOS */
+    width: 250px;
+}
+
+/* --- INICIO HISTORIAL DE BATALLA ---*/
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+#pagination-text {
+    font-size: 1.5em;
+}
+
+.pagination-button {
+    /* BOTONES PAGINACIÓN */
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    color: white;
+    background: #7c679a;
+    border: 3px solid white;
+    box-shadow: 4px 4px 0 black;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pagination-button:active {
+    box-shadow: 2px 2px 0 black;
+    transform: translate(2px, 2px);
+}
+
+.battle-history {
+    display: flex;
+    flex-direction: column;
+}
+
+.battle-card {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1em;
+    padding: 0.5em;
+    background-color: #7c679a;
+    border: 4px solid white;
+}
+
+/* Contenedor del badge */
+#badge-ribbon {
+    position: absolute;
+    background: gold;
+    top: -13%;
+    right: -21%;
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 1px 3px rgba(255, 255, 255, 0.5);
+    border: 2px solid #e6ac00;
+}
+
+/* Cintas de la medalla */
+#badge-ribbon:before,
+#badge-ribbon:after {
+    content: '';
+    position: absolute;
+    border-bottom: 1.5rem solid gold;
+    border-left: 1rem solid transparent;
+    border-right: 1rem solid transparent;
+    top: 3.2rem;
+    left: -0.3rem;
+    transform: rotate(-140deg);
+}
+
+#badge-ribbon:after {
+    left: auto;
+    right: -0.3rem;
+    transform: rotate(140deg);
+}
+
+/* Número dentro de la medalla */
+.level {
+    position: absolute;
+    background-color: gold;
+    color: white;
+    text-align: center;
+    border-radius: 50%;
+    height: 2.5rem;
+    width: 2.5rem;
+    line-height: 2.5rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    border: 2px solid #ffe59f;
 }
 
-.avatar{
-    width: 150px;
-    height: 150px;
-    border: 2px solid white;
-    border-radius: 5px;
+
+/* --- RESPONSIVE ---*/
+@media (max-width: 1170px) {
+
+    .profile-row,
+    .profile-row-buttons,
+    .new-password-row {
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .avatar-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .column {
+        width: 100%;
+    }
+
+    fieldset {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
-fieldset{
-    border-spacing: 1.5rem;
-    background-color: #302244;
-    border: 5px solid transparent;
-    border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
-    border-image-slice: 1;
-    margin: 20px auto;
-    width: 700px;
+@media (max-width: 570px) {
+
+    label,
+    span.label,
+    .form-button,
+    input {
+        font-size: 1em !important;
+    }
+
+    .form-button,
+    .button-wrapper {
+        width: 180px !important;
+        height: 45px !important;
+    }
+
+    .avatar-preview-img .avatar {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    .profile-row,
+    .profile-row-buttons,
+    .new-password-row {
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .avatar-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: auto;
+        width: 90vw;
+    }
+
+    .column {
+        width: 100%;
+    }
+
+    fieldset {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #pagination-text {
+        font-size: 0.9em;
+    }
+
+    .pagination-button {
+        /* BOTONES PAGINACIÓN */
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+}
+
+@media (max-width: 385px) {
+    .pagination-button {
+        /* BOTONES PAGINACIÓN */
+        width: 25px;
+        height: 25px;
+        font-size: 1rem;
+    }
 }

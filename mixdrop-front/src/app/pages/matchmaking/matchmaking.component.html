@@ -1,70 +1,104 @@
 <app-navbar></app-navbar>
 
-<div class="cabecera">
-    <img [src]="IMG_URL + user?.avatarPath" alt="avatar de usuario">
-    <span style="font-size: 2rem;">{{user?.nickname}}</span> <!-- nickname del usuario-->
+<div class="panel-top">
+    <h1>EMPAREJAMIENTO</h1>
 </div>
 
+<hr>
+
+<div class="cabecera">
+    @if(actualBattle)
+    {
+        
+        @if(actualBattle.usersBattles[0].userImage != "")
+        {
+            <img class="avatar" [src]="IMG_URL + actualBattle.usersBattles[0].userImage" alt="avatar">
+        }
+        @else
+        {
+            <img class="avatar" src="/images/user.png" alt="avatar">
+        }
+        <p> {{actualBattle.usersBattles[0].userName}}  VS  {{actualBattle.usersBattles[1].userName}} </p>
+        @if(actualBattle.usersBattles[1].userImage != "")
+        {
+            <img class="avatar" [src]="IMG_URL + actualBattle.usersBattles[1].userImage" alt="avatar">
+        }
+        @else
+        {
+            <img class="avatar" src="/images/user.png" alt="avatar">
+        }
+    }
+
+</div>
+
+
+<div class="matchmaking-container">
 @if(loading)
 {
-    <button (click)="deleteRandomBattle()">Cancelar matchmaking</button>
+    <img src="/images/waiting.gif" alt="Buscando">
+    <p>Buscando partida...</p>
+    <button class="rainbow-button" (click)="deleteRandomBattle()">Cancelar emparejamiento</button>
 }
-
-@if(readyForBattle)
+@else 
 {
-@if(battle)
-{
-<button (click)="startBattle()">Comenzar partida</button>
-}
-@else
-{
-<p>Esperando a que el anfitrión comience la partida...</p>
-}
-} @else {
+    @if(readyForBattle)
+    {
+        @if(battle)
+        {
+        <button class="rainbow-button" (click)="startBattle()">Comenzar partida</button>
+        }
+        @else
+        {
+        <p>Esperando a que el anfitrión comience la partida...</p>
+        }
+        <button class="rainbow-button" (click)="deleteBattleBydId(battleId || battle!!.id, true)">Abandonar partida</button>
+    } @else {
 
+        <!--mostrar tamb avatar de invitado / anfitrion-->
 
-<!--mostrar tamb avatar de invitado / anfitrion-->
+        <button class="rainbow-button" id="prueba" (click)="gameWithBot()" [disabled]="disabled">Jugar VS bot</button>
+        <button class="rainbow-button" (click)="gameRandom()">Jugar VS oponente aleatorio</button>
 
-<button (click)="gameWithBot()">Jugar contra un bot</button>
-<button (click)="gameRandom()">Jugar con oponente aleatorio</button>
+        <!-- q te abra ventana model con amigos conectados ? -->
+        <hr>
+        <p>Jugar con amigos</p>
+        <div class="listaUsuarios">
+            @if (connectedFriends.length < 1) 
+            { 
+                <span> No hay amigos conectados </span>
+            } @else 
+            {
+                <div class="friendList">
+                @for (friend of connectedFriends; track $index) {
 
-<!-- q te abra ventana model con amigos conectados ? -->
-<p>Invitar amigo a jugar</p>
-<div class="listaUsuarios">
-    @if (conenctedFriends.length < 1) { <span> No hay amigos conectados </span>
-        } @else {
-        @for (friend of conenctedFriends; track $index) {
+                <div class="tarjetaUsuario">
+                    <div class="contenedorAvatar">
+                        <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
+                    </div>
 
-        <div class="tarjetaUsuario">
-            <div class="contenedorAvatar">
-                <img class="avatar" [src]="IMG_URL + friend.avatarPath" alt="usuario avatar" width="50px">
-            </div>
+                    <span class="nickname">
+                        {{ friend.nickname }}
+                    </span>
 
-            <span class="nickname">
-                {{ friend.nickname }}
-            </span>
+                    @if (!hasBattle(friend)) 
+                    {
+                        <div class="contenedorIcono">
+                            <img #tooltip="matTooltip"
+                                matTooltip="Retar a batalla" 
+                                matTooltipPosition="above" 
+                                matTooltipClass="tooltip" 
+                                class="icono" 
+                                (click)="gameWithFriend(friend)" 
+                                src="/images/battle.webp"
+                                alt="Retar a batalla">
+                        </div>
+                    }
+                </div>
 
-
-            @if (!hasBattle(friend)) {
-            <div class="contenedorIcono">
-                <img class="icono" (click)="gameWithFriend(friend)" src="/images/battle.webp"
-                    alt="invitar a jugar a amigo">
-            </div>
-            } @else if (hasBattle(friend)) {
-            <div class="contenedorIcono">
-                <img class="icono" (click)="acceptBattle(friend.id)" src="/images/battle.webp" alt="aceptar batalla">
-            </div>
-            <div class="contenedorIcono">
-                <img class="icono" (click)="deleteBattle(friend.id)" src="/images/delete.webp" alt="rechazar batalla">
-            </div>
+                }
+                </div>
             }
         </div>
-
-
-        }
-        }
-
-</div>
-<br>
-
+    }
 }
+</div>

@@ -1,8 +1,8 @@
+using Microsoft.IdentityModel.Tokens;
 using mixdrop_back.Models.DTOs;
 using mixdrop_back.Models.Entities;
 using mixdrop_back.Models.Mappers;
 using mixdrop_back.Sockets.Game;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Action = mixdrop_back.Models.DTOs.Action;
@@ -12,13 +12,14 @@ namespace mixdrop_back.Sockets;
 public class GayHandler // GameHandler :3
 {
     private const int ACTIONS_REQUIRED = 1;
-    private const int POINTS_REQUIRED = 21;
+    private const int POINTS_REQUIRED = 10;
 
     public readonly ICollection<UserBattle> _participants = new List<UserBattle>();
     public Battle Battle { get; set; }
 
     // Lista obtenida de la base de datos
     private static ICollection<Card> _cards = new List<Card>();
+    private static ICollection<Card> cardsWithoutEffect = new List<Card>();
 
     private readonly Board _board = new Board();
     private readonly AudioModifier _audioModifier = new AudioModifier();
@@ -28,16 +29,10 @@ public class GayHandler // GameHandler :3
 
     private readonly UserBattleMapper _mapper = new UserBattleMapper();
     private readonly Random _random = new Random();
+    private readonly PitchCalculator _pitchCalculator = new PitchCalculator();
     private RemoveAFKPlayers _service;
 
     private string Bonus { get; set; } = "";
-
-    private Dictionary<string, Dictionary<string, int>> Grades = new Dictionary<string, Dictionary<string, int>>()
-    {
-        { "FirstGrade", new Dictionary<string, int> { { "", 0 } } },
-        { "ForthGrade", new Dictionary<string, int> { { "", 0 } } },
-        { "FifthGrade", new Dictionary<string, int> { { "", 0 } } },
-    };
 
 
     /// <summary>
@@ -55,6 +50,7 @@ public class GayHandler // GameHandler :3
         if (_cards.Count == 0)
         {
             _cards = await unitOfWork.CardRepository.GetAllCardsAsync();
+            cardsWithoutEffect = _cards.Where(c => c.Effect == "").ToList();
         }
 
         Random rand = new Random();
@@ -93,8 +89,16 @@ public class GayHandler // GameHandler :3
     {
         for (int i = 0; i < 5; i++)
         {
-            Card card = _cards.ElementAt(_random.Next(0, _cards.Count));
-            userBattle.Cards.Add(card);
+            if (!userBattle.IsBot)
+            {
+                Card card = _cards.ElementAt(_random.Next(0, _cards.Count));
+                userBattle.Cards.Add(card);
+            }
+            else
+            {
+                Card card = cardsWithoutEffect.ElementAt(_random.Next(0, cardsWithoutEffect.Count));
+                userBattle.Cards.Add(card);
+            }
         }
     }
 
@@ -105,6 +109,7 @@ public class GayHandler // GameHandler :3
         UserBattle otherUser = _participants.FirstOrDefault(u => u.UserId != userId);
 
         byte[] output = [];
+        int levelRoulette = -1;
         List<int> positions = new List<int>();
         Card randomCard = null;
         bool spinTheWheel = false;
@@ -130,90 +135,109 @@ public class GayHandler // GameHandler :3
                 return;
             }
 
-            Slot alreadyPlacedCard = _board.Slots.FirstOrDefault(s => s.Card?.Id == card.CardId);
-            if(alreadyPlacedCard != null)
-            {
-                Console.WriteLine("Esa carta ya está en juego :(");
-                return;
-            }
-
-            // Chequeo para ver si hay puntos extra
-            Slot slut = _board.Slots.ElementAt(card.Position);
-            if (slut.Card == null)
-            {
-                wasEmpty = true;
-            }
-            else
-            {
-                // Chequeo del nivel para que no se jueguen cartas inferiores
-                if (slut.Card.Level > existingCard.Level)
-                {
-                    Console.WriteLine("El nivel de la carta jugada es inferior");
-                    return;
-                }
-            }
-
-            bool isCorrectType = true;
-            string partName = existingCard.Track.Part.Name;
-
-            // Chequeo que se pueda jugar una carta del tipo correcto para esa posición
-            switch (card.Position)
-            {
-                case 0:
-                    isCorrectType = CheckCardType(["Vocal", "Main"], partName);
-                    break;
-                case 1:
-                    isCorrectType = CheckCardType(["Main"], partName);
-                    break;
-                case 2:
-                    isCorrectType = CheckCardType(["Main", "Drums"], partName);
-                    break;
-                case 3:
-                    isCorrectType = CheckCardType(["Drums"], partName);
-                    break;
-                case 4:
-                    isCorrectType = CheckCardType(["Drums", "Bass"], partName);
-                    break;
-                default:
-                    Console.WriteLine("La posición no es correcta");
-                    return;
-            }
-
-            if (!isCorrectType)
-            {
-                Console.WriteLine("El tipo de la carta no es el correcto");
-                return;
-            }
-
-            // Si todo está correcto, establezco la nueva carta y la borro del mazo
-            slut.Card = existingCard;
-            slut.UserId = playerInTurn.UserId;
             playerInTurn.Cards.Remove(existingCard);
-
             randomCard = _cards.ElementAt(_random.Next(0, _cards.Count));
             playerInTurn.Cards.Add(randomCard);
 
-            positions.Add(card.Position);
-
-            // Bonificaciones random
-            switch (Bonus)
+            // Comodines
+            if (existingCard.Effect != "")
             {
-                case "Amarillo":
-                    playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
-                    break;
-                case "Rojo":
-                    playerInTurn.Punctuation += CheckForCardType(2, existingCard.CardType.Id);
-                    break;
-                case "Verde":
-                    playerInTurn.Punctuation += CheckForCardType(3, existingCard.CardType.Id);
-                    break;
-                case "Azul":
-                    playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
-                    break;
+                switch (existingCard.Effect)
+                {
+                    case "Baraja tus cartas":
+                        playerInTurn.Cards = new List<Card>();
+                        DistributeCards(playerInTurn);
+                        break;
+                    case "-1 punto al rival":
+                        otherUser.Punctuation--;
+                        break;
+                }
+            }
+            else
+            {
+                Slot alreadyPlacedCard = _board.Slots.FirstOrDefault(s => s.Card?.Id == card.CardId);
+                if (alreadyPlacedCard != null)
+                {
+                    Console.WriteLine("Esa carta ya está en juego :(");
+                    return;
+                }
+
+                // Chequeo para ver si hay puntos extra
+                Slot slut = _board.Slots.ElementAt(card.Position);
+                if (slut.Card == null)
+                {
+                    wasEmpty = true;
+                }
+                else
+                {
+                    // Chequeo del nivel para que no se jueguen cartas inferiores
+                    if (slut.Card.Level > existingCard.Level)
+                    {
+                        Console.WriteLine("El nivel de la carta jugada es inferior");
+                        return;
+                    }
+                }
+
+                bool isCorrectType = true;
+                string partName = existingCard.Track.Part.Name;
+
+                // Chequeo que se pueda jugar una carta del tipo correcto para esa posición
+                switch (card.Position)
+                {
+                    case 0:
+                        isCorrectType = CheckCardType(["Vocal", "Main"], partName);
+                        break;
+                    case 1:
+                        isCorrectType = CheckCardType(["Main"], partName);
+                        break;
+                    case 2:
+                        isCorrectType = CheckCardType(["Main", "Drums"], partName);
+                        break;
+                    case 3:
+                        isCorrectType = CheckCardType(["Drums"], partName);
+                        break;
+                    case 4:
+                        isCorrectType = CheckCardType(["Drums", "Bass"], partName);
+                        break;
+                    default:
+                        Console.WriteLine("La posición no es correcta");
+                        return;
+                }
+
+                if (!isCorrectType)
+                {
+                    Console.WriteLine("El tipo de la carta no es el correcto");
+                    return;
+                }
+
+                // Si todo está correcto, establezco la nueva carta y la borro del mazo
+                slut.Card = existingCard;
+                slut.UserId = playerInTurn.UserId;
+                
+
+                positions.Add(card.Position);
+
+                // Bonificaciones random
+                switch (Bonus)
+                {
+                    case "Amarillo":
+                        playerInTurn.Punctuation += CheckForCardType(1, existingCard.CardType.Id);
+                        break;
+                    case "Rojo":
+                        playerInTurn.Punctuation += CheckForCardType(2, existingCard.CardType.Id);
+                        break;
+                    case "Verde":
+                        playerInTurn.Punctuation += CheckForCardType(3, existingCard.CardType.Id);
+                        break;
+                    case "Azul":
+                        playerInTurn.Punctuation += CheckForCardType(4, existingCard.CardType.Id);
+                        break;
+                }
+
+                // Establezco la nueva mezcla
+                output = PlayMusic(_board.Playing, existingCard);
             }
 
-            // Establezco la nueva mezcla
-            output = PlayMusic(_board.Playing, existingCard);
             playerInTurn.Punctuation += 1;
 
             if (TotalTurns >= 1)
@@ -230,9 +254,12 @@ public class GayHandler // GameHandler :3
             switch (actionType.Name)
             {
                 case "button":
-                    positions = SpinTheWheel(otherUser);
+                    var spin = SpinTheWheel(otherUser);
+                    levelRoulette = spin.Level;
+                    positions = spin.Positions;
                     spinTheWheel = true;
                     playerInTurn.ActionsLeft--;
+                    otherUser.Punctuation -= positions.Count;
                     break;
                 default:
                     Console.WriteLine("La acción no existe");
@@ -260,7 +287,7 @@ public class GayHandler // GameHandler :3
         }
 
 
-        if (playerInTurn.ActionsLeft <= 0 && !otherUser.IsBot)
+        if (playerInTurn.ActionsLeft <= 0)
         {
             playerInTurn.IsTheirTurn = false;
             otherUser.IsTheirTurn = true;
@@ -275,7 +302,10 @@ public class GayHandler // GameHandler :3
             { "position", positions },
             { "otherplayer", otherUser.Punctuation },
             { "wheel", spinTheWheel },
-            { "card", randomCard }
+            { "whoSpinTheWheel", spinTheWheel? playerInTurn.User.Nickname : "" },
+            { "levelRoulette", levelRoulette},
+            //{ "card", randomCard }
+
         };
 
         await NotifyUsers(dict, playerInTurn, otherUser, output);
@@ -302,6 +332,11 @@ public class GayHandler // GameHandler :3
         {
             if (otherUser.IsBot)
             {
+                await Task.Delay(2000);
+
+                playerInTurn.IsTheirTurn = true;
+                otherUser.IsTheirTurn = false;
+
                 await DoBotActions(otherUser, playerInTurn, dict, unitOfWork);
                 playerInTurn.ActionsLeft = ACTIONS_REQUIRED;
             }
@@ -324,20 +359,38 @@ public class GayHandler // GameHandler :3
     private UserBattleDto MapUserBattle(UserBattle userBattle)
     {
         UserBattleDto userBattleDto = _mapper.ToDto(userBattle);
-        userBattleDto.Cards = null;
+        //userBattleDto.Cards = null;
         return userBattleDto;
     }
 
     public async Task EndBattle(UserBattle winner, UserBattle loser, UnitOfWork unitOfWork)
     {
+        if (_service != null)
+        {
+            await _service.StopAsync(CancellationToken.None);
+        }
+
         Battle.BattleStateId = 4;
         Battle.BattleUsers = [];
         Battle.FinishedAt = DateTime.UtcNow;
+
+        var state = await unitOfWork.StateRepositoty.GetByIdAsync(2); // Conectado
 
         if (!winner.IsBot)
         {
             winner.BattleResultId = 1;
             winner.Cards = new List<Card>();
+
+            winner.User.State = state;
+            winner.User.StateId = state.Id;
+            winner.User.TotalPoints++;
+
+            UserSocket socket = WebSocketHandler.USER_SOCKETS.FirstOrDefault(u => u.User.Id == winner.UserId);
+            if (socket != null)
+            {
+                socket.User.TotalPoints++;
+            }
+
             Battle.BattleUsers.Add(winner);
         }
 
@@ -345,6 +398,10 @@ public class GayHandler // GameHandler :3
         {
             loser.BattleResultId = 2;
             loser.Cards = new List<Card>();
+
+            loser.User.State = state;
+            loser.User.StateId = state.Id;
+
             Battle.BattleUsers.Add(loser);
         }
 
@@ -383,7 +440,7 @@ public class GayHandler // GameHandler :3
             return;
         }
 
-        if(end)
+        if (end)
         {
             dict["otherUserId"] = playerInTurn.UserId;
         }
@@ -415,11 +472,11 @@ public class GayHandler // GameHandler :3
         {
             bool couldPlay = false;
 
-            for(int i = 0; i < _board.Slots.Length; i++)
+            for (int i = 0; i < _board.Slots.Length; i++)
             {
                 Slot currentSlot = _board.Slots.ElementAt(i);
                 Card card = GetValidCardForSlot(currentSlot, bot);
-                if(card == null)
+                if (card == null)
                 {
                     continue;
                 }
@@ -473,7 +530,15 @@ public class GayHandler // GameHandler :3
             // Si no pudo jugar ninguna carta, tira la ruleta
             if (!couldPlay)
             {
-                dict["position"] = SpinTheWheel(notBot);
+                var spin = SpinTheWheel(notBot);
+                dict["position"] = spin.Positions;
+                dict["levelRoulette"] = spin.Level;
+
+                if (notBot.Punctuation != 0)
+                {
+                    notBot.Punctuation -= spin.Positions.Count;
+                    if (notBot.Punctuation < 0) notBot.Punctuation = 0;
+                }
                 spinTheWheel = true;
                 totalActions++;
             }
@@ -488,6 +553,8 @@ public class GayHandler // GameHandler :3
             }
 
             dict["wheel"] = spinTheWheel;
+            dict["whoSpinTheWheel"] = spinTheWheel ? "bot" : "";
+
             await NotifyUsers(dict, notBot, bot, output, end);
         }
 
@@ -498,29 +565,39 @@ public class GayHandler // GameHandler :3
         }
     }
 
-    private List<int> SpinTheWheel(UserBattle opponent)
+    private RouletteInfo SpinTheWheel(UserBattle opponent)
     {
         int result = _random.Next(0, 100);
         List<int> positions;
 
+        int levelDeleted;
+
         if (result < 50)
         {
             positions = RemoveCardsOfLevel(3, opponent);
+            levelDeleted = 3;
         }
         else if (result >= 50 && result < 75)
         {
             positions = RemoveCardsOfLevel(2, opponent);
+            levelDeleted = 2;
         }
-        else if(result >= 75 && result < 90)
+        else if (result >= 75 && result < 90)
         {
             positions = RemoveCardsOfLevel(1, opponent);
+            levelDeleted = 1;
         }
         else
         {
             positions = RemoveCardsOfLevel(0, opponent);
+            levelDeleted = 0;
         }
 
-        return positions;
+        RouletteInfo info = new();
+        info.Level = levelDeleted;
+        info.Positions = positions;
+
+        return info;
     }
 
     private List<int> RemoveCardsOfLevel(int level, UserBattle player)
@@ -530,17 +607,17 @@ public class GayHandler // GameHandler :3
         for (int i = 0; i < _board.Slots.Length; i++)
         {
             Slot slot = _board.Slots[i];
-            if(slot.Card == null || slot.UserId != player.UserId)
+            if (slot.Card == null || slot.UserId != player.UserId)
             {
                 continue;
             }
 
-            if(level == 0)
+            if (level == 0)
             {
                 slot.Card = null;
                 positions.Add(i);
             }
-            else if(slot.Card.Level == level)
+            else if (slot.Card.Level == level)
             {
                 slot.Card = null;
                 positions.Add(i);
@@ -548,9 +625,9 @@ public class GayHandler // GameHandler :3
         }
 
         int total = _board.Slots.Where(s => s.Card == null).Count();
-        
+
         // Si no hay ninguna otra carta
-        if(total == 5)
+        if (total == 5)
         {
             _board.Playing = null;
         }
@@ -565,15 +642,15 @@ public class GayHandler // GameHandler :3
         switch (Array.IndexOf(_board.Slots, slot))
         {
             case 0:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Vocal") || c.Track.Part.Name.Equals("Main")) && !occupiedCards.Contains(c.Id));
             case 1:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && c.Track.Part.Name.Equals("Main") && !occupiedCards.Contains(c.Id));
             case 2:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Main") || c.Track.Part.Name.Equals("Drums")) && !occupiedCards.Contains(c.Id));
             case 3:
-                return bot.Cards.FirstOrDefault(c => c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() &&  c.Track.Part.Name.Equals("Drums") && !occupiedCards.Contains(c.Id));
             case 4:
-                return bot.Cards.FirstOrDefault(c => (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id));
+                return bot.Cards.FirstOrDefault(c => c.Effect.IsNullOrEmpty() && (c.Track.Part.Name.Equals("Drums") || c.Track.Part.Name.Equals("Bass")) && !occupiedCards.Contains(c.Id));
             default:
                 return null;
         }
@@ -590,34 +667,6 @@ public class GayHandler // GameHandler :3
         if (playing == null)
         {
             _board.Playing = card.Track;
-            string cardNote = card.Track.Song.Pitch;
-
-            for(int i = 0; i < MusicNotes.NOTES.Length; i++)
-            {
-                string currentNote = MusicNotes.NOTES[i];
-                if (currentNote == cardNote)
-                {
-                    Grades["FirstGrade"] = new Dictionary<string, int> { { currentNote, i } };
-
-                    int j = i + 3;
-                    if(j >= MusicNotes.NOTES.Length)
-                    {
-                        j = j - MusicNotes.NOTES.Length;
-                    }
-
-                    Grades["ForthGrade"] = new Dictionary<string, int> { { currentNote, j } };
-                    j++;
-
-                    if(j >= MusicNotes.NOTES.Length)
-                    {
-                        j = j - MusicNotes.NOTES.Length; 
-                    }
-
-                    Grades["FifthGrade"] = new Dictionary<string, int> { { currentNote, j } };
-                    break;
-                }
-            }
-
             return File.ReadAllBytes("wwwroot/" + card.Track.TrackPath);
         }
         else
@@ -629,65 +678,51 @@ public class GayHandler // GameHandler :3
             float changeForCard = (cardBpm - currentBpm) / cardBpm;
             float newBpmForCard = CalculateNewBpm(changeForCard);
 
-            // Cálculo del pitch
+            // Cálculo del nuevo pitch
+            int totalSemitones = _pitchCalculator.CalculateSemitones(playing.Song.Preferred, card.Track.Song, out _);
+            float pitchFactor = (float)Math.Pow(2, totalSemitones / 12.0);
+
+            /*int semitoneCurrent = GetFromDictionary(playing.Song.Pitch);
+            int semitoneCard = GetFromDictionary(card.Track.Song.Pitch);
+
+            // TODO: LA DIFERENCIA SE CALCULA SI LA DISTANCIA ARMÓNICA ES MAYOR QUE 1, IGUAL QUE TODO LO DEMÁS
+            int difference = semitoneCard - semitoneCurrent;
             float pitchFactor = 1.0f;
-            string cardNote = card.Track.Song.Pitch;
 
-            if (cardNote != Grades["FirstGrade"].Keys.First() && cardNote == Grades["ForthGrade"].Keys.First() && cardNote == Grades["FifthGrade"].Keys.First())
+            // Sólo aplico si es mayor que 1
+            if (Math.Abs(difference) > 1)
             {
-                string firstNote = Grades["FirstGrade"].Keys.First();
-                int firstGradePosition = Grades["FirstGrade"][firstNote];
-
-                string secondNote = Grades["FirstGrade"].Keys.First(k => k != Grades["FirstGrade"].Keys.First() );
-                int secondGradePosition = Grades["FirstGrade"][secondNote];
-
-                string thirdNote = Grades["FirstGrade"].Keys.Last();
-                int thirdGradePosition = Grades["FirstGrade"][thirdNote];
-
-                int[] positions = [ firstGradePosition,  secondGradePosition, thirdGradePosition ];
-                int position = -1;
-
-                for (int i = 0; i < MusicNotes.NOTES.Length; i++)
-                {
-                    string currentNote = MusicNotes.NOTES[i];
-
-                    if (currentNote == cardNote)
-                    {
-                        position = i; break;
-                    }
-                }
-
-                int[] differences = [Math.Abs(firstGradePosition - position), Math.Abs(secondGradePosition - position), Math.Abs(thirdGradePosition - position)];
-                int difference = differences.Min();
-
-                int newDifference = 0;
-
-                if (difference == differences[0])
-                {
-                    newDifference = GetFromDictionary(cardNote) - GetFromDictionary(firstNote);
-                }
-                else if (difference == differences[1])
-                {
-                    newDifference = GetFromDictionary(cardNote) - GetFromDictionary(secondNote);
-                }
-                else
-                {
-                    newDifference = GetFromDictionary(cardNote) - GetFromDictionary(thirdNote);
-                }
-
-                pitchFactor = (float)Math.Pow(2, newDifference / 12.0);
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
             }
+
+            /*if (pitchFactor < card.MinPitch)
+            {
+                difference += 12;
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            }
+            else if(pitchFactor > card.MaxPitch)
+            {
+                difference -= 12;
+                pitchFactor = (float)Math.Pow(2, difference / 12.0);
+            }*/
 
             byte[] newAudio = _audioModifier.Modify("wwwroot/" + card.Track.TrackPath, newBpmForCard, pitchFactor);
             //byte[] message = [..BitConverter.GetBytes(card.Id), .. newAudio];
-            byte[] message = [..newAudio];
+            byte[] message = [.. newAudio];
+
+            string noteName = playing.Song.Pitch;
+            bool couldGet = MusicNotes.NOTE_MAP.TryGetValue(playing.Song.Pitch, out _);
+            if (!couldGet)
+            {
+                noteName = MusicNotes.FIFTH_CIRCLE[playing.Song.Pitch];
+            }
 
             _board.Playing = new Track()
             {
-                Song = new Song()
+                Song = new Song(noteName, true)
                 {
                     Bpm = playing.Song.Bpm,
-                    Pitch = playing.Song.Pitch,
+                    Pitch = noteName,
                 }
             };
 

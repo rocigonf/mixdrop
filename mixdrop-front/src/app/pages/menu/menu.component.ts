@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 
 @Component({
@@ -105,7 +106,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.pendingBattles = jsonResponse.battles
         break
       case MessageType.Play:
-        alert("Partida encontrada :3")
+        this.showAlert("Partida encontrada", "Partida encontrada :3", 'info')
         this.router.navigateByUrl("matchmaking")
         if(jsonResponse.battle)
         {
@@ -144,17 +145,26 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.searchFriend("")
   }
 
-  async removeFriend(friend: Friend) {
+  async removeFriend(friend: Friend, accepted: boolean) {
     // En el servidor se llamaría a un método para borrar la amistad, ( wesoque ->) el cual llamaría al socket del otro usuario para notificarle
     // Para recibir la notificación ya se encarga "processMesage", y de actualizar la lista
 
     const nickname = friend.receiverUser?.nickname || friend.senderUser?.nickname;
 
-    const confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+    let confirmed
+
+    if(accepted)
+    {
+      confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+    }
+    else
+    {
+      confirmed = window.confirm(`¿Seguro que quieres rechazar la solicitud de ser amigo de ${nickname}?`);
+    }
   
     if (confirmed) {
       await this.friendshipService.removeFriendById(friend.id)
-      alert(`Has dejado de ser amigo de ${nickname}.`);
+      this.showAlert("Éxito", `Amistad con ${nickname} rechazada.`, 'info')
     } 
   }
 
@@ -170,13 +180,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   async acceptBattle(battle: Battle) {
+    sessionStorage.setItem("battleId", battle.id.toString())
     const response = await this.battleService.acceptBattleById(battle.id)
     console.log("Respuesta de aceptar la batalla: ", response)
   }
 
   async deleteBattle(battle : Battle)
   {
-    const response = await this.battleService.removeBattleById(battle.id)
+    const response = await this.battleService.removeBattleById(battle.id, false)
     console.log("Respuesta de borrar la batalla: ", response)
   }
 
@@ -202,7 +213,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(url);
   }
 
-  visitUserPorfile(user: User | null)
+  visitUserProfile(user: User | null)
   {
     if(user){
       this.router.navigateByUrl("profile/" +user?.id  );
@@ -291,5 +302,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     // te lleva al emparejamiento
     this.router.navigateByUrl("matchmaking");
   }
+
+  private showAlert(title: string, message: string, icon: SweetAlertIcon) {
+        Swal.fire({
+          title: title,
+          text: message,
+          showConfirmButton: false,
+          icon: icon,
+          timer: 2000
+        })
+      }
 
 }
