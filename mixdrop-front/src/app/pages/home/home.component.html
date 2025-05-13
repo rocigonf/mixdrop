@@ -1,6 +1,6 @@
 <app-navbar [frameName]="currentSpeakerFrameName" (musicEvent)="reproduce()"></app-navbar>
 
-<div class="container">
+<div class="container" *transloco="let t">
   <!--<button (click)="reproduce()">Púlsame si no escuchas ninguna canción</button>-->
 
   <img src="/images/mdx_logo.png" alt="logo">
@@ -33,6 +33,7 @@
 
   <img class="speaker-girl" [src]="currentRunaFrameName" alt="speaker girl">
 
+  <!--<p>{{ t("download-now")}}</p>-->
   <hr>
 
   <a href="https://github.com/rocigonf/moshiro-mixdrop" class="social-logo">

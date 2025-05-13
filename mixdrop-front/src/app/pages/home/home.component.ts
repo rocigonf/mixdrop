@@ -1,15 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import {MatIconModule} from '@angular/material/icon';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { TranslatorService } from '../../services/translator.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NavbarComponent, MatIconModule],
+  imports: [NavbarComponent, MatIconModule, TranslocoModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit, OnDestroy {
+
+  constructor(private translocoService: TranslocoService,
+    private translatorService: TranslatorService)
+    {}
+
   private bpm: number = 90;
   private intervalTime: number = 0;
   private isReproducing : boolean = false
@@ -47,6 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     "/songs/temazo.mp3" : 129
   }
 
+  languageSelected: number = 0
 
   ngOnInit(): void {
     try 
@@ -64,6 +72,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       //this.reproduce()
     }
     catch {}
+
+    const activeLang = this.translocoService.getActiveLang();
+    // Busca el índice del idioma activo en la lista LANGUAGES y lo guarda.
+    this.languageSelected =
+      this.translatorService.findLanguageIndex(activeLang);
   }
 
   ngOnDestroy(): void {
