@@ -23,6 +23,16 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+	<!-- Tarea que se va a ejecutar antes de la compilación del proyecto (AGREGAR EL MENOS MENOS COMO EN LA GUÍA) -->
+	<!--<Target Name="BuildAngular" BeforeTargets="Build">
+		<PropertyGroup>
+			<AngularAppPath>../../mixdrop-front</AngularAppPath>
+			<AngularConfiguration Condition="'$(Configuration)' == 'Debug'">development</AngularConfiguration>
+			<AngularConfiguration Condition="'$(Configuration)' == 'Release'">production</AngularConfiguration>
+		</PropertyGroup>
+		<Exec Command="ng build configuration $(AngularConfiguration) output-path=&quot;$(ProjectDir)wwwroot\client&quot;" WorkingDirectory="$(AngularAppPath)" ContinueOnError="False" />
+	</Target>-->
+
   <!--<ItemGroup>
     <Folder Include="wwwroot\Songs\Output\" />
   </ItemGroup>

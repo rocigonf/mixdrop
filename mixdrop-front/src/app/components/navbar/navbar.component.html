@@ -1,37 +1,72 @@
-<nav>
+<ng-container *transloco="let t">
+    <nav>
+        <a (click)="startMusic()">
+            <img id="speaker" [src]="frameName" alt="altavoz">
+        </a>
 
-    @if (this.router.url == '/'){
-    <a (click)="startMusic()">
-        <img #tooltip="matTooltip" matTooltip="Pulsa para un secreto :D" matTooltipPosition="below"
-            matTooltipClass="tooltip" id="speaker" [src]="frameName" alt="altavoz">
-    </a>
-    }
-    @else
-    {
-    <a (click)="startMusic()">
-        <img id="speaker" [src]="frameName" alt="altavoz">
-    </a>
-    }
+        <div class="nav-right">
 
+            <div class="dropdown">
+                @if (authService.isAuthenticated()) {
 
-    <div class="nav-right">
+                @if(user?.avatarPath != ""){
+                <img class="avatar" [src]="IMG_URL + user?.avatarPath" alt="avatar">
+                }@else {
+                <img class="avatar" src="/images/user.png" alt="avatar">
+                }
+                <div class="dropdown-content">
+                    <a (click)="navigateToUrl('profile/' + user?.id)">Perfil</a>
+                    @if (authService.isAdmin()) {
+                    <a (click)="navigateToUrl('admin/' + user?.id)">Administración</a>
+                    }
+                    <a class="menu" (click)="navigateToUrl('menu')">Menú</a>
+                </div>
 
-        @if (this.router.url == '/' || this.router.url == '/#rules') {
+                } @else {
+
+                <a (click)="navigateToUrl('login')">
+                    <img class="avatar" src="/images/user.png" alt="avatar">
+                </a>
+
+                }
+            </div>
+
+            <!--selector idioma-->
+            <details #langSelector (toggle)="isMenuOpen = !isMenuOpen" class="custom-select" style="margin-right: 5px">
+                <summary>
+                    <img [src]="getFlagUrl(this.languages[languageSelected]!!.code)"
+                        style="width: 28px; height: auto; object-fit: contain" />
+                </summary>
+
+                <div class="custom-select-options">
+                    @for (lang of this.languages; track $index) { @if ($index !==
+                    languageSelected) {
+                    <input type="radio" class="rad" name="lang" [id]="'lang-' + $index"
+                        [checked]="$index === languageSelected"
+                        (change)="languageSelected = $index; onLanguageChanged()" />
+                    <label class="opt" [for]="'lang-' + $index">
+                        <img [src]="getFlagUrl(lang.code)" />
+                    </label>
+                    } }
+                </div>
+            </details>
+
+            @if (this.router.url == '/' || this.router.url == '/#rules') {
 
         <a href="#rules">
             <span>REGLAS</span>
         </a>
 
 
-        } @else {
+            } @else {
 
-        <a class="home" (click)="navigateToUrl('/')">
-            <span>INICIO</span>
-        </a>
+            <a class="home" (click)="navigateToUrl('/')">
+                <span>INICIO</span>
+            </a>
 
-        }
+            }
 
-        @if (authService.isAuthenticated()) {
+            @if (authService.isAuthenticated()) {
 
         <a class="home" (click)="navigateToUrl('/menu')">
             <span>MENÚ</span>

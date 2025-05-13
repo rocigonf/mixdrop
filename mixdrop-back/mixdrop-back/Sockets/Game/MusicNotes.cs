@@ -24,6 +24,16 @@ public class MusicNotes
         { "Fm", "Ab" }, { "Cm", "Eb" }, { "Gm", "Bb" }, { "Dm", "F" }
     };
 
+    /*public static readonly Dictionary<string, string> FIFTH_CIRCLE_REVERSE = new Dictionary<string, string>
+    {
+        { "C", "Am" }, { "G", "Em" }, { "D", "Bm" }, { "A", "F#m" },
+        { "A", "Gbm" }, { "E", "C#m" }, { "E", "Dbm" }, { "B", "G#m" },
+        { "F#", "D#m" }, { "F#", "F#" }, { "A#m", "C#" }, { "Bbm", "C#" },
+        { "Fm", "Ab" }, { "Cm", "Eb" }, { "Gm", "Bb" }, { "Dm", "F" }
+    };*/
+
+    public static readonly string[] NOTES = ["C", "D", "E", "F", "G", "A", "B"]; 
+
     /*public static readonly double SEMITONE = Math.Pow(2, 1.0 / 12);
     public static readonly double UP_ONE_TONE = SEMITONE * SEMITONE;
     public static readonly double DOWN_ONE_TONE = 1.0 / UP_ONE_TONE;*/
