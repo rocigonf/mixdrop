@@ -21,13 +21,13 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { CardComponent } from "../../components/card/card.component";
 import { RouletteComponent } from "../../components/roulette/roulette.component";
 import { UserBattle } from '../../models/user-battle';
-import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent, CommonModule, RouletteComponent],
+  imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent, CommonModule, RouletteComponent, TranslocoModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -96,7 +96,7 @@ export class GameComponent implements OnInit, OnDestroy {
     public battleService: BattleService,
     public authService: AuthService,
     public router: Router,
-    private cdr: ChangeDetectorRef) {
+    private translocoService: TranslocoService) {
   }
 
 
@@ -257,26 +257,26 @@ export class GameComponent implements OnInit, OnDestroy {
         this.playAudio(positions, jsonResponse.wheel);
 
         if (this.userBattle?.battleResultId == 1) {
-          this.showAlert("Ganaste", "Ganaste :D")
+          this.showAlert(this.translocoService.translate("win"), `${this.translocoService.translate("win")} :D`)
         }
         else {
-          this.showAlert("Perdiste", "Perdiste :(")
+          this.showAlert(this.translocoService.translate("lost"), `${this.translocoService.translate("lost")} :(`)
         }
 
         this.timeRemaining$ = null
         break;
 
       case MessageType.AskForBattle:
-        this.showAlert("Revancha solicitada", "Revancha solicitada")
+        this.showAlert(this.translocoService.translate("rematch-asked"), this.translocoService.translate("rematch-asked"))
         this.router.navigateByUrl("menu")
         break
 
       case MessageType.DisconnectedFromBattle:
         if (jsonResponse.reported == false) {
-          alert("El otro usuario se ha desconectado, por lo que has ganado")
+          alert(this.translocoService.translate("other-user-left"))
         }
         else {
-          alert("Se te acabó el tiempo, por lo que has perdido")
+          alert(this.translocoService.translate("time-over"))
         }
         this.router.navigateByUrl("menu")
         break

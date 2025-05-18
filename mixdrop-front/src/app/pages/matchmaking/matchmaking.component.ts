@@ -13,11 +13,12 @@ import { Battle } from '../../models/battle';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { BattleDto } from '../../models/battle-dto';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-matchmaking',
   standalone: true,
-  imports: [NavbarComponent, MatTooltipModule],
+  imports: [NavbarComponent, MatTooltipModule, TranslocoModule],
   templateUrl: './matchmaking.component.html',
   styleUrl: './matchmaking.component.css'
 })
@@ -29,7 +30,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   constructor(private webSocketService: WebsocketService,
     private router: Router,
     public authService: AuthService,
-    public battleService: BattleService
+    public battleService: BattleService,
+    private translocoService: TranslocoService
   ) { }
 
 
@@ -128,7 +130,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
     switch (jsonResponse.messageType) {
       case MessageType.Play:
-        this.showAlert("Partida encontrada", "Partida encontrada :3", 'info')
+        this.showAlert(this.translocoService.translate("match-found"), `${this.translocoService.translate("match-found")} :3`, 'info')
         this.readyForBattle = true
         if (jsonResponse.battle) {
           this.battle = jsonResponse.battle
@@ -147,7 +149,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         this.askForInfo(MessageType.Friend)
         break
       case MessageType.DisconnectedFromBattle:
-        alert("La batalla se ha cancelado")
+        alert(this.translocoService.translate("battle-cancelled"))
         this.resetData()
         //this.router.navigateByUrl("menu")
         //window.location.reload()

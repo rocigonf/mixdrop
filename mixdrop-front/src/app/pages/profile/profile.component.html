@@ -1,5 +1,6 @@
 <app-navbar></app-navbar>
 
+<ng-container *transloco="let t">
 @if(user)
 {
     <div class="panel-top">
@@ -32,7 +33,7 @@
         {
             <div class="column">
 
-                <h2>Información</h2>
+                <h2>Info</h2>
                 <fieldset class="info-avatar">
 
                 <div class="avatar-preview-img">
@@ -49,17 +50,17 @@
                 <div class="avatar-preview">
                     <div class="button-wrapper">
 
-                        <span class="label">Cambiar avatar</span>
+                        <span class="label">{{t('change-avatar')}}</span>
                         <input 
                             type="file" 
                             accept="image/png, image/jpeg, image/jpg" 
                             id="input-file"  
-                            placeholder="Cambiar avatar" 
+                            [placeholder]="t('change-avatar')" 
                             (change)="onFileSelected($event)"
                         >
                     </div>
 
-                    <button (click)="deleteAvatar = true" class="form-button">Borrar avatar</button>
+                    <button (click)="deleteAvatar = true" class="form-button">{{t('delete-avatar')}}</button>
                 </div>
                 </fieldset>
 
@@ -68,11 +69,11 @@
 
                         <div class="profile-row">
 
-                            <label for="nickname">Nombre:
+                            <label for="nickname">Nickname:
                                 <input type="text" [value]="user.nickname" formControlName="nickname" [readonly]="!isEditing">
                             </label>
 
-                            <label for="email">Correo:
+                            <label for="email">Email:
                                 <input id="email" type="email" formControlName="email" [readonly]="!isEditing" [value]="user.email" />
                             </label>
 
@@ -82,7 +83,7 @@
                             
                             <button type="button" [ngClass]="isEditing ? 'btn-edit' : 'btn-secondary'" class="form-button"
                                 (click)="edit()">
-                                {{ isEditing? 'Cancelar edición' : 'Editar' }}
+                                {{ isEditing? t("cancel-edition") : t("edit") }}
                             </button>
                             
                             <!-- <button type="submit" class="form-button" [hidden]="!isEditing || userForm.invalid">
@@ -95,9 +96,8 @@
                 
                 <fieldset class="info">
                     <div class="profile-row">
-                        <label>Contraseña: <input type="password" placeholder="***********" [readonly]="!isEditing"></label>
-                        <button type="button" class="form-button" style="float: right;" (click)="showEditPassword()"> Cambiar
-                            Contraseña </button>
+                        <label>{{t("password")}}: <input type="password" placeholder="***********" [readonly]="!isEditing"></label>
+                        <button type="button" class="form-button" style="float: right;" (click)="showEditPassword()"> {{t("change-password")}} </button>
                     </div>
                 </fieldset>
                 
@@ -107,22 +107,22 @@
                         <form [formGroup]="passwordForm" (ngSubmit)="editPassword()">
                             
                             <div class="new-password-row">
-                                <label>Nueva contraseña:</label>
+                                <label>{{t("new-password")}}</label>
                             
                                 <div class="new-password-columm">
-                                    <input type="password" formControlName="newPassword" required placeholder="Nueva Contraseña" />
+                                    <input type="password" formControlName="newPassword" required [placeholder]="t('change-password')" />
                                     
                                     <div class="error" 
                                         *ngIf="passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched">
-                                        La contraseña debe tener mínimo 6 caracteres.
+                                        {{t("password-minimum")}}
                                     </div>
                                 </div>
                                 <div class="new-password-columm">
-                                    <input class="icon-input" placeholder="Repetir contraseña" type="password" formControlName="confirmPassword" />
+                                    <input class="icon-input" [placeholder]="t('repeat-password')" type="password" formControlName="confirmPassword" />
                                     
                                     <div class="error" 
                                         *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched">
-                                        Las contraseñas no coinciden.
+                                        {{t("password-do-not-match")}}
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +136,7 @@
                 </div>
 
                 <div class="centered-button">
-                    <button class="rainbow-button" (click)="updateUser()">Guardar cambios</button>
+                    <button class="rainbow-button" (click)="updateUser()">{{t("save-changes")}}</button>
                 </div>
             </div>
         } 
@@ -144,22 +144,22 @@
         {
             <div class="other-column">
 
-                <h2>Información</h2>
+                <h2>Info</h2>
 
                 <br>
                 @if(waitingFriendship(user) == false)
                 {
                     @if(hasFriendship(user))
                     {
-                        <button class="form-button" (click)="removeFriend(hasFriendship(user))">Borrar amigo</button>
+                        <button class="form-button" (click)="removeFriend(hasFriendship(user))">{{t("delete-friend")}}</button>
                     }
                     @else {
-                        <button class="form-button" (click)="addFriend(user)">Agregar amigo</button>
+                        <button class="form-button" (click)="addFriend(user)">{{t("add-friend")}}</button>
                     }
                 }
                 @else 
                 {
-                    <label for="waitingFriendship">Solicitud de amistad enviada...</label>
+                    <label for="waitingFriendship">{{t("friend-asked")}}</label>
                 }
 
             </div>
@@ -167,7 +167,7 @@
         <!-- Historial de batallas -->
         <div class="column">
 
-            <h2>Batallas</h2>
+            <h2>{{t("battles")}}</h2>
             <fieldset class="battle-history">
 
             <div class="pagination">
@@ -175,7 +175,7 @@
                 <button class="pagination-button" (click)="firstPage()" [disabled]="currentPage == 1"><<</button>
                 <button class="pagination-button" (click)="prevPage()" [disabled]="currentPage == 1"><</button>
                 
-                <span id="pagination-text">Página {{ currentPage }}</span>
+                <span id="pagination-text">{{t("page")}} {{ currentPage }}</span>
                 
                 <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">></button>
                 <button class="pagination-button" (click)="lastPage()" [disabled]="currentPage * battlesPerPage >= totalBattles">>></button>
@@ -201,13 +201,13 @@
                                     @if(!battle.isAgainstBot)
                                     {
                                         {{ battle.usersBattles[0].userName }}
-                                        ganó contra 
+                                        {{t("won-against")}} 
                                         {{ battle.usersBattles[1].userName }}
                                     }
                                     @else
                                     {
                                         {{ battle.usersBattles[0].userName }}
-                                        ganó contra un bot
+                                        {{t("won-against-bot")}}
                                     }
                                 </label>
                             }
@@ -216,20 +216,20 @@
                                     @if(!battle.isAgainstBot)
                                     {
                                         {{ battle.usersBattles[0].userName }}
-                                        perdió contra 
+                                        {{t("lost-against")}} 
                                         {{ battle.usersBattles[1].userName }}
                                     }
                                     @else
                                     {
                                         {{ battle.usersBattles[0].userName }}
-                                        perdió contra un bot
+                                        {{t("lost-against-bot")}}
                                     }
                                 </label>
                             }
                         }
-                        <label>Duración de partida: {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
+                        <label>{{t("match-time")}} {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
                         <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL --> <!-- nah -->
-                        <label>Puntuación: {{ battle.usersBattles[0].punctuation }}</label>
+                        <label>{{t("punctuation")}} {{ battle.usersBattles[0].punctuation }}</label>
                     }
                     @else
                     {
@@ -240,13 +240,13 @@
                                     @if(!battle.isAgainstBot)
                                     {
                                         {{ battle.usersBattles[1].userName }}
-                                        ganó contra 
+                                        {{t("won-against")}} 
                                         {{ battle.usersBattles[0].userName }}
                                     }
                                     @else
                                     {
                                         {{ battle.usersBattles[1].userName }}
-                                        ganó contra un bot
+                                        {{t("won-against-bot")}}
                                     }
                                 </label>
                             }
@@ -255,20 +255,20 @@
                                     @if(!battle.isAgainstBot)
                                     {
                                         {{ battle.usersBattles[1].userName }}
-                                        perdió contra 
+                                        {{t("lost-against")}} 
                                         {{ battle.usersBattles[0].userName }}
                                     }
                                     @else
                                     {
                                         {{ battle.usersBattles[1].userName }}
-                                        perdió contra un bot
+                                        {{t("lost-against-bot")}}
                                     }
                                 </label>
                             }
                         }
-                        <label>Duración de partida: {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
+                        <label>{{t("match-time")}} {{ getDiffTime(battle.createdAt, battle.finishedAt) }}</label>
                         <!-- CAMBIAR AQUÍ POR LA CANTIDAD DE PUNTOS QUE DECIDAMOS PONER AL FINAL --> <!-- nah -->
-                        <label>Puntuación: {{ battle.usersBattles[1].punctuation }}</label>
+                        <label>{{t("punctuation")}} {{ battle.usersBattles[1].punctuation }}</label>
                     }
                 }
                 </div>
@@ -278,5 +278,6 @@
     </div>
 }
 @else {
-    <h1 style="text-align: center; font-size: 3em;">Cargando...</h1>
+    <h1 style="text-align: center; font-size: 3em;">{{t("loading")}}</h1>
 }
+</ng-container>

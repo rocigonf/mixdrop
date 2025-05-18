@@ -1,9 +1,10 @@
 <app-navbar></app-navbar>
 
+<ng-container *transloco="let t">
 <div class="cabecera">
     <img [src]="IMG_URL + user.avatarPath" alt="Avatar">
     <span>{{user?.nickname}}</span>
-    <button class="rainbow-button" (click)="emparejar()">Jugar</button>
+    <button class="rainbow-button" (click)="emparejar()">{{t("play")}}</button>
 </div>
 
 <div class="container">
@@ -12,12 +13,12 @@
     <aside>
         <div (click)="menuSelector='myFriends'">
             <img src="/images/amigos.webp" alt="Amigos"> 
-            <span>Tus amigos</span>
+            <span>{{t("your-friends")}}</span>
         </div>
 
         <div (click)="menuSelector='searchUsers'">
             <img src="/images/buzon.webp" alt="Añadir amigo">
-            <span>Añadir a un amigo</span>
+            <span>{{t("add-friend")}}</span>
         </div>
 
         <div class="mostrarNoti" (click)="menuSelector='friendRequest'">
@@ -25,7 +26,7 @@
             @if (pendingFriends.length > 0) {
                 <span class="notificacionNum">{{pendingFriends.length}}</span>
             }
-            <span>Solicitudes de amistad</span>
+            <span>{{t("friend-requests")}}</span>
         </div>
 
         <div class="mostrarNoti" (click)="menuSelector='battleRequest'">
@@ -34,7 +35,7 @@
             @if (pendingBattles.length > 0) {
                 <span class="notificacionNum">{{pendingBattles.length}}</span>
             }
-            <span>Solicitudes de batalla</span>
+            <span>{{t("battle-requests")}}</span>
         </div>
     </aside>
 
@@ -48,19 +49,19 @@
 
         <div class="busquedaUsuarios">
             <div>
-                <span>TUS AMIGOS</span><br>
+                <span>{{t("your-friends")}}</span><br>
                 <form (submit)="searchFriend(queryfriend)">
-                    <input type="text" placeholder="Buscar amigos" class="icon-input" required [(ngModel)]="queryfriend"
+                    <input type="text" placeholder="Nickname" class="icon-input" required [(ngModel)]="queryfriend"
                         [ngModelOptions]="{standalone: true}" />
-                    <button class="form-button" type="submit" [disabled]="!queryfriend"> Buscar</button>
+                    <button class="form-button" type="submit" [disabled]="!queryfriend">{{t("search")}}</button>
                 </form>
 
-                @if (acceptedFriends.length < 1) { <p> No tienes amigos :C</p> }
+                @if (acceptedFriends.length < 1) { <p> {{t("no-friends")}}</p> }
                 @else if (searchedFriends) {
-                    @if (searchedFriends.length<1) { <p> Ninguno se llama asi :/</p> }
+                    @if (searchedFriends.length<1) { <p> {{t("no-name")}}</p> }
                     @else 
                     {
-                        <p>CONECTADOS</p>
+                        <p>ONLINE</p>
                         <div class="listaUsuarios">
 
                             @for (friend of searchedFriends; track $index){
@@ -82,7 +83,7 @@
                                     
                                         <div class="contenedorIcono">
                                             <img #tooltip="matTooltip"
-                                                matTooltip="Eliminar amigo" 
+                                                [matTooltip]="t('delete-friend')" 
                                                 matTooltipPosition="above" 
                                                 matTooltipClass="tooltip" 
                                                 class="icono" 
@@ -95,7 +96,7 @@
 
                                             <div class="contenedorIcono">
                                                 <img #tooltip="matTooltip"
-                                                    matTooltip="Retar a batalla" 
+                                                    [matTooltip]="t('challenge')" 
                                                     matTooltipPosition="above" 
                                                     matTooltipClass="tooltip" 
                                                     class="icono" 
@@ -109,7 +110,7 @@
                             }
                         </div>
 
-                        <p>DESCONECTADOS</p>
+                        <p>OFFLINE</p>
 
                         <div class="listaUsuarios">
                             @for (friend of searchedFriends; track $index)
@@ -132,7 +133,7 @@
                         
                                         <div class="contenedorIcono">
                                             <img #tooltip="matTooltip"
-                                                matTooltip="Eliminar amigo" 
+                                                [matTooltip]="t('delete-friend')" 
                                                 matTooltipPosition="above" 
                                                 matTooltipClass="tooltip" 
                                                 class="icono" 
@@ -146,7 +147,7 @@
                         </div>
                         
 
-                        <p>EN BATALLA</p>
+                        <p>{{t("playing")}}</p>
 
                         <div class="listaUsuarios">
                             @for (friend of searchedFriends; track $index)
@@ -168,7 +169,7 @@
                         
                                         <div class="contenedorIcono">
                                             <img #tooltip="matTooltip"
-                                                matTooltip="Eliminar amigo" 
+                                                [matTooltip]="t('delete-friend')" 
                                                 matTooltipPosition="above" 
                                                 matTooltipClass="tooltip" 
                                                 class="icono" 
@@ -190,17 +191,17 @@
         @case ('searchUsers') {
             <div class="busquedaUsuarios">
                 <div>
-                    <span>BUSCAR USUARIO</span>
+                    <span>{{t("search-user")}}</span>
                 </div>
             
                 <form (submit)="getSearchedUsers(queryuser)">
-                    <input type="text" placeholder="Buscar usuarios" class="icon-input" required [(ngModel)]="queryuser" [ngModelOptions]="{standalone: true}" />
-                    <button class="form-button" type="submit" [disabled]="!queryuser"> Buscar</button>
+                    <input type="text" placeholder="Nickname" class="icon-input" required [(ngModel)]="queryuser" [ngModelOptions]="{standalone: true}" />
+                    <button class="form-button" type="submit" [disabled]="!queryuser"> {{t("search")}}</button>
                 </form>
             
                 @if (searchedUsers) {
                     @if (searchedUsers.length < 1) {
-                        <p>No se encontraron usuarios</p>
+                        <p>{{t("no-name")}}</p>
                     } @else {
                         <div class="listaUsuarios">
                             @for (user of searchedUsers; track $index)
@@ -219,7 +220,7 @@
                                         @if (!hasFriendship(user)) 
                                         {
                                         <img #tooltip="matTooltip"
-                                            matTooltip="Añadir amigo" 
+                                            [matTooltip]="t('add-friend')" 
                                             matTooltipPosition="above" 
                                             matTooltipClass="tooltip" 
                                             class="icono" 
@@ -230,7 +231,7 @@
                                         @if (waitingFriendship(user)) 
                                         {
                                         <img #tooltip="matTooltip"
-                                            matTooltip="Solicitud enviada..." 
+                                            [matTooltip]="t('friend-asked')" 
                                             matTooltipPosition="above" 
                                             matTooltipClass="tooltip" 
                                             class="icono" 
@@ -248,10 +249,10 @@
 
         <!----------------------- SOLICITUDES DE AMISTAD-------------------------->
         @case ('friendRequest') {
-        <span>SOLICITUDES DE AMISTAD</span>
+        <span>{{t("friend-requests")}}</span>
 
         @if (pendingFriends.length < 1) {
-            <p>No tienes solicitudes de amistad :C</p>
+            <p>{{t("no-requests")}}</p>
         } @else {
             <div class="listaUsuarios">
                 @for (friend of pendingFriends; track $index)
@@ -270,7 +271,7 @@
         
                         <div class="contenedorIcono">
                             <img #tooltip="matTooltip"
-                                matTooltip="Aceptar solicitud" 
+                                [matTooltip]="t('accept-request')" 
                                 matTooltipPosition="above" 
                                 matTooltipClass="tooltip" 
                                 class="icono" 
@@ -281,7 +282,7 @@
         
                         <div class="contenedorIcono">
                             <img #tooltip="matTooltip"
-                                matTooltip="Rechazar solicitud" 
+                                [matTooltip]="t('reject-request')" 
                                 matTooltipPosition="above" 
                                 matTooltipClass="tooltip" 
                                 class="icono" 
@@ -296,11 +297,11 @@
         }
         <!------------------------------ SOLICITUDES DE BATALLA------------------------->
         @case ('battleRequest') {
-            <span>SOLICITUDES DE BATALLA</span>
+            <span>{{t("battle-requests")}}</span>
             <div class="listaUsuarios">
             
                 @if (pendingBattles.length < 1) {
-                    <p>No tienes solicitudes de batalla :C</p>
+                    <p>{{t("no-requests")}}</p>
                 } @else {
                     @for (battle of pendingBattles; track battle.id)
                     {
@@ -318,7 +319,7 @@
             
                             <div class="contenedorIcono">
                                 <img #tooltip="matTooltip"
-                                    matTooltip="Aceptar batalla" 
+                                    [matTooltip]="t('accept-request')" 
                                     matTooltipPosition="above" 
                                     matTooltipClass="tooltip" 
                                     class="icono" 
@@ -329,7 +330,7 @@
             
                             <div class="contenedorIcono">
                                 <img #tooltip="matTooltip"
-                                    matTooltip="Rechazar batalla" 
+                                    [matTooltip]="t('reject-request')" 
                                     matTooltipPosition="above" 
                                     matTooltipClass="tooltip" 
                                     class="icono" 
@@ -348,12 +349,13 @@
 <hr>
 <div class="stats">
     <fieldset>
-        <p style="font-size: 2rem;">Usuarios conectados: <br> {{ this.totalUsers }}</p>
+        <p style="font-size: 2rem;">{{t("users-connected")}} <br> {{ this.totalUsers }}</p>
     </fieldset>
     <fieldset>
-        <p style="font-size: 2rem;">Partidas en juego: <br> {{ this.totalBattles }} </p>
+        <p style="font-size: 2rem;">{{t("total-matches")}} <br> {{ this.totalBattles }} </p>
     </fieldset>
     <fieldset>
-        <p style="font-size: 2rem;">Usuarios jugando: <br> {{ this.totalPlayers }} </p>
+        <p style="font-size: 2rem;">{{t("users-playing")}} <br> {{ this.totalPlayers }} </p>
     </fieldset>
 </div>
+</ng-container>

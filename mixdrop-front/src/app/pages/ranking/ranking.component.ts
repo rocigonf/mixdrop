@@ -6,11 +6,12 @@ import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-ranking',
   standalone: true,
-  imports: [NavbarComponent, CommonModule],
+  imports: [NavbarComponent, CommonModule, TranslocoModule],
   templateUrl: './ranking.component.html',
   styleUrl: './ranking.component.css'
 })

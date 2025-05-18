@@ -58,7 +58,7 @@ export class NavbarComponent implements OnInit{
       this.authService.logout()
       this.webSocketService.disconnectNative()
       this.navigateToUrl("/")
-      this.showAlert("Éxito", "Sesión cerrada correctamente", 'success')
+      this.showAlert(this.translocoService.translate("success"), this.translocoService.translate("logout-success"), 'success')
       // Iniciar sesión
     } else {
       this.navigateToUrl("login");

@@ -1,7 +1,8 @@
 <app-navbar></app-navbar>
 
+<ng-container *transloco="let t">
 <div class="panel-top">
-    <h1>EMPAREJAMIENTO</h1>
+    <h1>{{t("matchmaking")}}</h1>
 </div>
 
 <hr>
@@ -36,8 +37,8 @@
 @if(loading)
 {
     <img src="/images/waiting.gif" alt="Buscando">
-    <p>Buscando partida...</p>
-    <button class="rainbow-button" (click)="deleteRandomBattle()">Cancelar emparejamiento</button>
+    <p>{{t("searching-match")}}</p>
+    <button class="rainbow-button" (click)="deleteRandomBattle()">{{t("cancel")}}</button>
 }
 @else 
 {
@@ -45,27 +46,27 @@
     {
         @if(battle)
         {
-        <button class="rainbow-button" (click)="startBattle()">Comenzar partida</button>
+        <button class="rainbow-button" (click)="startBattle()">{{t('start-match')}}</button>
         }
         @else
         {
-        <p>Esperando a que el anfitrión comience la partida...</p>
+        <p>{{t("waiting")}}</p>
         }
-        <button class="rainbow-button" (click)="deleteBattleBydId(battleId || battle!!.id, true)">Abandonar partida</button>
+        <button class="rainbow-button" (click)="deleteBattleBydId(battleId || battle!!.id, true)">{{t("leave")}}</button>
     } @else {
 
         <!--mostrar tamb avatar de invitado / anfitrion-->
 
-        <button class="rainbow-button" id="prueba" (click)="gameWithBot()" [disabled]="disabled">Jugar VS bot</button>
-        <button class="rainbow-button" (click)="gameRandom()">Jugar VS oponente aleatorio</button>
+        <button class="rainbow-button" id="prueba" (click)="gameWithBot()" [disabled]="disabled">{{t('play-bot')}}</button>
+        <button class="rainbow-button" (click)="gameRandom()">{{t('play-random')}}</button>
 
         <!-- q te abra ventana model con amigos conectados ? -->
         <hr>
-        <p>Jugar con amigos</p>
+        <p>{{t("play-friends")}}</p>
         <div class="listaUsuarios">
             @if (connectedFriends.length < 1) 
             { 
-                <span> No hay amigos conectados </span>
+                <span> {{t("no-friends-connected")}} </span>
             } @else 
             {
                 <div class="friendList">
@@ -84,7 +85,7 @@
                     {
                         <div class="contenedorIcono">
                             <img #tooltip="matTooltip"
-                                matTooltip="Retar a batalla" 
+                                [matTooltip]="t('challenge')" 
                                 matTooltipPosition="above" 
                                 matTooltipClass="tooltip" 
                                 class="icono" 
@@ -102,3 +103,4 @@
     }
 }
 </div>
+</ng-container>
