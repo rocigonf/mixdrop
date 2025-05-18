@@ -4,28 +4,28 @@
   <!--<button (click)="reproduce()">Púlsame si no escuchas ninguna canción</button>-->
 
   <img src="/images/mdx_logo.webp" alt="logo">
-  <button class="rainbow-button" (click)="this.navigateToUrl('/matchmaking')">Jugar</button>
+  <button class="rainbow-button" (click)="this.navigateToUrl('/matchmaking')">{{t('play')}}</button>
 
   <div class="text-section">
     <p class="text">
-      MIXDROP te permite crear música como nunca antes lo habías hecho. <br><br>
-      Este trepidante juego de mezclas musicales te ofrece una forma totalmente nueva de coleccionar, descubrir y combinar tu música favorita. Reta a tus amigos y haz unas mezclas totalmente inéditas de tus canciones preferidas. <br><br>
-      Con las cartas MIXDROP podrás mezclar canciones de éxito de los mejores artistas, tales como Bruno Mars, Childish Gambino, Disturbed, Ed Sheeran, Imagine Dragons, Sam Hunt, Sia, The Weeknd, y muchos más.
+      {{t("intro-1")}} <br><br>
+      {{t("intro-2")}} <br><br>
+      {{t("intro-3")}}
     </p>
     <img src="/images/card.webp" alt="carta">
   </div>
 
-  <h1 id="rules">REGLAS</h1>
+  <h1 id="rules">{{t("rules")}}</h1>
   <img id="triangle" src="/images/triangle.webp" alt="triangulo">
   <ul class="rule-list">
-    <li>El juego comienza repartiendo 5 cartas a cada jugador.</li>
-    <li>Cada jugador puede ver sólo sus cartas y el tablero.</li>
-    <li>Puedes colocar tus cartas en los huecos del mismo color. (Ej: Carta amarilla en hueco con borde amarillo y rojo)</li>
-    <li>Coloca cartas en huecos vacíos para ganar 2 puntos o sobre otras cartas cuyo nivel sea igual o inferior para ganar 1 punto.</li>
-    <li>Si no tienes cartas útiles, puedes girar la ruleta en el botón MIXDROP para eliminar cartas de cierto nivel o todas las del rival.</li>
-    <li>Si al girar la ruleta, eliminas cartas del rival, se le restarán los puntos de esas cartas.</li>
-    <li>También hay cartas bonus (grises) como la de barajar.</li>
-    <li>El objetivo es llegar a 10 puntos, ¡suerte! :D</li>
+    <li>{{t("rule-1")}}</li>
+    <li>{{t("rule-2")}}</li>
+    <li>{{t("rule-3")}}</li>
+    <li>{{t("rule-4")}}</li>
+    <li>{{t("rule-5")}}</li>
+    <li>{{t("rule-6")}}</li>
+    <li>{{t("rule-7")}}</li>
+    <li>{{t("rule-8")}}</li>
   </ul>
 
   <img class="speaker-girl" [src]="currentRunaFrameName" alt="speaker girl">

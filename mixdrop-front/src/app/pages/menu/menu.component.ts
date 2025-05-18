@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WebsocketService } from '../../services/websocket.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -15,12 +15,13 @@ import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [NavbarComponent, FormsModule, MatTooltipModule],
+  imports: [NavbarComponent, FormsModule, MatTooltipModule, TranslocoModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
@@ -55,6 +56,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     private battleService: BattleService,
     public authService: AuthService,
     private friendshipService: FriendshipService,
+    private translocoService: TranslocoService
   ) { }
 
   // TODO: Redirigir al login si no ha iniciado sesión
@@ -106,7 +108,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.pendingBattles = jsonResponse.battles
         break
       case MessageType.Play:
-        this.showAlert("Partida encontrada", "Partida encontrada :3", 'info')
+        this.showAlert(this.translocoService.translate("match-found"), `${this.translocoService.translate("match-found")} :3`, 'info')
         this.router.navigateByUrl("matchmaking")
         if(jsonResponse.battle)
         {
@@ -155,16 +157,16 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     if(accepted)
     {
-      confirmed = window.confirm(`¿Seguro que quieres dejar de ser amigo de ${nickname}?`);
+      confirmed = window.confirm(`${this.translocoService.translate("remove-friend-sure")} ${nickname}?`);
     }
     else
     {
-      confirmed = window.confirm(`¿Seguro que quieres rechazar la solicitud de ser amigo de ${nickname}?`);
+      confirmed = window.confirm(`${this.translocoService.translate("reject-friend-request")} ${nickname}?`);
     }
   
     if (confirmed) {
       await this.friendshipService.removeFriendById(friend.id)
-      this.showAlert("Éxito", `Amistad con ${nickname} rechazada.`, 'info')
+      this.showAlert(this.translocoService.translate("success"), `${this.translocoService.translate("friend-removed")} ${nickname}.`, 'info')
     } 
   }
 

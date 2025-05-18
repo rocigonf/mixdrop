@@ -1,12 +1,13 @@
 import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TranslocoModule } from '@jsverse/transloco';
 
 
 @Component({
   standalone: true,
   selector: 'app-roulette',
   templateUrl: './roulette.component.html',
-  imports: [DragDropModule],
+  imports: [DragDropModule, TranslocoModule],
   styleUrls: ['./roulette.component.css']
 })
 export class RouletteComponent {
