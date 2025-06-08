@@ -60,4 +60,5 @@ Este proyecto se ha creado con fines educativos.
 
 # Mención especial 🎁
 
-Agradecimientos a nuestro profesor de Acceso a Datos, José Santos.
+- Agradecimientos a nuestro profesor de Acceso a Datos, José Santos.
+- Agradecimientos a todos los comentarios recibidos en el subreddit oficial de Dropmix, pues [nuestra publicación](https://www.reddit.com/r/dropmix/comments/1kpofxy/me_and_some_friends_remade_dropmix_to_play_in_web/) se convirtió en menos de 24 horas en la más votada del mes, la cuarta del año y actualmente se ubica dentro de las 20 primeras en TODA la vida del foro.
