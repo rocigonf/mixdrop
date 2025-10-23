@@ -10,14 +10,13 @@ import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { Friend } from '../../models/friend';
 import { Battle } from '../../models/battle';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { BattleDto } from '../../models/battle-dto';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-matchmaking',
-  standalone: true,
   imports: [NavbarComponent, MatTooltipModule, TranslocoModule],
   templateUrl: './matchmaking.component.html',
   styleUrl: './matchmaking.component.css'
@@ -80,11 +79,9 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
       await this.getActualBattle()
     }
 
-    if(sessionStorage.getItem("revenge") == "true")
-    {
+    if (sessionStorage.getItem("revenge") == "true") {
       const idRaw = sessionStorage.getItem("otherUserId")
-      if(idRaw)
-      {
+      if (idRaw) {
         const id = parseInt(idRaw)
         await this.battleService.createBattle(id, false)
         sessionStorage.removeItem("revenge")
@@ -93,13 +90,11 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
-    try
-    {
+    try {
       this.messageReceived$?.unsubscribe()
       const battleId = this.battleId
       this.resetData()
-      if(this.readyForBattle)
-      {
+      if (this.readyForBattle) {
         await this.deleteBattleBydId(battleId, true)
       }
       /*if((this.battle || this.battleId != 0) && this.readyForBattle)
@@ -108,20 +103,18 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         this.resetData()
       }*/
     }
-    catch {}
+    catch { }
   }
 
-  async getActualBattle()
-  {
-    try
-    {
+  async getActualBattle() {
+    try {
       const result = await this.battleService.getBattleById(this.battleId || this.battle.id)
-      console.log("RESULTADO: ", result)
-        
+      //console.log("RESULTADO: ", result)
+
       this.actualBattle = result.data[0]
       this.battleId = this.actualBattle.id
       sessionStorage.setItem("battleId", this.battleId.toString())
-    } catch{}
+    } catch { }
   }
 
   async processMessage(message: any) {
@@ -159,11 +152,10 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl("game")
         break
     }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
+    //console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
-  resetData()
-  {
+  resetData() {
     this.battle = null
     this.readyForBattle = false
     this.loading = false
@@ -174,7 +166,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   askForInfo(messageType: MessageType) {
-    console.log("Mensaje pedido: ", messageType)
+    //console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendNative(messageType.toString())
   }
 
@@ -185,12 +177,10 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
 
   async gameWithBot() {
-    if(!this.disabled)
-    {
+    if (!this.disabled) {
       //console.error("PULSANDO")
       const button = document.getElementById("prueba") as HTMLButtonElement
-      if(button)
-      {
+      if (button) {
         button.disabled = true
       }
       // el user 2 es nulo y el false de que no es random
@@ -205,7 +195,7 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
   async gameRandom() {
     await this.battleService.randomBattle()
-    console.log("mortadela");
+    //console.log("mortadela");
     this.loading = true
   }
 
@@ -232,8 +222,8 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
     if (pendingBattle != undefined) {
       const response = await this.battleService.acceptBattleById(pendingBattle.id)
-      console.log("Respuesta de aceptar la batalla: ", response)
-    } else console.log("no se encuentra la batalla")
+      //console.log("Respuesta de aceptar la batalla: ", response)
+    } else console.warn("No se encuentra la batalla")
   }
 
   async deleteBattleByFriendId(friendId: number) {
@@ -244,16 +234,16 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
 
     if (pendingBattle != undefined) {
       await this.deleteBattleBydId(pendingBattle.id, false) // Si es byFriend no tengo que notificar
-    } else console.log("no se encuentra la batalla")
+    } else console.warn("No se encuentra la batalla")
   }
 
   async deleteBattleBydId(battleId: number, notify: boolean) {
-      const response = await this.battleService.removeBattleById(battleId, notify)
-      console.log("Respuesta de borrar la batalla: ", response)
+    const response = await this.battleService.removeBattleById(battleId, notify)
+    //console.log("Respuesta de borrar la batalla: ", response)
   }
 
   processFriends() {
-    console.log("amigos crudos: ", this.friendsRaw)
+    //console.log("amigos crudos: ", this.friendsRaw)
     this.myFriends = []
     this.connectedFriends = []
 
@@ -271,12 +261,12 @@ export class MatchmakingComponent implements OnInit, OnDestroy {
   }
 
   private showAlert(title: string, message: string, icon: SweetAlertIcon) {
-        Swal.fire({
-          title: title,
-          text: message,
-          showConfirmButton: false,
-          icon: icon,
-          timer: 2000
-        })
-      }
+    Swal.fire({
+      title: title,
+      text: message,
+      showConfirmButton: false,
+      icon: icon,
+      timer: 2000
+    })
+  }
 }

@@ -12,17 +12,16 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
   imports: [TranslocoModule, MatTooltipModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
   @Input() frameName = "/images/speaker/speaker1.png"
   @Output() musicEvent = new EventEmitter();
 
-  constructor(public authService: AuthService, public router: Router, private webSocketService : WebsocketService, private translocoService: TranslocoService,
-    private translatorService: TranslatorService){}
+  constructor(public authService: AuthService, public router: Router, private webSocketService: WebsocketService, private translocoService: TranslocoService,
+    private translatorService: TranslatorService) { }
 
   // Índice del idioma actualmente seleccionado.
   languageSelected: number = 0;
@@ -48,7 +47,7 @@ export class NavbarComponent implements OnInit{
 
     // usuario logueado
     this.user = this.authService.getUser();
-    console.log("ruta: ", this.router.url)
+    //console.log("ruta: ", this.router.url)
   }
 
   authClick() {
@@ -65,8 +64,7 @@ export class NavbarComponent implements OnInit{
     }
   }
 
-  navigateToUrl(url: string)
-  {
+  navigateToUrl(url: string) {
     this.router.navigateByUrl(url);
   }
 
@@ -101,12 +99,12 @@ export class NavbarComponent implements OnInit{
   }
 
   private showAlert(title: string, message: string, icon: SweetAlertIcon) {
-        Swal.fire({
-          title: title,
-          text: message,
-          showConfirmButton: false,
-          icon: icon,
-          timer: 2000
-        })
-      }
+    Swal.fire({
+      title: title,
+      text: message,
+      showConfirmButton: false,
+      icon: icon,
+      timer: 2000
+    })
+  }
 }

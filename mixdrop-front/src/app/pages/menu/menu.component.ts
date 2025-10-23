@@ -13,14 +13,13 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 import { FriendshipService } from '../../services/friendship.service';
 import { Friend } from '../../models/friend';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 
 @Component({
   selector: 'app-menu',
-  standalone: true,
   imports: [NavbarComponent, FormsModule, MatTooltipModule, TranslocoModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
@@ -62,15 +61,15 @@ export class MenuComponent implements OnInit, OnDestroy {
   // TODO: Redirigir al login si no ha iniciado sesión
   ngOnInit(): void {
 
-    if(!this.authService.isAuthenticated()){
+    if (!this.authService.isAuthenticated()) {
       this.navigateToUrl("login");
     } else {
       // Procesa la respuesta
-    this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
+      this.messageReceived$ = this.webSocketService.messageReceived.subscribe(message => this.processMessage(message))
 
-    this.user = this.authService.getUser();
+      this.user = this.authService.getUser();
 
-    this.askForInfo(MessageType.Stats)
+      this.askForInfo(MessageType.Stats)
     }
   }
 
@@ -88,7 +87,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.processFriends()
         break
       case MessageType.Stats:
-        console.log("recibidas estadísticas")
+        //console.log("recibidas estadísticas")
         this.totalUsers = jsonResponse.total | 0
         this.totalPlayers = jsonResponse.totalPlayers | 0
         this.totalBattles = jsonResponse.totalBattles | 0
@@ -96,7 +95,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         // Después de recibir las estadísticas, pido todo lo demás
         this.askForInfo(MessageType.Friend)
         this.askForInfo(MessageType.PendingBattle)
-    
+
         break
       case MessageType.AskForFriend:
         this.askForInfo(MessageType.Friend)
@@ -110,39 +109,33 @@ export class MenuComponent implements OnInit, OnDestroy {
       case MessageType.Play:
         this.showAlert(this.translocoService.translate("match-found"), `${this.translocoService.translate("match-found")} :3`, 'info')
         this.router.navigateByUrl("matchmaking")
-        if(jsonResponse.battle)
-        {
+        if (jsonResponse.battle) {
           sessionStorage.setItem("battle", JSON.stringify(jsonResponse.battle))
         }
-        else
-        {
+        else {
           sessionStorage.setItem("battle", "null")
         }
         break
     }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
+    //console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
   processFriends() {
     this.acceptedFriends = []
     this.pendingFriends = []
-    console.log(this.friendsRaw)
-    for(const friend of this.friendsRaw)
-    {
-      if(friend.accepted)
-      {
+    //console.log(this.friendsRaw)
+    for (const friend of this.friendsRaw) {
+      if (friend.accepted) {
         this.acceptedFriends.push(friend)
       }
-      if(friend.accepted === false)
-      {
-        if(this.user?.id == friend.receiverUserId)
-        {
+      if (friend.accepted === false) {
+        if (this.user?.id == friend.receiverUserId) {
           this.pendingFriends.push(friend)
         }
       }
     }
-    console.log("amigos: ", this.acceptedFriends)
-    console.log("solicitudes: ", this.pendingFriends)
+    //console.log("amigos: ", this.acceptedFriends)
+    //console.log("solicitudes: ", this.pendingFriends)
 
     this.searchFriend("")
   }
@@ -155,54 +148,50 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     let confirmed
 
-    if(accepted)
-    {
+    if (accepted) {
       confirmed = window.confirm(`${this.translocoService.translate("remove-friend-sure")} ${nickname}?`);
     }
-    else
-    {
+    else {
       confirmed = window.confirm(`${this.translocoService.translate("reject-friend-request")} ${nickname}?`);
     }
-  
+
     if (confirmed) {
       await this.friendshipService.removeFriendById(friend.id)
       this.showAlert(this.translocoService.translate("success"), `${this.translocoService.translate("friend-removed")} ${nickname}.`, 'info')
-    } 
+    }
   }
 
   async addFriend(user: User) {
     // Hago una petición para que cree el amigo, ( wesoque ->) y en back el servidor debería notificar a ambos usuarios enviando la lista de amigos
     const response = await this.friendshipService.addFriend(user)
-    console.log("Respuesta de agregar al amigo: ", response)
+    //console.log("Respuesta de agregar al amigo: ", response)
   }
 
   async acceptFriendship(id: number) {
     const response = await this.friendshipService.acceptFriendship(id)
-    console.log("Respuesta de aceptar al amigo: ", response)
+    //console.log("Respuesta de aceptar al amigo: ", response)
   }
 
   async acceptBattle(battle: Battle) {
     sessionStorage.setItem("battleId", battle.id.toString())
     const response = await this.battleService.acceptBattleById(battle.id)
-    console.log("Respuesta de aceptar la batalla: ", response)
+    //console.log("Respuesta de aceptar la batalla: ", response)
   }
 
-  async deleteBattle(battle : Battle)
-  {
+  async deleteBattle(battle: Battle) {
     const response = await this.battleService.removeBattleById(battle.id, false)
-    console.log("Respuesta de borrar la batalla: ", response)
+    //console.log("Respuesta de borrar la batalla: ", response)
   }
 
-  async createBattle(user : User | null)
-  {
-    if(user == null) { return }
+  async createBattle(user: User | null) {
+    if (user == null) { return }
     const response = await this.battleService.createBattle(user.id, false) // En esta vista siempre será no random
-    console.log("Respuesta de borrar la batalla: ", response)
+    //console.log("Respuesta de borrar la batalla: ", response)
     this.askForInfo(MessageType.PendingBattle)
   }
 
   askForInfo(messageType: MessageType) {
-    console.log("Mensaje pedido: ", messageType)
+    //console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendNative(messageType.toString())
   }
 
@@ -210,21 +199,19 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.messageReceived$?.unsubscribe();
   }
 
-  navigateToUrl(url: string)
-  {
+  navigateToUrl(url: string) {
     this.router.navigateByUrl(url);
   }
 
-  visitUserProfile(user: User | null)
-  {
-    if(user){
-      this.router.navigateByUrl("profile/" +user?.id  );
+  visitUserProfile(user: User | null) {
+    if (user) {
+      this.router.navigateByUrl("profile/" + user?.id);
     }
   }
 
   async getSearchedUsers(queryuser: string): Promise<User[]> {
     const result = await this.userService.searchUser(queryuser);
-    console.log(result)
+    //console.log(result)
 
     this.searchedUsers = result;
 
@@ -260,8 +247,8 @@ export class MenuComponent implements OnInit, OnDestroy {
           }
         });
       }
-    } 
-  );
+    }
+    );
     // aqui tambien se pueden guardar los usuarios USER de los amigos 
     this.searchedFriends = encontrados;
   }
@@ -269,31 +256,31 @@ export class MenuComponent implements OnInit, OnDestroy {
   // comprueba q el usuatio ya tiene amistad (aceptada o no) con otro usuario
   hasFriendship(user: User): boolean {
     return this.friendsRaw.some(friend =>
-      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) || 
+      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) ||
       (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
     );
   }
 
   // comprueba si se le ha enviado una solicitud de amistad y esta en espera
   waitingFriendship(user: User): boolean {
-    const amistad : Friend | undefined= this.friendsRaw.find(friend =>
-      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) || 
+    const amistad: Friend | undefined = this.friendsRaw.find(friend =>
+      (friend.senderUserId === user.id && friend.receiverUserId === this.user?.id) ||
       (friend.receiverUserId === user.id && friend.senderUserId === this.user?.id)
     )
-    if(amistad) {
+    if (amistad) {
       return !amistad.accepted
     } else return false
   }
 
 
-    // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro
-    hasBattle(user: User | null): boolean {
-      const has : boolean =  this.pendingBattles.some(battle =>
-        (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
-        || (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
-      );
-      return has;
-    }
+  // comprueba q el usuario ya tiene una solicitud de batalla pendiente con otro
+  hasBattle(user: User | null): boolean {
+    const has: boolean = this.pendingBattles.some(battle =>
+      (battle.user.id === user?.id) || (battle.user.id === this.user?.id)
+      || (battle.battleUsers[0].id === this.user?.id) || (battle.battleUsers[1].id === this.user?.id)
+    );
+    return has;
+  }
 
   // quita tildes y pone minuscula
   removeAccents(str: string): string {
@@ -306,13 +293,13 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   private showAlert(title: string, message: string, icon: SweetAlertIcon) {
-        Swal.fire({
-          title: title,
-          text: message,
-          showConfirmButton: false,
-          icon: icon,
-          timer: 2000
-        })
-      }
+    Swal.fire({
+      title: title,
+      text: message,
+      showConfirmButton: false,
+      icon: icon,
+      timer: 2000
+    })
+  }
 
 }

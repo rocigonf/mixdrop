@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { TranslatorService } from '../../services/translator.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
   imports: [NavbarComponent, MatIconModule, TranslocoModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -15,13 +14,12 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(private translocoService: TranslocoService,
-    private translatorService: TranslatorService, public router: Router)
-    {}
+    private translatorService: TranslatorService, public router: Router) { }
 
   private bpm: number = 90;
   private intervalTime: number = 0;
-  private isReproducing : boolean = false
-  private interval : any
+  private isReproducing: boolean = false
+  private interval: any
   private audio = new Audio('/songs/home_song.mp3');
 
   private readonly RUNA_FRAMES: string[] = [
@@ -30,29 +28,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     '/images/runa-speaker/runa-speaker3.png',
     '/images/runa-speaker/runa-speaker4.png',
   ];
-  public currentRunaFrameNumber : number = 0
-  public currentRunaFrameName : string = this.RUNA_FRAMES[0]
+  public currentRunaFrameNumber: number = 0
+  public currentRunaFrameName: string = this.RUNA_FRAMES[0]
 
   // Por ahora pongo esto aquí, si en el juego quisiésemos que el altavoz se mueva también al ritmo de lo que hayan jugado los usuarios, pues se movería
   private readonly SPEAKER_FRAMES: string[] = [
     '/images/speaker/speaker1.png',
     '/images/speaker/speaker2.png',
   ];
-  public currentSpeakerFrameNumber : number = 0
-  public currentSpeakerFrameName : string = this.SPEAKER_FRAMES[0]
+  public currentSpeakerFrameNumber: number = 0
+  public currentSpeakerFrameName: string = this.SPEAKER_FRAMES[0]
 
   private readonly SONGS: { [index: string]: number; } = {
-    "/songs/enemy.mp3" : 77,
-    "/songs/hip_shop.mp3" : 97.50884434,
-    "/songs/home_song.mp3" : 90,
-    "/songs/hopes_and_dreams.mp3" : 171,
+    "/songs/enemy.mp3": 77,
+    "/songs/hip_shop.mp3": 97.50884434,
+    "/songs/home_song.mp3": 90,
+    "/songs/hopes_and_dreams.mp3": 171,
   }
 
   languageSelected: number = 0
 
   ngOnInit(): void {
-    try 
-    {
+    try {
       // Escoge aleatoriamente la canción y luego la selecciona
       const keys = Object.keys(this.SONGS)
       const songName = keys[Math.floor(keys.length * Math.random())]
@@ -62,10 +59,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       this.intervalTime = (60 / this.bpm) * 1000; // Calcula la cantidad de veces que lo tiene que hacer en segundos y lo pasa a milisegundos
       this.audio.load()
-      this.audio.addEventListener('ended', () => { this.reproduce(); this.reproduce()}) // Lo para y luego lo vuelve a activar, por eso llamarlo dos veces
+      this.audio.addEventListener('ended', () => { this.reproduce(); this.reproduce() }) // Lo para y luego lo vuelve a activar, por eso llamarlo dos veces
       //this.reproduce()
     }
-    catch {}
+    catch { }
 
     const activeLang = this.translocoService.getActiveLang();
     // Busca el índice del idioma activo en la lista LANGUAGES y lo guarda.
@@ -78,53 +75,45 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.audio.pause()
   }
 
-  navigateToUrl(url: string)
-  {
-    console.log("sss")
+  navigateToUrl(url: string) {
+    //console.log("sss")
     this.router.navigateByUrl(url);
   }
 
   // CRÉDITOS POR EL "bind": https://stackoverflow.com/questions/70634283/react-typescript-uncaught-typeerror-this-is-undefined
   // Básicamente, al decirle en el "accurateInterval" que se le pasa la función "animate", parece que le da la paja y pierde el contexto, y con el "bind" se le pasa
-  reproduce()
-  {
-    console.log("SE HA PULSADO EL BOTÓN DE REPRODUCIR")
-    if(this.isReproducing)
-    {
+  reproduce() {
+    //console.log("SE HA PULSADO EL BOTÓN DE REPRODUCIR")
+    if (this.isReproducing) {
       this.interval.cancel()
       this.audio.pause()
       this.audio.currentTime = 0
       this.isReproducing = false
     }
-    else
-    {
+    else {
       this.interval = this.accurateInterval(this.intervalTime, this.animate.bind(this));
       this.audio.play()
       this.isReproducing = true
     }
   }
 
-  animate(this : any) {
+  animate(this: any) {
     //console.log('ola') 
-  
+
     // Runa
-    if (this.currentRunaFrameNumber < this.RUNA_FRAMES.length - 1)
-    {
+    if (this.currentRunaFrameNumber < this.RUNA_FRAMES.length - 1) {
       this.currentRunaFrameNumber++
-    } 
-    else
-    {
+    }
+    else {
       this.currentRunaFrameNumber = 0
     }
     this.currentRunaFrameName = this.RUNA_FRAMES[this.currentRunaFrameNumber]
 
     // Altavoz
-    if(this.currentSpeakerFrameNumber < this.SPEAKER_FRAMES.length - 1)
-    {
+    if (this.currentSpeakerFrameNumber < this.SPEAKER_FRAMES.length - 1) {
       this.currentSpeakerFrameNumber++
     }
-    else
-    {
+    else {
       this.currentSpeakerFrameNumber = 0
     }
     this.currentSpeakerFrameName = this.SPEAKER_FRAMES[this.currentSpeakerFrameNumber]
@@ -132,19 +121,19 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // CRÉDITOS: https://gist.github.com/AlexJWayne/1d99b3cd81d610ac7351
   private accurateInterval(time: any, fn: Function) {
-    let cancel : any, nextAt : any, timeout : any, wrapper : any, _ref: any
+    let cancel: any, nextAt: any, timeout: any, wrapper: any, _ref: any
     nextAt = new Date().getTime() + time
     timeout = null
 
     if (typeof time === 'function') _ref = [time, fn], fn = _ref[0], time = _ref[1]
 
-    wrapper = function() {
+    wrapper = function () {
       nextAt += time
       timeout = setTimeout(wrapper, nextAt - new Date().getTime())
       return fn()
     }
 
-    cancel = function() {
+    cancel = function () {
       return clearTimeout(timeout)
     }
 

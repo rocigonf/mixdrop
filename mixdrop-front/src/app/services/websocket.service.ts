@@ -8,7 +8,7 @@ import { ApiService } from './api.service';
 })
 export class WebsocketService {
 
-  constructor(private api : ApiService){}
+  constructor(private api: ApiService) { }
   // Eventos
   connected = new Subject<void>();
   messageReceived = new Subject<any>();
@@ -20,7 +20,7 @@ export class WebsocketService {
   }
 
   private onMessageReceived(message: any) {
-    //console.warn(message)
+    console.warn(message)
     this.messageReceived.next(message);
   }
 
@@ -59,11 +59,10 @@ export class WebsocketService {
   }
 
   sendNative(message: string) {
-    try
-    {
+    try {
       this.nativeSocket?.send(message);
     }
-    catch{}
+    catch { }
   }
 
   disconnectNative() {

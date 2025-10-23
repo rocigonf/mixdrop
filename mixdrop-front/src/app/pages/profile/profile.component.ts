@@ -19,7 +19,6 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
   imports: [NavbarComponent, CommonModule, ReactiveFormsModule, TranslocoModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -100,12 +99,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.messageReceived$?.unsubscribe()
+    this.messageReceived$?.unsubscribe()
   }
 
   async getUser() {
     const result = await this.userService.getUserById(this.id)
-    console.log("Resultado de pedir el perfil ", this.id, ": ", result)
+    //console.log("Resultado de pedir el perfil ", this.id, ": ", result)
 
     if (result != null) {
       this.user = result
@@ -158,17 +157,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.askForInfo(MessageType.Friend)
         break
     }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
+    //console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
   askForInfo(messageType: MessageType) {
-    console.log("Mensaje pedido: ", messageType)
+    //console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendNative(messageType.toString())
   }
 
   processFriends() {
     this.acceptedFriends = []
-    console.log(this.friendsRaw)
+    //console.log(this.friendsRaw)
 
     for (const friend of this.friendsRaw) {
       if (friend.accepted) {
@@ -180,8 +179,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       }
     }
-    console.log("amigos: ", this.acceptedFriends)
-    console.log("solicitudes: ", this.pendingFriends)
+    //console.log("amigos: ", this.acceptedFriends)
+    //console.log("solicitudes: ", this.pendingFriends)
 
   }
 
@@ -205,13 +204,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   async addFriend(user: User) {
     // Hago una petición para que cree el amigo, ( wesoque ->) y en back el servidor debería notificar a ambos usuarios enviando la lista de amigos
     const response = await this.friendshipService.addFriend(user)
-    console.log("Respuesta de agregar al amigo: ", response)
+    //console.log("Respuesta de agregar al amigo: ", response)
   }
 
   // comprueba si se le ha enviado una solicitud de amistad y esta en espera
   waitingFriendship(user: User): boolean {
     const amistad = this.hasFriendship(user)
-    
+
     if (amistad) {
       return !amistad.accepted
     } else return false
@@ -229,7 +228,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     else if (this.deleteAvatar) {
       formData.append("ChangeImage", "true")
     }
-    else if (!this.image){
+    else if (!this.image) {
       formData.append("ChangeImage", "false")
     }
 
@@ -241,7 +240,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         console.error("Error: La nueva contraseña no es válida.")
         return;
       }
-      
+
       formData.append("Password", newPassword)
       this.shouldReload = true
     }
@@ -249,8 +248,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (role) formData.append("Role", role)
 
     const result = await this.userService.updateUser(formData, this.id)
-    if(this.shouldReload)
-    {
+    if (this.shouldReload) {
       this.messageReceived$.unsubscribe()
       await this.authService.logout()
       this.router.navigateByUrl("login")
@@ -302,14 +300,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
   private showAlert(title: string, message: string, icon: SweetAlertIcon) {
-          Swal.fire({
-            title: title,
-            text: message,
-            showConfirmButton: false,
-            icon: icon,
-            timer: 2000
-          })
-        }
+    Swal.fire({
+      title: title,
+      text: message,
+      showConfirmButton: false,
+      icon: icon,
+      timer: 2000
+    })
+  }
 
 
   // comprueba q el usuario ya tiene amistad (aceptada o no) con otro usuario
@@ -324,10 +322,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const startDate = new Date(begin);
     const endDate = new Date(end);
     const time = endDate.getTime() - startDate.getTime();
-  
+
     //const hours = Math.floor(time / (1000 * 3600));
     const minutes = Math.floor((time % (1000 * 3600)) / (1000 * 60));
-  
+
     if (minutes == 1) {
       return `${minutes} minuto`;
     }
@@ -340,14 +338,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.battlesPaginated = this.user?.battles.slice(startIndex, endIndex) || [];
   }
 
-  firstPage(){
-    if (this.currentPage !== 1){
+  firstPage() {
+    if (this.currentPage !== 1) {
       this.currentPage = 1;
       this.paginateBattles();
     }
   }
 
-  lastPage(){
+  lastPage() {
     this.totalPages = Math.ceil(this.totalBattles / this.battlesPerPage);
     if (this.currentPage !== this.totalPages && this.totalPages > 0) {
       this.currentPage = this.totalPages;
@@ -361,7 +359,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.paginateBattles();
     }
   }
-  
+
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
