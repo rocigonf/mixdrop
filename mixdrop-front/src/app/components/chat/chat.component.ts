@@ -11,7 +11,6 @@ import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-chat',
-  standalone: true,
   imports: [FormsModule, TranslocoModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
@@ -37,8 +36,8 @@ export class ChatComponent {
   mensajes: string[][] = []
 
   async ngOnInit(): Promise<void> {
-    console.log("currentBattle en padre:", this.currentBattle);
-    console.log("userBattle en padre:", this.userBattle);
+    //console.log("currentBattle en padre:", this.currentBattle);
+    //console.log("userBattle en padre:", this.userBattle);
 
     this.user = this.authService.getUser();
 
@@ -55,7 +54,7 @@ export class ChatComponent {
 
     if (this.mensaje === '') return false;
 
-    console.log(this.mensaje)
+    //console.log(this.mensaje)
     this.mensajes.push([this.mensaje, "User"]);
 
     this.sendMessage(this.mensaje);
@@ -71,7 +70,7 @@ export class ChatComponent {
       "messageType": MessageType.Chat,
       "messageChat": mensaje
     }
-    console.log("data", data)
+    //console.log("data", data)
     const message = JSON.stringify(data)
     this.webSocketService.sendNative(message)
   }
@@ -85,11 +84,10 @@ export class ChatComponent {
   }
 
   processMessage(message: any) {
-    if(message instanceof Blob)
-    {
+    if (message instanceof Blob) {
       return
     }
-    
+
     this.serverResponse = message
     const jsonResponse = JSON.parse(this.serverResponse)
 
@@ -103,7 +101,7 @@ export class ChatComponent {
         }
         break;
     }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
+    //console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
 

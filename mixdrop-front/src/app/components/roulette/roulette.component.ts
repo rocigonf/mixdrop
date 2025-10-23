@@ -4,11 +4,10 @@ import { TranslocoModule } from '@jsverse/transloco';
 
 
 @Component({
-  standalone: true,
-  selector: 'app-roulette',
-  templateUrl: './roulette.component.html',
-  imports: [DragDropModule, TranslocoModule],
-  styleUrls: ['./roulette.component.css']
+    selector: 'app-roulette',
+    templateUrl: './roulette.component.html',
+    imports: [DragDropModule, TranslocoModule],
+    styleUrls: ['./roulette.component.css']
 })
 export class RouletteComponent {
 

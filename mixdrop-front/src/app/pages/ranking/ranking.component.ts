@@ -10,7 +10,6 @@ import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-ranking',
-  standalone: true,
   imports: [NavbarComponent, CommonModule, TranslocoModule],
   templateUrl: './ranking.component.html',
   styleUrl: './ranking.component.css'
@@ -29,7 +28,7 @@ export class RankingComponent implements OnInit {
 
   async ngOnInit() {
     this.user = this.authService.getUser();
-    console.log(this.user)
+    //console.log(this.user)
     this.users = await this.userService.getRanking()
   }
 

@@ -13,7 +13,6 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule, NgIf, TranslocoModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -35,7 +34,7 @@ export class LoginComponent {
 
   imagePreview!: string;
 
-  pressedEnter : Boolean = false;
+  pressedEnter: Boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -47,8 +46,8 @@ export class LoginComponent {
   ) {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, 
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)]],
+      email: ['', [Validators.required, Validators.email,
+      Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     },
@@ -56,17 +55,17 @@ export class LoginComponent {
   }
 
   private showAlert(title: string, message: string, icon: SweetAlertIcon) {
-      Swal.fire({
-        title: title,
-        text: message,
-        showConfirmButton: false,
-        icon: icon,
-        timer: 2000
-      })
-    }
+    Swal.fire({
+      title: title,
+      text: message,
+      showConfirmButton: false,
+      icon: icon,
+      timer: 2000
+    })
+  }
 
   async login() {
-    if(this.pressedEnter) return;
+    if (this.pressedEnter) return;
     this.pressedEnter = true;
 
     const authData = { emailOrNickname: this.emailOrNickname, password: this.password };
@@ -99,8 +98,8 @@ export class LoginComponent {
 
   // Registro
   async register() {
-    if(this.pressedEnter) return;
-    console.log(this.registerForm.value)
+    if (this.pressedEnter) return;
+    //console.log(this.registerForm.value)
     this.pressedEnter = true
 
     if (this.registerForm.valid) {

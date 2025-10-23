@@ -3,11 +3,10 @@ import { environment } from '../../../environments/environment';
 import { Card } from '../../models/card';
 
 @Component({
-  selector: 'app-card',
-  standalone: true,
-  imports: [],
-  templateUrl: './card.component.html',
-  styleUrl: './card.component.css'
+    selector: 'app-card',
+    imports: [],
+    templateUrl: './card.component.html',
+    styleUrl: './card.component.css'
 })
 export class CardComponent {
   readonly MAX_LEVELS = new Array(3);

@@ -26,7 +26,6 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-game',
-  standalone: true,
   imports: [NavbarComponent, ChatComponent, DatePipe, AsyncPipe, CardComponent, CommonModule, RouletteComponent, TranslocoModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
@@ -85,9 +84,8 @@ export class GameComponent implements OnInit, OnDestroy {
   private canReceive = true
 
   showRoulette: boolean = false;
-  showEnemyRoulette : boolean = false;
+  showEnemyRoulette: boolean = false;
   isRouletteSpinning: boolean = false;
-
 
   private audioContext: AudioContext = new AudioContext();
   private activeSources: Map<string, AudioBufferSourceNode> = new Map;
@@ -99,11 +97,9 @@ export class GameComponent implements OnInit, OnDestroy {
     private translocoService: TranslocoService) {
   }
 
-
-
   async ngOnInit(): Promise<void> {
 
-    console.log(this.authService.isAuthenticated())
+    //console.log(this.authService.isAuthenticated())
     if (!this.authService.isAuthenticated()) {
       this.navigateToUrl("login");
     } else {
@@ -113,14 +109,14 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    console.log('Ruleta cargada:', this.roulette);
+    //console.log('Ruleta cargada:', this.roulette);
   }
 
   startRoulette(level: number) {
     this.isRouletteSpinning = true;
     if (this.roulette && this.roulette.wheel) {
       this.roulette.spinRoulette(level);
-      console.log("Ruleta girada por ", this.whoSpinRoulette);
+      //console.log("Ruleta girada por ", this.whoSpinRoulette);
 
       setTimeout(() => {
         this.showRoulette = false;
@@ -131,7 +127,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   showAndHideRoulette(level: number) {
     if (this.isRouletteSpinning) {
-      console.log("esta girando ya")
+      //console.log("esta girando ya")
     } else {
       this.showRoulette = true;
       this.spinRouletteLevel = level;
@@ -219,7 +215,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
         // RULETA
         if (this.spinRouletteLevel > -1 && wheel) {
-          console.log("NIVEL RULETA", this.spinRouletteLevel)
+          //console.log("NIVEL RULETA", this.spinRouletteLevel)
           this.whoSpinRoulette = jsonResponse.whoSpinTheWheel
 
           // si no he tirado yo, sale en forma de alerta, sino sale la animación
@@ -281,7 +277,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl("menu")
         break
     }
-    console.log("Respuesta del socket en JSON: ", jsonResponse)
+    //console.log("Respuesta del socket en JSON: ", jsonResponse)
   }
 
 
@@ -308,7 +304,7 @@ export class GameComponent implements OnInit, OnDestroy {
   async playAudio(positions: number[], spinTheWheel: boolean) {
     this.isProcessingAudio = true
     if (spinTheWheel) {
-      console.log("Se ha girado la ruleta. El resultado ha sido: ", positions)
+      //console.log("Se ha girado la ruleta. El resultado ha sido: ", positions)
       for (let i = 0; i < positions.length; i++) {
         this.stopTrack(positions[i])
       }
@@ -320,7 +316,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
     const slut = this.board.slots[this.position]
     if (slut?.card != null) {
-      console.log("Borrando posición indicada: ", this.position)
+      //console.log("Borrando posición indicada: ", this.position)
       this.stopTrack(this.position)
     }
 
@@ -345,7 +341,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   private stopTrack(position: number) {
-    console.log("Posición a borrar: ", position)
+    //console.log("Posición a borrar: ", position)
     //const source = this.activeSources.get(position)
     this.activeSources[position.toString()]?.stop()
     this.activeSources.delete(position.toString())
@@ -461,7 +457,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   askForInfo(messageType: MessageType) {
-    console.log("Mensaje pedido: ", messageType)
+    //console.log("Mensaje pedido: ", messageType)
     this.webSocketService.sendNative(messageType.toString())
   }
 
