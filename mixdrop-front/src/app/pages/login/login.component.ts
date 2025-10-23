@@ -5,16 +5,16 @@ import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { WebsocketService } from '../../services/websocket.service';
 import { NgIf } from '@angular/common';
-import { Validator } from '@angular/forms';
 import { PasswordValidatorService } from '../../services/password-validator.service';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule, NgIf],
+  imports: [FormsModule, RouterModule, NavbarComponent, ReactiveFormsModule, NgIf, TranslocoModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -42,7 +42,8 @@ export class LoginComponent {
     private router: Router,
     private authService: AuthService,
     private webSocketService: WebsocketService,
-    private passwordValidator: PasswordValidatorService
+    private passwordValidator: PasswordValidatorService,
+    private translocoService: TranslocoService
   ) {
     this.registerForm = this.formBuilder.group({
       nickname: ['', Validators.required],
@@ -83,13 +84,13 @@ export class LoginComponent {
         localStorage.setItem('jwtToken', this.jwt);
       }
 
-      this.showAlert("Éxito", "Inicio de sesión exitoso", 'success')
+      this.showAlert(this.translocoService.translate("success"), this.translocoService.translate("login-success"), 'success')
 
       this.router.navigateByUrl("menu"); // redirige a inicio
 
       this.webSocketService.connectNative()
     } else {
-      this.showAlert("Error", "Datos incorrectos o baneo existente", 'error')
+      this.showAlert("Error", this.translocoService.translate("login-error"), 'error')
       this.pressedEnter = false
 
     }
@@ -122,23 +123,23 @@ export class LoginComponent {
         const loginResult = await this.authService.login(authData, false);
 
         if (loginResult.success) {
-          this.showAlert("Éxito", "Te has registrado con éxito", 'success')
+          this.showAlert(this.translocoService.translate("success"), this.translocoService.translate("register-success"), 'success')
           this.router.navigateByUrl("menu"); // redirige a inicio
 
           this.webSocketService.connectNative()
 
         } else {
-          this.showAlert("Error", "Error en el registro", 'error')
+          this.showAlert("Error", this.translocoService.translate("register-error"), 'error')
           this.pressedEnter = false
         }
 
       } else {
-        this.showAlert("Error", "Error en el registro", 'error')
+        this.showAlert("Error", this.translocoService.translate("register-error"), 'error')
         this.pressedEnter = false;
       }
 
     } else {
-      this.showAlert("Error", "Formulario no válido", 'error')
+      this.showAlert("Error", this.translocoService.translate("form-error"), 'error')
       this.pressedEnter = false;
     }
   }

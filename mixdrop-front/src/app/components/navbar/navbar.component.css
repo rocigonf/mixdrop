@@ -84,6 +84,22 @@ a :hover{
     cursor: pointer;
 }
 
+.trofeo{
+    position: relative;
+}
+
+#level{
+    color: #cf7216;;
+    text-align: center;
+    height: 1.2rem;
+    width: 1.2rem;
+    line-height: 1.5rem;
+    left: 0.5rem;
+    font-size: smaller;
+    position: absolute;
+    cursor: pointer;
+}
+
 @media (max-width: 450px) {
     nav {
         max-width: 100%;
@@ -100,7 +116,7 @@ a :hover{
     }
 
     span {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         align-self: center;
     }
 
@@ -108,7 +124,82 @@ a :hover{
         height: 30px;
     }
 
-    #trophy {
+    .ranking {
         height: 30px;
+        width: 30px;
     }
+
+    .nav-right{
+        gap: 0.5rem;
+    }
+
+    #level{
+        height: 1rem;
+        width: 0.8rem;
+        line-height: 1.2rem;
+    }
+}
+
+/* SELECTOR IDIOMA */
+.custom-select {
+  width: 40px;
+  border: 0px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  padding: 4px 0px;
+  position: relative;
+}
+
+.custom-select summary {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.custom-select summary::marker {
+  display: none;
+}
+
+/* CONTENEDOR DE OPCIONES */
+.custom-select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 0px solid #ccc;
+  border-radius: 4px;
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  padding: 4px;
+}
+
+.custom-select[open] .custom-select-options {
+  display: flex;
+}
+
+.rad {
+  display: none;
+}
+
+.opt {
+  padding: 6px 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.opt img {
+  width: 28px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.rad:checked + .opt {
+  background-color: #ffeb3b;
 }

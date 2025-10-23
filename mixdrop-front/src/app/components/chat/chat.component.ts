@@ -7,11 +7,12 @@ import { Subscription } from 'rxjs';
 import { MessageType } from '../../models/message-type';
 import { User } from '../../models/user';
 import { AuthService } from '../../services/auth.service';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslocoModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })

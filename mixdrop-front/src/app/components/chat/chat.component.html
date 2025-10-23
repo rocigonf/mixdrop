@@ -1,9 +1,9 @@
 @if (chatVisible) {
-<div class="box">
+<div class="box" *transloco="let t">
     <div class="chat">
         <button class="close" (click)="chatVisible= false">✖️</button>
 
-        <p style="text-align: center;">Chatea con {{enemyNickname}}</p>
+        <p style="text-align: center;">{{ t("chat-with")}} {{enemyNickname}}</p>
 
         <div class="content" #scrollMe>
 
@@ -14,7 +14,7 @@
         
         <form class="envio" (submit)="envia()">
             <input type="text" name="mensaje" [(ngModel)]="mensaje">
-            <button type="submit" class="p-button font-bold ml-3">Enviar</button>
+            <button type="submit" class="p-button font-bold ml-3">{{ t("send") }}</button>
         </form>
 
     </div>

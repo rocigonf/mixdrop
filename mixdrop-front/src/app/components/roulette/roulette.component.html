@@ -2,16 +2,16 @@
 <h1>{{nameUser}} ha girado la ruleta</h1>
 -->
 
-<div class="roulette">
+<div class="roulette" *transloco="let t">
   <div class="wheel" #wheel>
     <div class="wheel-segment" >
-      <div class="wheel-text">NIVEL 3</div>
+      <div class="wheel-text">{{t("level")}} 3</div>
     </div>
     <div class="wheel-segment" >
-      <div class="wheel-text">NIVEL 2</div>
+      <div class="wheel-text">{{t("level")}} 2</div>
     </div>
     <div class="wheel-segment" >
-      <div class="wheel-text">NIVEL 1</div>
+      <div class="wheel-text">{{t("level")}} 1</div>
     </div>
     <div class="wheel-segment" >
       <div class="wheel-text">X</div>

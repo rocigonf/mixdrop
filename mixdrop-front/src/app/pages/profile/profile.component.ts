@@ -15,11 +15,12 @@ import { Friend } from '../../models/friend';
 import { FriendshipService } from '../../services/friendship.service';
 import { BattleDto } from '../../models/battle-dto';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [NavbarComponent, CommonModule, ReactiveFormsModule],
+  imports: [NavbarComponent, CommonModule, ReactiveFormsModule, TranslocoModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -65,7 +66,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private webSocketService: WebsocketService,
-    private friendshipService: FriendshipService
+    private friendshipService: FriendshipService,
+    private translocoService: TranslocoService
   ) {
     this.userForm = this.formBuild.group({
       nickname: ['', Validators.required],
@@ -194,7 +196,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       if (confirmed) {
         await this.friendshipService.removeFriendById(friend.id)
-        this.showAlert("Éxito", `Amistad con ${nickname} rechazada.`, 'info')
+        this.showAlert(this.translocoService.translate("success"), `${this.translocoService.translate("friend-removed")} ${nickname}.`, 'info')
       }
     }
 
@@ -294,7 +296,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       //this.shouldReload = true
       this.authService.getUser()
     } else {
-      this.showAlert("Error", "Formulario no válido", 'error')
+      this.showAlert("Error", this.translocoService.translate("form-error"), 'error')
     }
   }
 

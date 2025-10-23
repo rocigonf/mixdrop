@@ -482,7 +482,7 @@ app-card:active {
     }
 
     .screen::before {
-        content: "Gira tu dispositivo para jugar";
+        content: "Rotate your phone to play";
     }
 
     .game,
